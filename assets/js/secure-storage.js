@@ -355,7 +355,7 @@
         <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 18px 0;">
           Your authentication state is no longer synchronized. Please sign in again to continue.
         </p>
-        <button onclick="window.location.replace('index.html?session_reset=true')" style="width: 100%; background: linear-gradient(135deg, #ff5e00 0%, #ff3838 100%); color: #ffffff; border: none; padding: 11px 16px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25);">
+        <button onclick="window.location.replace('login.html?session_reset=true')" style="width: 100%; background: linear-gradient(135deg, #ff5e00 0%, #ff3838 100%); color: #ffffff; border: none; padding: 11px 16px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25);">
           Sign In Again
         </button>
       </div>
@@ -365,7 +365,7 @@
 
     // Auto redirect after 2.5 seconds
     setTimeout(() => {
-      window.location.replace('index.html?session_reset=true');
+      window.location.replace('login.html?session_reset=true');
     }, 2500);
   }
 

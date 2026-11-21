@@ -19,14 +19,12 @@
 
   const STORAGE_KEY = "mendorbit_attribution_data";
   const FIRST_TOUCH_KEY = "mendorbit_first_attribution";
-  const DEFAULT_REDIRECT = "dashboard.html";
+  const DEFAULT_REDIRECT = "index.html";
 
   // Allowed domains for redirection security
   const ALLOWED_REDIRECT_PATTERNS = [
     /^mendorbit\.in$/i,
     /^[a-z0-9-]+\.mendorbit\.in$/i,
-    /^mendorbit-test\.netlify\.app$/i,
-    /^mendorbit-login-test\.netlify\.app$/i,
     /^localhost(:\d+)?$/i,
     /^127\.0\.0\.1(:\d+)?$/i
   ];

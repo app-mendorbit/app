@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mendorbit | Login & Registration</title>
+
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Parameter Vault & URL Cloaking Engine (Instantly caches parameters and clears browser address bar) -->
+  <script>
+    (function() {
+      // 1. Initialize Global Parameter Vault
+      window.MendorbitParams = {
+        get: function(key) {
+          try {
+            const raw = sessionStorage.getItem('mendorbit_url_params');
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (parsed[key] !== undefined) return parsed[key];
+            }
+          } catch (e) {}
+          try {
+            return new URLSearchParams(window.location.search).get(key);
+          } catch (e) {}
+          return null;
+        },
+        getAll: function() {
+          const res = {};
+          try {
+            const raw = sessionStorage.getItem('mendorbit_url_params');
+            if (raw) Object.assign(res, JSON.parse(raw));
+          } catch (e) {}
+          try {
+            const params = new URLSearchParams(window.location.search);
+            for (const [k, v] of params.entries()) {
+              res[k] = v.trim();
+            }
+          } catch (e) {}
+          return res;
+        },
+        remove: function(key) {
+          try {
+            const raw = sessionStorage.getItem('mendorbit_url_params');
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              delete parsed[key];
+              sessionStorage.setItem('mendorbit_url_params', JSON.stringify(parsed));
+            }
+          } catch (e) {}
+        },
+        clear: function() {
+          try {
+            sessionStorage.removeItem('mendorbit_url_params');
+          } catch (e) {}
+        }
+      };
+
+      // 2. On page arrival, if URL has parameters: cache into vault and cloak the URL bar
+      const search = window.location.search;
+      if (search && search.length > 1) {
+        try {
+          const params = new URLSearchParams(search);
+          const cached = {};
+          for (const [k, v] of params.entries()) {
+            cached[k] = v.trim();
+          }
+          sessionStorage.setItem('mendorbit_url_params', JSON.stringify(cached));
+
+          // Immediately remove query string from browser address bar (Zero URL clutter/leakage!)
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+        } catch (e) {}
+      }
+
+      // 3. Immediate Auth Session Check (Auto-redirect if already logged in)
+      try {
+        if (MendorbitParams.get('security_revoked') === 'true' || MendorbitParams.get('tamper_detected') === 'true') {
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch (e) {}
+          return;
+        }
+
+        // CRITICAL: If accessing emergency account lock or reset link via action=lock or token=..., DO NOT auto-redirect to dashboard!
+        const actionParam = MendorbitParams.get('action');
+        const tokenParam = MendorbitParams.get('token');
+        if (actionParam === 'lock' || tokenParam) {
+          return;
+        }
+
+        if (MendorbitParams.get('force_login') !== 'true') {
+          const cookieMatch = document.cookie.match(/(^|;)\s*mendorbit_sso_session\s*=\s*([^;]+)/);
+          const hasLocalSession = localStorage.getItem('mendorbit_sso_user') || localStorage.getItem('mendorbit_current_session');
+          if (cookieMatch || hasLocalSession) {
+            const dest = MendorbitParams.get('redirect_url') || MendorbitParams.get('redirect') || 'index.html';
+            window.location.replace(dest);
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Auth Stylesheet -->
+  <link rel="stylesheet" href="assets/css/auth.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen p-3 xs:p-4 sm:p-6 lg:p-10 select-none">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center my-auto">
+
+    <!-- ==================== LEFT COLUMN: BRANDING & FEATURES ==================== -->
+    <div class="lg:col-span-6 space-y-5 sm:space-y-7 self-center order-2 lg:order-1">
+      
+      <!-- Desktop Brand Header (Matches User's Reference Screenshot) -->
+      <div class="hidden lg:flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-white shadow-md border border-orange-100 p-1.5 flex items-center justify-center flex-shrink-0">
+          <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-4xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
+          <span class="text-[11px] font-extrabold text-[#526071] tracking-[0.24em] uppercase mt-1">ORBIT OF KNOWLEDGE</span>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-lg">
+        India's trusted learning platform for School Boards & Competitive Exams. Built passionately from ground zero to turn every student into a topper.
+      </p>
+
+      <!-- Feature Highlight Cards -->
+      <div class="space-y-3.5 sm:space-y-4 max-w-lg">
+        
+        <!-- Card 1: Ground Zero -->
+        <div class="feature-card p-4 sm:p-5 flex items-start gap-3.5 sm:gap-4">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-orange-500/10 text-[#ff5e00] flex items-center justify-center flex-shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">Ground-Zero Teaching</h3>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Absolute conceptual clarity from foundational basics to advanced levels.</p>
+          </div>
+        </div>
+
+        <!-- Card 2 & 3: Side by Side -->
+        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+          
+          <div class="feature-card p-3.5 sm:p-5 flex flex-col gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-pink-500/10 text-pink-600 flex items-center justify-center">
+              <i data-lucide="video" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Board Exams</h4>
+              <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Class 9 & 10 toppers batch.</p>
+            </div>
+          </div>
+
+          <div class="feature-card p-3.5 sm:p-5 flex flex-col gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="zap" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Competitive Prep</h4>
+              <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">SSC, Bank PO, and CLAT.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Proudly Made in India Pill Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/90 border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
+        <span>Proudly Made with ❤️ in India</span>
+      </div>
+
+    </div>
+
+    <!-- ==================== RIGHT COLUMN: FLOATING AUTH CARD ==================== -->
+    <div class="lg:col-span-6 flex flex-col items-center lg:items-end order-1 lg:order-2 w-full">
+      
+      <!-- Mobile-Only Brand Header (Shows at top on phones) -->
+      <div class="lg:hidden flex items-center gap-3 mb-5 self-center">
+        <div class="w-11 h-11 rounded-2xl bg-white shadow-md border border-orange-100 p-1 flex items-center justify-center flex-shrink-0">
+          <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-3xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
+          <span class="text-[10px] font-extrabold text-[#526071] tracking-[0.22em] uppercase mt-0.5">ORBIT OF KNOWLEDGE</span>
+        </div>
+      </div>
+
+      <div class="auth-main-card w-full max-w-[440px] p-5 sm:p-8 lg:p-10 relative">
+
+        <!-- Card Header -->
+        <div class="text-center mb-5 sm:mb-6">
+          <h2 id="auth-card-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
+          <p id="auth-card-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Please enter your details to continue.</p>
+        </div>
+
+        <!-- Pill Toggle Switch (Sign In / Register) -->
+        <div id="pill-toggle-wrapper" class="pill-toggle-container mb-5 sm:mb-6">
+          <button id="pill-btn-signin" class="pill-toggle-btn active" type="button">Sign In</button>
+          <button id="pill-btn-register" class="pill-toggle-btn" type="button">Register</button>
+        </div>
+
+        <!-- ==================== VIEW 1: SIGN IN (PASSWORD) ==================== -->
+        <form id="view-signin" class="space-y-4">
+          <!-- Email Input -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input type="email" id="signin-identifier" required placeholder="Email" class="mendorbit-input w-full pl-11 pr-4 py-3.5">
+          </div>
+
+          <!-- Password Input (Default Masked Dots & Closed Eye) -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input type="password" id="signin-password" required placeholder="Password" class="mendorbit-input w-full pl-11 pr-11 py-3.5">
+            <button type="button" onclick="togglePasswordVisibility('signin-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition" title="Show/Hide Password">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Links: Use OTP Instead | Forgot Password -->
+          <div class="flex items-center justify-between text-xs pt-1">
+            <a href="javascript:void(0)" onclick="openDirectOtpView()" class="text-[#ff5e00] hover:text-[#e64d00] font-semibold transition">Use OTP Instead</a>
+            <a href="javascript:void(0)" onclick="openForgotView()" class="text-slate-400 hover:text-slate-600 font-medium transition">Forgot Password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="btn-signin-submit" class="btn-mendorbit-primary w-full mt-2 flex items-center justify-center gap-2">
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <!-- ==================== VIEW 2: REGISTER (SIGN UP) ==================== -->
+        <form id="view-register" class="space-y-3.5 hidden">
+          <!-- Name -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+            <input type="text" id="reg-name" required placeholder="Name" class="mendorbit-input w-full pl-11 pr-4 py-3">
+          </div>
+
+          <!-- Email -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input type="email" id="reg-email" required placeholder="Email" class="mendorbit-input w-full pl-11 pr-4 py-3">
+          </div>
+
+          <!-- Select Class Dropdown -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+            </div>
+            <select id="reg-class" required class="mendorbit-input w-full pl-11 pr-4 py-3 appearance-none text-slate-700">
+              <option value="" disabled selected>Select Target / Class</option>
+              <option value="Class 9">Class 9</option>
+              <option value="Class 10">Class 10</option>
+              <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
+              <option value="Banking">Banking</option>
+              <option value="CLAT / AILET">CLAT / AILET</option>
+            </select>
+          </div>
+
+          <!-- Password (Default Masked Dots & Closed Eye) -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input type="password" id="reg-password" minlength="6" required placeholder="Password" class="mendorbit-input w-full pl-11 pr-11 py-3">
+            <button type="button" onclick="togglePasswordVisibility('reg-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition" title="Show/Hide Password">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Dynamic Password Strength Bar -->
+          <div id="reg-pwd-strength-container" class="mt-1 px-1 hidden transition-all duration-300">
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="reg-pwd-strength-bar" class="h-full w-0 transition-all duration-300 rounded-full bg-red-500"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1 font-medium">
+              <span>Strength: <strong id="reg-pwd-strength-label" class="text-slate-600">Weak</strong></span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="btn-register-submit" class="btn-mendorbit-primary w-full mt-2 flex items-center justify-center gap-2">
+            <span>Register</span>
+          </button>
+        </form>
+
+        <!-- ==================== VIEW 3: DIRECT EMAIL + OTP LOGIN ==================== -->
+        <form id="view-otp-login" class="space-y-4 hidden">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input type="email" id="direct-otp-email" required placeholder="Email" class="mendorbit-input w-full pl-11 pr-4 py-3.5">
+          </div>
+
+          <button type="submit" id="btn-direct-otp-submit" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+            <span>Send Login OTP</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
+              ← Return to Password Sign In
+            </button>
+          </div>
+        </form>
+
+        <!-- ==================== VIEW 4: FORGOT PASSWORD ==================== -->
+        <form id="view-forgot" class="space-y-4 hidden">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input type="email" id="forgot-password-email" required placeholder="Email" class="mendorbit-input w-full pl-11 pr-4 py-3.5">
+          </div>
+
+          <button type="submit" id="btn-forgot-submit" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+            <span>Send Reset OTP</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
+              ← Back to Sign In
+            </button>
+          </div>
+        </form>
+
+        <!-- ==================== VIEW 5: INLINE OTP VERIFICATION ==================== -->
+        <div id="view-otp-verify" class="space-y-4 hidden text-center">
+          <div class="w-14 h-14 rounded-2xl bg-orange-50 text-[#ff5e00] flex items-center justify-center mx-auto mb-2 shadow-sm border border-orange-100/70">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-extrabold text-slate-900">Enter OTP</h3>
+            <p class="text-xs text-slate-500 mt-1">Enter the 6-digit OTP sent to</p>
+            <div id="inline-otp-email" class="text-xs font-bold text-[#ff5e00] font-mono mt-0.5 break-all"></div>
+            <p class="text-[11px] text-slate-400 mt-2">
+              Not in inbox? Check your <strong>Spam / Junk</strong> folder also.
+            </p>
+          </div>
+
+          <!-- 6 discrete numeric input cells -->
+          <div class="flex justify-center gap-1.5 sm:gap-2.5 my-3">
+            <input type="text" maxlength="1" class="otp-digit" autofocus inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+          </div>
+
+          <!-- Timer & Resend (Resend in 2 min) -->
+          <div class="text-xs text-slate-500">
+            <span id="otp-timer-label">Resend in </span>
+            <strong id="inline-otp-timer" class="text-[#ff5e00] font-mono">02:00</strong>
+            <div class="mt-1">
+              <button type="button" id="btn-inline-resend" class="text-xs font-semibold text-[#ff5e00] hover:text-[#e64d00] underline hidden">
+                Resend OTP
+              </button>
+            </div>
+          </div>
+
+          <button type="button" id="btn-inline-otp-confirm" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2 mt-2">
+            <span>Verify OTP</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+          <div class="pt-1">
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-400 hover:text-slate-700 font-medium">
+              ← Cancel and Return
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 6: GOOGLE USER MANDATORY PASSWORD SETUP ==================== -->
+        <form id="view-google-setup" class="space-y-4 hidden">
+          <div class="text-center mb-2">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 shadow-sm">
+              <i data-lucide="key" class="w-7 h-7"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900">Select your class</h3>
+          </div>
+
+          <!-- Select Class -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+            </div>
+            <select id="google-class" required class="mendorbit-input w-full pl-11 pr-4 py-3 appearance-none text-slate-700">
+              <option value="" disabled selected>Select Target / Class</option>
+              <option value="Class 9">Class 9</option>
+              <option value="Class 10">Class 10</option>
+              <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
+              <option value="Banking">Banking</option>
+              <option value="CLAT / AILET">CLAT / AILET</option>
+            </select>
+          </div>
+
+          <!-- Set Password -->
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input type="password" id="google-password" minlength="6" required placeholder="Password" class="mendorbit-input w-full pl-11 pr-11 py-3.5">
+            <button type="button" onclick="togglePasswordVisibility('google-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition" title="Show/Hide Password">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Dynamic Password Strength Bar -->
+          <div id="google-pwd-strength-container" class="mt-1 px-1 hidden transition-all duration-300">
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="google-pwd-strength-bar" class="h-full w-0 transition-all duration-300 rounded-full bg-red-500"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1 font-medium">
+              <span>Strength: <strong id="google-pwd-strength-label" class="text-slate-600">Weak</strong></span>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-google-setup-submit" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+            <span>Complete Setup & Enter</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <!-- ==================== VIEW 7: INLINE RESET PASSWORD ==================== -->
+        <form id="view-reset-password" class="space-y-4 hidden">
+          <div class="text-center mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 shadow-sm">
+              <i data-lucide="lock-keyhole" class="w-7 h-7"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900">Create New Password</h3>
+            <p class="text-xs text-slate-400 mt-1 font-medium">Enter your new account password below.</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input type="password" id="new-reset-password" minlength="6" required placeholder="Password" class="mendorbit-input w-full pl-11 pr-11 py-3.5">
+            <button type="button" onclick="togglePasswordVisibility('new-reset-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition" title="Show/Hide Password">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Dynamic Password Strength Bar -->
+          <div id="reset-pwd-strength-container" class="mt-1 px-1 hidden transition-all duration-300">
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="reset-pwd-strength-bar" class="h-full w-0 transition-all duration-300 rounded-full bg-red-500"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1 font-medium">
+              <span>Strength: <strong id="reset-pwd-strength-label" class="text-slate-600">Weak</strong></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+            <span>Update Password & Sign In</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <!-- ==================== VIEW 8: QR LOGIN CARD ==================== -->
+        <div id="view-qr" class="hidden text-center space-y-4 py-2">
+          <!-- QR Canvas with Center Mendorbit Logo -->
+          <div class="relative inline-block mx-auto p-2 bg-white rounded-2xl border border-slate-200/90 shadow-sm">
+            <div id="qr-target-container" class="flex justify-center w-44 h-44"></div>
+            <!-- Centered Logo Overlay (36px with White Ring - Never cuts QR Data) -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-9 h-9 bg-white rounded-xl shadow-md ring-4 ring-white p-1 flex items-center justify-center">
+                <img src="logo.png" alt="Mendorbit" class="w-full h-full object-contain">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-2">
+            <div id="qr-live-status" class="text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Waiting for App Scan...</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono bg-slate-100 py-1 px-2.5 rounded-full">
+              Refreshes in: <span id="qr-refresh-timer" class="font-bold text-slate-700">60s</span>
+            </div>
+          </div>
+
+          <p class="text-[12px] text-slate-400 max-w-xs mx-auto">
+            Open the Mendorbit Mobile App and scan this code to log in instantly.
+          </p>
+          <div>
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">
+              ← Return to Password Sign In
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 9: INLINE EMERGENCY LOCK & CHANGE PASSWORD ==================== -->
+        <div id="view-lock-account" class="hidden space-y-4">
+          <!-- SUB-STATE 1: VERIFYING TOKEN SPINNER -->
+          <div id="lock-state-loading" class="text-center py-6 space-y-3">
+            <div class="w-10 h-10 border-4 border-orange-500/20 border-t-[#ff5e00] rounded-full animate-spin mx-auto"></div>
+            <p class="text-xs font-semibold text-slate-700">Verifying security token...</p>
+          </div>
+
+          <!-- SUB-STATE 2: TOKEN ALREADY USED -->
+          <div id="lock-state-already-used" class="hidden text-center py-3 space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200/80 mx-auto flex items-center justify-center shadow-sm">
+              <i data-lucide="shield-alert" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-extrabold text-slate-900">Link Already Used</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                This change password link has <strong>already been used</strong> and cannot be reused. Each link is single-use for your security.
+              </p>
+            </div>
+            <div class="pt-2">
+              <button type="button" onclick="returnToSignIn()" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+                <span>Go to Sign In</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-STATE 3: TOKEN EXPIRED (24 HOURS) -->
+          <div id="lock-state-expired" class="hidden text-center py-3 space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-600 border border-slate-200 mx-auto flex items-center justify-center shadow-sm">
+              <i data-lucide="clock" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-extrabold text-slate-900">Link Expired</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                For your security, this password reset link expired after <strong>24 hours</strong>. Please request a new verification code.
+              </p>
+            </div>
+            <div class="pt-2">
+              <button type="button" onclick="returnToSignIn()" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+                <span>Return to Sign In</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-STATE 4: INVALID TOKEN -->
+          <div id="lock-state-invalid" class="hidden text-center py-3 space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 border border-red-200/80 mx-auto flex items-center justify-center shadow-sm">
+              <i data-lucide="shield-x" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-extrabold text-slate-900">Invalid Link</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                This link is missing a valid authorization token. Please use the original link from your email.
+              </p>
+            </div>
+            <div class="pt-2">
+              <button type="button" onclick="returnToSignIn()" class="btn-mendorbit-secondary w-full flex items-center justify-center gap-2">
+                <span>Return to Portal</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-STATE 5: ACTIVE CHANGE PASSWORD FORM -->
+          <form id="lock-active-form" class="hidden space-y-4">
+            <div class="text-center mb-2">
+              <div class="w-12 h-12 rounded-2xl bg-orange-50 text-[#ff5e00] border border-orange-100 mx-auto flex items-center justify-center shadow-sm mb-2">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900">Change Password</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Enter your new account password below.</p>
+            </div>
+
+            <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-800 flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
+              <span>If you change your password, all active sessions everywhere across Mendorbit will be terminated.</span>
+            </div>
+
+            <!-- Email Display (Verified & Read-only, no need to manually enter) -->
+            <div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="mail" class="w-4 h-4"></i>
+                </div>
+                <input type="email" id="inline-lock-email" required readonly class="mendorbit-input w-full pl-10 pr-10 py-3 bg-slate-100/90 text-slate-700 cursor-not-allowed text-xs sm:text-sm">
+                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-emerald-600" title="Account Verified">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+                <input type="password" id="inline-lock-new-password" minlength="6" required placeholder="New Password (min 6 characters)" class="mendorbit-input w-full pl-10 pr-11 py-3 text-xs sm:text-sm">
+                <button type="button" onclick="togglePasswordVisibility('inline-lock-new-password', this)" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition" title="Show/Hide">
+                  <i data-lucide="eye-off" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Password Strength Bar -->
+              <div id="inline-lock-pwd-strength-container" class="mt-1 px-1">
+                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div id="inline-lock-pwd-strength-bar" class="h-full w-0 transition-all duration-300 rounded-full bg-red-500"></div>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1 font-medium">
+                  <span>Strength: <strong id="inline-lock-pwd-strength-label" class="text-slate-600">Weak</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-inline-lock-submit" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2 mt-2">
+              <span>Change Password</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </form>
+
+          <!-- SUB-STATE 6: SUCCESS -->
+          <div id="lock-state-success" class="hidden text-center py-3 space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 mx-auto flex items-center justify-center shadow-sm">
+              <i data-lucide="check-circle-2" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-extrabold text-slate-900">Password Updated Successfully</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Your new password is now active. All previous sessions across all devices have been terminated and this link has been permanently expired.
+              </p>
+            </div>
+            <div class="pt-2">
+              <button type="button" onclick="returnToSignIn()" class="btn-mendorbit-primary w-full flex items-center justify-center gap-2">
+                <span>Sign In Now</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== SOCIAL / ALTERNATIVE AUTH ==================== -->
+        <div id="social-auth-section" class="mt-5">
+          <!-- Sleek Hairline OR Divider -->
+          <div class="flex items-center my-5">
+            <div class="flex-grow border-t border-slate-200/80"></div>
+            <span class="flex-shrink mx-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">OR</span>
+            <div class="flex-grow border-t border-slate-200/80"></div>
+          </div>
+
+          <!-- Google & QR Login Buttons in 2 Columns -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Google Button -->
+            <button id="btn-google-action" type="button" class="btn-mendorbit-secondary flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <span>Google</span>
+            </button>
+
+            <!-- QR Login Button -->
+            <button id="btn-qr-action" type="button" onclick="openQrView()" class="btn-mendorbit-secondary flex items-center justify-center gap-2">
+              <i data-lucide="qr-code" class="w-4 h-4 text-slate-700"></i>
+              <span>QR Login</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Helper Scripts -->
+  <script>
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i data-lucide="eye" class="w-4 h-4 text-[#ff5e00]"></i>';
+      } else {
+        input.type = 'password';
+        btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-slate-400"></i>';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+  </script>
+
+  <!-- Mendorbit Engine Scripts -->
+  <script src="assets/js/mendorbit-cipher.js"></script>
+  <script src="assets/js/secure-storage.js"></script>
+  <script src="assets/js/utm-tracker.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/api-client.js"></script>
+  <script src="assets/js/auth-app.js"></script>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>
