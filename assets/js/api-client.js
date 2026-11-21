@@ -73,6 +73,7 @@
     resetPassword: async (email, newPassword, token) => post("/api/auth/reset-password", { email, newPassword, token }),
     lockAccount: async (email, token) => post("/api/auth/lock-account", { email, token }),
     googleSetup: async (data) => post("/api/auth/google-setup", { ...data, location: getClientLocation() }),
+    updateProfile: async (email, profileData) => post("/api/auth/update-profile", { email, profileData }),
 
     // Admin
     adminDecrypt: async (ciphertext, adminKey) => post("/api/admin/decrypt", { ciphertext }, { "X-Admin-Key": adminKey }),

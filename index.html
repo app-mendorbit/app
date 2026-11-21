@@ -286,17 +286,17 @@
 
                 <!-- Dropdown Actions -->
                 <div class="space-y-0.5 text-xs font-semibold">
-                  <!-- My Account Modal Trigger -->
-                  <button type="button" id="btn-open-my-account" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                  <!-- My Account Link to Profile Page -->
+                  <a href="profile.html" id="btn-open-my-account" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
                     <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                       <i data-lucide="user" class="w-4 h-4"></i>
                     </div>
                     <div class="flex-1">
                       <span class="block text-slate-900 dark:text-white font-bold">My Account</span>
-                      <span class="text-[10px] text-slate-400 font-normal">View personal details & target</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Personal, Billing & Academic details</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-                  </button>
+                  </a>
 
                   <!-- Batches Link -->
                   <a href="https://mendorbit.in/batches.html" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
@@ -398,10 +398,10 @@
 
           <!-- Quick Action Buttons -->
           <div class="flex items-center gap-3 flex-wrap">
-            <button type="button" id="btn-hero-account" class="px-5 py-2.5 rounded-xl bg-white text-brand-900 hover:bg-slate-100 font-extrabold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
+            <a href="profile.html" id="btn-hero-account" class="px-5 py-2.5 rounded-xl bg-white text-brand-900 hover:bg-slate-100 font-extrabold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
               <i data-lucide="user" class="w-4 h-4 text-brand-700"></i>
               <span>My Account</span>
-            </button>
+            </a>
             <a href="https://mendorbit.in/batches.html" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm transition flex items-center gap-2 backdrop-blur">
               <i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i>
               <span>Explore Batches</span>
@@ -470,9 +470,9 @@
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
               Secure Session
             </span>
-            <button type="button" id="btn-card-account" class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline">
+            <a href="profile.html" id="btn-card-account" class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline">
               Account Details
-            </button>
+            </a>
           </div>
         </div>
 
@@ -481,69 +481,6 @@
     </div>
 
   </main>
-
-  <!-- ======================================================== -->
-  <!-- "MY ACCOUNT" POPUP MODAL                                  -->
-  <!-- ======================================================== -->
-  <div id="modal-my-account" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
-    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 transform scale-95 transition-transform duration-200">
-      
-      <!-- Close Button -->
-      <button type="button" id="btn-close-account-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-
-      <!-- Modal Header -->
-      <div class="flex items-center gap-4 mb-6">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-900 to-brand-600 text-white flex items-center justify-center font-black text-xl shadow-lg relative overflow-hidden flex-shrink-0">
-          <span id="modal-avatar-initial">M</span>
-          <img id="modal-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
-        </div>
-        <div>
-          <h3 id="modal-user-fullname" class="text-xl font-black text-slate-900 dark:text-white">Student Name</h3>
-          <p id="modal-user-email" class="text-xs text-slate-500 dark:text-slate-400 font-mono">student@gmail.com</p>
-        </div>
-      </div>
-
-      <!-- Details List -->
-      <div class="space-y-3">
-        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Target Examination / Class</span>
-          <span id="modal-user-exam" class="text-xs font-bold text-slate-900 dark:text-white">Class 10</span>
-        </div>
-
-        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Authentication Status</span>
-          <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Verified Active SSO
-          </span>
-        </div>
-
-        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">SSO Cookie Scope</span>
-          <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">.mendorbit.in</span>
-        </div>
-
-        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Security Encryption</span>
-          <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Server-Side Cipher</span>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
-        <a href="login.html?action=forgot" class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline flex items-center gap-1.5">
-          <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
-          <span>Change Password</span>
-        </a>
-        <button type="button" id="btn-modal-close" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition">
-          Close
-        </button>
-      </div>
-
-    </div>
-  </div>
 
   <!-- ======================================================== -->
   <!-- FOOTER (MATCHING mendorbit.in)                           -->
@@ -655,72 +592,20 @@
       document.getElementById('hero-target-exam').textContent = targetExam;
       document.getElementById('card-target-exam').textContent = `${targetExam} Preparation`;
 
-      // Modal Elements
-      document.getElementById('modal-user-fullname').textContent = fullName;
-      document.getElementById('modal-user-email').textContent = email;
-      document.getElementById('modal-user-exam').textContent = targetExam;
-      document.getElementById('modal-avatar-initial').textContent = initialChar;
-
       // Photo handling (if Google photo exists)
       if (session.photoURL) {
-        ['nav-avatar-img', 'menu-avatar-img', 'modal-avatar-img'].forEach(id => {
+        ['nav-avatar-img', 'menu-avatar-img'].forEach(id => {
           const img = document.getElementById(id);
           if (img) {
             img.src = session.photoURL;
             img.classList.remove('hidden');
           }
         });
-        ['nav-avatar-initial', 'menu-avatar-initial', 'modal-avatar-initial'].forEach(id => {
+        ['nav-avatar-initial', 'menu-avatar-initial'].forEach(id => {
           const init = document.getElementById(id);
           if (init) init.classList.add('hidden');
         });
       }
-
-      // ========================================================
-      // 3. "MY ACCOUNT" MODAL HANDLER
-      // ========================================================
-      const accountModal = document.getElementById('modal-my-account');
-      const openModalButtons = [
-        document.getElementById('btn-open-my-account'),
-        document.getElementById('btn-hero-account'),
-        document.getElementById('btn-card-account')
-      ];
-      const closeModalButtons = [
-        document.getElementById('btn-close-account-modal'),
-        document.getElementById('btn-modal-close')
-      ];
-
-      function openAccountModal() {
-        if (!accountModal) return;
-        accountModal.classList.remove('hidden');
-        setTimeout(() => {
-          accountModal.classList.remove('opacity-0');
-          const panel = accountModal.querySelector('div');
-          if (panel) panel.classList.remove('scale-95');
-        }, 10);
-      }
-
-      function closeAccountModal() {
-        if (!accountModal) return;
-        accountModal.classList.add('opacity-0');
-        const panel = accountModal.querySelector('div');
-        if (panel) panel.classList.add('scale-95');
-        setTimeout(() => {
-          accountModal.classList.add('hidden');
-        }, 200);
-      }
-
-      openModalButtons.forEach(btn => {
-        if (btn) btn.addEventListener('click', openAccountModal);
-      });
-
-      closeModalButtons.forEach(btn => {
-        if (btn) btn.addEventListener('click', closeAccountModal);
-      });
-
-      accountModal.addEventListener('click', (e) => {
-        if (e.target === accountModal) closeAccountModal();
-      });
 
       // ========================================================
       // 4. LOGOUT HANDLER

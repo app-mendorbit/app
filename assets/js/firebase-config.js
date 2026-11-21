@@ -4,7 +4,7 @@
  */
 
 // 1. Google Apps Script Deployed Web App URL
-const MENDORBIT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+const MENDORBIT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWiLcXeggeJ34fx-Nc0Ded1MJ-O0a-7_ohHKtTI96BBm2KbZ4G8r3sttpu0qx43Sgwfw/exec";
 
 // 2. Firebase Production Credentials (app-mendorbit)
 const MENDORBIT_FIREBASE_CONFIG = {

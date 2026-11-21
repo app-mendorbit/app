@@ -34,7 +34,7 @@
   const PREFIX = "MND_SEC_v1";
   const BASE_SALT = "MNDRBT_SECURE_VAULT_2026_@99X#";
   const WORKER_URL = (typeof MENDORBIT_WORKER_URL !== 'undefined') ? MENDORBIT_WORKER_URL : "https://auth.app-mendorbit.workers.dev";
-  const APPS_SCRIPT_URL = (typeof MENDORBIT_APPS_SCRIPT_URL !== 'undefined') ? MENDORBIT_APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+  const APPS_SCRIPT_URL = (typeof MENDORBIT_APPS_SCRIPT_URL !== 'undefined') ? MENDORBIT_APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbwWiLcXeggeJ34fx-Nc0Ded1MJ-O0a-7_ohHKtTI96BBm2KbZ4G8r3sttpu0qx43Sgwfw/exec";
   
   // Track verified signatures in memory
   const verifiedHashes = {};
