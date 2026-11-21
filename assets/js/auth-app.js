@@ -1112,7 +1112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Verify token with Cloudflare Worker Edge
       try {
-        const workerUrl = MendorbitAPI.getBaseUrl() || "https://auth.team-mendorbit.workers.dev";
+        const workerUrl = MendorbitAPI.getBaseUrl() || "https://auth.app-mendorbit.workers.dev";
         const verifyRes = await fetch(`${workerUrl}/api/auth/verify-reset-token?token=${encodeURIComponent(token)}`);
         const verifyData = await verifyRes.json();
 
@@ -1162,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", function () {
       setButtonLoading(btn, true, "Securing Account...");
 
       try {
-        const workerUrl = MendorbitAPI.getBaseUrl() || "https://auth.team-mendorbit.workers.dev";
+        const workerUrl = MendorbitAPI.getBaseUrl() || "https://auth.app-mendorbit.workers.dev";
 
         // 1. Reset Password & Consume Single-Use Token on Edge
         const resetRes = await fetch(`${workerUrl}/api/auth/reset-password`, {

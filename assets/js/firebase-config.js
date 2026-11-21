@@ -18,7 +18,7 @@ const MENDORBIT_FIREBASE_CONFIG = {
 };
 
 // 3. Live Cloudflare Worker Endpoint
-const MENDORBIT_WORKER_URL = "https://auth.team-mendorbit.workers.dev";
+const MENDORBIT_WORKER_URL = "https://auth.app-mendorbit.workers.dev";
 
 // Service Initialization
 let firebaseAuth = null;
