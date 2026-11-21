@@ -24,6 +24,7 @@ apps-script/
 .DS_Store
 Thumbs.db
 desktop.ini
+*.zip
 
 # Logs
 logs

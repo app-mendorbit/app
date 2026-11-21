@@ -1,20 +1,20 @@
 /**
  * MENDORBIT PRODUCTION BACKEND CONFIGURATION
- * Connected to live Firebase project (mendorbit-in) and live Google Apps Script OTP Web App.
+ * Connected to live Firebase project (app-mendorbit) and live Google Apps Script OTP Web App.
  */
 
 // 1. Google Apps Script Deployed Web App URL
 const MENDORBIT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
 
-// 2. Firebase Production Credentials (mendorbit-in)
+// 2. Firebase Production Credentials (app-mendorbit)
 const MENDORBIT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAbvLQ1jjvdcJ2D6K8k-dNJ-dKLRuAlFac",
-  authDomain: "mendorbit-in.firebaseapp.com",
-  projectId: "mendorbit-in",
-  storageBucket: "mendorbit-in.firebasestorage.app",
-  messagingSenderId: "868790235880",
-  appId: "1:868790235880:web:cf1442f238c599792c4f5d",
-  measurementId: "G-QCVC5Y6P2P"
+  apiKey: "AIzaSyD1Bq8tZ_EHHpm2X953lLpd7B8Za7Dg6FY",
+  authDomain: "app-mendorbit.firebaseapp.com",
+  projectId: "app-mendorbit",
+  storageBucket: "app-mendorbit.firebasestorage.app",
+  messagingSenderId: "631509609750",
+  appId: "1:631509609750:web:6deec2049572550b2ab437",
+  measurementId: "G-WH09F8MWSH"
 };
 
 // 3. Live Cloudflare Worker Endpoint
@@ -36,7 +36,7 @@ try {
     googleAuthProvider = new firebase.auth.GoogleAuthProvider();
     googleAuthProvider.setCustomParameters({ prompt: 'select_account' });
     isFirebaseConfigured = true;
-    console.log("[Mendorbit Backend] Connected to live Firebase: mendorbit-in");
+    console.log("[Mendorbit Backend] Connected to live Firebase: app-mendorbit");
   }
 } catch (e) {
   console.warn("[Mendorbit Backend] Firebase initialization note:", e.message);
