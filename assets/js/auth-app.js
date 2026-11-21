@@ -850,21 +850,56 @@ document.addEventListener("DOMContentLoaded", function () {
           const gUser = result.user;
           const normalizedEmail = (gUser.email || "").toLowerCase().trim();
 
-          // 1. Check if user already has an established account
+          // 1. Check if user already has an established account in Firestore
           const existing = await MendorbitBackend.getUserByEmail(normalizedEmail);
           const storedClass = (typeof MendorbitSecureStorage !== 'undefined')
             ? MendorbitSecureStorage.getItem("mendorbit_user_class_" + normalizedEmail)
             : localStorage.getItem("mendorbit_user_class_" + normalizedEmail);
 
-          // If user exists anywhere in database OR has a stored class: LOG IN DIRECTLY! Never ask to register again!
+          // If user exists anywhere in database OR has a stored class:
           if (existing || storedClass) {
+            const finalClass = (existing && existing.class) || storedClass || "Class 10";
+            const finalName = (existing && existing.displayName) || gUser.displayName || "Student";
+            const finalPhoto = gUser.photoURL || (existing && existing.photoURL) || "";
+
             const userSession = {
               uid: (existing && existing.uid) || gUser.uid || normalizedEmail,
               email: normalizedEmail,
-              displayName: (existing && existing.displayName) || gUser.displayName || "Student",
-              class: (existing && existing.class) || storedClass || "Class 10",
-              photoURL: gUser.photoURL || (existing && existing.photoURL) || ""
+              displayName: finalName,
+              class: finalClass,
+              photoURL: finalPhoto
             };
+
+            // PERSISTENCE GUARANTEE: If document does NOT exist in Firestore yet, write it now!
+            if (!existing) {
+              try {
+                // 1. Persist via Worker Backend
+                await MendorbitAPI.googleSetup({
+                  email: normalizedEmail,
+                  name: finalName,
+                  studentClass: finalClass,
+                  uid: userSession.uid,
+                  photoURL: finalPhoto,
+                  attribution: attribution
+                });
+              } catch (e) {
+                console.warn("[Google Login] Worker sync note:", e);
+              }
+
+              try {
+                // 2. Direct Firestore SDK fallback
+                if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.saveUserProfile) {
+                  await MendorbitBackend.saveUserProfile(normalizedEmail, {
+                    displayName: finalName,
+                    email: normalizedEmail,
+                    class: finalClass,
+                    photoURL: finalPhoto
+                  }, attribution);
+                }
+              } catch (e) {
+                console.warn("[Google Login] Direct Firestore note:", e);
+              }
+            }
 
             MendorbitSSO.setSession(userSession);
             const exactLoc = (typeof MendorbitTracker !== 'undefined' && MendorbitTracker.getExactLocation) ? MendorbitTracker.getExactLocation() : null;

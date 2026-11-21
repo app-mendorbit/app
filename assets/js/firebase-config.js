@@ -57,17 +57,22 @@ const MendorbitBackend = {
     const docId = profileData.email.toLowerCase().trim();
     const userDoc = {
       uid: docId,
-      displayName: profileData.displayName,
+      displayName: profileData.displayName || "Student",
       email: docId,
-      class: profileData.class,
+      class: profileData.class || "Class 10",
       photoURL: profileData.photoURL || "",
-      encryptedPassword: encryptedPassword, // Custom 2-digit encrypted password
-      cipherVersion: "MendorbitAlphabetCipher_v2",
-      attribution: attributionData || {},
       status: "active",
-      createdAt: (firebase.firestore && isFirebaseConfigured) ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
-      lastLoginAt: (firebase.firestore && isFirebaseConfigured) ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
+      createdAt: (typeof firebase !== 'undefined' && firebase.firestore && isFirebaseConfigured) ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+      lastLoginAt: (typeof firebase !== 'undefined' && firebase.firestore && isFirebaseConfigured) ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
     };
+
+    if (encryptedPassword) {
+      userDoc.encryptedPassword = encryptedPassword;
+      userDoc.cipherVersion = "MendorbitAlphabetCipher_v2";
+    }
+    if (attributionData) {
+      userDoc.attribution = attributionData;
+    }
 
     if (isFirebaseConfigured && firestoreDb) {
       try {
