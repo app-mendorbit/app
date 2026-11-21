@@ -1,0 +1,9 @@
+name = "mendorbit-auth-backend"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+MASTER_ADMIN_KEY = "mendorbit@admin2026"
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec"
+FIREBASE_PROJECT_ID = "mendorbit-in"
+FIREBASE_API_KEY = "AIzaSyAbvLQ1jjvdcJ2D6K8k-dNJ-dKLRuAlFac"

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Mendorbit Education</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Immediate Dark Mode Preference Check -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            accent: {
+              orange: '#f97316',
+              emerald: '#10b981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium shadow-inner">
+    <span>Cross-Subdomain SSO Authenticated Session Active</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="logo.png" alt="Mendorbit Logo" class="h-10 w-auto object-contain">
+        <div>
+          <span class="text-xl font-black text-brand-900 dark:text-white tracking-tight">Mendorbit</span>
+          <span class="text-xs block text-slate-500 dark:text-slate-400 font-semibold uppercase">Learning Portal</span>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <button id="btn-theme-toggle" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+          <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400"></i>
+        </button>
+
+        <button id="btn-logout" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 transition">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Logout SSO</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
+
+    <!-- Not Logged In Notice -->
+    <div id="unauth-view" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-8">
+      <div class="w-16 h-16 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="shield-alert" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Authentication Required</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-md mx-auto">
+        No active Single Sign-On session was found for this browser. Please log in through the Mendorbit Auth Portal.
+      </p>
+      <div class="mt-6">
+        <a href="index.html" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm rounded-xl shadow-md transition">
+          <span>Go to Login Panel</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Authenticated Dashboard View -->
+    <div id="auth-view" class="space-y-6">
+      
+      <!-- User Hero Card -->
+      <div class="glass-panel rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-900 to-brand-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-500/20 overflow-hidden relative">
+            <span id="user-avatar-initial">M</span>
+            <img id="user-avatar-img" class="w-full h-full object-cover hidden rounded-2xl absolute inset-0" alt="Student Profile" />
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 id="user-display-name" class="text-2xl font-black text-slate-900 dark:text-white">Student</h1>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                SSO Verified
+              </span>
+            </div>
+            <p id="user-email" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono"></p>
+            <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 dark:bg-slate-800 text-brand-700 dark:text-blue-300 text-xs font-bold">
+              <i data-lucide="award" class="w-4 h-4"></i>
+              <span id="user-target-class">Class 10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:items-end text-xs text-slate-500 dark:text-slate-400 gap-1">
+          <div>Session Domain: <strong class="text-slate-700 dark:text-slate-200" id="session-domain-display">.mendorbit.in</strong></div>
+          <div>Session Valid For: <strong class="text-slate-700 dark:text-slate-200">30 Days</strong></div>
+          <div class="mt-2">
+            <button onclick="window.location.href='index.html'" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition">
+              ← Switch or Re-authenticate
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: SSO Subdomain Test & Attribution Details -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Card 1: Cross-Subdomain SSO Status -->
+        <div class="glass-panel rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="globe" class="w-5 h-5 text-brand-600 dark:text-blue-400"></i>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Cross-Subdomain SSO Status</h3>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            Your Single Sign-On cookie is scoped to <code class="bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono">Domain=.mendorbit.in</code>. Any subdomain you visit will automatically recognize your profile without re-prompting for credentials.
+          </p>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <strong class="text-slate-800 dark:text-slate-200">Main Portal</strong>
+                <span class="block text-[11px] text-slate-500 font-mono">mendorbit.in</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 text-[11px] font-bold">Synchronized</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <strong class="text-slate-800 dark:text-slate-200">LMS & Test Series</strong>
+                <span class="block text-[11px] text-slate-500 font-mono">learn.mendorbit.in</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 text-[11px] font-bold">Synchronized</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <strong class="text-slate-800 dark:text-slate-200">App Dashboard</strong>
+                <span class="block text-[11px] text-slate-500 font-mono">app.mendorbit.in</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 text-[11px] font-bold">Synchronized</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Marketing & UTM Attribution Record -->
+        <div class="glass-panel rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="crosshair" class="w-5 h-5 text-accent-orange"></i>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Captured Acquisition Attribution</h3>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            These parameters were captured upon your first page landing and stored in Firebase under your user document for marketing analytics.
+          </p>
+
+          <div id="attribution-list" class="space-y-2 text-xs font-mono">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Security & Encryption Inspector Card -->
+      <div class="glass-panel rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="lock" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Stored Reversible Ciphertext Preview</h3>
+          </div>
+          <a href="admin.html" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 underline">
+            Open Admin De-Encryption Console →
+          </a>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mb-3">
+          In compliance with your specifications, the password stored in Firebase is rendered using the custom 2-digit reversible alphabet cipher.
+        </p>
+
+        <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 font-mono text-xs border border-slate-200 dark:border-slate-700 break-all text-slate-700 dark:text-slate-300" id="user-encrypted-pwd-display">
+          Loading stored ciphertext...
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2026 Mendorbit Education. Built for high performance and maximum security.</p>
+      <div class="flex items-center gap-4">
+        <a href="https://mendorbit-test.netlify.app/" target="_blank" class="hover:text-brand-600">Netlify Live Site</a>
+        <a href="https://mendorbit.in/" target="_blank" class="hover:text-brand-600">mendorbit.in</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/mendorbit-cipher.js"></script>
+  <script src="assets/js/secure-storage.js"></script>
+  <script src="assets/js/utm-tracker.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.lucide) lucide.createIcons();
+
+      // Strip any trailing query parameters from address bar
+      if (window.location.search) {
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+        } catch (e) {}
+      }
+
+      // Theme toggle
+      const btnTheme = document.getElementById('btn-theme-toggle');
+      btnTheme.addEventListener('click', () => {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      });
+
+      // Check SSO session
+      const session = MendorbitSSO.getSession();
+      const unauthView = document.getElementById('unauth-view');
+      const authView = document.getElementById('auth-view');
+
+      if (!session) {
+        unauthView.classList.remove('hidden');
+        authView.classList.add('hidden');
+        return;
+      }
+
+      // Populate user info
+      authView.classList.remove('hidden');
+      unauthView.classList.add('hidden');
+
+      document.getElementById('user-display-name').textContent = session.displayName || "Student";
+      document.getElementById('user-email').textContent = session.email || "";
+      document.getElementById('user-target-class').textContent = session.class || "General Aspirant";
+      document.getElementById('session-domain-display').textContent = MendorbitSSO.getCookieDomain() || "Localhost / Staging";
+
+      // Render Avatar (Profile Photo if from Google, or initial fallback)
+      const avatarImg = document.getElementById('user-avatar-img');
+      const avatarInitial = document.getElementById('user-avatar-initial');
+      if (session.photoURL) {
+        avatarImg.src = session.photoURL;
+        avatarImg.classList.remove('hidden');
+        avatarInitial.classList.add('hidden');
+      } else {
+        avatarInitial.textContent = (session.displayName || "M").charAt(0).toUpperCase();
+        avatarInitial.classList.remove('hidden');
+        avatarImg.classList.add('hidden');
+      }
+
+      // Render Encrypted Password from DB
+      const users = (typeof MendorbitSecureStorage !== 'undefined')
+        ? (MendorbitSecureStorage.getItem("mendorbit_users_db") || {})
+        : JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
+      const userRecord = users[session.email.toLowerCase()];
+
+      // Render Registration Attribution (Permanent First-Touch Acquisition from User Profile)
+      const attr = (session && session.attribution) || (userRecord && userRecord.attribution) || MendorbitTracker.getAttribution() || {};
+      const attrContainer = document.getElementById('attribution-list');
+      attrContainer.innerHTML = `
+        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><strong>utm_source:</strong> ${attr.utm_source || 'direct'}</div>
+        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><strong>utm_medium:</strong> ${attr.utm_medium || 'none'}</div>
+        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><strong>utm_campaign:</strong> ${attr.utm_campaign || 'none'}</div>
+        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><strong>utm_link:</strong> <span class="break-all">${attr.utm_link || window.location.href}</span></div>
+        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><strong>referrer:</strong> ${attr.referrer || 'direct'}</div>
+      `;
+
+      const pwdDisplay = document.getElementById('user-encrypted-pwd-display');
+      if (userRecord && userRecord.encryptedPassword) {
+        pwdDisplay.textContent = userRecord.encryptedPassword;
+      } else {
+        pwdDisplay.textContent = "(Password authenticated via Google OAuth or Direct OTP)";
+      }
+
+      // Logout handler
+      document.getElementById('btn-logout').addEventListener('click', () => {
+        MendorbitSSO.clearSession();
+        window.location.href = "index.html?force_login=true";
+      });
+    });
+  </script>
+</body>
+</html>

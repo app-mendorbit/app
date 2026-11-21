@@ -1,0 +1,277 @@
+/* Mendorbit Official Brand Authentication Portal Styles */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --mendorbit-orange: #ff5e00;
+  --mendorbit-coral: #ff3838;
+  --mendorbit-gradient: linear-gradient(135deg, #ff5e00 0%, #ff3838 100%);
+  --mendorbit-gradient-hover: linear-gradient(135deg, #eb5400 0%, #eb2f2f 100%);
+  --brand-navy: #0f172a;
+  --brand-slate: #526071;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 35%, #f8fafc 100%);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Floating Auth Card (Natural Hugging Height - 100% Mobile Responsive) */
+.auth-main-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px -15px rgba(255, 94, 0, 0.09), 0 10px 30px -5px rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .auth-main-card {
+    border-radius: 32px;
+  }
+}
+
+/* Feature Side Cards */
+.feature-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .feature-card {
+    border-radius: 24px;
+  }
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px -10px rgba(255, 94, 0, 0.09);
+}
+
+/* Pill Toggle Switch */
+.pill-toggle-container {
+  background: #f1f4f9;
+  border-radius: 9999px;
+  padding: 4px;
+  display: flex;
+}
+
+.pill-toggle-btn {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .pill-toggle-btn {
+    font-size: 14px;
+    padding: 9px 18px;
+  }
+}
+
+.pill-toggle-btn.active {
+  background: #ffffff;
+  color: #ff5e00;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 94, 0, 0.12);
+}
+
+/* Form Inputs (16px base font on mobile prevents iOS auto-zoom jump) */
+.mendorbit-input {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 16px;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .mendorbit-input {
+    font-size: 14px;
+    border-radius: 16px;
+  }
+}
+
+.mendorbit-input:focus {
+  background: #ffffff;
+  border-color: #ff5e00;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 94, 0, 0.14);
+}
+
+/* Primary Action Button (Vivid Mendorbit Brand Gradient) */
+.btn-mendorbit-primary {
+  background: linear-gradient(135deg, #ff5e00 0%, #ff3838 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 14px;
+  padding: 12px 22px;
+  box-shadow: 0 8px 22px -4px rgba(255, 94, 0, 0.35);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .btn-mendorbit-primary {
+    font-size: 15px;
+    border-radius: 16px;
+    padding: 13px 24px;
+  }
+}
+
+.btn-mendorbit-primary:hover {
+  background: linear-gradient(135deg, #eb5400 0%, #eb2f2f 100%);
+  box-shadow: 0 10px 26px -4px rgba(255, 94, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-mendorbit-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary Button (Google, QR) */
+.btn-mendorbit-secondary {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .btn-mendorbit-secondary {
+    border-radius: 16px;
+    padding: 11px 16px;
+  }
+}
+
+.btn-mendorbit-secondary:hover {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+
+/* OTP Digits Input (Fluid and 100% Responsive on all screen sizes) */
+.otp-digit {
+  width: 100%;
+  max-width: 44px;
+  height: 50px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  font-family: monospace;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 375px) {
+  .otp-digit {
+    max-width: 36px;
+    height: 44px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+}
+
+@media (min-width: 640px) {
+  .otp-digit {
+    max-width: 48px;
+    height: 54px;
+    font-size: 22px;
+    border-radius: 14px;
+  }
+}
+
+.otp-digit:focus {
+  background: #ffffff;
+  border-color: #ff5e00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.18);
+}
+
+/* Toast Notifications - Mobile Friendly */
+#toast-container {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  #toast-container {
+    left: auto;
+    right: 20px;
+    top: 20px;
+    max-width: 380px;
+  }
+}
+
+.toast-item {
+  pointer-events: auto;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.toast-item.success { border-left: 4px solid #10b981; }
+.toast-item.error { border-left: 4px solid #ef4444; }
+.toast-item.info { border-left: 4px solid #ff5e00; }
+
+/* Password Strength & QR Visual Enhancements */
+#reg-pwd-strength-bar, #google-pwd-strength-bar, #reset-pwd-strength-bar {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+}
+
+#qr-target-container img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
