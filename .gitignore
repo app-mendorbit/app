@@ -6,6 +6,8 @@ dist/
 # Cloudflare Wrangler & Serverless
 .wrangler/
 .mf/
+cloudflare-worker/
+apps-script/
 
 # Environment and sensitive keys
 .env
