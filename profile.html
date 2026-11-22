@@ -360,7 +360,7 @@
               <!-- Avatar Circle -->
               <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 p-0.5 shadow-md">
                 <div class="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden relative">
-                  <span id="hero-avatar-initial" class="font-black text-2xl sm:text-3xl text-slate-700 dark:text-slate-200">S</span>
+                  <span id="hero-avatar-initial" class="font-black text-2xl sm:text-3xl text-slate-700 dark:text-slate-200"></span>
                   <img id="hero-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
                 </div>
               </div>
@@ -372,19 +372,19 @@
 
             <div>
               <div class="flex items-center gap-2.5 flex-wrap">
-                <h1 id="hero-user-fullname" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Shivam Kumar</h1>
-                <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                <h1 id="hero-user-fullname" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Student Profile</h1>
+                <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  <span id="hero-status-text">Active Student</span>
+                  <span id="hero-status-text">Active</span>
                 </span>
               </div>
               <div class="flex items-center gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
                 <span id="hero-user-phone" class="font-mono flex items-center gap-1">
                   <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span>+91 9801085156</span>
+                  <span></span>
                 </span>
                 <span>•</span>
-                <span id="hero-user-email" class="font-mono truncate max-w-[200px] sm:max-w-xs">student@mendorbit.in</span>
+                <span id="hero-user-email" class="font-mono truncate max-w-[200px] sm:max-w-xs"></span>
               </div>
             </div>
           </div>
@@ -394,17 +394,17 @@
             <div class="flex items-center gap-4 sm:gap-7">
               <div>
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Class</span>
-                <span id="hero-stat-class" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">11</span>
+                <span id="hero-stat-class" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">--</span>
               </div>
               <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
               <div>
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Board</span>
-                <span id="hero-stat-board" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">CBSE</span>
+                <span id="hero-stat-board" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">--</span>
               </div>
               <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
               <div>
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Target</span>
-                <span id="hero-stat-target" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 max-w-[120px] sm:max-w-[160px] truncate block">Foundations</span>
+                <span id="hero-stat-target" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 max-w-[120px] sm:max-w-[160px] truncate block">--</span>
               </div>
             </div>
 
@@ -432,7 +432,7 @@
             <div class="flex items-center gap-2.5">
               <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">KYC & Student Profile Form</h2>
               <span id="kyc-status-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-white shadow-sm">
-                Pending
+                Calculating...
               </span>
             </div>
             <p class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
@@ -444,10 +444,10 @@
         <!-- Right: Dynamic Progress Bar & Percent Indicator -->
         <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 min-w-[260px]">
           <div class="flex-1 md:w-48 bg-orange-200/70 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
-            <div id="kyc-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out" style="width: 42%;"></div>
+            <div id="kyc-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out" style="width: 0%;"></div>
           </div>
           <span id="kyc-progress-text" class="text-sm font-black text-slate-900 dark:text-white flex-shrink-0">
-            42% Completed
+            0% Completed
           </span>
         </div>
 
@@ -540,13 +540,13 @@
                 <!-- Enter Your First name * -->
                 <div class="edtech-input-group">
                   <label>Enter Your First name *</label>
-                  <input type="text" id="input-first-name" required placeholder="Shivam" class="edtech-input">
+                  <input type="text" id="input-first-name" required placeholder="Enter first name" class="edtech-input">
                 </div>
 
                 <!-- Enter Your Last name -->
                 <div class="edtech-input-group">
                   <label>Enter Your Last name</label>
-                  <input type="text" id="input-last-name" placeholder="Kumar" class="edtech-input">
+                  <input type="text" id="input-last-name" placeholder="Enter last name" class="edtech-input">
                 </div>
 
                 <!-- Select your Gender -->
@@ -591,7 +591,7 @@
                 <!-- Phone / WhatsApp Number * -->
                 <div class="edtech-input-group">
                   <label>Phone / WhatsApp Number *</label>
-                  <input type="tel" id="input-phone" required placeholder="+91 9801085156" class="edtech-input font-mono">
+                  <input type="tel" id="input-phone" required placeholder="+91 98765 43210" class="edtech-input font-mono">
                 </div>
 
                 <!-- Registered Email (Readonly) -->
@@ -1036,9 +1036,16 @@
   <script src="assets/js/api-client.js"></script>
   <script src="assets/js/secure-storage.js"></script>
   <script src="assets/js/sso-manager.js"></script>
+  <script src="assets/js/mendorbit-loader.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.show("Loading Student Profile...", "Retrieving your secure learning records & preferences...", {
+          reason: "Database sync is taking slightly longer than usual. Please wait a moment."
+        });
+      }
+
       if (window.lucide) lucide.createIcons();
 
       // ========================================================
@@ -1091,21 +1098,23 @@
       }
 
       // Populate Hero Names & Stats
-      const rawFullName = userDoc.displayName || session.displayName || session.name || "Shivam Kumar";
+      const rawFullName = userDoc.displayName || session.displayName || session.name || (email ? email.split('@')[0] : "Student");
       const nameParts = rawFullName.trim().split(" ");
-      const firstName = userDoc.firstName || nameParts[0] || "Shivam";
+      const firstName = userDoc.firstName || nameParts[0] || (email ? email.split('@')[0] : "Student");
       const lastName = userDoc.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
       const displayFullName = `${firstName} ${lastName}`.trim();
 
-      const phone = userDoc.phone || session.phone || "+91 9801085156";
-      const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "11";
+      const phone = userDoc.phone || session.phone || "";
+      const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "Class 10";
       const cleanClassNum = studentClass.replace(/[^0-9]/g, '') || studentClass;
       const board = (userDoc.academicInfo && userDoc.academicInfo.board) || "CBSE";
       const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundations";
 
       // Render in Hero Header
       document.getElementById('hero-user-fullname').textContent = displayFullName;
-      document.getElementById('hero-user-phone').innerHTML = `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phone}</span>`;
+      document.getElementById('hero-user-phone').innerHTML = phone
+        ? `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phone}</span>`
+        : `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span class="text-slate-400 italic">No phone added</span>`;
       document.getElementById('hero-user-email').textContent = email;
       document.getElementById('hero-stat-class').textContent = cleanClassNum || studentClass;
       document.getElementById('hero-stat-board').textContent = board;
@@ -1233,6 +1242,9 @@
       }
 
       updateKycProgress();
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.hide();
+      }
 
       // ========================================================
       // 5. MASTER-DETAIL TAB NAVIGATION (SIDEBAR SWITCHER)
@@ -1297,6 +1309,12 @@
 
       // Universal Persistence Helper (Worker API + Firestore SDK + SSO Session)
       async function saveProfileData(updateFields, successMessage, submitBtn) {
+        if (typeof MendorbitLoader !== 'undefined') {
+          MendorbitLoader.show("Updating Profile...", "Encrypting and syncing your changes with Mendorbit servers...", {
+            reason: "Server write is taking longer than usual. Please keep this tab open."
+          });
+        }
+
         const originalContent = submitBtn ? submitBtn.innerHTML : "Update";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -1327,6 +1345,9 @@
           console.error("Save profile error:", err);
           showToast("Failed to save changes. Please try again.", "error");
         } finally {
+          if (typeof MendorbitLoader !== 'undefined') {
+            MendorbitLoader.hide();
+          }
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalContent;

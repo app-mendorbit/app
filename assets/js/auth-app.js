@@ -844,6 +844,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnGoogle = document.getElementById("btn-google-action");
   if (btnGoogle) {
     btnGoogle.addEventListener("click", async () => {
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.show("Connecting to Google...", "Authenticating your Google Account...", {
+          reason: "Google login popup may be waiting in another window or tab. Please complete sign-in there."
+        });
+      }
+
       if (MendorbitBackend.isConfigured() && firebaseAuth && googleAuthProvider) {
         try {
           const result = await firebaseAuth.signInWithPopup(googleAuthProvider);
@@ -911,6 +917,10 @@ document.addEventListener("DOMContentLoaded", function () {
               });
             }
             dispatchClientSecurityAlert(userSession.email, userSession.displayName, "GOOGLE_LOGIN");
+
+            if (typeof MendorbitLoader !== 'undefined') {
+              MendorbitLoader.show("Verified!", "Redirecting to your student dashboard...");
+            }
             notify("Welcome back, " + userSession.displayName + "!", "success");
             setTimeout(() => {
               MendorbitTracker.executePostLoginRedirect();
@@ -919,15 +929,24 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           // 2. Only brand new Google users who have never had an account -> Show Class selection ONCE
+          if (typeof MendorbitLoader !== 'undefined') {
+            MendorbitLoader.hide();
+          }
           pendingGoogleUser = gUser;
           showView("google-setup");
           return;
         } catch (err) {
+          if (typeof MendorbitLoader !== 'undefined') {
+            MendorbitLoader.hide();
+          }
           notify(err.message || "Google sign-in was cancelled.", "error");
           return;
         }
       }
 
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.hide();
+      }
       notify("Please check Firebase configuration in firebase-config.js", "error");
     });
   }
@@ -1017,7 +1036,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 900);
   });
 
-  // UI Button Loading Helper
+  // UI Button Loading Helper with Global Dimmed Dot-Circle Loader
   function setButtonLoading(btn, isLoading, text) {
     if (!btn) return;
     btn.disabled = isLoading;
@@ -1030,8 +1049,16 @@ document.addEventListener("DOMContentLoaded", function () {
         </svg>
         <span>${text || 'Please wait...'}</span>
       `;
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.show(text || "Please wait...", "Connecting securely to Mendorbit backend...", {
+          reason: "Server or email dispatcher is taking slightly longer than usual. Please do not close this window."
+        });
+      }
     } else {
       btn.innerHTML = btn.dataset.originalText || `<span>${text}</span>`;
+      if (typeof MendorbitLoader !== 'undefined') {
+        MendorbitLoader.hide();
+      }
     }
   }
 
