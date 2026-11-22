@@ -124,9 +124,9 @@ document.addEventListener("DOMContentLoaded", function () {
       stopQrAutoRefresh();
     }
 
-    // Toggle top title card visibility (hidden on otp-verify, google-setup, reset-password, and lock-account to let clean view icons shine)
+    // Toggle top title card visibility (hidden on otp-verify, google-setup, reset-password, lock-account, and manual-code to let clean view icons shine)
     if (title && title.parentElement) {
-      if (viewName === "otp-verify" || viewName === "google-setup" || viewName === "reset-password" || viewName === "lock-account") {
+      if (viewName === "otp-verify" || viewName === "google-setup" || viewName === "reset-password" || viewName === "lock-account" || viewName === "manual-code") {
         title.parentElement.classList.add("hidden");
       } else {
         title.parentElement.classList.remove("hidden");
@@ -235,14 +235,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const liveStatus = document.getElementById("qr-live-status");
     if (liveStatus) {
       liveStatus.className = "text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5";
-      liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Device Verified! Logging in...</span>';
+      liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span><span>Device Verified! Logging in...</span>';
     }
 
-    notify("Device authorized via QR! Welcome to Mendorbit.", "success");
+    const manualStatusPill = document.getElementById("manual-code-status-pill");
+    if (manualStatusPill) {
+      manualStatusPill.className = "flex items-center gap-2 font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 py-1.5 px-3 rounded-full text-xs";
+      manualStatusPill.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span><span>Verified! Redirecting...</span>';
+    }
+    const manualCodeBox = document.getElementById("manual-code-inline-display");
+    if (manualCodeBox) {
+      manualCodeBox.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-black flex items-center justify-center gap-2 text-2xl">✓ Verified</span>';
+    }
+
+    notify("Device authorized successfully! Redirecting to Dashboard...", "success");
     await completeAuthSession({ ...user, sessionId: activeQrSessionId }, "QR_LOGIN", "QR Linked Device");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
-    }, 800);
+    }, 600);
   }
 
   // 8-Character Link Code Generator (Letters & Numbers Guaranteed, No Confusing Chars)

@@ -314,6 +314,50 @@
       }
     }
 
+    /* Telegram-Style Smooth Sweeping QR Scanner & Glowing Reticle */
+    @keyframes tgScanSweep {
+      0% {
+        top: 8%;
+        opacity: 0.5;
+      }
+      50% {
+        top: 88%;
+        opacity: 1;
+      }
+      100% {
+        top: 8%;
+        opacity: 0.5;
+      }
+    }
+    .tg-scan-laser-line {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, #ff6600 20%, #ffa500 50%, #ff6600 80%, transparent 100%);
+      box-shadow: 0 0 14px 3px rgba(255, 102, 0, 0.9), 0 0 6px 1px rgba(255, 165, 0, 0.8);
+      border-radius: 9999px;
+      animation: tgScanSweep 2.2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .tg-scanner-frame {
+      box-shadow: inset 0 0 25px rgba(255, 102, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+    .tg-scanner-frame.qr-locked {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.8), inset 0 0 20px rgba(16, 185, 129, 0.3) !important;
+    }
+    .tg-scanner-frame.qr-locked .tg-corner {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 1) !important;
+    }
+    .tg-scanner-frame.qr-locked .tg-scan-laser-line {
+      background: linear-gradient(90deg, transparent 0%, #10b981 20%, #34d399 50%, #10b981 80%, transparent 100%) !important;
+      box-shadow: 0 0 14px 3px rgba(16, 185, 129, 0.9) !important;
+    }
+
     /* Vedantu-Style Primary Button */
     .btn-edtech-update {
       background: linear-gradient(135deg, #ff6600 0%, #f97316 100%);
@@ -792,9 +836,9 @@
                   </select>
                 </div>
 
-                <!-- Phone / WhatsApp Number * with Country Code -->
+                <!-- WhatsApp Phone Number * with Country Code -->
                 <div class="edtech-input-group">
-                  <label>Phone / WhatsApp Number *</label>
+                  <label>WhatsApp Phone Number *</label>
                   <div class="phone-input-row">
                     <div class="phone-code-prefix flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs font-bold text-slate-700 dark:text-slate-200 flex-shrink-0 select-none shadow-2xs">
                       <span class="text-sm">🇮🇳</span>
@@ -873,7 +917,7 @@
 
                 <form id="form-security" class="space-y-5">
                   <div class="edtech-input-group">
-                    <label>Current / Old Password *</label>
+                    <label>Current Password *</label>
                     <input type="password" id="input-current-password" placeholder="Enter your current password" class="edtech-input font-mono">
                   </div>
 
@@ -986,7 +1030,7 @@
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Father's Contact / WhatsApp *</label>
+                  <label>Father's Phone Number *</label>
                   <div class="phone-input-row">
                     <div class="phone-code-prefix flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs font-bold text-slate-700 dark:text-slate-200 flex-shrink-0 select-none shadow-2xs">
                       <span class="text-sm">🇮🇳</span>
@@ -1067,7 +1111,7 @@
                 <!-- PIN Code moved BEFORE City, District & State -->
                 <div class="edtech-input-group">
                   <label class="flex items-center justify-between">
-                    <span>PIN / Postal Code *</span>
+                    <span>PIN Code *</span>
                     <span id="pincode-fetch-indicator" class="text-[11px] font-bold text-orange-600 hidden inline-flex items-center gap-1">
                       <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping"></span>
                       Auto-detecting...
@@ -1081,9 +1125,9 @@
                   </div>
                 </div>
 
-                <!-- City / Town -->
+                <!-- City -->
                 <div class="edtech-input-group">
-                  <label>City / Town *</label>
+                  <label>City *</label>
                   <input type="text" id="input-city" placeholder="e.g. Rosera, Patna" class="edtech-input">
                 </div>
 
@@ -1136,7 +1180,7 @@
                 <div class="edtech-input-group">
                   <label>Current Class *</label>
                   <select id="input-academic-class" class="edtech-input">
-                    <option value="">Select Current Class / Exam</option>
+                    <option value="">Select Current Class</option>
                     <option value="Class 9">Class 9</option>
                     <option value="Class 10">Class 10</option>
                     <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
@@ -1146,7 +1190,7 @@
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Education Board / Authority *</label>
+                  <label>Education Board *</label>
                   <select id="input-academic-board" class="edtech-input">
                     <option value="">Select Board</option>
                     <option value="CBSE">CBSE</option>
@@ -1157,7 +1201,7 @@
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Target Course / Exam *</label>
+                  <label>Target Exam *</label>
                   <select id="input-academic-target" class="edtech-input">
                     <option value="">Select Target Course</option>
                     <option value="Foundation">Foundation</option>
@@ -1177,18 +1221,19 @@
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>School / College Name *</label>
+                  <label>School or College Name *</label>
                   <input type="text" id="input-academic-school" placeholder="e.g. Delhi Public School" class="edtech-input">
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Stream / Subject Focus</label>
+                  <label>Stream</label>
                   <select id="input-academic-stream" class="edtech-input">
-                    <option value="">Select Stream Focus</option>
-                    <option value="General Science & Math">General Science & Math</option>
-                    <option value="General Studies">General Studies</option>
-                    <option value="Quantitative & Reasoning">Quantitative & Reasoning</option>
-                    <option value="English & Legal Aptitude">English & Legal Aptitude</option>
+                    <option value="">Select Stream</option>
+                    <option value="PCM">PCM (Physics, Chemistry, Maths)</option>
+                    <option value="PCB">PCB (Physics, Chemistry, Biology)</option>
+                    <option value="PCMB">PCMB (Physics, Chemistry, Maths, Biology)</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Arts</option>
                   </select>
                 </div>
 
@@ -1227,7 +1272,7 @@
               </div>
             </div>
 
-            <!-- State 1: Active Live Camera Scanner Viewport -->
+            <!-- State 1: Active Live Camera Scanner Viewport (Telegram Style) -->
             <div id="tab-scanner-view-wrapper" class="max-w-md mx-auto flex flex-col items-center py-2 sm:py-4">
               
               <!-- Camera Viewport Box -->
@@ -1235,24 +1280,25 @@
                 <!-- HTML5 QR Code Mount Element -->
                 <div id="qr-tab-camera-reader" class="w-full h-full object-cover"></div>
 
-                <!-- Live Scanning Reticle Overlay -->
-                <div id="tab-camera-overlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
-                  <div class="w-44 h-44 sm:w-52 sm:h-52 border border-dashed border-orange-400/80 rounded-2xl relative">
-                    <!-- Reticle corner highlights -->
-                    <div class="absolute -top-1.5 -left-1.5 w-5 h-5 sm:w-6 sm:h-6 border-t-4 border-l-4 border-orange-500 rounded-tl-lg"></div>
-                    <div class="absolute -top-1.5 -right-1.5 w-5 h-5 sm:w-6 sm:h-6 border-t-4 border-r-4 border-orange-500 rounded-tr-lg"></div>
-                    <div class="absolute -bottom-1.5 -left-1.5 w-5 h-5 sm:w-6 sm:h-6 border-b-4 border-l-4 border-orange-500 rounded-bl-lg"></div>
-                    <div class="absolute -bottom-1.5 -right-1.5 w-5 h-5 sm:w-6 sm:h-6 border-b-4 border-r-4 border-orange-500 rounded-br-lg"></div>
-                    <!-- Animated Scanning Laser Line -->
-                    <div class="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_12px_rgba(249,115,22,1)] animate-pulse" style="top: 50%;"></div>
+                <!-- Live Scanning Reticle Overlay (Telegram Style with Sweeping Laser) -->
+                <div id="tab-camera-overlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center z-10">
+                  <div id="tg-reticle-box" class="tg-scanner-frame w-48 h-48 sm:w-56 sm:h-56 border-2 border-orange-400/40 rounded-3xl relative">
+                    <!-- Telegram Rounded Glowing Corner Brackets -->
+                    <div class="tg-corner absolute -top-1.5 -left-1.5 w-6 h-6 sm:w-7 sm:h-7 border-t-4 border-l-4 border-orange-500 rounded-tl-2xl shadow-[0_0_10px_rgba(255,102,0,0.8)]"></div>
+                    <div class="tg-corner absolute -top-1.5 -right-1.5 w-6 h-6 sm:w-7 sm:h-7 border-t-4 border-r-4 border-orange-500 rounded-tr-2xl shadow-[0_0_10px_rgba(255,102,0,0.8)]"></div>
+                    <div class="tg-corner absolute -bottom-1.5 -left-1.5 w-6 h-6 sm:w-7 sm:h-7 border-b-4 border-l-4 border-orange-500 rounded-bl-2xl shadow-[0_0_10px_rgba(255,102,0,0.8)]"></div>
+                    <div class="tg-corner absolute -bottom-1.5 -right-1.5 w-6 h-6 sm:w-7 sm:h-7 border-b-4 border-r-4 border-orange-500 rounded-br-2xl shadow-[0_0_10px_rgba(255,102,0,0.8)]"></div>
+                    
+                    <!-- Animated Sweeping Laser Line (Smoothly sweeps up and down!) -->
+                    <div class="tg-scan-laser-line"></div>
                   </div>
                 </div>
 
                 <!-- Camera Loading / Permission Banner -->
-                <div id="tab-camera-loading" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center text-center p-6">
+                <div id="tab-camera-loading" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center text-center p-6 z-20">
                   <i data-lucide="camera" class="w-10 h-10 text-orange-500 animate-bounce mb-3"></i>
                   <span class="text-sm font-bold text-white">Opening Camera Scanner...</span>
-                  <span class="text-xs text-slate-400 mt-1.5 max-w-[220px]">Point your device camera at the QR code on the secondary device</span>
+                  <span class="text-xs text-slate-400 mt-1.5 max-w-[220px]">Point your camera at the QR code on your secondary device</span>
                   <button type="button" id="btn-force-start-tab-camera" class="mt-4 px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition">
                     Grant Camera Access
                   </button>
@@ -1269,25 +1315,60 @@
                 </p>
               </div>
 
-              <!-- Manual Code Input Accordion Toggle -->
-              <div class="w-full max-w-sm mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" id="btn-tab-toggle-manual-qr" class="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline flex items-center justify-center gap-1.5 w-full">
-                  <span>Camera not working? Enter 8-character code manually</span>
-                  <i data-lucide="chevron-down" id="tab-manual-chevron" class="w-3.5 h-3.5 transition-transform"></i>
+              <!-- Fresh "Enter code manually" Action Button -->
+              <div class="w-full max-w-sm mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+                <button type="button" id="btn-goto-manual-code-tab" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-orange-950/40 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/40 transition shadow-xs cursor-pointer">
+                  <i data-lucide="key-round" class="w-4 h-4"></i>
+                  <span>Enter 8-digit code manually</span>
                 </button>
-
-                <div id="tab-manual-input-box" class="hidden mt-3 space-y-3">
-                  <div class="edtech-input-group">
-                    <label>8-Character Device Link Code</label>
-                    <input type="text" id="input-tab-qr-code" placeholder="e.g. M7K9-4P2X" maxlength="12" class="edtech-input font-mono uppercase text-center tracking-widest text-sm font-bold">
-                  </div>
-                  <button type="button" id="btn-tab-submit-manual-qr" class="btn-edtech-update w-full py-2.5 text-xs">
-                    <span>Authorize Device</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                  </button>
-                </div>
               </div>
 
+            </div>
+
+            <!-- View 1B: Fresh Dedicated Manual 8-Digit Code Entry View -->
+            <div id="tab-device-view-manual" class="hidden max-w-md mx-auto py-2 sm:py-4">
+              <!-- Back Header -->
+              <div class="flex items-center justify-between mb-4">
+                <button type="button" id="btn-back-to-scanner-tab" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition cursor-pointer">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                  <span>Back to Scanner</span>
+                </button>
+                <span class="text-[10.5px] font-extrabold uppercase tracking-wider text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/60 dark:border-orange-800/60">
+                  Manual Link
+                </span>
+              </div>
+
+              <!-- Card -->
+              <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 border border-slate-200/90 dark:border-slate-800 shadow-sm text-center">
+                <div class="w-12 h-12 mx-auto rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center shadow-inner mb-3">
+                  <i data-lucide="key-round" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Enter 8-Digit Device Code</h3>
+                <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                  Type the authorization code displayed on your laptop or tablet screen.
+                </p>
+
+                <!-- 8 Individual Code Boxes (4 - 4 Split) -->
+                <div class="flex items-center justify-center gap-1.5 sm:gap-2 my-6" id="manual-code-8boxes-container">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="0">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="1">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="2">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="3">
+                  
+                  <span class="text-slate-300 dark:text-slate-600 font-black text-lg sm:text-xl px-0.5">-</span>
+
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="4">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="5">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="6">
+                  <input type="text" maxlength="1" class="manual-code-box w-8 h-11 sm:w-10 sm:h-13 text-center text-base sm:text-lg font-mono font-black uppercase rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition shadow-xs" data-index="7">
+                </div>
+
+                <!-- Approve & Link Device Action Button -->
+                <button type="button" id="btn-approve-manual-code" class="btn-edtech-update w-full py-3 text-xs sm:text-sm font-black flex items-center justify-center gap-2 cursor-pointer shadow-md">
+                  <span>Approve &amp; Link Device</span>
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                </button>
+              </div>
             </div>
 
             <!-- State 2: Verifying Account Loader Screen (Hidden until QR detected) -->
@@ -1778,9 +1859,45 @@
       const email = session.email.toLowerCase().trim();
       let userDoc = {};
 
+      // 1. Instant Local Storage Profile Cache (100% Persistence across F5)
+      try {
+        const localCached = localStorage.getItem("mendorbit_profile_" + email);
+        if (localCached) {
+          userDoc = JSON.parse(localCached) || {};
+        }
+      } catch (e) {}
+
+      // 2. Encrypted Vault / Local Users DB Fallback
+      try {
+        const users = (typeof MendorbitSecureStorage !== 'undefined')
+          ? (MendorbitSecureStorage.getItem("mendorbit_users_db") || {})
+          : JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
+        if (users && users[email]) {
+          userDoc = Object.assign({}, users[email], userDoc);
+        }
+      } catch (e) {}
+
+      // 3. SSO Session Fallback
+      userDoc = Object.assign({}, session, userDoc);
+
+      // 4. Remote Firestore & Worker Sync (Non-blocking deep merge)
       try {
         if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
-          userDoc = (await MendorbitBackend.getUserByEmail(email)) || {};
+          const remoteDoc = await MendorbitBackend.getUserByEmail(email);
+          if (remoteDoc && typeof remoteDoc === 'object') {
+            Object.keys(remoteDoc).forEach(k => {
+              if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
+                if (typeof remoteDoc[k] === 'object' && !Array.isArray(remoteDoc[k])) {
+                  userDoc[k] = Object.assign({}, userDoc[k] || {}, remoteDoc[k]);
+                } else {
+                  userDoc[k] = remoteDoc[k];
+                }
+              }
+            });
+            try {
+              localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+            } catch(e) {}
+          }
         }
       } catch (e) {
         console.warn("Firestore profile fetch note:", e);
@@ -1810,6 +1927,52 @@
           selectEl.value = currentCourseValue;
         } else {
           selectEl.value = courses[0];
+        }
+      }
+
+      function syncStreamOptions(selectedClass, currentStreamValue) {
+        const streamSelect = document.getElementById('input-academic-stream');
+        if (!streamSelect) return;
+
+        const isClass9or10 = (selectedClass === "Class 9" || selectedClass === "Class 10");
+
+        if (isClass9or10) {
+          streamSelect.disabled = true;
+          streamSelect.innerHTML = '<option value="Not Applicable" selected>Not Applicable (General for Class 9 & 10)</option>';
+          streamSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+        } else {
+          streamSelect.disabled = false;
+          streamSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+          const streamOptions = [
+            { val: "", label: "Select Stream" },
+            { val: "PCM", label: "PCM (Physics, Chemistry, Maths)" },
+            { val: "PCB", label: "PCB (Physics, Chemistry, Biology)" },
+            { val: "PCMB", label: "PCMB (Physics, Chemistry, Maths, Biology)" },
+            { val: "Arts", label: "Arts" },
+            { val: "Commerce", label: "Commerce" }
+          ];
+
+          streamSelect.innerHTML = "";
+          streamOptions.forEach(opt => {
+            const el = document.createElement("option");
+            el.value = opt.val;
+            el.textContent = opt.label;
+            if (opt.val && currentStreamValue && (
+              opt.val.toLowerCase() === currentStreamValue.toLowerCase() ||
+              currentStreamValue.toUpperCase().startsWith(opt.val)
+            )) {
+              el.selected = true;
+            }
+            streamSelect.appendChild(el);
+          });
+
+          if (currentStreamValue && !streamSelect.value && currentStreamValue !== "Not Applicable") {
+            setSelectValueFuzzy(streamSelect, currentStreamValue);
+          }
+        }
+        if (typeof syncFieldFilledState === 'function') {
+          syncFieldFilledState(streamSelect);
         }
       }
 
@@ -1990,11 +2153,12 @@
       populateCourseOptions(document.getElementById('input-academic-target'), currentAcademicClass, currentAcademicTarget);
       document.getElementById('input-academic-year').value = academic.passingYear || "2026";
       document.getElementById('input-academic-school').value = academic.school || "";
-      document.getElementById('input-academic-stream').value = academic.stream || "General Science & Math";
+      syncStreamOptions(currentAcademicClass, academic.stream);
 
-      // Dynamic Class to Target sync in Academic form
+      // Dynamic Class to Target & Stream sync in Academic form
       document.getElementById('input-academic-class').addEventListener('change', function() {
         populateCourseOptions(document.getElementById('input-academic-target'), this.value);
+        syncStreamOptions(this.value, document.getElementById('input-academic-stream').value);
       });
 
       // Modal inputs
@@ -2424,7 +2588,9 @@
 
         // Dedicated Tab Camera Scanner control
         if (targetId === 'tab-link-device') {
-          if (typeof startTabCameraScanner === 'function') {
+          const manualView = document.getElementById('tab-device-view-manual');
+          const isManualActive = manualView && !manualView.classList.contains('hidden');
+          if (!isManualActive && typeof startTabCameraScanner === 'function') {
             startTabCameraScanner();
           }
         } else {
@@ -2509,7 +2675,7 @@
         }, 3200);
       }
 
-      // Universal Persistence Helper (Worker API + Firestore SDK + SSO Session)
+      // Universal Persistence Helper (Worker API + Firestore SDK + SSO Session + Local Vault)
       async function saveProfileData(updateFields, successMessage, submitBtn) {
         if (typeof MendorbitLoader !== 'undefined') {
           MendorbitLoader.show("Updating Profile...", "Encrypting and syncing your changes with Mendorbit servers...", {
@@ -2525,23 +2691,56 @@
         }
 
         try {
-          // 1. Worker API
+          // 1. In-Memory Deep Merge (Instant reactive updates in DOM)
+          Object.keys(updateFields).forEach(k => {
+            if (typeof updateFields[k] === 'object' && updateFields[k] !== null && !Array.isArray(updateFields[k])) {
+              userDoc[k] = Object.assign({}, userDoc[k] || {}, updateFields[k]);
+            } else {
+              userDoc[k] = updateFields[k];
+            }
+          });
+
+          // 2. Direct LocalStorage Persistence (Guarantees zero data loss on F5 refresh)
+          try {
+            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+          } catch (e) {
+            console.warn("Local profile cache write note:", e);
+          }
+
+          // 3. Encrypted Vault / Users DB Persistence
+          try {
+            if (typeof MendorbitSecureStorage !== 'undefined') {
+              const users = MendorbitSecureStorage.getItem("mendorbit_users_db") || {};
+              users[email] = Object.assign({}, users[email] || {}, userDoc);
+              MendorbitSecureStorage.setItem("mendorbit_users_db", users);
+            }
+            const rawUsers = JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
+            rawUsers[email] = Object.assign({}, rawUsers[email] || {}, userDoc);
+            localStorage.setItem("mendorbit_users_db", JSON.stringify(rawUsers));
+          } catch (e) {}
+
+          // 4. Update local SSO session state
+          try {
+            const currentSession = MendorbitSSO.getSession() || {};
+            if (updateFields.displayName) currentSession.displayName = updateFields.displayName;
+            if (updateFields.class) currentSession.class = updateFields.class;
+            if (updateFields.phone) currentSession.phone = updateFields.phone;
+            if (updateFields.photoURL) currentSession.photoURL = updateFields.photoURL;
+            MendorbitSSO.setSession(currentSession);
+          } catch (e) {}
+
+          // 5. Worker API (Dual-Channel Cloud Sync)
           if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.updateProfile) {
-            await MendorbitAPI.updateProfile(email, updateFields);
+            await MendorbitAPI.updateProfile(email, updateFields).catch(e => console.warn("Worker updateProfile note:", e));
           }
 
-          // 2. Direct Firestore SDK (compat)
+          // 6. Direct Firestore SDK (compat)
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
-            await firestoreDb.collection("users").doc(email).set(updateFields, { merge: true });
+            await firestoreDb.collection("users").doc(email).set(updateFields, { merge: true }).catch(e => console.warn("Firestore set error:", e));
           }
-
-          // 3. Update local session state
-          const currentSession = MendorbitSSO.getSession() || {};
-          if (updateFields.displayName) currentSession.displayName = updateFields.displayName;
-          if (updateFields.class) currentSession.class = updateFields.class;
-          MendorbitSSO.setSession(currentSession);
 
           updateKycProgress();
+          syncAllFields();
           showToast(successMessage, "success");
         } catch (err) {
           console.error("Save profile error:", err);
@@ -2756,6 +2955,8 @@
         const selectedClass = document.getElementById('input-academic-class').value;
         const selectedBoard = document.getElementById('input-academic-board').value;
         const selectedTarget = document.getElementById('input-academic-target').value;
+        const isClass9or10 = (selectedClass === "Class 9" || selectedClass === "Class 10");
+        const streamVal = isClass9or10 ? "Not Applicable" : (document.getElementById('input-academic-stream').value || "");
 
         const payload = {
           class: selectedClass,
@@ -2765,7 +2966,7 @@
             targetExam: selectedTarget,
             passingYear: document.getElementById('input-academic-year').value,
             school: document.getElementById('input-academic-school').value.trim(),
-            stream: document.getElementById('input-academic-stream').value
+            stream: streamVal
           }
         };
 
@@ -2845,6 +3046,7 @@
         document.getElementById('input-academic-class').value = newClass;
         document.getElementById('input-academic-board').value = newBoard;
         document.getElementById('input-academic-target').value = newTarget;
+        syncStreamOptions(newClass, document.getElementById('input-academic-stream').value);
 
         closeQuickModal();
       });
@@ -3277,13 +3479,18 @@
         isTabQrAuthorizing = false;
 
         const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+        const manualView = document.getElementById('tab-device-view-manual');
         const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
         const successView = document.getElementById('tab-scanner-verified-success');
 
         if (viewWrapper) viewWrapper.classList.remove('hidden');
+        if (manualView) manualView.classList.add('hidden');
         if (verifyingLoader) verifyingLoader.classList.add('hidden');
         if (successView) successView.classList.add('hidden');
         if (loadingEl) loadingEl.classList.remove('hidden');
+
+        const reticle = document.getElementById('tg-reticle-box');
+        if (reticle) reticle.classList.remove('qr-locked');
 
         if (typeof Html5Qrcode === 'undefined') {
           if (statusEl) statusEl.textContent = "Camera scanner loading... please wait";
@@ -3317,6 +3524,14 @@
               if (isTabQrAuthorizing) return;
               isTabQrAuthorizing = true;
               console.log("[Tab QR Scanner] Decoded:", decodedText);
+
+              // Telegram Reticle Lock Effect: glowing emerald corners & frame
+              const reticleBox = document.getElementById('tg-reticle-box');
+              if (reticleBox) reticleBox.classList.add('qr-locked');
+
+              // 200ms lock animation feedback
+              await new Promise(r => setTimeout(r, 200));
+
               await handleTabQrScanned(decodedText);
             },
             (error) => {
@@ -3330,8 +3545,6 @@
           console.warn("[Tab QR Scanner] Start error:", err);
           if (loadingEl) loadingEl.classList.add('hidden');
           if (statusEl) statusEl.innerHTML = `<span class="text-rose-500 font-semibold">Camera permission denied. Use manual code below.</span>`;
-          const manualBox = document.getElementById('tab-manual-input-box');
-          if (manualBox) manualBox.classList.remove('hidden');
         }
       }
 
@@ -3348,14 +3561,16 @@
       async function handleTabQrScanned(rawCode) {
         if (!rawCode) return;
 
-        // 1. Instantly stop scanner and hide scanner viewfinder
+        // 1. Instantly stop scanner and hide both scanner viewfinder and manual code view
         await stopTabCameraScanner();
 
         const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+        const manualView = document.getElementById('tab-device-view-manual');
         const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
         const successView = document.getElementById('tab-scanner-verified-success');
 
         if (viewWrapper) viewWrapper.classList.add('hidden');
+        if (manualView) manualView.classList.add('hidden');
         if (verifyingLoader) verifyingLoader.classList.remove('hidden');
         if (successView) successView.classList.add('hidden');
         if (window.lucide) lucide.createIcons();
@@ -3422,6 +3637,9 @@
           console.error("Authorize QR error:", err);
           if (verifyingLoader) verifyingLoader.classList.add('hidden');
           if (viewWrapper) viewWrapper.classList.remove('hidden');
+          const reticle = document.getElementById('tg-reticle-box');
+          if (reticle) reticle.classList.remove('qr-locked');
+          isTabQrAuthorizing = false;
           showToast("Failed to link device. Please try again.", "error");
         }
       }
@@ -3434,37 +3652,82 @@
         });
       }
 
-      const btnTabToggleManual = document.getElementById('btn-tab-toggle-manual-qr');
-      const tabManualInputBox = document.getElementById('tab-manual-input-box');
-      const tabManualChevron = document.getElementById('tab-manual-chevron');
-      if (btnTabToggleManual && tabManualInputBox) {
-        btnTabToggleManual.addEventListener('click', () => {
-          const isHidden = tabManualInputBox.classList.contains('hidden');
-          if (isHidden) {
-            tabManualInputBox.classList.remove('hidden');
-            if (tabManualChevron) tabManualChevron.classList.add('rotate-180');
-          } else {
-            tabManualInputBox.classList.add('hidden');
-            if (tabManualChevron) tabManualChevron.classList.remove('rotate-180');
-          }
-        });
+      // Dedicated 8-Digit Manual Code Tab Controller
+      const btnGotoManualCodeTab = document.getElementById('btn-goto-manual-code-tab');
+      const btnBackToScannerTab = document.getElementById('btn-back-to-scanner-tab');
+      const tabScannerViewWrapper = document.getElementById('tab-scanner-view-wrapper');
+      const tabDeviceViewManual = document.getElementById('tab-device-view-manual');
+      const manualCodeBoxes = Array.from(document.querySelectorAll('.manual-code-box'));
+      const btnApproveManualCode = document.getElementById('btn-approve-manual-code');
+
+      function showManualCodeTabView() {
+        stopTabCameraScanner();
+        if (tabScannerViewWrapper) tabScannerViewWrapper.classList.add('hidden');
+        if (tabDeviceViewManual) tabDeviceViewManual.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+        if (manualCodeBoxes.length > 0) {
+          manualCodeBoxes[0].focus();
+        }
       }
 
-      const btnTabSubmitManual = document.getElementById('btn-tab-submit-manual-qr');
-      const inputTabQrCode = document.getElementById('input-tab-qr-code');
-      if (inputTabQrCode) {
-        inputTabQrCode.addEventListener('input', function() {
-          this.value = this.value.toUpperCase();
-        });
+      function showScannerTabView() {
+        if (tabDeviceViewManual) tabDeviceViewManual.classList.add('hidden');
+        if (tabScannerViewWrapper) tabScannerViewWrapper.classList.remove('hidden');
+        startTabCameraScanner();
       }
-      if (btnTabSubmitManual && inputTabQrCode) {
-        btnTabSubmitManual.addEventListener('click', async () => {
-          const rawCode = inputTabQrCode.value.trim();
-          if (!rawCode) {
-            showToast("Please enter the 8-digit link code from the login screen.", "error");
+
+      if (btnGotoManualCodeTab) {
+        btnGotoManualCodeTab.addEventListener('click', showManualCodeTabView);
+      }
+      if (btnBackToScannerTab) {
+        btnBackToScannerTab.addEventListener('click', showScannerTabView);
+      }
+
+      // 8 Individual Code Boxes: Auto-advance, backspace navigation, paste distribution
+      manualCodeBoxes.forEach((box, idx) => {
+        box.addEventListener('input', () => {
+          const val = box.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          box.value = val ? val.slice(-1) : '';
+          if (box.value && idx < manualCodeBoxes.length - 1) {
+            manualCodeBoxes[idx + 1].focus();
+            manualCodeBoxes[idx + 1].select();
+          }
+        });
+
+        box.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !box.value && idx > 0) {
+            manualCodeBoxes[idx - 1].focus();
+            manualCodeBoxes[idx - 1].value = '';
+          } else if (e.key === 'ArrowLeft' && idx > 0) {
+            manualCodeBoxes[idx - 1].focus();
+          } else if (e.key === 'ArrowRight' && idx < manualCodeBoxes.length - 1) {
+            manualCodeBoxes[idx + 1].focus();
+          } else if (e.key === 'Enter') {
+            if (btnApproveManualCode) btnApproveManualCode.click();
+          }
+        });
+
+        box.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData).getData('text');
+          if (!pasted) return;
+          const clean = pasted.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          for (let i = 0; i < manualCodeBoxes.length; i++) {
+            manualCodeBoxes[i].value = clean[i] || '';
+          }
+          const nextIndex = Math.min(clean.length, manualCodeBoxes.length - 1);
+          manualCodeBoxes[nextIndex].focus();
+        });
+      });
+
+      if (btnApproveManualCode) {
+        btnApproveManualCode.addEventListener('click', async () => {
+          const code = manualCodeBoxes.map(b => b.value.trim()).join('');
+          if (code.length < 8) {
+            showToast("Please enter the complete 8-character code from your screen.", "error");
             return;
           }
-          await handleTabQrScanned(rawCode);
+          await handleTabQrScanned(code);
         });
       }
 
@@ -3479,11 +3742,14 @@
       if (btnLinkAnotherDevice) {
         btnLinkAnotherDevice.addEventListener('click', () => {
           const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+          const manualView = document.getElementById('tab-device-view-manual');
           const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
           const successView = document.getElementById('tab-scanner-verified-success');
           if (viewWrapper) viewWrapper.classList.remove('hidden');
+          if (manualView) manualView.classList.add('hidden');
           if (verifyingLoader) verifyingLoader.classList.add('hidden');
           if (successView) successView.classList.add('hidden');
+          manualCodeBoxes.forEach(b => b.value = '');
           startTabCameraScanner();
         });
       }
