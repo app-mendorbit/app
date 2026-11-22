@@ -277,6 +277,15 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
 
+    // Opens 8-digit code in a fresh dedicated tab as requested by user
+    const btnOpenManualTab = document.getElementById("btn-open-manual-code-tab");
+    if (btnOpenManualTab) {
+      btnOpenManualTab.onclick = () => {
+        const url = `device-code.html?session=${encodeURIComponent(shortCode)}&code=${encodeURIComponent(shortCode)}`;
+        window.open(url, "_blank");
+      };
+    }
+
     const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${shortCode}`);
     // High error correction (ecc=H) with lower matrix density makes scanning instant
     container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-2xl w-48 h-48 object-contain shadow-inner" />`;

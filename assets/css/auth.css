@@ -69,9 +69,9 @@ body {
 
 .pill-toggle-btn {
   flex: 1;
-  padding: 8px 14px;
+  padding: 7px 12px;
   border-radius: 9999px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #64748b;
   text-align: center;
@@ -93,12 +93,12 @@ body {
   box-shadow: 0 2px 8px rgba(255, 94, 0, 0.12);
 }
 
-/* Form Inputs (16px base font on mobile prevents iOS auto-zoom jump) */
+/* Form Inputs (Refined sleek typography for premium finish) */
 .mendorbit-input {
   background: #f8fafc;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  font-size: 16px;
+  border-radius: 13px;
+  font-size: 14px;
   color: #0f172a;
   transition: all 0.2s ease;
 }
@@ -122,12 +122,12 @@ body {
   background: linear-gradient(135deg, #ff5e00 0%, #ff3838 100%);
   color: #ffffff;
   font-weight: 700;
-  font-size: 14px;
-  border-radius: 14px;
-  padding: 12px 22px;
+  font-size: 13.5px;
+  border-radius: 13px;
+  padding: 10px 20px;
   box-shadow: 0 8px 22px -4px rgba(255, 94, 0, 0.35);
   transition: all 0.2s ease;
-  min-height: 48px;
+  min-height: 44px;
   cursor: pointer;
 }
 
@@ -136,6 +136,7 @@ body {
     font-size: 15px;
     border-radius: 16px;
     padding: 13px 24px;
+    min-height: 48px;
   }
 }
 
@@ -153,11 +154,14 @@ body {
 .btn-mendorbit-secondary {
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-size: 13px;
+  border-radius: 13px;
+  padding: 9px 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #334155;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
   transition: all 0.2s ease;
   min-height: 44px;
   cursor: pointer;

@@ -192,22 +192,22 @@
     <div class="lg:col-span-6 flex flex-col items-center lg:items-end w-full">
       
       <!-- Mobile-Only Brand Header (Shows ONLY on small devices at the top) -->
-      <div class="lg:hidden flex items-center justify-center gap-3 mb-5 sm:mb-6 self-center">
-        <div class="w-12 h-12 rounded-2xl bg-white shadow-md border border-orange-100 p-1 flex items-center justify-center flex-shrink-0">
+      <div class="lg:hidden flex items-center justify-center gap-2.5 mb-4 sm:mb-6 self-center">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-md border border-orange-100 p-1 flex items-center justify-center flex-shrink-0">
           <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain">
         </div>
         <div class="flex flex-col text-left">
-          <span class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
-          <span class="text-[10px] sm:text-[11px] font-extrabold text-[#526071] tracking-[0.22em] uppercase mt-0.5">ORBIT OF KNOWLEDGE</span>
+          <span class="text-2xl sm:text-3xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
+          <span class="text-[9px] sm:text-[10px] font-extrabold text-[#526071] tracking-[0.2em] uppercase mt-0.5">ORBIT OF KNOWLEDGE</span>
         </div>
       </div>
 
-      <div class="auth-main-card w-full max-w-[440px] p-5 sm:p-8 lg:p-10 relative">
+      <div class="auth-main-card w-full max-w-[440px] p-4 sm:p-7 lg:p-9 relative">
 
         <!-- Card Header -->
-        <div class="text-center mb-5 sm:mb-6">
-          <h2 id="auth-card-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
-          <p id="auth-card-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Please enter your details to continue.</p>
+        <div class="text-center mb-4 sm:mb-6">
+          <h2 id="auth-card-title" class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
+          <p id="auth-card-subtitle" class="text-[11.5px] sm:text-xs text-slate-400 mt-1 font-medium">Please enter your details to continue.</p>
         </div>
 
         <!-- Pill Toggle Switch (Sign In / Register) -->
@@ -524,21 +524,21 @@
             </div>
           </div>
 
-          <!-- 3. Enter Code Manually (8-Digit Alphanumeric Code) -->
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 max-w-xs mx-auto text-center">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-              Enter code manually
-            </span>
-            <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-              <span id="qr-link-code-display" class="font-mono text-base font-black text-slate-900 dark:text-white tracking-widest select-all">
-                ---- ----
-              </span>
-              <button type="button" id="btn-copy-link-code" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 px-1.5 py-0.5 ml-1 transition" title="Copy Code">
-                Copy
-              </button>
-            </div>
-            <p class="text-[10.5px] text-slate-400 mt-1">
-              Enter this 8-digit code in your Profile under Link Device
+          <!-- OR Divider -->
+          <div class="relative my-3 flex items-center justify-center max-w-xs mx-auto">
+            <div class="border-t border-slate-200 dark:border-slate-700 w-full"></div>
+            <span class="bg-white dark:bg-slate-900 px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 absolute">OR</span>
+          </div>
+
+          <!-- Enter Code Manually Button (Opens New Tab with 8-Digit Code) -->
+          <div class="max-w-xs mx-auto text-center space-y-1.5">
+            <button type="button" id="btn-open-manual-code-tab" class="w-full py-2.5 px-4 rounded-xl border border-orange-200 dark:border-orange-900/60 bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/30 dark:hover:bg-orange-950/50 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm group cursor-pointer">
+              <i data-lucide="key-round" class="w-4 h-4 text-orange-500"></i>
+              <span>Enter Code Manually</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-orange-400 group-hover:translate-x-0.5 transition-transform"></i>
+            </button>
+            <p class="text-[10px] text-slate-400">
+              Opens your 8-digit device code in a new tab
             </p>
           </div>
 
