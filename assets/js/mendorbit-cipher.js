@@ -20,7 +20,13 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.MendorbitCipher = factory();
+    const cipherInstance = factory();
+    root.MendorbitCipher = cipherInstance;
+    if (typeof window !== 'undefined') {
+      window.MendorbitCipher = cipherInstance;
+      window.encrypt2Digit = cipherInstance.encrypt2Digit;
+      window.decrypt2Digit = cipherInstance.decrypt2Digit;
+    }
   }
 })(typeof self !== 'undefined' ? self : this, function () {
 

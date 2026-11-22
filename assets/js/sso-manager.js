@@ -257,6 +257,8 @@
     }
   }
 
+  let isManualLoggingOut = false;
+
   /**
    * Complete Logout Flow:
    * 1. Marks current session as LOGGED_OUT and isOnline: false in Firestore
@@ -264,7 +266,17 @@
    * 3. Wipes cookies and local storage (clearSession)
    * 4. Redirects to login page
    */
-  async function logout(redirectUrl = "login.html?force_login=true") {
+  async function logout(redirectUrl = "login.html?logged_out=true") {
+    isManualLoggingOut = true;
+    try {
+      sessionStorage.setItem("mendorbit_manual_logout", "true");
+    } catch (e) {}
+
+    if (activeSessionListenerUnsub) {
+      try { activeSessionListenerUnsub(); } catch (e) {}
+      activeSessionListenerUnsub = null;
+    }
+
     if (heartbeatInterval) {
       clearInterval(heartbeatInterval);
       heartbeatInterval = null;
@@ -359,6 +371,9 @@
           .collection("sessions")
           .doc(currentSessionId)
           .onSnapshot((docSnap) => {
+            if (isManualLoggingOut || sessionStorage.getItem("mendorbit_manual_logout") === "true") {
+              return;
+            }
             if (docSnap.exists) {
               const data = docSnap.data();
               if (data && (data.status === "LOGGED_OUT" || data.status === "logged_out")) {
@@ -382,6 +397,9 @@
   }
 
   function triggerDefaultRevokedUI() {
+    if (isManualLoggingOut || sessionStorage.getItem("mendorbit_manual_logout") === "true") {
+      return;
+    }
     clearSession();
     const overlay = document.createElement("div");
     overlay.id = "mendorbit-remote-logout-overlay";

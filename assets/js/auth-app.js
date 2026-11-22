@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const actionParam = getParam('action');
     const tokenParam = getParam('token');
     const sessionExpired = getParam('session_expired') === 'true' || getParam('session_revoked') === 'true';
-    if (!sessionExpired && actionParam !== 'lock' && !tokenParam && getParam('force_login') !== 'true') {
+    const isLogout = getParam('logged_out') === 'true' || getParam('force_login') === 'true';
+    if (!sessionExpired && !isLogout && actionParam !== 'lock' && !tokenParam) {
       MendorbitTracker.executePostLoginRedirect();
       return;
     }
@@ -26,6 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
   if (getParam('session_expired') === 'true' || getParam('session_revoked') === 'true') {
     setTimeout(() => {
       notify("Your session was terminated from another device. Please sign in again.", "error");
+    }, 400);
+  }
+
+  if (getParam('logged_out') === 'true') {
+    try { sessionStorage.removeItem("mendorbit_manual_logout"); } catch(e) {}
+    setTimeout(() => {
+      notify("You have been logged out successfully.", "info");
     }, 400);
   }
 
@@ -45,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const viewGoogleSetup = document.getElementById("view-google-setup");
   const viewResetPassword = document.getElementById("view-reset-password");
   const viewQr = document.getElementById("view-qr");
+  const viewManualCode = document.getElementById("view-manual-code");
   const viewLockAccount = document.getElementById("view-lock-account");
   const socialAuthSection = document.getElementById("social-auth-section");
 
@@ -105,13 +114,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function showView(viewName) {
     const allViews = [
       viewSignIn, viewRegister, viewOtpLogin, viewForgot, 
-      viewOtpVerify, viewGoogleSetup, viewResetPassword, viewQr, viewLockAccount
+      viewOtpVerify, viewGoogleSetup, viewResetPassword, viewQr, viewManualCode, viewLockAccount
     ];
     allViews.forEach(v => {
       if (v) v.classList.add("hidden");
     });
 
-    if (viewName !== "qr") {
+    if (viewName !== "qr" && viewName !== "manual-code") {
       stopQrAutoRefresh();
     }
 
@@ -171,6 +180,19 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = "QR Login";
       subtitle.textContent = "Scan with the Mendorbit Mobile App.";
       startQrAutoRefresh();
+    } else if (viewName === "manual-code") {
+      if (viewManualCode) viewManualCode.classList.remove("hidden");
+      pillWrapper.classList.add("hidden");
+      socialAuthSection.classList.add("hidden");
+      title.textContent = "Device Code";
+      subtitle.textContent = "Enter code on your phone to link device.";
+      const manualDisp = document.getElementById("manual-code-inline-display");
+      if (manualDisp && activeQrSessionId) {
+        manualDisp.textContent = `${activeQrSessionId.substring(0, 4)} ${activeQrSessionId.substring(4)}`;
+      }
+      if (!activeQrSessionId) {
+        startQrAutoRefresh();
+      }
     } else if (viewName === "lock-account") {
       if (viewLockAccount) viewLockAccount.classList.remove("hidden");
       pillWrapper.classList.add("hidden");
@@ -187,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.openDirectOtpView = () => showView("otp-login");
   window.openForgotView = () => showView("forgot");
   window.openQrView = () => showView("qr");
+  window.openManualCodeView = () => showView("manual-code");
   window.returnToSignIn = () => {
     stopQrAutoRefresh();
     if (typeof MendorbitParams !== 'undefined') {
@@ -262,11 +285,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const shortCode = generate8DigitCode(); // Guaranteed 8 chars with letters & digits
     activeQrSessionId = shortCode;
 
-    // Display formatted with hyphen in the middle for effortless readability: e.g. "K7M9-4P2X"
+    // Display formatted with space/hyphen for effortless readability: e.g. "K7M9 4P2X"
     const linkCodeElem = document.getElementById("qr-link-code-display");
     if (linkCodeElem) {
       linkCodeElem.textContent = `${shortCode.substring(0, 4)}-${shortCode.substring(4)}`;
       linkCodeElem.setAttribute("data-raw-code", shortCode);
+    }
+
+    const manualDisp = document.getElementById("manual-code-inline-display");
+    if (manualDisp) {
+      manualDisp.textContent = `${shortCode.substring(0, 4)} ${shortCode.substring(4)}`;
     }
 
     const btnCopy = document.getElementById("btn-copy-link-code");
@@ -277,12 +305,20 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
 
-    // Opens 8-digit code in a fresh dedicated tab as requested by user
-    const btnOpenManualTab = document.getElementById("btn-open-manual-code-tab");
-    if (btnOpenManualTab) {
-      btnOpenManualTab.onclick = () => {
-        const url = `device-code.html?session=${encodeURIComponent(shortCode)}&code=${encodeURIComponent(shortCode)}`;
-        window.open(url, "_blank");
+    const btnCopyManual = document.getElementById("btn-copy-manual-view-code");
+    if (btnCopyManual) {
+      btnCopyManual.onclick = () => {
+        navigator.clipboard.writeText(shortCode);
+        const textEl = document.getElementById("text-copy-manual");
+        if (textEl) textEl.textContent = "Copied!";
+        btnCopyManual.classList.remove("bg-orange-500", "hover:bg-orange-600");
+        btnCopyManual.classList.add("bg-emerald-600");
+        setTimeout(() => {
+          if (textEl) textEl.textContent = "Copy Code";
+          btnCopyManual.classList.add("bg-orange-500", "hover:bg-orange-600");
+          btnCopyManual.classList.remove("bg-emerald-600");
+        }, 2000);
+        notify("Code copied to clipboard: " + shortCode, "success");
       };
     }
 
@@ -324,16 +360,20 @@ document.addEventListener("DOMContentLoaded", function () {
     renderQrCode();
     qrRefreshCountdown = 60;
     const timerElem = document.getElementById("qr-refresh-timer");
+    const manualTimerElem = document.getElementById("manual-code-refresh-timer");
     if (timerElem) timerElem.textContent = "60s";
+    if (manualTimerElem) manualTimerElem.textContent = "60s";
 
     if (qrTimerInterval) clearInterval(qrTimerInterval);
     qrTimerInterval = setInterval(() => {
       qrRefreshCountdown--;
       if (timerElem) timerElem.textContent = qrRefreshCountdown + "s";
+      if (manualTimerElem) manualTimerElem.textContent = qrRefreshCountdown + "s";
       if (qrRefreshCountdown <= 0) {
         renderQrCode();
         qrRefreshCountdown = 60;
         if (timerElem) timerElem.textContent = "60s";
+        if (manualTimerElem) manualTimerElem.textContent = "60s";
       }
     }, 1000);
   }

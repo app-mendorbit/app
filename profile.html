@@ -513,17 +513,20 @@
           </div>
 
           <!-- Right: Inline Class / Board / Target Stats & "Change" Pill Button -->
-          <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between lg:justify-end gap-3 sm:gap-6 pt-3.5 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800">
-            <div class="grid grid-cols-3 gap-2 py-2 px-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 sm:flex sm:items-center sm:gap-6 sm:bg-transparent sm:border-0 sm:p-0 text-center sm:text-left">
-              <div class="px-1">
+          <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between lg:justify-end gap-3.5 sm:gap-6 pt-3.5 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800">
+            <!-- Mobile: Clean Card / Desktop: Inline with Dividers -->
+            <div class="grid grid-cols-3 gap-2 py-2.5 px-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 sm:flex sm:items-center sm:gap-6 sm:bg-transparent sm:border-0 sm:p-0 text-center sm:text-left">
+              <div class="px-1 sm:px-0">
                 <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Class</span>
                 <span id="hero-stat-class" class="text-sm sm:text-base font-extrabold text-slate-800 dark:text-slate-100">--</span>
               </div>
-              <div class="px-1 border-x border-slate-200/80 dark:border-slate-700/80 sm:border-x-0 sm:border-l sm:pl-6">
+              <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block flex-shrink-0"></div>
+              <div class="px-1 sm:px-0 border-x border-slate-200/80 dark:border-slate-700/80 sm:border-x-0">
                 <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Board</span>
                 <span id="hero-stat-board" class="text-sm sm:text-base font-extrabold text-slate-800 dark:text-slate-100">--</span>
               </div>
-              <div class="px-1 sm:border-l sm:border-slate-200/80 sm:dark:border-slate-700/80 sm:pl-6">
+              <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block flex-shrink-0"></div>
+              <div class="px-1 sm:px-0">
                 <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Target</span>
                 <span id="hero-stat-target" class="text-sm sm:text-base font-extrabold text-slate-800 dark:text-slate-100 truncate block">--</span>
               </div>
@@ -535,9 +538,6 @@
               <span>Change</span>
             </button>
           </div>
-
-        </div>
-      </div>
 
         </div>
       </div>
@@ -585,7 +585,7 @@
         <!-- ================================================== -->
         <!-- LEFT NAVIGATION SIDEBAR (HORIZONTAL ON MOBILE)     -->
         <!-- ================================================== -->
-        <aside class="w-full lg:w-72 flex-shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 p-2 sm:p-3 shadow-sm sticky top-[70px] sm:top-[88px] z-30">
+        <aside class="w-full lg:w-72 flex-shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 p-2 sm:p-3 shadow-sm">
           
           <div class="px-3 py-2 mb-1 border-b border-slate-100 dark:border-slate-800/80 hidden lg:block">
             <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Settings & Sections</span>
@@ -2264,7 +2264,8 @@
           let isValidOld = false;
 
           if (storedEncrypted && typeof MendorbitCipher !== 'undefined') {
-            const decrypted = MendorbitCipher.decrypt2Digit(storedEncrypted);
+            const decFn = (MendorbitCipher.decrypt2Digit || MendorbitCipher.decrypt);
+            const decrypted = decFn ? decFn.call(MendorbitCipher, storedEncrypted) : storedEncrypted;
             isValidOld = (decrypted === currentPass);
           } else if (storedEncrypted && storedEncrypted === currentPass) {
             isValidOld = true;
@@ -2733,14 +2734,16 @@
               btn.disabled = true;
               btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Logging out...</span>`;
               if (window.lucide) lucide.createIcons();
+              window.isManualLoggingOut = true;
+              try { sessionStorage.setItem("mendorbit_manual_logout", "true"); } catch(e) {}
               if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
-                await MendorbitSSO.logout("login.html?force_login=true");
+                await MendorbitSSO.logout("login.html?logged_out=true");
               } else {
                 if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
                   try { await MendorbitBackend.revokeUserSession(email, currentSessionId); } catch(e) {}
                 }
                 MendorbitSSO.clearSession();
-                window.location.href = "login.html?force_login=true";
+                window.location.href = "login.html?logged_out=true";
               }
             });
           });
@@ -3599,6 +3602,9 @@
       if (typeof firestoreDb !== 'undefined' && firestoreDb && currentSessionId) {
         try {
           firestoreDb.collection("users").doc(email).collection("sessions").doc(currentSessionId).onSnapshot((docSnap) => {
+            if (window.isManualLoggingOut || sessionStorage.getItem("mendorbit_manual_logout") === "true") {
+              return;
+            }
             if (docSnap.exists) {
               const sData = docSnap.data();
               if (sData && (sData.status === "LOGGED_OUT" || sData.status === "logged_out")) {
@@ -3623,8 +3629,10 @@
         logoutBtn.addEventListener('click', async () => {
           logoutBtn.disabled = true;
           logoutBtn.classList.add('opacity-60', 'pointer-events-none');
+          window.isManualLoggingOut = true;
+          try { sessionStorage.setItem("mendorbit_manual_logout", "true"); } catch(e) {}
           if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
-            await MendorbitSSO.logout("login.html?force_login=true");
+            await MendorbitSSO.logout("login.html?logged_out=true");
           } else {
             if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
               try {
@@ -3637,7 +3645,7 @@
               } catch(e) {}
             }
             MendorbitSSO.clearSession();
-            window.location.href = "login.html?force_login=true";
+            window.location.href = "login.html?logged_out=true";
           }
         });
       }
