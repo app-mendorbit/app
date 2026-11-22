@@ -355,21 +355,59 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div class="invisible group-hover/profile:visible opacity-0 group-hover/profile:opacity-100 transition-all duration-200 transform translate-y-2 group-hover/profile:translate-y-0 absolute right-0 top-full w-64 pt-1.5 z-50">
-              <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-2 overflow-hidden backdrop-blur-xl">
-                <a href="index.html" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition">
-                  <i data-lucide="home" class="w-4 h-4 text-brand-600"></i>
-                  <span>Main Dashboard</span>
-                </a>
-                <a href="login.html?action=forgot" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition">
-                  <i data-lucide="key-round" class="w-4 h-4 text-indigo-500"></i>
-                  <span>Change Password</span>
-                </a>
-                <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
-                <button type="button" id="nav-btn-logout" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-bold transition text-left">
-                  <i data-lucide="log-out" class="w-4 h-4"></i>
-                  <span>Logout</span>
+            <div id="profile-dropdown-menu" class="invisible group-hover/profile:visible opacity-0 group-hover/profile:opacity-100 transition-all duration-200 transform translate-y-2 group-hover/profile:translate-y-0 absolute right-0 top-full w-72 pt-1.5 z-50">
+              <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-2.5 overflow-hidden backdrop-blur-xl">
+                
+                <!-- Dropdown Actions -->
+                <div class="space-y-1 text-xs font-semibold">
+                  <!-- 1. My Account -->
+                  <a href="profile.html?tab=personal" id="nav-item-account" data-target-tab="tab-personal" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                    <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="user" class="w-4 h-4"></i>
+                    </div>
+                    <div class="flex-1">
+                      <span class="block text-slate-900 dark:text-white font-bold">My Account</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Personal details & KYC</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                  </a>
+
+                  <!-- 2. Link Device -->
+                  <a href="profile.html?tab=link-device" id="nav-item-link-device" data-target-tab="tab-link-device" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                    <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="qr-code" class="w-4 h-4"></i>
+                    </div>
+                    <div class="flex-1">
+                      <span class="block text-slate-900 dark:text-white font-bold">Link Device</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Scan QR to connect new device</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                  </a>
+
+                  <!-- 3. Security -->
+                  <a href="profile.html?tab=security" id="nav-item-security" data-target-tab="tab-security" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    </div>
+                    <div class="flex-1">
+                      <span class="block text-slate-900 dark:text-white font-bold">Security</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Password, email & logins</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                  </a>
+                </div>
+
+                <!-- Divider -->
+                <div class="my-1.5 border-t border-slate-100 dark:border-slate-800"></div>
+
+                <!-- 4. Logout Button -->
+                <button type="button" id="nav-btn-logout" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-bold transition text-left group">
+                  <div class="w-7 h-7 rounded-lg bg-red-100/70 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                  </div>
+                  <span class="flex-1 font-bold">Logout</span>
                 </button>
+
               </div>
             </div>
           </div>
@@ -519,34 +557,40 @@
               <span>Sign-in & Security</span>
             </button>
 
-            <!-- 3. My Preferences -->
+            <!-- 3. Link Device (Separate Tab) -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-link-device">
+              <i data-lucide="qr-code" class="w-4 h-4 text-orange-500"></i>
+              <span>Link Device</span>
+            </button>
+
+            <!-- 4. Active Sessions -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-sessions">
+              <i data-lucide="monitor-smartphone" class="w-4 h-4"></i>
+              <span>Active Sessions</span>
+            </button>
+
+            <!-- 5. My Preferences -->
             <button type="button" class="sidebar-tab-btn" data-tab="tab-preferences">
               <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
               <span>My Preferences</span>
             </button>
 
-            <!-- 4. Guardian Details -->
+            <!-- 6. Guardian Details -->
             <button type="button" class="sidebar-tab-btn" data-tab="tab-guardian">
               <i data-lucide="users" class="w-4 h-4"></i>
               <span>Guardian Details</span>
             </button>
 
-            <!-- 5. Address Details -->
+            <!-- 7. Address Details -->
             <button type="button" class="sidebar-tab-btn" data-tab="tab-address">
               <i data-lucide="map-pin" class="w-4 h-4"></i>
               <span>Address Details</span>
             </button>
 
-            <!-- 6. Academic Details -->
+            <!-- 8. Academic Details -->
             <button type="button" class="sidebar-tab-btn" data-tab="tab-academic">
               <i data-lucide="graduation-cap" class="w-4 h-4"></i>
               <span>Academic Details</span>
-            </button>
-
-            <!-- 7. Active Sessions -->
-            <button type="button" class="sidebar-tab-btn" data-tab="tab-sessions">
-              <i data-lucide="monitor-smartphone" class="w-4 h-4"></i>
-              <span>Active Sessions</span>
             </button>
 
           </nav>
@@ -1037,6 +1081,140 @@
                 </button>
               </div>
             </form>
+          </div>
+
+          <!-- ================================================ -->
+          <!-- TAB: LINK DEVICE (SEPARATE DEDICATED TAB)        -->
+          <!-- ================================================ -->
+          <div id="tab-link-device" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2.5">
+                  <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Link a Device</h2>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-orange-100 text-orange-800 dark:bg-orange-950/80 dark:text-orange-300">Instant QR Sign-in</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Scan the QR code displayed on the login page of your laptop, desktop, or tablet to authorize sign-in instantly.
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  <span>End-to-End Encrypted</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- State 1: Active Live Camera Scanner Viewport -->
+            <div id="tab-scanner-view-wrapper" class="max-w-md mx-auto flex flex-col items-center py-4">
+              
+              <!-- Camera Viewport Box -->
+              <div class="relative w-full aspect-square max-w-[320px] rounded-3xl overflow-hidden bg-slate-950 border-2 border-orange-500/60 shadow-2xl flex items-center justify-center">
+                <!-- HTML5 QR Code Mount Element -->
+                <div id="qr-tab-camera-reader" class="w-full h-full object-cover"></div>
+
+                <!-- Live Scanning Reticle Overlay -->
+                <div id="tab-camera-overlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
+                  <div class="w-52 h-52 border border-dashed border-orange-400/80 rounded-2xl relative">
+                    <!-- Reticle corner highlights -->
+                    <div class="absolute -top-1.5 -left-1.5 w-6 h-6 border-t-4 border-l-4 border-orange-500 rounded-tl-lg"></div>
+                    <div class="absolute -top-1.5 -right-1.5 w-6 h-6 border-t-4 border-r-4 border-orange-500 rounded-tr-lg"></div>
+                    <div class="absolute -bottom-1.5 -left-1.5 w-6 h-6 border-b-4 border-l-4 border-orange-500 rounded-bl-lg"></div>
+                    <div class="absolute -bottom-1.5 -right-1.5 w-6 h-6 border-b-4 border-r-4 border-orange-500 rounded-br-lg"></div>
+                    <!-- Animated Scanning Laser Line -->
+                    <div class="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_12px_rgba(249,115,22,1)] animate-pulse" style="top: 50%;"></div>
+                  </div>
+                </div>
+
+                <!-- Camera Loading / Permission Banner -->
+                <div id="tab-camera-loading" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center text-center p-6">
+                  <i data-lucide="camera" class="w-10 h-10 text-orange-500 animate-bounce mb-3"></i>
+                  <span class="text-sm font-bold text-white">Opening Camera Scanner...</span>
+                  <span class="text-xs text-slate-400 mt-1.5 max-w-[220px]">Point your device camera at the QR code on the secondary device</span>
+                  <button type="button" id="btn-force-start-tab-camera" class="mt-4 px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition">
+                    Grant Camera Access
+                  </button>
+                </div>
+              </div>
+
+              <!-- Scanner Status Text -->
+              <div class="text-center mt-4 space-y-1">
+                <p id="tab-qr-status-text" class="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Align the QR code within the frame to link
+                </p>
+                <p class="text-[11px] text-slate-400">
+                  Hold your camera steady over the QR code on the screen
+                </p>
+              </div>
+
+              <!-- Manual Code Input Accordion Toggle -->
+              <div class="w-full max-w-sm mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" id="btn-tab-toggle-manual-qr" class="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline flex items-center justify-center gap-1.5 w-full">
+                  <span>Camera not working? Enter code manually</span>
+                  <i data-lucide="chevron-down" id="tab-manual-chevron" class="w-3.5 h-3.5 transition-transform"></i>
+                </button>
+
+                <div id="tab-manual-input-box" class="hidden mt-3 space-y-3">
+                  <div class="edtech-input-group">
+                    <label>QR Link Code or Session URL</label>
+                    <input type="text" id="input-tab-qr-code" placeholder="mndrbt_qr_..." class="edtech-input font-mono text-center tracking-wider text-xs">
+                  </div>
+                  <button type="button" id="btn-tab-submit-manual-qr" class="btn-edtech-update w-full py-2.5 text-xs">
+                    <span>Authorize Device</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- State 2: Verifying Account Loader Screen (Hidden until QR detected) -->
+            <div id="tab-scanner-verifying-loader" class="hidden max-w-md mx-auto py-16 flex flex-col items-center text-center">
+              <!-- Premium Spinning Ring with Mendorbit Logo -->
+              <div class="relative w-24 h-24 flex items-center justify-center">
+                <!-- Dual Gradient Spinning Rings -->
+                <div class="absolute inset-0 rounded-full border-4 border-orange-500/20 border-t-orange-500 animate-spin"></div>
+                <div class="absolute inset-2 rounded-full border-4 border-brand-500/20 border-b-brand-500 animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                
+                <!-- Center Mendorbit Logo -->
+                <div class="w-14 h-14 rounded-full bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center p-2.5 border border-slate-200/80 dark:border-slate-700 z-10">
+                  <img src="logo.png" alt="Mendorbit" class="w-full h-full object-contain animate-pulse">
+                </div>
+              </div>
+
+              <!-- Headings -->
+              <h3 class="text-xl font-black text-slate-900 dark:text-white mt-6">Verifying account...</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-xs leading-relaxed">
+                Authorizing instant single sign-on login on your secondary device...
+              </p>
+
+              <!-- Encrypting badge -->
+              <div class="mt-5 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+                <span>Encrypting session token</span>
+              </div>
+            </div>
+
+            <!-- State 3: Verified Success Screen -->
+            <div id="tab-scanner-verified-success" class="hidden max-w-md mx-auto py-16 flex flex-col items-center text-center">
+              <div class="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg border-2 border-emerald-500/30 mb-5 animate-bounce">
+                <i data-lucide="check" class="w-10 h-10 stroke-[3]"></i>
+              </div>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white">Device Verified & Linked!</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-xs leading-relaxed">
+                Your secondary device has been authorized and is now logged in to your Mendorbit account.
+              </p>
+              <div class="mt-6 flex items-center gap-3">
+                <button type="button" id="btn-view-sessions-after-link" class="btn-edtech-update px-5 py-2.5 text-xs">
+                  <i data-lucide="monitor-smartphone" class="w-4 h-4"></i>
+                  <span>View Active Sessions</span>
+                </button>
+                <button type="button" id="btn-link-another-device" class="btn-edtech-cancel px-4 py-2.5 text-xs">
+                  <span>Link Another</span>
+                </button>
+              </div>
+            </div>
+
           </div>
 
           <!-- ================================================ -->
@@ -1799,7 +1977,39 @@
           }
         });
 
+        // Update URL query parameter cleanly without reloading page
+        const reverseTabMap = {
+          'tab-personal': 'personal',
+          'tab-security': 'security',
+          'tab-link-device': 'link-device',
+          'tab-sessions': 'sessions',
+          'tab-preferences': 'preferences',
+          'tab-guardian': 'guardian',
+          'tab-address': 'address',
+          'tab-academic': 'academic'
+        };
+        const slug = reverseTabMap[targetId];
+        if (slug) {
+          try {
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('tab', slug);
+            window.history.replaceState({ tab: slug }, '', newUrl.toString());
+          } catch(e) {}
+        }
+
         syncAllFields();
+
+        // Dedicated Tab Camera Scanner control
+        if (targetId === 'tab-link-device') {
+          if (typeof startTabCameraScanner === 'function') {
+            startTabCameraScanner();
+          }
+        } else {
+          if (typeof stopTabCameraScanner === 'function') {
+            stopTabCameraScanner();
+          }
+        }
+
         if (targetId === 'tab-sessions') {
           renderSessions();
         }
@@ -1811,6 +2021,41 @@
           switchTab(btn.getAttribute('data-tab'));
         });
       });
+
+      // Navbar dropdown click deep linking on profile page
+      document.querySelectorAll('[data-target-tab]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = link.getAttribute('data-target-tab');
+          if (target) {
+            switchTab(target);
+            // Smooth scroll to content area on mobile
+            const mainCont = document.getElementById(target);
+            if (mainCont && window.innerWidth < 1024) {
+              mainCont.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        });
+      });
+
+      // URL search parameter tab router on page load
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestedTab = urlParams.get('tab');
+        const tabMap = {
+          'personal': 'tab-personal',
+          'security': 'tab-security',
+          'link-device': 'tab-link-device',
+          'sessions': 'tab-sessions',
+          'preferences': 'tab-preferences',
+          'guardian': 'tab-guardian',
+          'address': 'tab-address',
+          'academic': 'tab-academic'
+        };
+        if (requestedTab && tabMap[requestedTab]) {
+          switchTab(tabMap[requestedTab]);
+        }
+      } catch (e) {}
 
       // ========================================================
       // 6. TOAST NOTIFIER HELPER
@@ -2565,15 +2810,23 @@
       }
 
       // ========================================================
-      // LIVE CAMERA QR SCANNER & LINK DEVICE ENGINE
+      // LIVE CAMERA QR SCANNER & LINK DEVICE ENGINE (DEDICATED TAB)
       // ========================================================
-      let html5QrScanner = null;
-      let isQrAuthorizing = false;
+      let tabQrScanner = null;
+      let isTabQrAuthorizing = false;
 
-      async function startCameraScanner() {
-        const loadingEl = document.getElementById('qr-camera-loading');
-        const statusEl = document.getElementById('qr-scan-status-text');
-        isQrAuthorizing = false;
+      async function startTabCameraScanner() {
+        const loadingEl = document.getElementById('tab-camera-loading');
+        const statusEl = document.getElementById('tab-qr-status-text');
+        isTabQrAuthorizing = false;
+
+        const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+        const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
+        const successView = document.getElementById('tab-scanner-verified-success');
+
+        if (viewWrapper) viewWrapper.classList.remove('hidden');
+        if (verifyingLoader) verifyingLoader.classList.add('hidden');
+        if (successView) successView.classList.add('hidden');
         if (loadingEl) loadingEl.classList.remove('hidden');
 
         if (typeof Html5Qrcode === 'undefined') {
@@ -2582,18 +2835,18 @@
         }
 
         try {
-          if (html5QrScanner) {
-            try { await html5QrScanner.stop(); } catch(e) {}
-            try { html5QrScanner.clear(); } catch(e) {}
-            html5QrScanner = null;
+          if (tabQrScanner) {
+            try { await tabQrScanner.stop(); } catch(e) {}
+            try { tabQrScanner.clear(); } catch(e) {}
+            tabQrScanner = null;
           }
 
-          html5QrScanner = new Html5Qrcode("qr-camera-reader");
+          tabQrScanner = new Html5Qrcode("qr-tab-camera-reader");
           const cameras = await Html5Qrcode.getCameras().catch(() => []);
 
           const qrConfig = {
             fps: 15,
-            qrbox: { width: 190, height: 190 },
+            qrbox: { width: 200, height: 200 },
             aspectRatio: 1.0
           };
 
@@ -2601,49 +2854,57 @@
             ? (cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('environment'))?.id || cameras[0].id)
             : { facingMode: "environment" };
 
-          await html5QrScanner.start(
+          await tabQrScanner.start(
             cameraIdOrConfig,
             qrConfig,
             async (decodedText) => {
-              if (isQrAuthorizing) return;
-              isQrAuthorizing = true;
-              console.log("[QR Scanner] Decoded:", decodedText);
-              if (statusEl) {
-                statusEl.innerHTML = `<span class="text-emerald-500 font-bold">QR Detected! Authorizing...</span>`;
-              }
-              await authorizeQrPayload(decodedText);
+              if (isTabQrAuthorizing) return;
+              isTabQrAuthorizing = true;
+              console.log("[Tab QR Scanner] Decoded:", decodedText);
+              await handleTabQrScanned(decodedText);
             },
             (error) => {
-              // frame parse noise - silent
+              // frame noise - silent
             }
           );
 
           if (loadingEl) loadingEl.classList.add('hidden');
           if (statusEl) statusEl.textContent = "Scanning... Hold camera steady over QR code.";
         } catch (err) {
-          console.warn("[QR Scanner] Start error:", err);
+          console.warn("[Tab QR Scanner] Start error:", err);
           if (loadingEl) loadingEl.classList.add('hidden');
           if (statusEl) statusEl.innerHTML = `<span class="text-rose-500 font-semibold">Camera permission denied. Use manual code below.</span>`;
-          const manualBox = document.getElementById('qr-manual-input-box');
+          const manualBox = document.getElementById('tab-manual-input-box');
           if (manualBox) manualBox.classList.remove('hidden');
         }
       }
 
-      async function stopCameraScanner() {
-        if (html5QrScanner) {
+      async function stopTabCameraScanner() {
+        if (tabQrScanner) {
           try {
-            await html5QrScanner.stop();
-            html5QrScanner.clear();
+            await tabQrScanner.stop();
+            tabQrScanner.clear();
           } catch(e) {}
-          html5QrScanner = null;
+          tabQrScanner = null;
         }
       }
 
-      async function authorizeQrPayload(rawCode) {
+      async function handleTabQrScanned(rawCode) {
         if (!rawCode) return;
-        await stopCameraScanner();
 
-        // Extract session ID
+        // 1. Instantly stop scanner and hide scanner viewfinder
+        await stopTabCameraScanner();
+
+        const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+        const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
+        const successView = document.getElementById('tab-scanner-verified-success');
+
+        if (viewWrapper) viewWrapper.classList.add('hidden');
+        if (verifyingLoader) verifyingLoader.classList.remove('hidden');
+        if (successView) successView.classList.add('hidden');
+        if (window.lucide) lucide.createIcons();
+
+        // 2. Parse session token
         let targetSession = rawCode.trim();
         if (targetSession.includes("session=")) {
           try {
@@ -2659,19 +2920,19 @@
 
         try {
           const userPayload = {
-            uid: (typeof userDoc !== 'undefined' && userDoc.uid) || email,
+            uid: (typeof userDoc !== 'undefined' && userDoc && userDoc.uid) || email,
             email: email,
-            displayName: (typeof displayFullName !== 'undefined' && displayFullName) || (typeof userDoc !== 'undefined' && userDoc.displayName) || "Student",
+            displayName: (typeof displayFullName !== 'undefined' && displayFullName) || (typeof userDoc !== 'undefined' && userDoc && userDoc.displayName) || "Student",
             class: (typeof studentClass !== 'undefined' && studentClass) || "Class 10",
-            photoURL: (typeof userDoc !== 'undefined' && userDoc.photoURL) || photoURL || ""
+            photoURL: (typeof userDoc !== 'undefined' && userDoc && userDoc.photoURL) || photoURL || ""
           };
 
-          // 1. Dual-Channel: Authorize via Worker endpoint
+          // 1. Dual-Channel: Authorize via Cloudflare Worker
           if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.authorizeQrSession) {
             await MendorbitAPI.authorizeQrSession(targetSession, userPayload, email).catch(e => console.warn("Worker QR error:", e));
           }
 
-          // 2. Dual-Channel: Also write to Firestore qr_auth collection
+          // 2. Dual-Channel: Authorize via Firebase Firestore qr_auth
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
             await firestoreDb.collection("qr_auth").doc(targetSession).set({
               status: "AUTHORIZED",
@@ -2682,85 +2943,92 @@
             }).catch(e => console.warn("Firestore QR set error:", e));
           }
 
-          closeLinkDeviceModal();
+          // Hold verifying loader for 1.2s for silky smooth user feedback
+          await new Promise(resolve => setTimeout(resolve, 1200));
+
+          // 3. Show Success State
+          if (verifyingLoader) verifyingLoader.classList.add('hidden');
+          if (successView) successView.classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+
           showToast("Device linked successfully! Login approved on other screen.", "success");
-          await renderSessions();
+
+          // Transition to active sessions after 2s
+          setTimeout(async () => {
+            switchTab('tab-sessions');
+            await renderSessions();
+          }, 2000);
+
         } catch (err) {
           console.error("Authorize QR error:", err);
+          if (verifyingLoader) verifyingLoader.classList.add('hidden');
+          if (viewWrapper) viewWrapper.classList.remove('hidden');
           showToast("Failed to link device. Please try again.", "error");
         }
       }
 
-      // "Link a Device" Modal Open/Close
-      const modalLinkDevice = document.getElementById('modal-link-device');
-      const btnOpenLinkDevice = document.getElementById('btn-open-link-device');
-      const btnCloseLinkModal = document.getElementById('btn-close-link-modal');
-      const btnCancelLinkModal = document.getElementById('btn-cancel-link-modal');
-      const btnToggleManualQr = document.getElementById('btn-toggle-manual-qr');
-      const qrManualInputBox = document.getElementById('qr-manual-input-box');
-      const iconManualChevron = document.getElementById('icon-manual-chevron');
-      const btnSubmitLinkDevice = document.getElementById('btn-submit-link-device');
-      const inputQrLinkCode = document.getElementById('input-qr-link-code');
-
-      function openLinkDeviceModal() {
-        if (!modalLinkDevice) return;
-        if (inputQrLinkCode) inputQrLinkCode.value = '';
-        if (qrManualInputBox) qrManualInputBox.classList.add('hidden');
-        modalLinkDevice.classList.remove('hidden');
-        requestAnimationFrame(() => {
-          modalLinkDevice.classList.remove('opacity-0');
-          modalLinkDevice.firstElementChild.classList.remove('scale-95');
+      // Tab Link Device Controls Wiring
+      const btnForceStartCamera = document.getElementById('btn-force-start-tab-camera');
+      if (btnForceStartCamera) {
+        btnForceStartCamera.addEventListener('click', () => {
+          startTabCameraScanner();
         });
-        if (window.lucide) lucide.createIcons();
-        startCameraScanner();
       }
 
-      function closeLinkDeviceModal() {
-        if (!modalLinkDevice) return;
-        stopCameraScanner();
-        modalLinkDevice.classList.add('opacity-0');
-        modalLinkDevice.firstElementChild.classList.add('scale-95');
-        setTimeout(() => modalLinkDevice.classList.add('hidden'), 200);
-      }
-
-      if (btnOpenLinkDevice) btnOpenLinkDevice.addEventListener('click', openLinkDeviceModal);
-      if (btnCloseLinkModal) btnCloseLinkModal.addEventListener('click', closeLinkDeviceModal);
-      if (btnCancelLinkModal) btnCancelLinkModal.addEventListener('click', closeLinkDeviceModal);
-
-      // Toggle Manual QR Input
-      if (btnToggleManualQr && qrManualInputBox) {
-        btnToggleManualQr.addEventListener('click', () => {
-          const isHidden = qrManualInputBox.classList.contains('hidden');
+      const btnTabToggleManual = document.getElementById('btn-tab-toggle-manual-qr');
+      const tabManualInputBox = document.getElementById('tab-manual-input-box');
+      const tabManualChevron = document.getElementById('tab-manual-chevron');
+      if (btnTabToggleManual && tabManualInputBox) {
+        btnTabToggleManual.addEventListener('click', () => {
+          const isHidden = tabManualInputBox.classList.contains('hidden');
           if (isHidden) {
-            qrManualInputBox.classList.remove('hidden');
-            if (iconManualChevron) iconManualChevron.classList.add('rotate-180');
-            if (inputQrLinkCode) inputQrLinkCode.focus();
+            tabManualInputBox.classList.remove('hidden');
+            if (tabManualChevron) tabManualChevron.classList.add('rotate-180');
           } else {
-            qrManualInputBox.classList.add('hidden');
-            if (iconManualChevron) iconManualChevron.classList.remove('rotate-180');
+            tabManualInputBox.classList.add('hidden');
+            if (tabManualChevron) tabManualChevron.classList.remove('rotate-180');
           }
         });
       }
 
-      // Manual Code Submit
-      if (btnSubmitLinkDevice) {
-        btnSubmitLinkDevice.addEventListener('click', async () => {
-          const rawCode = (inputQrLinkCode ? inputQrLinkCode.value : '').trim();
+      const btnTabSubmitManual = document.getElementById('btn-tab-submit-manual-qr');
+      const inputTabQrCode = document.getElementById('input-tab-qr-code');
+      if (btnTabSubmitManual && inputTabQrCode) {
+        btnTabSubmitManual.addEventListener('click', async () => {
+          const rawCode = inputTabQrCode.value.trim();
           if (!rawCode) {
             showToast("Please enter the QR Link Code from the login screen.", "error");
             return;
           }
-          btnSubmitLinkDevice.disabled = true;
-          btnSubmitLinkDevice.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Authorizing...</span>`;
-          if (window.lucide) lucide.createIcons();
+          await handleTabQrScanned(rawCode);
+        });
+      }
 
-          try {
-            await authorizeQrPayload(rawCode);
-          } finally {
-            btnSubmitLinkDevice.disabled = false;
-            btnSubmitLinkDevice.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>Authorize Device Manually</span>`;
-            if (window.lucide) lucide.createIcons();
-          }
+      const btnViewSessionsAfterLink = document.getElementById('btn-view-sessions-after-link');
+      if (btnViewSessionsAfterLink) {
+        btnViewSessionsAfterLink.addEventListener('click', () => {
+          switchTab('tab-sessions');
+        });
+      }
+
+      const btnLinkAnotherDevice = document.getElementById('btn-link-another-device');
+      if (btnLinkAnotherDevice) {
+        btnLinkAnotherDevice.addEventListener('click', () => {
+          const viewWrapper = document.getElementById('tab-scanner-view-wrapper');
+          const verifyingLoader = document.getElementById('tab-scanner-verifying-loader');
+          const successView = document.getElementById('tab-scanner-verified-success');
+          if (viewWrapper) viewWrapper.classList.remove('hidden');
+          if (verifyingLoader) verifyingLoader.classList.add('hidden');
+          if (successView) successView.classList.add('hidden');
+          startTabCameraScanner();
+        });
+      }
+
+      // Link a Device Button inside Active Sessions Tab
+      const btnOpenLinkDevice = document.getElementById('btn-open-link-device');
+      if (btnOpenLinkDevice) {
+        btnOpenLinkDevice.addEventListener('click', () => {
+          switchTab('tab-link-device');
         });
       }
 

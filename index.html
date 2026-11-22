@@ -285,40 +285,41 @@
                 </div>
 
                 <!-- Dropdown Actions -->
-                <div class="space-y-0.5 text-xs font-semibold">
-                  <!-- My Account Link to Profile Page -->
-                  <a href="profile.html" id="btn-open-my-account" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                <div class="space-y-1 text-xs font-semibold">
+                  <!-- 1. My Account -->
+                  <a href="profile.html?tab=personal" id="btn-open-my-account" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
                     <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                       <i data-lucide="user" class="w-4 h-4"></i>
                     </div>
                     <div class="flex-1">
                       <span class="block text-slate-900 dark:text-white font-bold">My Account</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Personal, Billing & Academic details</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Personal details & KYC</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
                   </a>
 
-                  <!-- Batches Link -->
-                  <a href="https://mendorbit.in/batches.html" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="book-open" class="w-4 h-4"></i>
+                  <!-- 2. Link Device -->
+                  <a href="profile.html?tab=link-device" id="btn-open-link-device" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                    <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="qr-code" class="w-4 h-4"></i>
                     </div>
                     <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">My Batches & Notes</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Access your learning resources</span>
+                      <span class="block text-slate-900 dark:text-white font-bold">Link Device</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Scan QR to connect new device</span>
                     </div>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
                   </a>
 
-                  <!-- Change Password Link -->
-                  <a href="login.html?action=forgot" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="key-round" class="w-4 h-4"></i>
+                  <!-- 3. Security -->
+                  <a href="profile.html?tab=security" id="btn-open-security" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="shield-check" class="w-4 h-4"></i>
                     </div>
                     <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">Change Password</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Update security credentials</span>
+                      <span class="block text-slate-900 dark:text-white font-bold">Security</span>
+                      <span class="text-[10px] text-slate-400 font-normal">Password, email & logins</span>
                     </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
                   </a>
                 </div>
 
@@ -330,7 +331,7 @@
                   <div class="w-7 h-7 rounded-lg bg-red-100/70 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                   </div>
-                  <span class="flex-1 font-bold">Logout from Mendorbit</span>
+                  <span class="flex-1 font-bold">Logout</span>
                 </button>
 
               </div>
@@ -353,7 +354,7 @@
   <!-- ======================================================== -->
   <!-- MAIN DASHBOARD CONTENT AREA                              -->
   <!-- ======================================================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-1 w-full flex flex-col justify-center">
 
     <!-- 1. UNAUTHENTICATED STATE -->
     <div id="unauth-view" class="hidden max-w-xl mx-auto text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl p-8 sm:p-12">
@@ -362,7 +363,7 @@
       </div>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Authentication Required</h2>
       <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-3 max-w-md mx-auto leading-relaxed">
-        Please log in through the Mendorbit portal to access your courses, study notes, and student hub.
+        Please log in through the Mendorbit portal to access your account.
       </p>
       <div class="mt-8">
         <a href="login.html" class="inline-flex items-center gap-2.5 px-8 py-3.5 bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 hover:to-brand-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-700/25 transition">
@@ -372,112 +373,9 @@
       </div>
     </div>
 
-    <!-- 2. AUTHENTICATED DASHBOARD (FRESH, CLEAN LOOK) -->
-    <div id="auth-view" class="space-y-8">
-      
-      <!-- Welcome Hero Banner -->
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-900 to-slate-900 text-white p-6 sm:p-10 shadow-2xl border border-blue-900/40">
-        <!-- Background Glowing Circles -->
-        <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-accent-orange/15 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <!-- Greeting & Details -->
-          <div class="space-y-2">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 backdrop-blur border border-white/15 text-amber-300">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              <span>Student Learning Hub</span>
-            </div>
-            <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white">
-              Welcome back, <span id="hero-student-name" class="gradient-orange">Student</span>! 👋
-            </h1>
-            <p class="text-slate-300 text-xs sm:text-sm max-w-xl">
-              Target Focus: <span id="hero-target-exam" class="font-extrabold text-white">Class 10</span> • Single Sign-On Active across Mendorbit.
-            </p>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div class="flex items-center gap-3 flex-wrap">
-            <a href="profile.html" id="btn-hero-account" class="px-5 py-2.5 rounded-xl bg-white text-brand-900 hover:bg-slate-100 font-extrabold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
-              <i data-lucide="user" class="w-4 h-4 text-brand-700"></i>
-              <span>My Account</span>
-            </a>
-            <a href="https://mendorbit.in/batches.html" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-extrabold text-xs sm:text-sm transition flex items-center gap-2 backdrop-blur">
-              <i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i>
-              <span>Explore Batches</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Learning Hub Grid (Clean Student Cards) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Card 1: Enrolled Batch -->
-        <div class="study-card bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-brand-600 dark:text-blue-400 flex items-center justify-center mb-4">
-              <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-            </div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Target Preparation</span>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white mt-1" id="card-target-exam">Class 10 Board Batch</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Access your interactive lectures, chapter schedule, and live classroom sessions.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <a href="https://mendorbit.in/batches.html" class="inline-flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-blue-400 hover:gap-3 transition-all">
-              <span>View Lectures & Schedule</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 2: Notes & Study Material -->
-        <div class="study-card bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
-              <i data-lucide="file-text" class="w-6 h-6"></i>
-            </div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Curated Resources</span>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white mt-1">Study Notes & Formula Sheets</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              High-yield summary revision sheets, formula compendiums, and practice questions.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <a href="https://mendorbit.in/notes.html" class="inline-flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:gap-3 transition-all">
-              <span>Open Study Library</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 3: Security & Single Sign-On Status -->
-        <div class="study-card bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
-              <i data-lucide="shield-check" class="w-6 h-6"></i>
-            </div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Enterprise Security</span>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white mt-1">Mendorbit SSO Active</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Signed in across <code class="font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">.mendorbit.in</code> with encrypted session credentials.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Secure Session
-            </span>
-            <a href="profile.html" id="btn-card-account" class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline">
-              Account Details
-            </a>
-          </div>
-        </div>
-
-      </div>
-
+    <!-- 2. AUTHENTICATED DASHBOARD (CLEAN & BLANK AS REQUESTED) -->
+    <div id="auth-view" class="w-full min-h-[50vh] flex flex-col items-center justify-center">
+      <!-- Clean, minimal blank workspace -->
     </div>
 
   </main>
@@ -586,20 +484,22 @@
       const initialChar = fullName.charAt(0).toUpperCase();
 
       // Navbar Profile Elements
-      document.getElementById('nav-user-firstname').textContent = firstName;
-      document.getElementById('nav-user-target').textContent = targetExam;
-      document.getElementById('nav-avatar-initial').textContent = initialChar;
+      const navFirstname = document.getElementById('nav-user-firstname');
+      if (navFirstname) navFirstname.textContent = firstName;
+      const navTarget = document.getElementById('nav-user-target');
+      if (navTarget) navTarget.textContent = targetExam;
+      const navAvatarInit = document.getElementById('nav-avatar-initial');
+      if (navAvatarInit) navAvatarInit.textContent = initialChar;
 
       // Dropdown Menu Elements
-      document.getElementById('menu-user-fullname').textContent = fullName;
-      document.getElementById('menu-user-email').textContent = email;
-      document.getElementById('menu-user-exam-badge').textContent = targetExam;
-      document.getElementById('menu-avatar-initial').textContent = initialChar;
-
-      // Hero & Dashboard Card Elements
-      document.getElementById('hero-student-name').textContent = firstName;
-      document.getElementById('hero-target-exam').textContent = targetExam;
-      document.getElementById('card-target-exam').textContent = `${targetExam} Preparation`;
+      const menuFullname = document.getElementById('menu-user-fullname');
+      if (menuFullname) menuFullname.textContent = fullName;
+      const menuEmail = document.getElementById('menu-user-email');
+      if (menuEmail) menuEmail.textContent = email;
+      const menuExamBadge = document.getElementById('menu-user-exam-badge');
+      if (menuExamBadge) menuExamBadge.textContent = targetExam;
+      const menuAvatarInit = document.getElementById('menu-avatar-initial');
+      if (menuAvatarInit) menuAvatarInit.textContent = initialChar;
 
       // Photo handling (if Google photo exists)
       if (session.photoURL) {
