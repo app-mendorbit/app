@@ -221,6 +221,16 @@
    * Log out and wipe session across all subdomains
    */
   function clearSession() {
+    // If a session exists and has not yet been revoked, emit background beacon as fallback
+    try {
+      const sess = getSession();
+      const sId = localStorage.getItem("mendorbit_session_id") || (sess ? sess.sessionId : null);
+      if (sess && sess.email && sId && navigator.sendBeacon) {
+        const payload = JSON.stringify({ email: sess.email.toLowerCase().trim(), sessionId: sId });
+        navigator.sendBeacon("/api/auth/revoke-session", new Blob([payload], { type: "application/json" }));
+      }
+    } catch(e) {}
+
     const domain = getCookieDomain();
     eraseCookie(COOKIE_NAME, domain);
 
@@ -244,6 +254,84 @@
       try {
         syncChannel.postMessage({ type: 'SSO_LOGOUT' });
       } catch (e) {}
+    }
+  }
+
+  /**
+   * Complete Logout Flow:
+   * 1. Marks current session as LOGGED_OUT and isOnline: false in Firestore
+   * 2. Calls backend Worker API via keepalive beacon so revocation is guaranteed
+   * 3. Wipes cookies and local storage (clearSession)
+   * 4. Redirects to login page
+   */
+  async function logout(redirectUrl = "login.html?force_login=true") {
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+      heartbeatInterval = null;
+    }
+
+    const session = getSession();
+    const email = session ? session.email : null;
+    const sessionId = localStorage.getItem("mendorbit_session_id") || (session ? session.sessionId : null);
+
+    if (email && sessionId) {
+      const emailNorm = email.toLowerCase().trim();
+      const nowIso = new Date().toISOString();
+      const nowEpoch = Date.now();
+
+      // 1. Direct Firestore write
+      if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+        try {
+          const sessRef = firestoreDb.collection("users").doc(emailNorm).collection("sessions").doc(sessionId);
+          await sessRef.set({
+            status: "LOGGED_OUT",
+            isOnline: false,
+            loggedOutAt: nowIso,
+            lastActive: nowIso,
+            lastActiveEpoch: nowEpoch
+          }, { merge: true });
+
+          const rootMap = {};
+          rootMap[`sessions.${sessionId}.status`] = "LOGGED_OUT";
+          rootMap[`sessions.${sessionId}.isOnline`] = false;
+          rootMap[`sessions.${sessionId}.loggedOutAt`] = nowIso;
+          rootMap[`sessions.${sessionId}.lastActive`] = nowIso;
+          rootMap[`sessions.${sessionId}.lastActiveEpoch`] = nowEpoch;
+          await firestoreDb.collection("users").doc(emailNorm).set(rootMap, { merge: true });
+        } catch (e) {
+          console.warn("[MendorbitSSO] Direct Firestore revoke note:", e);
+        }
+      }
+
+      // 2. MendorbitBackend helper if available
+      if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession) {
+        try {
+          await MendorbitBackend.revokeUserSession(emailNorm, sessionId);
+        } catch (e) {}
+      }
+
+      // 3. Worker API keepalive beacon (guaranteed delivery)
+      const payload = JSON.stringify({ email: emailNorm, sessionId: sessionId });
+      try {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon("/api/auth/revoke-session", new Blob([payload], { type: "application/json" }));
+        } else {
+          fetch("/api/auth/revoke-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload,
+            keepalive: true
+          }).catch(() => {});
+        }
+      } catch (e) {}
+    }
+
+    // 4. Wipe local session
+    clearSession();
+
+    // 5. Navigate
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
     }
   }
 
@@ -438,6 +526,7 @@
     getSession: getSession,
     isLoggedIn: isLoggedIn,
     clearSession: clearSession,
+    logout: logout,
     onAuthStateChanged: onAuthStateChanged,
     getCookieDomain: getCookieDomain,
     listenToRemoteSessionStatus: listenToRemoteSessionStatus,

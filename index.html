@@ -521,9 +521,15 @@
       // ========================================================
       const logoutBtn = document.getElementById('nav-btn-logout');
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-          MendorbitSSO.clearSession();
-          window.location.href = "login.html?force_login=true";
+        logoutBtn.addEventListener('click', async () => {
+          logoutBtn.disabled = true;
+          logoutBtn.classList.add('opacity-60', 'pointer-events-none');
+          if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
+            await MendorbitSSO.logout("login.html?force_login=true");
+          } else {
+            MendorbitSSO.clearSession();
+            window.location.href = "login.html?force_login=true";
+          }
         });
       }
     });

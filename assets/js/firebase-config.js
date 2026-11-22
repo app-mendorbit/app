@@ -319,12 +319,18 @@ const MendorbitBackend = {
       try {
         await firestoreDb.collection("users").doc(normalized).collection("sessions").doc(sessionId).set({
           status: "LOGGED_OUT",
-          loggedOutAt: nowIso
+          isOnline: false,
+          loggedOutAt: nowIso,
+          lastActive: nowIso,
+          lastActiveEpoch: Date.now()
         }, { merge: true });
 
         const updateMap = {};
         updateMap[`sessions.${sessionId}.status`] = "LOGGED_OUT";
+        updateMap[`sessions.${sessionId}.isOnline`] = false;
         updateMap[`sessions.${sessionId}.loggedOutAt`] = nowIso;
+        updateMap[`sessions.${sessionId}.lastActive`] = nowIso;
+        updateMap[`sessions.${sessionId}.lastActiveEpoch`] = Date.now();
         await firestoreDb.collection("users").doc(normalized).set(updateMap, { merge: true });
         console.log(`[Mendorbit Backend] Session ${sessionId} revoked for ${normalized}`);
         return true;

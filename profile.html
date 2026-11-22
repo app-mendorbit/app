@@ -2559,8 +2559,14 @@
           }
           sessions = cleanSessions;
 
-          const activeList = sessions.filter(s => s.status === "ACTIVE" || !s.status);
-          const historyList = sessions.filter(s => s.status === "LOGGED_OUT" || s.status === "logged_out");
+          const isLoggedOut = (s) => {
+            if (!s) return true;
+            const st = (s.status || "").toUpperCase();
+            return st === "LOGGED_OUT" || st === "REVOKED" || st === "TERMINATED" || st === "INACTIVE";
+          };
+
+          const activeList = sessions.filter(s => !isLoggedOut(s) && (s.status === "ACTIVE" || !s.status));
+          const historyList = sessions.filter(s => isLoggedOut(s));
 
           if (countPill) countPill.textContent = `${activeList.length} Active`;
           if (historyCount) historyCount.textContent = historyList.length;
@@ -2671,12 +2677,17 @@
                   </p>
                 </div>
               </div>
-              ${!isCurrent ? `
+              ${isCurrent ? `
+                <button type="button" class="btn-logout-current-device px-3 py-1.5 rounded-xl text-xs font-bold text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
+                  <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                  <span>Logout Device</span>
+                </button>
+              ` : `
                 <button type="button" class="btn-logout-device px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
                   <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                   <span>Terminate</span>
                 </button>
-              ` : ''}
+              `}
             `;
             listContainer.appendChild(card);
           });
@@ -2713,6 +2724,24 @@
           }
 
           if (window.lucide) lucide.createIcons();
+
+          // Wire "Logout Device" button on current device card
+          document.querySelectorAll('.btn-logout-current-device').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              btn.disabled = true;
+              btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Logging out...</span>`;
+              if (window.lucide) lucide.createIcons();
+              if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
+                await MendorbitSSO.logout("login.html?force_login=true");
+              } else {
+                if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
+                  try { await MendorbitBackend.revokeUserSession(email, currentSessionId); } catch(e) {}
+                }
+                MendorbitSSO.clearSession();
+                window.location.href = "login.html?force_login=true";
+              }
+            });
+          });
 
           // Wire individual "Terminate" buttons
           document.querySelectorAll('.btn-logout-device').forEach(btn => {
@@ -3590,13 +3619,24 @@
       const logoutBtn = document.getElementById('nav-btn-logout');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-          if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
-            try {
-              await MendorbitBackend.revokeUserSession(email, currentSessionId);
-            } catch(e) {}
+          logoutBtn.disabled = true;
+          logoutBtn.classList.add('opacity-60', 'pointer-events-none');
+          if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
+            await MendorbitSSO.logout("login.html?force_login=true");
+          } else {
+            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
+              try {
+                await MendorbitBackend.revokeUserSession(email, currentSessionId);
+              } catch(e) {}
+            }
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.revokeSession && currentSessionId) {
+              try {
+                await MendorbitAPI.revokeSession(email, currentSessionId);
+              } catch(e) {}
+            }
+            MendorbitSSO.clearSession();
+            window.location.href = "login.html?force_login=true";
           }
-          MendorbitSSO.clearSession();
-          window.location.href = "login.html?force_login=true";
         });
       }
     });

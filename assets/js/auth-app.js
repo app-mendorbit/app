@@ -56,6 +56,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
     const sessionWithId = { ...userPayload, sessionId };
 
+    // Purge old zombie session on the same device so only one active session remains
+    try {
+      const oldSessionId = localStorage.getItem("mendorbit_session_id");
+      if (oldSessionId && oldSessionId !== sessionId) {
+        if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession) {
+          MendorbitBackend.revokeUserSession(sessionWithId.email, oldSessionId).catch(() => {});
+        }
+      }
+    } catch(e) {}
+
     MendorbitSSO.setSession(sessionWithId);
     try {
       localStorage.setItem("mendorbit_session_id", sessionId);
