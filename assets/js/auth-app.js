@@ -80,6 +80,17 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("mendorbit_session_id", sessionId);
     } catch(e) {}
 
+    // Synchronize comprehensive profile cache locally for instant dashboard & profile persistence
+    if (userPayload && userPayload.email) {
+      const norm = userPayload.email.toLowerCase().trim();
+      try {
+        const cached = JSON.parse(localStorage.getItem("mendorbit_profile_" + norm) || "{}");
+        const merged = Object.assign({}, cached, userPayload);
+        localStorage.setItem("mendorbit_profile_" + userPayload.email, JSON.stringify(merged));
+        localStorage.setItem("mendorbit_profile_" + norm, JSON.stringify(merged));
+      } catch (e) {}
+    }
+
     // Infer friendly authMethod if not explicitly passed
     const resolvedMethod = authMethod || (
       eventType === "GOOGLE_LOGIN" ? "Google Sign-In" :
@@ -240,12 +251,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const manualStatusPill = document.getElementById("manual-code-status-pill");
     if (manualStatusPill) {
-      manualStatusPill.className = "flex items-center gap-2 font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 py-1.5 px-3 rounded-full text-xs";
+      manualStatusPill.className = "flex items-center gap-2 font-bold text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full text-xs";
       manualStatusPill.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span><span>Verified! Redirecting...</span>';
     }
     const manualCodeBox = document.getElementById("manual-code-inline-display");
     if (manualCodeBox) {
-      manualCodeBox.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-black flex items-center justify-center gap-2 text-2xl">✓ Verified</span>';
+      manualCodeBox.innerHTML = '<span class="text-emerald-600 font-black flex items-center justify-center gap-2 text-2xl">✓ Verified</span>';
+    }
+
+    // Cache complete profile state locally so target device receives 100% verified status & all fields instantly
+    if (user && user.email) {
+      const norm = user.email.toLowerCase().trim();
+      try {
+        localStorage.setItem("mendorbit_profile_" + user.email, JSON.stringify(user));
+        localStorage.setItem("mendorbit_profile_" + norm, JSON.stringify(user));
+        const users = JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
+        users[user.email] = Object.assign({}, users[user.email] || {}, user);
+        users[norm] = Object.assign({}, users[norm] || {}, user);
+        localStorage.setItem("mendorbit_users_db", JSON.stringify(users));
+      } catch (e) {
+        console.warn("[QR Auth] Cache write note:", e);
+      }
     }
 
     notify("Device authorized successfully! Redirecting to Dashboard...", "success");

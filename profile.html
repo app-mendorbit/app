@@ -659,10 +659,9 @@
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 class="text-sm sm:text-base md:text-lg font-extrabold text-slate-900 dark:text-white">KYC & Student Profile Form</h2>
-              <button type="button" id="kyc-status-pill" class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm cursor-pointer transition flex items-center gap-1.5" title="Click to view checklist">
+              <button type="button" id="kyc-status-pill" class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm cursor-pointer transition flex items-center gap-1.5" title="Click to view pending items">
                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                <span id="kyc-status-pill-text">Incomplete (Click to view)</span>
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <span id="kyc-status-pill-text">Pending</span>
               </button>
             </div>
             <p class="text-[11px] sm:text-xs md:text-[13px] text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
@@ -1134,15 +1133,10 @@
                   <input type="text" id="input-state" placeholder="e.g. Bihar, Delhi" class="edtech-input">
                 </div>
 
-                <!-- Country (India with Flag) -->
+                <!-- Country (India) -->
                 <div class="edtech-input-group md:col-span-2">
                   <label>Country *</label>
-                  <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-base">
-                      🇮🇳
-                    </div>
-                    <input type="text" id="input-country" value="India" readonly class="edtech-input pl-10 cursor-not-allowed font-semibold !bg-slate-50 dark:!bg-slate-800/80">
-                  </div>
+                  <input type="text" id="input-country" value="India" readonly class="edtech-input cursor-not-allowed font-semibold !bg-slate-50 dark:!bg-slate-800/80">
                 </div>
 
               </div>
@@ -1898,11 +1892,12 @@
       }
 
       const email = session.email.toLowerCase().trim();
+      const normalizedEmail = (email || '').toLowerCase().trim();
       let userDoc = {};
 
-      // 1. Instant Local Storage Profile Cache (100% Persistence across F5)
+      // 1. Instant Local Storage Profile Cache (100% Persistence across F5 and Cross-device QR login)
       try {
-        const localCached = localStorage.getItem("mendorbit_profile_" + email);
+        const localCached = localStorage.getItem("mendorbit_profile_" + normalizedEmail) || localStorage.getItem("mendorbit_profile_" + email);
         if (localCached) {
           userDoc = JSON.parse(localCached) || {};
         }
@@ -1913,8 +1908,9 @@
         const users = (typeof MendorbitSecureStorage !== 'undefined')
           ? (MendorbitSecureStorage.getItem("mendorbit_users_db") || {})
           : JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
-        if (users && users[email]) {
-          userDoc = Object.assign({}, users[email], userDoc);
+        const found = users ? (users[normalizedEmail] || users[email]) : null;
+        if (found) {
+          userDoc = Object.assign({}, found, userDoc);
         }
       } catch (e) {}
 
@@ -1924,7 +1920,7 @@
       // 4. Remote Firestore & Worker Sync (Non-blocking deep merge)
       try {
         if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
-          const remoteDoc = await MendorbitBackend.getUserByEmail(email);
+          const remoteDoc = await MendorbitBackend.getUserByEmail(email) || await MendorbitBackend.getUserByEmail(normalizedEmail);
           if (remoteDoc && typeof remoteDoc === 'object') {
             Object.keys(remoteDoc).forEach(k => {
               if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
@@ -1937,6 +1933,7 @@
             });
             try {
               localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+              localStorage.setItem("mendorbit_profile_" + normalizedEmail, JSON.stringify(userDoc));
             } catch(e) {}
           }
         }
@@ -2252,40 +2249,64 @@
       function updateKycProgress() {
         let score = 0;
 
-        // Check each critical field
-        const fName = (document.getElementById('input-first-name')?.value || '').trim();
-        const phone = (document.getElementById('input-phone-number')?.value || '').trim();
-        const dob = (document.getElementById('input-dob')?.value || '').trim();
-        const gender = (document.getElementById('input-gender')?.value || '').trim();
-        const bloodVal = (document.getElementById('input-blood-group')?.value || '').trim();
-        const isBloodSet = !!(bloodVal && !bloodVal.toLowerCase().includes('select'));
+        // Perpetual Verification Lock: If verified once, status is permanently locked at 100%
+        const isPermanentlyVerified = !!(userDoc && (userDoc.isVerified === true || userDoc.kycCompleted === true || userDoc.kycStatus === 'VERIFIED'));
 
-        if (fName) score += 12;
-        if (phone.length === 10) score += 12;
-        if (dob) score += 10;
-        if (gender) score += 8;
-        if (isBloodSet) score += 6;
+        if (isPermanentlyVerified) {
+          score = 100;
+        } else {
+          // Check each critical field
+          const fName = (document.getElementById('input-first-name')?.value || '').trim();
+          const phone = (document.getElementById('input-phone-number')?.value || '').trim();
+          const dob = (document.getElementById('input-dob')?.value || '').trim();
+          const gender = (document.getElementById('input-gender')?.value || '').trim();
+          const bloodVal = (document.getElementById('input-blood-group')?.value || '').trim();
+          const isBloodSet = !!(bloodVal && !bloodVal.toLowerCase().includes('select'));
 
-        // Guardian
-        const fatherName = (document.getElementById('input-father-name')?.value || '').trim();
-        const motherName = (document.getElementById('input-mother-name')?.value || '').trim();
-        const isGuardianSet = !!(fatherName || motherName);
-        if (isGuardianSet) score += 14;
+          if (fName) score += 12;
+          if (phone.length === 10) score += 12;
+          if (dob) score += 10;
+          if (gender) score += 8;
+          if (isBloodSet) score += 6;
 
-        // Address
-        const addr1 = (document.getElementById('input-address1')?.value || '').trim();
-        const pincode = (document.getElementById('input-pincode')?.value || '').trim();
-        const city = (document.getElementById('input-city')?.value || '').trim();
-        const district = (document.getElementById('input-district')?.value || '').trim();
-        const isAddressSet = !!(addr1 && pincode.length === 6 && (city || district));
-        if (isAddressSet) score += 18;
+          // Guardian
+          const fatherName = (document.getElementById('input-father-name')?.value || '').trim();
+          const motherName = (document.getElementById('input-mother-name')?.value || '').trim();
+          const isGuardianSet = !!(fatherName || motherName);
+          if (isGuardianSet) score += 14;
 
-        // Academic
-        const academicSchool = (document.getElementById('input-academic-school')?.value || '').trim();
-        const isAcademicSet = !!academicSchool;
-        if (isAcademicSet) score += 20;
+          // Address
+          const addr1 = (document.getElementById('input-address1')?.value || '').trim();
+          const pincode = (document.getElementById('input-pincode')?.value || '').trim();
+          const city = (document.getElementById('input-city')?.value || '').trim();
+          const district = (document.getElementById('input-district')?.value || '').trim();
+          const isAddressSet = !!(addr1 && pincode.length === 6 && (city || district));
+          if (isAddressSet) score += 18;
+
+          // Academic
+          const academicSchool = (document.getElementById('input-academic-school')?.value || '').trim();
+          const isAcademicSet = !!academicSchool;
+          if (isAcademicSet) score += 20;
+        }
 
         const clamped = Math.min(100, Math.max(score, 20));
+        const isFullyVerified = (clamped >= 100);
+        if (isFullyVerified && !isPermanentlyVerified) {
+          userDoc.isVerified = true;
+          userDoc.kycCompleted = true;
+          userDoc.kycStatus = "VERIFIED";
+          const normEmail = (email || '').toLowerCase().trim();
+          try {
+            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+            localStorage.setItem("mendorbit_profile_" + normEmail, JSON.stringify(userDoc));
+          } catch(e) {}
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            firestoreDb.collection("users").doc(email).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
+            if (normEmail !== email) {
+              firestoreDb.collection("users").doc(normEmail).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
+            }
+          }
+        }
         const progressBar = document.getElementById('kyc-progress-bar');
         const progressText = document.getElementById('kyc-progress-text');
         const statusPill = document.getElementById('kyc-status-pill');
@@ -2304,16 +2325,13 @@
         if (modalBar) modalBar.style.width = clamped + "%";
         if (modalBadge) modalBadge.textContent = clamped + "% Done";
 
-        const isFullyVerified = (clamped >= 100);
-
         if (statusPill) {
           if (isFullyVerified) {
             statusPill.innerHTML = `<span>Verified 100%</span>`;
             statusPill.className = "px-3 py-1 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer";
           } else {
-            statusPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>Incomplete (Click to view)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>`;
+            statusPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>Pending</span>`;
             statusPill.className = "px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm cursor-pointer transition flex items-center gap-1.5";
-            if (window.lucide) lucide.createIcons();
           }
         }
 
@@ -2885,6 +2903,13 @@
 
         try {
           // 1. In-Memory Deep Merge (Instant reactive updates in DOM)
+          const normEmail = (email || '').toLowerCase().trim();
+          if (userDoc.isVerified || userDoc.kycCompleted) {
+            updateFields.isVerified = true;
+            updateFields.kycCompleted = true;
+            updateFields.kycStatus = "VERIFIED";
+          }
+
           Object.keys(updateFields).forEach(k => {
             if (typeof updateFields[k] === 'object' && updateFields[k] !== null && !Array.isArray(updateFields[k])) {
               userDoc[k] = Object.assign({}, userDoc[k] || {}, updateFields[k]);
@@ -2896,6 +2921,7 @@
           // 2. Direct LocalStorage Persistence (Guarantees zero data loss on F5 refresh)
           try {
             localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+            localStorage.setItem("mendorbit_profile_" + normEmail, JSON.stringify(userDoc));
           } catch (e) {
             console.warn("Local profile cache write note:", e);
           }
@@ -2905,10 +2931,12 @@
             if (typeof MendorbitSecureStorage !== 'undefined') {
               const users = MendorbitSecureStorage.getItem("mendorbit_users_db") || {};
               users[email] = Object.assign({}, users[email] || {}, userDoc);
+              users[normEmail] = Object.assign({}, users[normEmail] || {}, userDoc);
               MendorbitSecureStorage.setItem("mendorbit_users_db", users);
             }
             const rawUsers = JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
             rawUsers[email] = Object.assign({}, rawUsers[email] || {}, userDoc);
+            rawUsers[normEmail] = Object.assign({}, rawUsers[normEmail] || {}, userDoc);
             localStorage.setItem("mendorbit_users_db", JSON.stringify(rawUsers));
           } catch (e) {}
 
@@ -2919,6 +2947,10 @@
             if (updateFields.class) currentSession.class = updateFields.class;
             if (updateFields.phone) currentSession.phone = updateFields.phone;
             if (updateFields.photoURL) currentSession.photoURL = updateFields.photoURL;
+            if (userDoc.isVerified) {
+              currentSession.isVerified = true;
+              currentSession.kycCompleted = true;
+            }
             MendorbitSSO.setSession(currentSession);
           } catch (e) {}
 
@@ -2930,6 +2962,9 @@
           // 6. Direct Firestore SDK (compat)
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
             await firestoreDb.collection("users").doc(email).set(updateFields, { merge: true }).catch(e => console.warn("Firestore set error:", e));
+            if (normEmail !== email) {
+              await firestoreDb.collection("users").doc(normEmail).set(updateFields, { merge: true }).catch(e => console.warn("Firestore norm set error:", e));
+            }
           }
 
           updateKycProgress();
@@ -3786,13 +3821,88 @@
         showToast("QR Verified! Authorizing login...", "info");
 
         try {
-          const userPayload = {
-            uid: (typeof userDoc !== 'undefined' && userDoc && userDoc.uid) || email,
-            email: email,
-            displayName: (typeof displayFullName !== 'undefined' && displayFullName) || (typeof userDoc !== 'undefined' && userDoc && userDoc.displayName) || "Student",
-            class: (typeof studentClass !== 'undefined' && studentClass) || "Class 10",
-            photoURL: (typeof userDoc !== 'undefined' && userDoc && userDoc.photoURL) || photoURL || ""
-          };
+          // Compile comprehensive user profile payload so linked device gets 100% of all data immediately
+          const fullPayload = Object.assign({}, userDoc || {});
+          fullPayload.uid = fullPayload.uid || email;
+          fullPayload.email = email;
+          fullPayload.displayName = (typeof displayFullName !== 'undefined' && displayFullName) || fullPayload.displayName || "Student";
+          fullPayload.class = (typeof studentClass !== 'undefined' && studentClass) || fullPayload.class || "Class 10";
+          fullPayload.photoURL = (typeof photoURL !== 'undefined' && photoURL) || fullPayload.photoURL || "";
+
+          // Collect current field values from DOM to guarantee fresh state
+          const getVal = (id) => (document.getElementById(id)?.value || '').trim();
+          fullPayload.firstName = getVal('input-first-name') || fullPayload.firstName || "";
+          fullPayload.lastName = getVal('input-last-name') || fullPayload.lastName || "";
+          fullPayload.gender = getVal('input-gender') || fullPayload.gender || "Male";
+          fullPayload.nationality = getVal('input-nationality') || fullPayload.nationality || "Indian";
+          fullPayload.dob = getVal('input-dob') || fullPayload.dob || "";
+          fullPayload.bloodGroup = getVal('input-blood-group') || fullPayload.bloodGroup || "";
+          if (getVal('input-phone-number')) {
+            fullPayload.phone = `${getVal('input-phone-code') || '+91'} ${getVal('input-phone-number')}`;
+          }
+
+          // Address
+          fullPayload.billingAddress = fullPayload.billingAddress || fullPayload.address || {};
+          fullPayload.billingAddress.address1 = getVal('input-address1') || fullPayload.billingAddress.address1 || "";
+          fullPayload.billingAddress.address2 = getVal('input-address2') || fullPayload.billingAddress.address2 || "";
+          fullPayload.billingAddress.pincode = getVal('input-pincode') || fullPayload.billingAddress.pincode || "";
+          fullPayload.billingAddress.city = getVal('input-city') || fullPayload.billingAddress.city || "";
+          fullPayload.billingAddress.district = getVal('input-district') || fullPayload.billingAddress.district || "";
+          fullPayload.billingAddress.state = getVal('input-state') || fullPayload.billingAddress.state || "";
+          fullPayload.billingAddress.country = "India";
+          fullPayload.address = Object.assign({}, fullPayload.billingAddress);
+
+          // Guardian
+          fullPayload.parentInfo = fullPayload.parentInfo || {};
+          fullPayload.parentInfo.fatherName = getVal('input-father-name') || fullPayload.parentInfo.fatherName || "";
+          if (getVal('input-father-phone-number')) {
+            fullPayload.parentInfo.fatherPhone = `${getVal('input-father-phone-code') || '+91'} ${getVal('input-father-phone-number')}`;
+          }
+          fullPayload.parentInfo.motherName = getVal('input-mother-name') || fullPayload.parentInfo.motherName || "";
+          if (getVal('input-mother-phone-number')) {
+            fullPayload.parentInfo.motherPhone = `${getVal('input-mother-phone-code') || '+91'} ${getVal('input-mother-phone-number')}`;
+          }
+          fullPayload.parentInfo.parentEmail = getVal('input-parent-email') || fullPayload.parentInfo.parentEmail || "";
+          fullPayload.parentInfo.emergencyContact = getVal('input-emergency-pref') || fullPayload.parentInfo.emergencyContact || "Father";
+
+          // Academic
+          fullPayload.academicInfo = fullPayload.academicInfo || {};
+          fullPayload.academicInfo.class = getVal('input-academic-class') || fullPayload.academicInfo.class || "Class 10";
+          fullPayload.academicInfo.board = getVal('input-academic-board') || fullPayload.academicInfo.board || "CBSE";
+          fullPayload.academicInfo.targetExam = getVal('input-academic-target') || fullPayload.academicInfo.targetExam || "Foundation";
+          fullPayload.academicInfo.passingYear = getVal('input-academic-year') || fullPayload.academicInfo.passingYear || "2026";
+          fullPayload.academicInfo.school = getVal('input-academic-school') || fullPayload.academicInfo.school || "";
+          fullPayload.academicInfo.stream = getVal('input-academic-stream') || fullPayload.academicInfo.stream || "";
+
+          // Preferences
+          fullPayload.preferences = fullPayload.preferences || {};
+          fullPayload.preferences.learningMode = getVal('input-pref-mode') || fullPayload.preferences.learningMode || "Live Interactive Batches";
+          fullPayload.preferences.language = getVal('input-pref-lang') || fullPayload.preferences.language || "Hinglish";
+          fullPayload.preferences.studyHours = getVal('input-pref-hours') || fullPayload.preferences.studyHours || "4-5 Hours / Day";
+          fullPayload.preferences.notification = getVal('input-pref-notify') || fullPayload.preferences.notification || "WhatsApp & Email";
+
+          // Perpetual Verification Lock
+          const isVerifiedBadgeVisible = document.getElementById('hero-verified-badge') && !document.getElementById('hero-verified-badge').classList.contains('hidden');
+          if (fullPayload.isVerified || fullPayload.kycCompleted || fullPayload.kycStatus === 'VERIFIED' || isVerifiedBadgeVisible) {
+            fullPayload.isVerified = true;
+            fullPayload.kycCompleted = true;
+            fullPayload.kycStatus = "VERIFIED";
+          }
+
+          const userPayload = fullPayload;
+
+          // Save full payload to cache and Firestore
+          const targetNormEmail = (email || '').toLowerCase().trim();
+          try {
+            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(fullPayload));
+            localStorage.setItem("mendorbit_profile_" + targetNormEmail, JSON.stringify(fullPayload));
+          } catch(e) {}
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            firestoreDb.collection("users").doc(email).set(fullPayload, { merge: true }).catch(() => {});
+            if (targetNormEmail !== email) {
+              firestoreDb.collection("users").doc(targetNormEmail).set(fullPayload, { merge: true }).catch(() => {});
+            }
+          }
 
           // 1. Dual-Channel: Authorize via Cloudflare Worker
           if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.authorizeQrSession) {

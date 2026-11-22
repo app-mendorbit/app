@@ -110,6 +110,14 @@
     })();
   </script>
   
+  <!-- Strict Light Mode Enforcer (Login Portal is always crisp, clean light mode) -->
+  <script>
+    document.documentElement.classList.remove("dark");
+    try {
+      document.documentElement.style.colorScheme = "light";
+    } catch(e) {}
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
@@ -122,7 +130,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="flex flex-col items-center justify-center min-h-[100dvh] p-3 xs:p-4 sm:p-6 lg:p-10 select-none overflow-x-hidden">
+<body class="flex flex-col items-center justify-center min-h-[100dvh] px-4 py-6 sm:px-6 sm:py-8 lg:p-10 select-none overflow-x-hidden">
 
   <!-- Toast Notification Container -->
   <div id="toast-container"></div>
@@ -210,7 +218,7 @@
         </div>
       </div>
 
-      <div class="auth-main-card w-full max-w-[440px] p-4 sm:p-7 lg:p-9 relative">
+      <div class="auth-main-card w-full max-w-[440px] p-5 sm:p-7 lg:p-9 relative">
 
         <!-- Card Header -->
         <div class="text-center mb-4 sm:mb-6">
@@ -494,14 +502,8 @@
 
         <!-- ==================== VIEW 8: QR LOGIN CARD ==================== -->
         <div id="view-qr" class="hidden text-center space-y-4 py-1">
-          <!-- 1. Pure QR Canvas with Glowing Dark Mode Frame & Center Logo -->
-          <div class="relative inline-block mx-auto p-2.5 bg-white dark:bg-slate-950 rounded-3xl border-2 border-slate-200 dark:border-orange-500/50 shadow-lg dark:shadow-[0_0_30px_rgba(255,102,0,0.22)]">
-            <!-- Futuristic Corner Accents in Dark Mode -->
-            <div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-orange-500 rounded-tl-lg pointer-events-none hidden dark:block"></div>
-            <div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-orange-500 rounded-tr-lg pointer-events-none hidden dark:block"></div>
-            <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-orange-500 rounded-bl-lg pointer-events-none hidden dark:block"></div>
-            <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-orange-500 rounded-br-lg pointer-events-none hidden dark:block"></div>
-
+          <!-- 1. Pure QR Canvas with Clean Light Card & Center Logo -->
+          <div class="relative inline-block mx-auto p-3 bg-white rounded-3xl border border-slate-200/90 shadow-md">
             <div class="bg-white p-2 rounded-2xl flex items-center justify-center">
               <div id="qr-target-container" class="flex justify-center w-44 h-44 sm:w-48 sm:h-48"></div>
             </div>
@@ -516,40 +518,40 @@
 
           <!-- Live Scanning Status & Refresh Countdown -->
           <div class="flex items-center justify-center gap-2">
-            <div id="qr-live-status" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 py-1 px-3 rounded-full inline-flex items-center gap-1.5 border border-emerald-200/60 dark:border-emerald-800/80">
+            <div id="qr-live-status" class="text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5 border border-emerald-200/60">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Waiting for scan...</span>
             </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-800/90 py-1 px-2.5 rounded-full border border-slate-200/60 dark:border-slate-700">
-              Refreshes in: <span id="qr-refresh-timer" class="font-bold text-slate-800 dark:text-slate-200">60s</span>
+            <div class="text-xs text-slate-500 font-mono bg-slate-100 py-1 px-2.5 rounded-full border border-slate-200/60">
+              Refreshes in: <span id="qr-refresh-timer" class="font-bold text-slate-800">60s</span>
             </div>
           </div>
 
           <!-- 2. Step-by-Step Instructions -->
-          <div class="max-w-xs mx-auto bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-left shadow-xs">
+          <div class="max-w-xs mx-auto bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2 text-left shadow-xs">
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">1</span>
-              <span class="text-slate-700 dark:text-slate-300">Go to <strong class="text-slate-900 dark:text-white font-bold">Profile</strong></span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">1</span>
+              <span class="text-slate-700">Go to <strong class="text-slate-900 font-bold">Profile</strong></span>
             </div>
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">2</span>
-              <span class="text-slate-700 dark:text-slate-300">Click on <strong class="text-slate-900 dark:text-white font-bold">Link Device</strong></span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">2</span>
+              <span class="text-slate-700">Click on <strong class="text-slate-900 font-bold">Link Device</strong></span>
             </div>
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">3</span>
-              <span class="text-slate-700 dark:text-slate-300">Scan this QR code</span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">3</span>
+              <span class="text-slate-700">Scan this QR code</span>
             </div>
           </div>
 
           <!-- OR Divider -->
           <div class="relative my-3 flex items-center justify-center max-w-xs mx-auto">
-            <div class="border-t border-slate-200 dark:border-slate-700 w-full"></div>
-            <span class="bg-white dark:bg-slate-900 px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 absolute">OR</span>
+            <div class="border-t border-slate-200 w-full"></div>
+            <span class="bg-white px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 absolute">OR</span>
           </div>
 
           <!-- Enter Code Manually Button (Opens Inline View Inside Card) -->
           <div class="max-w-xs mx-auto text-center space-y-1.5">
-            <button type="button" onclick="openManualCodeView()" class="w-full py-2.5 px-4 rounded-xl border border-orange-200 dark:border-orange-500/40 bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm cursor-pointer">
+            <button type="button" onclick="openManualCodeView()" class="w-full py-2.5 px-4 rounded-xl border border-orange-200 bg-orange-50/70 hover:bg-orange-100 text-orange-600 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm cursor-pointer">
               <i data-lucide="key-round" class="w-4 h-4 text-orange-500"></i>
               <span>Enter Code Manually</span>
             </button>
@@ -559,7 +561,7 @@
           </div>
 
           <div>
-            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 font-semibold transition">
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold transition">
               ← Return to Password Sign In
             </button>
           </div>
@@ -568,60 +570,60 @@
         <!-- ==================== VIEW 10: INLINE MANUAL 8-DIGIT DEVICE CODE VIEW ==================== -->
         <div id="view-manual-code" class="hidden text-center space-y-4 py-1">
           <!-- Icon & Header -->
-          <div class="w-12 h-12 mx-auto rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center shadow-inner">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center shadow-inner">
             <i data-lucide="key-round" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Manual Device Code</h3>
+            <h3 class="text-lg sm:text-xl font-black text-slate-900">Manual Device Code</h3>
             <p class="text-xs text-slate-400 mt-0.5">Enter this code in Profile &gt; Link Device on your phone</p>
           </div>
 
           <!-- 8-Digit Code Display Box -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border-2 border-dashed border-orange-300 dark:border-orange-500/60 dark:shadow-[0_0_25px_rgba(255,102,0,0.18)] text-center max-w-xs mx-auto">
+          <div class="p-4 rounded-2xl bg-slate-50 border-2 border-dashed border-orange-300 text-center max-w-xs mx-auto">
             <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block mb-1">Authorization Code</span>
-            <div id="manual-code-inline-display" class="font-mono text-2xl sm:text-3xl font-black text-slate-900 dark:text-orange-400 tracking-[0.2em] select-all">
+            <div id="manual-code-inline-display" class="font-mono text-2xl sm:text-3xl font-black text-slate-900 tracking-[0.2em] select-all">
               ---- ----
             </div>
-            <button type="button" id="btn-copy-manual-view-code" class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-bold transition shadow-sm cursor-pointer">
+            <button type="button" id="btn-copy-manual-view-code" class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition shadow-sm cursor-pointer">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i>
               <span id="text-copy-manual">Copy Code</span>
             </button>
           </div>
 
           <!-- Live Status & Expiry Timer -->
-          <div class="flex items-center justify-between text-xs px-2 text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+          <div class="flex items-center justify-between text-xs px-2 text-slate-500 max-w-xs mx-auto">
             <div id="manual-code-status-pill" class="flex items-center gap-1.5 font-medium">
               <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
               <span>Waiting for phone...</span>
             </div>
             <div class="font-mono text-[11px]">
-              Refreshes in: <span id="manual-code-refresh-timer" class="font-bold text-slate-800 dark:text-slate-200">60s</span>
+              Refreshes in: <span id="manual-code-refresh-timer" class="font-bold text-slate-800">60s</span>
             </div>
           </div>
 
           <!-- 3 Steps Instructions -->
-          <div class="bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-left max-w-xs mx-auto">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2 text-left max-w-xs mx-auto">
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">1</span>
-              <span class="text-slate-700 dark:text-slate-300">Open <strong class="text-slate-900 dark:text-white font-bold">Profile</strong> on your phone</span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">1</span>
+              <span class="text-slate-700">Open <strong class="text-slate-900 font-bold">Profile</strong> on your phone</span>
             </div>
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">2</span>
-              <span class="text-slate-700 dark:text-slate-300">Tap <strong class="text-slate-900 dark:text-white font-bold">Link Device</strong> tab</span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">2</span>
+              <span class="text-slate-700">Tap <strong class="text-slate-900 font-bold">Link Device</strong> tab</span>
             </div>
             <div class="flex items-center gap-2.5 text-xs">
-              <span class="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">3</span>
-              <span class="text-slate-700 dark:text-slate-300">Tap <strong class="text-slate-900 dark:text-white font-bold">"Enter code manually"</strong> &amp; submit</span>
+              <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 font-black flex items-center justify-center text-[10.5px] flex-shrink-0">3</span>
+              <span class="text-slate-700">Tap <strong class="text-slate-900 font-bold">"Enter code manually"</strong> &amp; submit</span>
             </div>
           </div>
 
           <!-- Back Actions -->
           <div class="space-y-2 pt-1 max-w-xs mx-auto">
-            <button type="button" onclick="openQrView()" class="w-full py-2 rounded-xl text-xs font-bold text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition flex items-center justify-center gap-1.5 cursor-pointer">
+            <button type="button" onclick="openQrView()" class="w-full py-2 rounded-xl text-xs font-bold text-orange-600 hover:bg-orange-50 transition flex items-center justify-center gap-1.5 cursor-pointer">
               <i data-lucide="qr-code" class="w-4 h-4"></i>
               <span>← Back to QR Scanner</span>
             </button>
-            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-medium transition block mx-auto cursor-pointer">
+            <button type="button" onclick="returnToSignIn()" class="text-xs text-slate-400 hover:text-slate-600 font-medium transition block mx-auto cursor-pointer">
               Return to Password Sign In
             </button>
           </div>

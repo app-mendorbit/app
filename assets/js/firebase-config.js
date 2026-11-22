@@ -131,7 +131,10 @@ const MendorbitBackend = {
     // 1. Try Firebase Client SDK
     if (isFirebaseConfigured && firestoreDb) {
       try {
-        const directDoc = await firestoreDb.collection("users").doc(normalized).get();
+        let directDoc = await firestoreDb.collection("users").doc(normalized).get();
+        if (!directDoc.exists && email !== normalized) {
+          directDoc = await firestoreDb.collection("users").doc(email).get();
+        }
         if (directDoc.exists) {
           const docData = directDoc.data() || {};
           if (!docData.email) docData.email = normalized;
@@ -163,11 +166,16 @@ const MendorbitBackend = {
       }
     } catch (e) {}
 
-    // 3. Try Local Encrypted Browser Vault
+    // 3. Try Local Profile Cache & Encrypted Browser Vault
+    try {
+      const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
+      if (cached) return JSON.parse(cached);
+    } catch(e) {}
+
     const users = (typeof MendorbitSecureStorage !== 'undefined')
       ? (MendorbitSecureStorage.getItem("mendorbit_users_db") || {})
       : JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
-    return users[normalized] || null;
+    return users[normalized] || users[email] || null;
   },
 
   /**
