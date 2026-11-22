@@ -212,6 +212,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 800);
   }
 
+  // 8-Character Link Code Generator (Letters & Numbers Guaranteed, No Confusing Chars)
+  function generate8DigitCode() {
+    const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // 24 uppercase letters (excludes I, O)
+    const digits = "23456789";                  // 8 digits (excludes 0, 1)
+    const allChars = letters + digits;
+
+    const codeArray = [
+      letters.charAt(Math.floor(Math.random() * letters.length)),
+      letters.charAt(Math.floor(Math.random() * letters.length)),
+      digits.charAt(Math.floor(Math.random() * digits.length)),
+      digits.charAt(Math.floor(Math.random() * digits.length))
+    ];
+    for (let i = 0; i < 4; i++) {
+      codeArray.push(allChars.charAt(Math.floor(Math.random() * allChars.length)));
+    }
+    // Fisher-Yates shuffle
+    for (let i = codeArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [codeArray[i], codeArray[j]] = [codeArray[j], codeArray[i]];
+    }
+    return codeArray.join("");
+  }
+
   function renderQrCode() {
     const container = document.getElementById("qr-target-container");
     if (!container) return;
@@ -226,22 +249,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     qrHandled = false;
-    const sessionId = "mndrbt_qr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
-    activeQrSessionId = sessionId;
+    const shortCode = generate8DigitCode(); // Guaranteed 8 chars with letters & digits
+    activeQrSessionId = shortCode;
 
+    // Display formatted with hyphen in the middle for effortless readability: e.g. "K7M9-4P2X"
     const linkCodeElem = document.getElementById("qr-link-code-display");
     if (linkCodeElem) {
-      linkCodeElem.textContent = sessionId;
+      linkCodeElem.textContent = `${shortCode.substring(0, 4)}-${shortCode.substring(4)}`;
+      linkCodeElem.setAttribute("data-raw-code", shortCode);
     }
 
-    const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${sessionId}`);
-    // High error correction (ecc=H) guarantees 100% scan reliability with camera viewfinder
-    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-xl w-44 h-44 object-contain shadow-inner" />`;
+    const btnCopy = document.getElementById("btn-copy-link-code");
+    if (btnCopy) {
+      btnCopy.onclick = () => {
+        navigator.clipboard.writeText(shortCode);
+        notify("Link code copied: " + shortCode, "success");
+      };
+    }
+
+    const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${shortCode}`);
+    // High error correction (ecc=H) with lower matrix density makes scanning instant
+    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-2xl w-48 h-48 object-contain shadow-inner" />`;
 
     // Dual-Channel 1: Real-Time Firestore Snapshot Listener
     if (typeof firestoreDb !== 'undefined' && firestoreDb) {
       try {
-        qrUnsubscribe = firestoreDb.collection("qr_auth").doc(sessionId).onSnapshot(async (doc) => {
+        qrUnsubscribe = firestoreDb.collection("qr_auth").doc(shortCode).onSnapshot(async (doc) => {
           if (doc.exists) {
             const data = doc.data();
             if (data && (data.status === "AUTHORIZED" || data.status === "SUCCESS") && data.user) {
@@ -259,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (qrHandled) return;
       try {
         if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.pollQrSession) {
-          const res = await MendorbitAPI.pollQrSession(sessionId);
+          const res = await MendorbitAPI.pollQrSession(shortCode);
           if (res && res.status === "success" && (res.user || res.data?.user)) {
             await handleQrSuccess(res.user || res.data.user);
           }
