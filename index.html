@@ -246,7 +246,12 @@
               
               <!-- Student First Name -->
               <div class="hidden sm:flex flex-col text-left leading-tight pr-0.5">
-                <span id="nav-user-firstname" class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[110px] truncate">Student</span>
+                <div class="flex items-center gap-1">
+                  <span id="nav-user-firstname" class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[110px] truncate">Student</span>
+                  <span id="nav-verified-badge" class="inline-flex items-center text-blue-500 hidden" title="Verified Profile">
+                    <svg class="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="m8.6 22.5-1.9-3.2-3.6-.8.4-3.7-2.5-2.8 2.5-2.8-.4-3.7 3.6-.8 1.9-3.2 3.4 1.5 3.4-1.5 1.9 3.2 3.6.8-.4 3.7 2.5 2.8-2.5 2.8.4 3.7-3.6.8-1.9 3.2-3.4-1.5zm2.4-7.4 5.7-5.7-1.4-1.4-4.3 4.3-2.1-2.1-1.4 1.4z"/></svg>
+                  </span>
+                </div>
                 <span id="nav-user-target" class="text-[9.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Aspirant</span>
               </div>
 
@@ -486,6 +491,14 @@
       // Navbar Profile Elements
       const navFirstname = document.getElementById('nav-user-firstname');
       if (navFirstname) navFirstname.textContent = firstName;
+      const navVerifiedBadge = document.getElementById('nav-verified-badge');
+      if (navVerifiedBadge) {
+        if (session.isVerified || session.kycCompleted) {
+          navVerifiedBadge.classList.remove('hidden');
+        } else {
+          navVerifiedBadge.classList.add('hidden');
+        }
+      }
       const navTarget = document.getElementById('nav-user-target');
       if (navTarget) navTarget.textContent = targetExam;
       const navAvatarInit = document.getElementById('nav-avatar-initial');
