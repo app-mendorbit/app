@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     notify("Device authorized via QR! Welcome to Mendorbit.", "success");
-    await completeAuthSession(user, "QR_LOGIN", "QR Linked Device");
+    await completeAuthSession({ ...user, sessionId: activeQrSessionId }, "QR_LOGIN", "QR Linked Device");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
     }, 800);

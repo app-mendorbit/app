@@ -2253,6 +2253,13 @@
           const cleanSessions = [];
           for (const s of sessions) {
             if (!s || !s.sessionId) continue;
+            // Purge legacy dummy phantom "Remote Browser (QR Linked)" sessions from previous tests
+            if (s.friendlyDevice === "Remote Browser (QR Linked)" && s.sessionId !== currentSessionId) {
+              if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.deleteUserSession) {
+                MendorbitBackend.deleteUserSession(email, s.sessionId);
+              }
+              continue;
+            }
             if (!seenIds.has(s.sessionId)) {
               seenIds.add(s.sessionId);
               cleanSessions.push(s);
@@ -2282,10 +2289,19 @@
             if (devType === "mobile") iconName = "smartphone";
             else if (devType === "tablet") iconName = "tablet";
 
-            // Real-Time Online Status & Last Seen Engine
+            // Real-Time Online Status & Last Seen Engine (Strict 35s fresh heartbeat check)
             const lastActiveEpoch = s.lastActiveEpoch || (s.lastActive ? new Date(s.lastActive).getTime() : 0);
-            const diffSec = lastActiveEpoch ? Math.floor((now - lastActiveEpoch) / 1000) : 9999;
-            const isOnline = isCurrent || (s.isOnline !== false && diffSec < 75);
+            const diffSec = lastActiveEpoch ? Math.floor((now - lastActiveEpoch) / 1000) : 99999;
+
+            // Strict Online Evaluation:
+            // - Current session: online if tab is visible & online
+            // - Other sessions: ONLY online if s.isOnline is true AND heartbeat is fresh (<= 35 seconds)
+            let isOnline = false;
+            if (isCurrent && document.visibilityState === 'visible' && navigator.onLine) {
+              isOnline = true;
+            } else if (!isCurrent && s.isOnline === true && diffSec <= 35) {
+              isOnline = true;
+            }
 
             let onlineBadge = '';
             if (isOnline) {
@@ -2459,6 +2475,23 @@
       }
 
       renderSessions();
+
+      // Real-Time Live Sync: Automatically re-render instantly whenever any session logs in, heartbeats, or disconnects
+      if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+        try {
+          firestoreDb.collection("users").doc(email).collection("sessions").onSnapshot(() => {
+            renderSessions();
+          }, (err) => console.warn("[Sessions] Snapshot sync note:", err));
+        } catch(e) {}
+      }
+
+      // Live Ticker: Re-render every 10 seconds so elapsed last-seen times update dynamically without reload
+      setInterval(() => {
+        const tabSessions = document.getElementById('tab-sessions');
+        if (tabSessions && !tabSessions.classList.contains('hidden')) {
+          renderSessions();
+        }
+      }, 10000);
 
       // "Logout All Other Devices" button
       const btnLogoutAllOthers = document.getElementById('btn-logout-all-others');
@@ -2638,7 +2671,7 @@
             await MendorbitAPI.authorizeQrSession(targetSession, userPayload, email).catch(e => console.warn("Worker QR error:", e));
           }
 
-          // 2. Dual-Channel: Also write to Firestore qr_auth
+          // 2. Dual-Channel: Also write to Firestore qr_auth collection
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
             await firestoreDb.collection("qr_auth").doc(targetSession).set({
               status: "AUTHORIZED",
@@ -2647,38 +2680,6 @@
               user: userPayload,
               authorizedAt: new Date().toISOString()
             }).catch(e => console.warn("Firestore QR set error:", e));
-
-            // Record linked device in user's active sessions
-            const remoteSessId = "sess_qr_" + Date.now();
-            await firestoreDb.collection("users").doc(email).collection("sessions").doc(remoteSessId).set({
-              sessionId: remoteSessId,
-              friendlyDevice: "Remote Browser (QR Linked)",
-              deviceType: "Desktop",
-              ip: "Remote Device",
-              location: { city: "India" },
-              loginTime: new Date().toISOString(),
-              loginEpoch: Date.now(),
-              lastActive: new Date().toISOString(),
-              lastActiveEpoch: Date.now(),
-              isOnline: true,
-              authMethod: "QR Linked Device",
-              status: "ACTIVE"
-            }).catch(() => {});
-
-            const updateMap = {};
-            updateMap[`sessions.${remoteSessId}`] = {
-              sessionId: remoteSessId,
-              friendlyDevice: "Remote Browser (QR Linked)",
-              deviceType: "Desktop",
-              authMethod: "QR Linked Device",
-              status: "ACTIVE",
-              loginTime: new Date().toISOString(),
-              loginEpoch: Date.now(),
-              lastActive: new Date().toISOString(),
-              lastActiveEpoch: Date.now(),
-              isOnline: true
-            };
-            await firestoreDb.collection("users").doc(email).set(updateMap, { merge: true }).catch(() => {});
           }
 
           closeLinkDeviceModal();

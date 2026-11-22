@@ -336,7 +336,7 @@
 
   /**
    * Real-Time Heartbeat & Last-Seen Engine
-   * Broadcasts active state every 25 seconds and sets offline state on exit/unload
+   * Broadcasts active state every 15 seconds and sends guaranteed offline beacon on unload/hide
    */
   let heartbeatInterval = null;
 
@@ -364,34 +364,59 @@
     }
   }
 
+  function sendOfflineSignal() {
+    const session = getSession();
+    const sessionId = (session && session.sessionId) || localStorage.getItem("mendorbit_session_id");
+    if (!session || !session.email || !sessionId) return;
+    const emailNorm = session.email.toLowerCase().trim();
+
+    // 1. Direct Firestore write
+    updateHeartbeatState(false);
+
+    // 2. Guaranteed background beacon (delivered even after browser window destroys)
+    const payload = JSON.stringify({ email: emailNorm, sessionId: sessionId });
+    const offlineUrl = "/api/auth/session-offline";
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(offlineUrl, new Blob([payload], { type: "application/json" }));
+      } else {
+        fetch(offlineUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+      }
+    } catch(e) {}
+  }
+
   function startHeartbeatMonitor() {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
 
-    // Initial ping
+    // Initial online ping
     updateHeartbeatState(true);
 
-    // Periodic ping every 25 seconds
+    // Periodic ping every 15 seconds (responsive & lightweight)
     heartbeatInterval = setInterval(() => {
       if (document.visibilityState === 'visible' && navigator.onLine) {
         updateHeartbeatState(true);
       }
-    }, 25000);
+    }, 15000);
 
-    // Offline / Visibility change triggers
+    // Visibility change triggers (immediate online / offline state)
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
-        updateHeartbeatState(false);
+        sendOfflineSignal();
       } else if (navigator.onLine) {
         updateHeartbeatState(true);
       }
     });
 
     window.addEventListener('beforeunload', () => {
-      updateHeartbeatState(false);
+      sendOfflineSignal();
+    });
+
+    window.addEventListener('pagehide', () => {
+      sendOfflineSignal();
     });
 
     window.addEventListener('offline', () => {
-      updateHeartbeatState(false);
+      sendOfflineSignal();
     });
 
     window.addEventListener('online', () => {

@@ -248,6 +248,8 @@ const MendorbitBackend = {
       loginTime: sessionData.loginTime || new Date().toISOString(),
       loginEpoch: Date.now(),
       lastActive: new Date().toISOString(),
+      lastActiveEpoch: Date.now(),
+      isOnline: true,
       authMethod: sessionData.authMethod || sessionData.type || "Password",
       status: "ACTIVE"
     };
