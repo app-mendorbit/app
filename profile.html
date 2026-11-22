@@ -2415,40 +2415,40 @@
         // Perpetual Verification Lock: If verified once, status is permanently locked at 100%
         const isPermanentlyVerified = !!(userDoc && (userDoc.isVerified === true || userDoc.kycCompleted === true || userDoc.kycStatus === 'VERIFIED'));
 
+        // Check each critical field (Declared in function scope so accessible in checklist modal)
+        const fName = (document.getElementById('input-first-name')?.value || '').trim();
+        const phone = (document.getElementById('input-phone-number')?.value || '').trim();
+        const dob = (document.getElementById('input-dob')?.value || '').trim();
+        const gender = (document.getElementById('input-gender')?.value || '').trim();
+        const bloodVal = (document.getElementById('input-blood-group')?.value || '').trim();
+        const isBloodSet = !!(bloodVal && !bloodVal.toLowerCase().includes('select'));
+
+        // Guardian
+        const fatherName = (document.getElementById('input-father-name')?.value || '').trim();
+        const motherName = (document.getElementById('input-mother-name')?.value || '').trim();
+        const isGuardianSet = !!(fatherName || motherName);
+
+        // Address
+        const addr1 = (document.getElementById('input-address1')?.value || '').trim();
+        const pincode = (document.getElementById('input-pincode')?.value || '').trim();
+        const city = (document.getElementById('input-city')?.value || '').trim();
+        const district = (document.getElementById('input-district')?.value || '').trim();
+        const isAddressSet = !!(addr1 && pincode.length === 6 && (city || district));
+
+        // Academic
+        const academicSchool = (document.getElementById('input-academic-school')?.value || '').trim();
+        const isAcademicSet = !!academicSchool;
+
         if (isPermanentlyVerified) {
           score = 100;
         } else {
-          // Check each critical field
-          const fName = (document.getElementById('input-first-name')?.value || '').trim();
-          const phone = (document.getElementById('input-phone-number')?.value || '').trim();
-          const dob = (document.getElementById('input-dob')?.value || '').trim();
-          const gender = (document.getElementById('input-gender')?.value || '').trim();
-          const bloodVal = (document.getElementById('input-blood-group')?.value || '').trim();
-          const isBloodSet = !!(bloodVal && !bloodVal.toLowerCase().includes('select'));
-
           if (fName) score += 12;
           if (phone.length === 10) score += 12;
           if (dob) score += 10;
           if (gender) score += 8;
           if (isBloodSet) score += 6;
-
-          // Guardian
-          const fatherName = (document.getElementById('input-father-name')?.value || '').trim();
-          const motherName = (document.getElementById('input-mother-name')?.value || '').trim();
-          const isGuardianSet = !!(fatherName || motherName);
           if (isGuardianSet) score += 14;
-
-          // Address
-          const addr1 = (document.getElementById('input-address1')?.value || '').trim();
-          const pincode = (document.getElementById('input-pincode')?.value || '').trim();
-          const city = (document.getElementById('input-city')?.value || '').trim();
-          const district = (document.getElementById('input-district')?.value || '').trim();
-          const isAddressSet = !!(addr1 && pincode.length === 6 && (city || district));
           if (isAddressSet) score += 18;
-
-          // Academic
-          const academicSchool = (document.getElementById('input-academic-school')?.value || '').trim();
-          const isAcademicSet = !!academicSchool;
           if (isAcademicSet) score += 20;
         }
 
