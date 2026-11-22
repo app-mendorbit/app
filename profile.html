@@ -1412,13 +1412,16 @@
           <!-- TAB 7: ACTIVE SESSIONS                           -->
           <!-- ================================================ -->
           <div id="tab-sessions" class="profile-tab-pane hidden">
-            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div class="flex items-center gap-2.5">
-                  <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Active Sessions & Devices</h2>
-                  <span id="active-sessions-count-pill" class="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">1 Active</span>
+            <div class="pb-5 mb-5 sm:pb-6 sm:mb-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                  <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Active Sessions & Devices</h2>
+                  <span id="active-sessions-count-pill" class="whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800/80 shadow-2xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>1 Active</span>
+                  </span>
                 </div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage all computers, phones and active browser sessions authorized to access your Mendorbit account.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Manage all computers, phones and active browser sessions authorized to access your Mendorbit account.</p>
               </div>
               
               <div class="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto mt-2 sm:mt-0">
@@ -1811,6 +1814,96 @@
       <div class="flex items-center justify-end pt-3">
         <button type="button" id="btn-cancel-link-modal" class="btn-edtech-cancel text-xs py-2 px-4">
           Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- AVATAR PHOTO CROPPER MODAL (SMOOTH DRAG, ZOOM & ROTATE)   -->
+  <!-- ======================================================== -->
+  <div id="modal-avatar-cropper" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-4 sm:p-6 transform scale-95 transition-transform duration-200 overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="crop" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white">Crop Profile Photo</h3>
+            <p class="text-[11px] text-slate-400">Position & scale your picture inside the circle</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-crop-modal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Crop Viewport Container -->
+      <div class="relative my-3 sm:my-4 flex items-center justify-center select-none">
+        <div id="crop-viewport" class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner flex items-center justify-center cursor-grab active:cursor-grabbing touch-none select-none">
+          <!-- Dynamic High-DPR Canvas -->
+          <canvas id="crop-canvas" class="w-full h-full block"></canvas>
+
+          <!-- Circular Stencil Aperture Overlay -->
+          <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <!-- Circular stencil cutout with dark outer mask and bright border -->
+            <div id="crop-stencil" class="w-48 h-48 sm:w-56 sm:h-56 rounded-full border-2 border-white/90 shadow-[0_0_0_9999px_rgba(15,23,42,0.72)] relative flex items-center justify-center">
+              <!-- Subtle 3x3 rule-of-thirds grid -->
+              <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-25">
+                <div class="border-r border-b border-white"></div>
+                <div class="border-r border-b border-white"></div>
+                <div class="border-b border-white"></div>
+                <div class="border-r border-b border-white"></div>
+                <div class="border-r border-b border-white"></div>
+                <div class="border-b border-white"></div>
+                <div class="border-r border-white"></div>
+                <div class="border-r border-white"></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom hint badge -->
+          <div class="absolute bottom-2 inset-x-0 text-center pointer-events-none">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-black/60 text-white/90 backdrop-blur-xs">
+              Drag to move • Pinch/Slider to zoom
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls: Zoom Slider + Rotate + Reset -->
+      <div class="space-y-2.5 pt-1 pb-3.5 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2 sm:gap-2.5">
+          <button type="button" id="btn-zoom-out" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="Zoom Out">
+            <i data-lucide="zoom-out" class="w-4 h-4"></i>
+          </button>
+          <input type="range" id="crop-zoom-slider" min="1" max="3" step="0.01" value="1" class="flex-1 accent-orange-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg">
+          <button type="button" id="btn-zoom-in" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="Zoom In">
+            <i data-lucide="zoom-in" class="w-4 h-4"></i>
+          </button>
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-0.5"></div>
+          <button type="button" id="btn-rotate-crop" class="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="Rotate 90°">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+          <button type="button" id="btn-reset-crop" class="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="Reset Positioning">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end gap-2.5 pt-3.5">
+        <button type="button" id="btn-cancel-crop" class="btn-edtech-cancel px-4 py-2 text-xs">
+          Cancel
+        </button>
+        <button type="button" id="btn-apply-crop" class="btn-edtech-update px-4 sm:px-5 py-2 text-xs flex items-center gap-1.5">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Crop & Upload</span>
         </button>
       </div>
 
@@ -3284,18 +3377,245 @@
       });
 
       // ========================================================
-      // 9. AVATAR PHOTO UPDATE (ONE-CLICK NATIVE FILE UPLOAD + INSTANT CLOUD SYNC)
+      // 9. AVATAR PHOTO UPDATE & INTERACTIVE CIRCLE CROPPER
       // ========================================================
       const editAvatarBtn = document.getElementById('btn-edit-avatar');
       const avatarFileInput = document.getElementById('avatar-file-input');
 
+      // Cropper Modal Elements
+      const modalAvatarCropper = document.getElementById('modal-avatar-cropper');
+      const cropViewport = document.getElementById('crop-viewport');
+      const cropCanvas = document.getElementById('crop-canvas');
+      const cropStencil = document.getElementById('crop-stencil');
+      const cropZoomSlider = document.getElementById('crop-zoom-slider');
+      const btnZoomIn = document.getElementById('btn-zoom-in');
+      const btnZoomOut = document.getElementById('btn-zoom-out');
+      const btnRotateCrop = document.getElementById('btn-rotate-crop');
+      const btnResetCrop = document.getElementById('btn-reset-crop');
+      const btnCloseCropModal = document.getElementById('btn-close-crop-modal');
+      const btnCancelCrop = document.getElementById('btn-cancel-crop');
+      const btnApplyCrop = document.getElementById('btn-apply-crop');
+
+      // Cropper State
+      let cropImage = null;
+      let baseScale = 1;
+      let cropScaleMultiplier = 1;
+      let cropOffsetX = 0;
+      let cropOffsetY = 0;
+      let cropRotation = 0;
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let isPinching = false;
+      let initialPinchDist = 0;
+      let initialPinchScale = 1;
+
+      function openCropModal() {
+        if (!modalAvatarCropper) return;
+        modalAvatarCropper.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modalAvatarCropper.classList.remove('opacity-0');
+          const card = modalAvatarCropper.querySelector('div');
+          if (card) card.classList.remove('scale-95');
+        });
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function closeCropModal() {
+        if (!modalAvatarCropper) return;
+        modalAvatarCropper.classList.add('opacity-0');
+        const card = modalAvatarCropper.querySelector('div');
+        if (card) card.classList.add('scale-95');
+        setTimeout(() => {
+          modalAvatarCropper.classList.add('hidden');
+          cropImage = null;
+          if (avatarFileInput) avatarFileInput.value = "";
+        }, 200);
+      }
+
+      if (btnCloseCropModal) btnCloseCropModal.addEventListener('click', closeCropModal);
+      if (btnCancelCrop) btnCancelCrop.addEventListener('click', closeCropModal);
+
+      // Render Crop Canvas in real-time
+      function renderCropCanvas() {
+        if (!cropCanvas || !cropViewport || !cropImage) return;
+
+        const rect = cropViewport.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const width = rect.width;
+        const height = rect.height;
+
+        if (cropCanvas.width !== width * dpr || cropCanvas.height !== height * dpr) {
+          cropCanvas.width = width * dpr;
+          cropCanvas.height = height * dpr;
+        }
+
+        const ctx = cropCanvas.getContext('2d');
+        ctx.save();
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, width, height);
+
+        // Center on viewport + user drag offset
+        ctx.translate(width / 2 + cropOffsetX, height / 2 + cropOffsetY);
+        ctx.rotate((cropRotation * Math.PI) / 180);
+
+        const currentScale = baseScale * cropScaleMultiplier;
+        ctx.scale(currentScale, currentScale);
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(cropImage, -cropImage.width / 2, -cropImage.height / 2);
+        ctx.restore();
+      }
+
+      // Initialize cropper when image loads
+      function initCropperWithImage(img) {
+        cropImage = img;
+        cropOffsetX = 0;
+        cropOffsetY = 0;
+        cropRotation = 0;
+        cropScaleMultiplier = 1;
+        if (cropZoomSlider) cropZoomSlider.value = "1";
+
+        openCropModal();
+
+        // Stencil diameter
+        requestAnimationFrame(() => {
+          const stencilDim = (cropStencil && cropStencil.offsetWidth) || 224;
+          // Base scale ensures the image covers the stencil circle completely
+          baseScale = Math.max(stencilDim / img.width, stencilDim / img.height);
+          renderCropCanvas();
+        });
+      }
+
+      // Mouse drag controls
+      if (cropViewport) {
+        cropViewport.addEventListener('mousedown', (e) => {
+          if (!cropImage) return;
+          isDragging = true;
+          dragStartX = e.clientX - cropOffsetX;
+          dragStartY = e.clientY - cropOffsetY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          cropOffsetX = e.clientX - dragStartX;
+          cropOffsetY = e.clientY - dragStartY;
+          renderCropCanvas();
+        });
+
+        window.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+
+        // Trackpad / Mouse Wheel Zoom
+        cropViewport.addEventListener('wheel', (e) => {
+          if (!cropImage) return;
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.08 : -0.08;
+          cropScaleMultiplier = Math.min(3, Math.max(1, cropScaleMultiplier + delta));
+          if (cropZoomSlider) cropZoomSlider.value = cropScaleMultiplier.toFixed(2);
+          renderCropCanvas();
+        }, { passive: false });
+
+        // Touch Drag & Pinch-to-Zoom
+        cropViewport.addEventListener('touchstart', (e) => {
+          if (!cropImage) return;
+          if (e.touches.length === 1) {
+            isDragging = true;
+            dragStartX = e.touches[0].clientX - cropOffsetX;
+            dragStartY = e.touches[0].clientY - cropOffsetY;
+          } else if (e.touches.length === 2) {
+            isPinching = true;
+            isDragging = false;
+            initialPinchDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialPinchScale = cropScaleMultiplier;
+          }
+        }, { passive: true });
+
+        cropViewport.addEventListener('touchmove', (e) => {
+          if (!cropImage) return;
+          if (e.cancelable) e.preventDefault();
+
+          if (isDragging && e.touches.length === 1) {
+            cropOffsetX = e.touches[0].clientX - dragStartX;
+            cropOffsetY = e.touches[0].clientY - dragStartY;
+            renderCropCanvas();
+          } else if (isPinching && e.touches.length === 2) {
+            const currentDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            if (initialPinchDist > 0) {
+              const ratio = currentDist / initialPinchDist;
+              cropScaleMultiplier = Math.min(3, Math.max(1, initialPinchScale * ratio));
+              if (cropZoomSlider) cropZoomSlider.value = cropScaleMultiplier.toFixed(2);
+              renderCropCanvas();
+            }
+          }
+        }, { passive: false });
+
+        cropViewport.addEventListener('touchend', (e) => {
+          if (e.touches.length < 2) isPinching = false;
+          if (e.touches.length === 0) isDragging = false;
+        });
+      }
+
+      // Zoom slider event
+      if (cropZoomSlider) {
+        cropZoomSlider.addEventListener('input', () => {
+          cropScaleMultiplier = parseFloat(cropZoomSlider.value) || 1;
+          renderCropCanvas();
+        });
+      }
+
+      // Zoom In / Out Buttons
+      if (btnZoomIn) {
+        btnZoomIn.addEventListener('click', () => {
+          cropScaleMultiplier = Math.min(3, cropScaleMultiplier + 0.2);
+          if (cropZoomSlider) cropZoomSlider.value = cropScaleMultiplier.toFixed(2);
+          renderCropCanvas();
+        });
+      }
+      if (btnZoomOut) {
+        btnZoomOut.addEventListener('click', () => {
+          cropScaleMultiplier = Math.max(1, cropScaleMultiplier - 0.2);
+          if (cropZoomSlider) cropZoomSlider.value = cropScaleMultiplier.toFixed(2);
+          renderCropCanvas();
+        });
+      }
+
+      // Rotate Button
+      if (btnRotateCrop) {
+        btnRotateCrop.addEventListener('click', () => {
+          cropRotation = (cropRotation + 90) % 360;
+          renderCropCanvas();
+        });
+      }
+
+      // Reset Button
+      if (btnResetCrop) {
+        btnResetCrop.addEventListener('click', () => {
+          cropOffsetX = 0;
+          cropOffsetY = 0;
+          cropRotation = 0;
+          cropScaleMultiplier = 1;
+          if (cropZoomSlider) cropZoomSlider.value = "1";
+          renderCropCanvas();
+        });
+      }
+
+      // Trigger file selector from pencil badge
       if (editAvatarBtn && avatarFileInput) {
         editAvatarBtn.addEventListener('click', () => {
           avatarFileInput.value = "";
           avatarFileInput.click();
         });
 
-        avatarFileInput.addEventListener('change', async (e) => {
+        avatarFileInput.addEventListener('change', (e) => {
           const file = e.target.files && e.target.files[0];
           if (!file) return;
 
@@ -3304,53 +3624,61 @@
             return;
           }
 
-          if (file.size > 15 * 1024 * 1024) {
-            showToast("Selected file is larger than 15MB. Please choose a smaller image.", "error");
+          if (file.size > 20 * 1024 * 1024) {
+            showToast("Selected file is larger than 20MB. Please choose a smaller image.", "error");
             return;
           }
 
-          const originalHTML = editAvatarBtn.innerHTML;
-          editAvatarBtn.disabled = true;
-          editAvatarBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 text-orange-500 animate-spin"></i>`;
+          const reader = new FileReader();
+          reader.onerror = () => showToast("Failed to read image file.", "error");
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => showToast("Invalid image format.", "error");
+            img.onload = () => {
+              initCropperWithImage(img);
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Apply Crop & Save Button
+      if (btnApplyCrop) {
+        btnApplyCrop.addEventListener('click', async () => {
+          if (!cropImage) return;
+
+          const originalHTML = btnApplyCrop.innerHTML;
+          btnApplyCrop.disabled = true;
+          btnApplyCrop.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Saving...</span>`;
           if (window.lucide) lucide.createIcons();
 
           try {
-            showToast("Optimizing & uploading profile photo...", "info");
+            // High-resolution Retina export (320x320 Retina square)
+            const outCanvas = document.createElement('canvas');
+            const targetDim = 320;
+            outCanvas.width = targetDim;
+            outCanvas.height = targetDim;
+            const outCtx = outCanvas.getContext('2d');
+            outCtx.imageSmoothingEnabled = true;
+            outCtx.imageSmoothingQuality = 'high';
 
-            // Client-side high-resolution square-crop & WebP compression (0ms blur, zero latency)
-            const optimizedBase64 = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onerror = () => reject(new Error("Failed to read image file"));
-              reader.onload = () => {
-                const img = new Image();
-                img.onerror = () => reject(new Error("Invalid image format"));
-                img.onload = () => {
-                  const canvas = document.createElement('canvas');
-                  const targetDim = 320; // 320x320 Retina square
-                  canvas.width = targetDim;
-                  canvas.height = targetDim;
-                  const ctx = canvas.getContext('2d');
+            const stencilDim = (cropStencil && cropStencil.offsetWidth) || 224;
+            const scaleRatio = targetDim / stencilDim;
 
-                  // High-fidelity center-square cover crop
-                  const minSide = Math.min(img.width, img.height);
-                  const sx = (img.width - minSide) / 2;
-                  const sy = (img.height - minSide) / 2;
+            outCtx.save();
+            outCtx.translate(targetDim / 2 + cropOffsetX * scaleRatio, targetDim / 2 + cropOffsetY * scaleRatio);
+            outCtx.rotate((cropRotation * Math.PI) / 180);
 
-                  ctx.imageSmoothingEnabled = true;
-                  ctx.imageSmoothingQuality = 'high';
-                  ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, targetDim, targetDim);
+            const effectiveScale = baseScale * cropScaleMultiplier * scaleRatio;
+            outCtx.scale(effectiveScale, effectiveScale);
+            outCtx.drawImage(cropImage, -cropImage.width / 2, -cropImage.height / 2);
+            outCtx.restore();
 
-                  // Modern WebP export (falls back to JPEG)
-                  let result = canvas.toDataURL('image/webp', 0.88);
-                  if (!result.startsWith('data:image/webp')) {
-                    result = canvas.toDataURL('image/jpeg', 0.88);
-                  }
-                  resolve(result);
-                };
-                img.src = reader.result;
-              };
-              reader.readAsDataURL(file);
-            });
+            let optimizedBase64 = outCanvas.toDataURL('image/webp', 0.88);
+            if (!optimizedBase64.startsWith('data:image/webp')) {
+              optimizedBase64 = outCanvas.toDataURL('image/jpeg', 0.88);
+            }
 
             // Instant UI update on both hero and navbar avatars
             ['hero-avatar-img', 'nav-avatar-img'].forEach(id => {
@@ -3370,14 +3698,16 @@
               photoURL: optimizedBase64,
               hasCustomAvatar: true,
               avatarUpdatedAt: new Date().toISOString()
-            }, "Profile photo updated successfully!", editAvatarBtn);
+            }, "Profile photo cropped & updated successfully!", editAvatarBtn);
+
+            closeCropModal();
 
           } catch (err) {
-            console.error("Avatar upload error:", err);
-            showToast("Failed to upload photo. Please try again.", "error");
+            console.error("Avatar crop save error:", err);
+            showToast("Failed to save cropped photo. Please try again.", "error");
           } finally {
-            editAvatarBtn.disabled = false;
-            editAvatarBtn.innerHTML = originalHTML;
+            btnApplyCrop.disabled = false;
+            btnApplyCrop.innerHTML = originalHTML;
             if (window.lucide) lucide.createIcons();
           }
         });
@@ -3455,7 +3785,7 @@
           const activeList = sessions.filter(s => !isLoggedOut(s) && (s.status === "ACTIVE" || !s.status));
           const historyList = sessions.filter(s => isLoggedOut(s));
 
-          if (countPill) countPill.textContent = `${activeList.length} Active`;
+          if (countPill) countPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>${activeList.length} Active</span>`;
           if (historyCount) historyCount.textContent = historyList.length;
           if (btnClearAllHistory) {
             if (historyList.length > 0) btnClearAllHistory.classList.remove('hidden');
@@ -3534,7 +3864,7 @@
             }
 
             const card = document.createElement("div");
-            card.className = `p-4 rounded-2xl border transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 ${
+            card.className = `p-3.5 sm:p-4 rounded-2xl border transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-3.5 ${
               isCurrent 
                 ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/40 shadow-sm'
                 : 'bg-white dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
@@ -3544,18 +3874,18 @@
             const timeStr = s.loginTime ? new Date(s.loginTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : "Recently";
 
             card.innerHTML = `
-              <div class="flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl ${isCurrent ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'} flex items-center justify-center flex-shrink-0">
+              <div class="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
+                <div class="w-10 h-10 rounded-xl ${isCurrent ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'} flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0">
                   <i data-lucide="${iconName}" class="w-5 h-5"></i>
                 </div>
-                <div>
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-sm font-extrabold text-slate-900 dark:text-white">${s.friendlyDevice || 'Device'}</span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">${s.friendlyDevice || 'Device'}</span>
                     ${authBadge}
                     ${onlineBadge}
                     ${isCurrent ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300">This Device</span>' : ''}
                   </div>
-                  <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
+                  <p class="text-[11px] sm:text-xs text-slate-400 mt-1 flex items-center gap-1.5 sm:gap-2 flex-wrap leading-relaxed">
                     <span>📍 ${locStr}</span>
                     <span>•</span>
                     <span class="font-mono">IP: ${s.ip || '127.0.0.1'}</span>
@@ -3564,17 +3894,19 @@
                   </p>
                 </div>
               </div>
-              ${isCurrent ? `
-                <button type="button" class="btn-logout-current-device px-3 py-1.5 rounded-xl text-xs font-bold text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
-                  <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                  <span>Logout Device</span>
-                </button>
-              ` : `
-                <button type="button" class="btn-logout-device px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
-                  <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                  <span>Terminate</span>
-                </button>
-              `}
+              <div class="w-full sm:w-auto flex items-center justify-end sm:justify-start pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800/80">
+                ${isCurrent ? `
+                  <button type="button" class="btn-logout-current-device w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout Device</span>
+                  </button>
+                ` : `
+                  <button type="button" class="btn-logout-device w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Terminate</span>
+                  </button>
+                `}
+              </div>
             `;
             listContainer.appendChild(card);
           });
