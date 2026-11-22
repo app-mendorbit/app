@@ -65,6 +65,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
     const sessionWithId = { ...userPayload, sessionId };
 
+    // PRESERVE CUSTOM AVATAR: Custom uploaded avatar must NEVER be overwritten by Google Sign-In or default photo
+    if (userPayload && userPayload.email) {
+      const norm = userPayload.email.toLowerCase().trim();
+      try {
+        const cached = JSON.parse(localStorage.getItem("mendorbit_profile_" + norm) || "{}");
+        if (cached && (cached.hasCustomAvatar || (cached.photoURL && !userPayload.hasCustomAvatar))) {
+          sessionWithId.photoURL = cached.photoURL;
+          sessionWithId.hasCustomAvatar = true;
+          userPayload.photoURL = cached.photoURL;
+          userPayload.hasCustomAvatar = true;
+        }
+      } catch (e) {}
+    }
+
     // Purge old zombie session on the same device so only one active session remains
     try {
       const oldSessionId = localStorage.getItem("mendorbit_session_id");
@@ -1128,7 +1142,8 @@ document.addEventListener("DOMContentLoaded", function () {
           if (existing || storedClass) {
             const finalClass = (existing && existing.class) || storedClass || "Class 10";
             const finalName = (existing && existing.displayName) || gUser.displayName || "Student";
-            const finalPhoto = gUser.photoURL || (existing && existing.photoURL) || "";
+            const localCachedProfile = JSON.parse(localStorage.getItem("mendorbit_profile_" + normalizedEmail) || "{}");
+            const finalPhoto = (existing && existing.photoURL) || localCachedProfile.photoURL || gUser.photoURL || "";
 
             const userSession = {
               uid: (existing && existing.uid) || gUser.uid || normalizedEmail,
@@ -1215,7 +1230,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedClass = document.getElementById("google-class").value;
     const password = document.getElementById("google-password").value;
     const normalizedEmail = (pendingGoogleUser.email || "").toLowerCase().trim();
-    const photoURL = (pendingGoogleUser && pendingGoogleUser.photoURL) || "";
+    const localProfile = JSON.parse(localStorage.getItem("mendorbit_profile_" + normalizedEmail) || "{}");
+    const photoURL = localProfile.photoURL || (pendingGoogleUser && pendingGoogleUser.photoURL) || "";
 
     if (!selectedClass || !password) {
       notify("Please select your class and set a password.", "error");
