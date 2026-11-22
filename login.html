@@ -114,18 +114,18 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="flex items-center justify-center min-h-screen p-3 xs:p-4 sm:p-6 lg:p-10 select-none">
+<body class="flex flex-col items-center justify-center min-h-[100dvh] p-3 xs:p-4 sm:p-6 lg:p-10 select-none overflow-x-hidden">
 
   <!-- Toast Notification Container -->
   <div id="toast-container"></div>
 
-  <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center my-auto">
+  <div class="max-w-md lg:max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-center my-auto">
 
-    <!-- ==================== LEFT COLUMN: BRANDING & FEATURES ==================== -->
-    <div class="lg:col-span-6 space-y-5 sm:space-y-7 self-center order-2 lg:order-1">
+    <!-- ==================== LEFT COLUMN: BRANDING & FEATURES (DESKTOP ONLY) ==================== -->
+    <div class="hidden lg:block lg:col-span-6 space-y-5 sm:space-y-7 self-center">
       
-      <!-- Desktop Brand Header (Matches User's Reference Screenshot) -->
-      <div class="hidden lg:flex items-center gap-4">
+      <!-- Desktop Brand Header -->
+      <div class="flex items-center gap-4">
         <div class="w-14 h-14 rounded-2xl bg-white shadow-md border border-orange-100 p-1.5 flex items-center justify-center flex-shrink-0">
           <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain">
         </div>
@@ -140,7 +140,7 @@
         India's trusted learning platform for School Boards & Competitive Exams. Built passionately from ground zero to turn every student into a topper.
       </p>
 
-      <!-- Feature Highlight Cards -->
+      <!-- Feature Highlight Cards (Hidden on small mobile devices as requested) -->
       <div class="space-y-3.5 sm:space-y-4 max-w-lg">
         
         <!-- Card 1: Ground Zero -->
@@ -189,16 +189,16 @@
     </div>
 
     <!-- ==================== RIGHT COLUMN: FLOATING AUTH CARD ==================== -->
-    <div class="lg:col-span-6 flex flex-col items-center lg:items-end order-1 lg:order-2 w-full">
+    <div class="lg:col-span-6 flex flex-col items-center lg:items-end w-full">
       
-      <!-- Mobile-Only Brand Header (Shows at top on phones) -->
-      <div class="lg:hidden flex items-center gap-3 mb-5 self-center">
-        <div class="w-11 h-11 rounded-2xl bg-white shadow-md border border-orange-100 p-1 flex items-center justify-center flex-shrink-0">
+      <!-- Mobile-Only Brand Header (Shows ONLY on small devices at the top) -->
+      <div class="lg:hidden flex items-center justify-center gap-3 mb-5 sm:mb-6 self-center">
+        <div class="w-12 h-12 rounded-2xl bg-white shadow-md border border-orange-100 p-1 flex items-center justify-center flex-shrink-0">
           <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain">
         </div>
-        <div class="flex flex-col">
-          <span class="text-3xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
-          <span class="text-[10px] font-extrabold text-[#526071] tracking-[0.22em] uppercase mt-0.5">ORBIT OF KNOWLEDGE</span>
+        <div class="flex flex-col text-left">
+          <span class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-[#ff5e00] to-[#ff3838] bg-clip-text text-transparent tracking-tight leading-none">Mendorbit</span>
+          <span class="text-[10px] sm:text-[11px] font-extrabold text-[#526071] tracking-[0.22em] uppercase mt-0.5">ORBIT OF KNOWLEDGE</span>
         </div>
       </div>
 
