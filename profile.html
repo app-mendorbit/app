@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings & Student Profile | Mendorbit</title>
+  <title>Student Profile & KYC | Mendorbit</title>
   <link rel="icon" type="image/png" href="logo.png">
 
   <!-- Immediate Theme Preference Check -->
@@ -15,7 +15,7 @@
     }
   </script>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -41,8 +41,10 @@
               800: '#1e40af',
               900: '#1e3a8a',
             },
-            accent: {
+            edtech: {
               orange: '#ff6600',
+              orangeHover: '#ea580c',
+              orangeLight: '#fff7ed',
               coral: '#ff3838',
               emerald: '#10b981',
             }
@@ -73,36 +75,18 @@
       -webkit-backdrop-filter: blur(14px);
     }
     .dark .nav-glass {
-      background: rgba(11, 15, 25, 0.88);
+      background: rgba(11, 15, 25, 0.90);
       border-color: rgba(255, 255, 255, 0.08);
     }
 
-    .btn-premium-batches {
-      height: 38px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      position: relative;
-      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
-      color: #ffffff !important;
-      border-radius: 9999px;
-      overflow: hidden;
-      padding: 0 16px;
-      box-shadow: 0 4px 14px 0 rgba(30, 58, 138, 0.35);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      font-weight: 800;
-      font-size: 11.5px;
-      line-height: 1;
+    .profile-hero-wash {
+      background: linear-gradient(180deg, #fbfaff 0%, #f4f6fb 60%, #f8fafc 100%);
     }
-    .btn-premium-batches:hover {
-      transform: translateY(-1.5px);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-    }
-    .dark .btn-premium-batches {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+    .dark .profile-hero-wash {
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.6) 60%, #0b0f19 100%);
     }
 
+    /* Apple-Style Theme Toggle */
     .apple-theme-toggle {
       position: relative;
       display: inline-flex;
@@ -137,79 +121,148 @@
       background-color: #0f172a;
     }
 
-    /* Tab navigation buttons */
-    .profile-tab-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 18px;
-      font-size: 13.5px;
-      font-weight: 600;
+    /* Input Field Polish (Matching Vedantu EdTech Form Look) */
+    .edtech-input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
       color: #64748b;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
     }
-    .dark .profile-tab-btn {
+    .dark .edtech-input-group label {
       color: #94a3b8;
     }
-    .profile-tab-btn:hover {
-      color: #2563eb;
-    }
-    .dark .profile-tab-btn:hover {
-      color: #60a5fa;
-    }
-    .profile-tab-btn.active {
-      color: #2563eb;
-      border-bottom-color: #2563eb;
-    }
-    .dark .profile-tab-btn.active {
-      color: #60a5fa;
-      border-bottom-color: #60a5fa;
-    }
-
-    /* Input focus styling */
-    .mendorbit-form-input {
-      background: #f8fafc;
+    .edtech-input {
+      width: 100%;
+      background: #ffffff;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 11px 16px;
       font-size: 13.5px;
+      font-weight: 500;
       color: #1e293b;
       transition: all 0.2s ease;
-      width: 100%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
-    .dark .mendorbit-form-input {
-      background: #111827;
-      border-color: #374151;
-      color: #f3f4f6;
-    }
-    .mendorbit-form-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-    .dark .mendorbit-form-input:focus {
+    .dark .edtech-input {
       background: #0f172a;
-      border-color: #60a5fa;
+      border-color: #334155;
+      color: #f1f5f9;
     }
-    .mendorbit-form-input:disabled, .mendorbit-form-input[readonly] {
-      background: #f1f5f9;
+    .edtech-input:focus {
+      outline: none;
+      border-color: #ff6600;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
+    }
+    .dark .edtech-input:focus {
+      background: #0f172a;
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+    }
+    .edtech-input:read-only, .edtech-input:disabled {
+      background: #f8fafc;
       color: #64748b;
       cursor: not-allowed;
+      border-color: #e2e8f0;
     }
-    .dark .mendorbit-form-input:disabled, .dark .mendorbit-form-input[readonly] {
-      background: #1f2937;
-      color: #9ca3af;
+    .dark .edtech-input:read-only, .dark .edtech-input:disabled {
+      background: #1e293b;
+      color: #94a3b8;
+      border-color: #334155;
+    }
+
+    /* Sidebar Navigation Links */
+    .sidebar-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+      text-align: left;
+    }
+    .dark .sidebar-tab-btn {
+      color: #94a3b8;
+    }
+    .sidebar-tab-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .dark .sidebar-tab-btn:hover {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+    .sidebar-tab-btn.active {
+      background: #fff7ed;
+      color: #ea580c;
+      font-weight: 700;
+      border-left-color: #ff6600;
+    }
+    .dark .sidebar-tab-btn.active {
+      background: rgba(234, 88, 12, 0.14);
+      color: #fb923c;
+      border-left-color: #f97316;
+    }
+
+    /* Vedantu-Style Primary Button */
+    .btn-edtech-update {
+      background: linear-gradient(135deg, #ff6600 0%, #f97316 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13.5px;
+      padding: 10px 32px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-edtech-update:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #ea580c 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
+    }
+    .btn-edtech-update:active {
+      transform: translateY(0);
+    }
+
+    .btn-edtech-cancel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-weight: 700;
+      font-size: 13.5px;
+      padding: 10px 28px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .dark .btn-edtech-cancel {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+    .btn-edtech-cancel:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .dark .btn-edtech-cancel:hover {
+      background: #334155;
     }
   </style>
 </head>
 <body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
   <!-- ======================================================== -->
-  <!-- NAVBAR: MATCHING EXACT DESIGN OF mendorbit.in            -->
+  <!-- NAVBAR: IDENTICAL TO mendorbit.in & DASHBOARD             -->
   <!-- ======================================================== -->
   <header class="sticky top-0 z-50 nav-glass border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -249,7 +302,7 @@
             </span>
           </button>
 
-          <!-- Profile Option Dropdown -->
+          <!-- Profile Pill Dropdown -->
           <div class="relative group/profile py-2" id="profile-dropdown-container">
             <button id="profile-trigger-btn" type="button" class="flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm focus:outline-none">
               <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-900 via-indigo-800 to-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-inner overflow-hidden relative flex-shrink-0">
@@ -258,7 +311,7 @@
               </div>
               <div class="hidden sm:flex flex-col text-left leading-tight pr-0.5">
                 <span id="nav-user-firstname" class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[110px] truncate">Student</span>
-                <span id="nav-user-target" class="text-[9.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Aspirant</span>
+                <span id="nav-user-target" class="text-[9.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Class 10</span>
               </div>
               <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover/profile:text-brand-600 group-hover/profile:rotate-180 transition-transform duration-200"></i>
             </button>
@@ -290,373 +343,669 @@
   </header>
 
   <!-- ======================================================== -->
-  <!-- MAIN PROFILE & SETTINGS CONTAINER                        -->
+  <!-- MAIN PROFILE WORKSPACE                                   -->
   <!-- ======================================================== -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1 w-full">
-
-    <!-- 1. PROFILE TOP HEADER CARD (MATCHES UPLOADED SCREENSHOT) -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-      
-      <!-- Avatar & Name / Email -->
-      <div class="flex items-center gap-4 sm:gap-5">
-        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-brand-900 via-indigo-800 to-brand-600 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-lg relative overflow-hidden flex-shrink-0">
-          <span id="header-avatar-initial">M</span>
-          <img id="header-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
-        </div>
-
-        <div>
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 id="header-user-fullname" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Student Name</h1>
-            <span id="header-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-              <span id="header-status-text">Active Profile</span>
-            </span>
-          </div>
-          <p id="header-user-email" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-mono mt-1">student@gmail.com</p>
-        </div>
-      </div>
-
-      <!-- Quick Action: Dashboard Link -->
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
-          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-          <span>Back to Dashboard</span>
-        </a>
-      </div>
-
-    </div>
-
-    <!-- 2. HORIZONTAL TAB NAVIGATION (MATCHES SCREENSHOT TABS) -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm p-1.5 mb-6 overflow-x-auto scrollbar-none">
-      <div class="flex items-center gap-1 min-w-max">
-        
-        <!-- Tab 1: Personal Info -->
-        <button type="button" class="profile-tab-btn active" data-tab="tab-personal">
-          <i data-lucide="user" class="w-4 h-4"></i>
-          <span>Personal Info</span>
-        </button>
-
-        <!-- Tab 2: Billing Address -->
-        <button type="button" class="profile-tab-btn" data-tab="tab-billing">
-          <i data-lucide="map-pin" class="w-4 h-4"></i>
-          <span>Billing Address</span>
-        </button>
-
-        <!-- Tab 3: Parent Information -->
-        <button type="button" class="profile-tab-btn" data-tab="tab-parent">
-          <i data-lucide="users" class="w-4 h-4"></i>
-          <span>Parent Information</span>
-        </button>
-
-        <!-- Tab 4: Academic Information -->
-        <button type="button" class="profile-tab-btn" data-tab="tab-academic">
-          <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-          <span>Academic Information</span>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- 3. TAB CONTENTS CONTAINER -->
-    <div class="space-y-6">
+  <main class="flex-1 w-full profile-hero-wash pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
 
       <!-- ==================================================== -->
-      <!-- TAB 1: PERSONAL INFORMATION                         -->
+      <!-- 1. TOP PROFILE HERO BAR (MATCHING VEDANTU SCREENSHOT) -->
       <!-- ==================================================== -->
-      <div id="tab-personal" class="profile-tab-content bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm">
-        
-        <!-- Card Title -->
-        <div class="flex items-center gap-2.5 pb-5 mb-6 border-b border-slate-100 dark:border-slate-800">
-          <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="user-check" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Personal Information</h2>
-            <p class="text-xs text-slate-400">Update your primary identity and communication contact</p>
-          </div>
-        </div>
-
-        <form id="form-personal" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            
-            <!-- Full Name -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Full Name *</label>
-              <input type="text" id="input-fullname" required placeholder="Enter your full name" class="mendorbit-form-input">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm mb-6">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          
+          <!-- Left: Circular Avatar with Pencil Edit Badge + Name & Phone -->
+          <div class="flex items-center gap-4 sm:gap-6">
+            <div class="relative flex-shrink-0 group">
+              <!-- Avatar Circle -->
+              <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 p-0.5 shadow-md">
+                <div class="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden relative">
+                  <span id="hero-avatar-initial" class="font-black text-2xl sm:text-3xl text-slate-700 dark:text-slate-200">S</span>
+                  <img id="hero-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
+                </div>
+              </div>
+              <!-- Pencil Edit Badge (Matching Vedantu Avatar Badge) -->
+              <button type="button" id="btn-edit-avatar" title="Update Profile Photo" class="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-slate-800 border-2 border-orange-500 text-orange-500 dark:text-orange-400 shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-transform cursor-pointer">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
 
-            <!-- Email Address (Registered - Readonly with Change Password) -->
             <div>
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Email Address (Registered)</label>
-                <a href="login.html?action=forgot" class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline flex items-center gap-1">
-                  <i data-lucide="key" class="w-3 h-3"></i>
-                  <span>Change Password</span>
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 id="hero-user-fullname" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Shivam Kumar</h1>
+                <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span id="hero-status-text">Active Student</span>
+                </span>
+              </div>
+              <div class="flex items-center gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+                <span id="hero-user-phone" class="font-mono flex items-center gap-1">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>+91 9801085156</span>
+                </span>
+                <span>•</span>
+                <span id="hero-user-email" class="font-mono truncate max-w-[200px] sm:max-w-xs">student@mendorbit.in</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Inline Class / Board / Target Stats & "Change" Pill Button -->
+          <div class="w-full lg:w-auto flex items-center justify-between lg:justify-end gap-4 sm:gap-7 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-4 sm:gap-7">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Class</span>
+                <span id="hero-stat-class" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">11</span>
+              </div>
+              <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Board</span>
+                <span id="hero-stat-board" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">CBSE</span>
+              </div>
+              <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Target</span>
+                <span id="hero-stat-target" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 max-w-[120px] sm:max-w-[160px] truncate block">Foundations</span>
+              </div>
+            </div>
+
+            <!-- "Change" Pill Button (Matching Vedantu Screenshot) -->
+            <button type="button" id="btn-quick-change" class="px-5 py-1.5 sm:px-6 sm:py-2 rounded-full border-2 border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-orange-600 dark:text-orange-400 font-extrabold text-xs sm:text-sm transition-all duration-200 shadow-sm flex items-center gap-1.5 flex-shrink-0">
+              <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+              <span>Change</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- 2. KYC / PROFILE FORM COMPLETION BANNER              -->
+      <!-- ==================================================== -->
+      <div class="rounded-3xl bg-gradient-to-r from-orange-50/90 via-amber-50/70 to-orange-50/50 dark:from-orange-950/20 dark:via-amber-950/15 dark:to-slate-900 border border-orange-200/80 dark:border-orange-900/40 p-5 sm:p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-sm">
+        
+        <!-- Left: Badge Document Icon + Title -->
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 border border-orange-200/80 dark:border-orange-800/40 shadow-sm flex items-center justify-center flex-shrink-0 text-orange-600 dark:text-orange-400">
+            <i data-lucide="file-check-2" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">KYC & Student Profile Form</h2>
+              <span id="kyc-status-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-white shadow-sm">
+                Pending
+              </span>
+            </div>
+            <p class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
+              Filling out the KYC form is essential for your batches, certificates & personalized mentorship.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Dynamic Progress Bar & Percent Indicator -->
+        <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 min-w-[260px]">
+          <div class="flex-1 md:w-48 bg-orange-200/70 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+            <div id="kyc-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out" style="width: 42%;"></div>
+          </div>
+          <span id="kyc-progress-text" class="text-sm font-black text-slate-900 dark:text-white flex-shrink-0">
+            42% Completed
+          </span>
+        </div>
+
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- 3. MASTER-DETAIL LAYOUT: VERTICAL SIDEBAR + FORM     -->
+      <!-- ==================================================== -->
+      <div class="flex flex-col lg:flex-row items-start gap-8">
+        
+        <!-- ================================================== -->
+        <!-- LEFT VERTICAL NAVIGATION SIDEBAR (VEDANTU STYLE)   -->
+        <!-- ================================================== -->
+        <aside class="w-full lg:w-72 flex-shrink-0 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-3 shadow-sm">
+          
+          <div class="px-3 py-2 mb-1 border-b border-slate-100 dark:border-slate-800/80">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Settings & Sections</span>
+          </div>
+
+          <nav class="space-y-1">
+            
+            <!-- 1. Personal Details -->
+            <button type="button" class="sidebar-tab-btn active" data-tab="tab-personal">
+              <i data-lucide="user" class="w-4 h-4"></i>
+              <span>Personal Details</span>
+            </button>
+
+            <!-- 2. Sign-in & Security -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-security">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+              <span>Sign-in & Security</span>
+            </button>
+
+            <!-- 3. My Preferences -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-preferences">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+              <span>My Preferences</span>
+            </button>
+
+            <!-- 4. Guardian Details -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-guardian">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>Guardian Details</span>
+            </button>
+
+            <!-- 5. Address Details -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-address">
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+              <span>Address Details</span>
+            </button>
+
+            <!-- 6. Academic Details -->
+            <button type="button" class="sidebar-tab-btn" data-tab="tab-academic">
+              <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+              <span>Academic Details</span>
+            </button>
+
+          </nav>
+
+          <!-- Quick Return to Dashboard Banner -->
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 px-2">
+            <a href="index.html" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>Return to Dashboard</span>
+            </a>
+          </div>
+
+        </aside>
+
+        <!-- ================================================== -->
+        <!-- RIGHT FORM CONTENT CONTAINER                       -->
+        <!-- ================================================== -->
+        <div class="flex-1 w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-10 shadow-sm min-h-[580px]">
+          
+          <!-- ================================================ -->
+          <!-- TAB 1: PERSONAL DETAILS (MATCHES SCREENSHOT)      -->
+          <!-- ================================================ -->
+          <div id="tab-personal" class="profile-tab-pane">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Personal Details</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Primary personal information and verification contacts</p>
+              </div>
+              <span class="text-xs font-semibold text-slate-400">* Required fields</span>
+            </div>
+
+            <form id="form-personal" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                
+                <!-- Enter Your First name * -->
+                <div class="edtech-input-group">
+                  <label>Enter Your First name *</label>
+                  <input type="text" id="input-first-name" required placeholder="Shivam" class="edtech-input">
+                </div>
+
+                <!-- Enter Your Last name -->
+                <div class="edtech-input-group">
+                  <label>Enter Your Last name</label>
+                  <input type="text" id="input-last-name" placeholder="Kumar" class="edtech-input">
+                </div>
+
+                <!-- Select your Gender -->
+                <div class="edtech-input-group">
+                  <label>Select your Gender</label>
+                  <select id="input-gender" class="edtech-input">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                </div>
+
+                <!-- Nationality -->
+                <div class="edtech-input-group">
+                  <label>Nationality</label>
+                  <input type="text" id="input-nationality" value="Indian" placeholder="Indian" class="edtech-input">
+                </div>
+
+                <!-- Date of Birth * -->
+                <div class="edtech-input-group">
+                  <label>Date of Birth *</label>
+                  <input type="date" id="input-dob" class="edtech-input">
+                </div>
+
+                <!-- Blood Group -->
+                <div class="edtech-input-group">
+                  <label>Blood Group</label>
+                  <select id="input-blood-group" class="edtech-input">
+                    <option value="">Select Blood Group</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                  </select>
+                </div>
+
+                <!-- Phone / WhatsApp Number * -->
+                <div class="edtech-input-group">
+                  <label>Phone / WhatsApp Number *</label>
+                  <input type="tel" id="input-phone" required placeholder="+91 9801085156" class="edtech-input font-mono">
+                </div>
+
+                <!-- Registered Email (Readonly) -->
+                <div class="edtech-input-group">
+                  <label>Registered Email Address</label>
+                  <input type="email" id="input-email" readonly class="edtech-input font-mono">
+                </div>
+
+              </div>
+
+              <!-- Bottom Action Buttons: Cancel and Update -->
+              <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-personal">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-personal" class="btn-edtech-update">
+                  <span>Update</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ================================================ -->
+          <!-- TAB 2: SIGN-IN & SECURITY                         -->
+          <!-- ================================================ -->
+          <div id="tab-security" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Sign-in & Security</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Manage authentication, SSO passwords and connected devices</p>
+            </div>
+
+            <div class="space-y-6">
+              
+              <!-- Registered Account Badge Card -->
+              <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="security-email-label">student@gmail.com</h3>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      Single Sign-On (SSO) Active across *.mendorbit.in
+                    </p>
+                  </div>
+                </div>
+                <a href="login.html?action=forgot" class="px-4 py-2 rounded-xl text-xs font-bold text-brand-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition">
+                  Reset Password via OTP
                 </a>
               </div>
-              <input type="email" id="input-email" readonly class="mendorbit-form-input font-mono">
-            </div>
 
-            <!-- Phone / WhatsApp Number -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Phone / WhatsApp Number *</label>
-              <input type="tel" id="input-phone" required placeholder="+91 98765 43210" class="mendorbit-form-input">
-            </div>
+              <!-- Quick Password Change Form -->
+              <form id="form-security" class="space-y-6">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Change Password</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div class="edtech-input-group">
+                    <label>New Password *</label>
+                    <input type="password" id="input-new-password" placeholder="At least 6 characters" minlength="6" class="edtech-input font-mono">
+                  </div>
 
-            <!-- Target Exam / Class -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Current Class / Target Exam *</label>
-              <select id="input-target-class" class="mendorbit-form-input">
-                <option value="Class 9">Class 9 (Foundations)</option>
-                <option value="Class 10">Class 10 (Board Exam Batch)</option>
-                <option value="Class 11">Class 11</option>
-                <option value="Class 12">Class 12 (Board & Prep)</option>
-                <option value="JEE Main & Advanced">JEE Main & Advanced</option>
-                <option value="NEET">NEET (Medical Aspirant)</option>
-              </select>
-            </div>
+                  <div class="edtech-input-group">
+                    <label>Confirm New Password *</label>
+                    <input type="password" id="input-confirm-password" placeholder="Re-type new password" minlength="6" class="edtech-input font-mono">
+                  </div>
+                </div>
 
-            <!-- Gender -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Gender</label>
-              <select id="input-gender" class="mendorbit-form-input">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>
-            </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-security">
+                    Cancel
+                  </button>
+                  <button type="submit" id="btn-submit-security" class="btn-edtech-update">
+                    <span>Update Password</span>
+                  </button>
+                </div>
+              </form>
 
-            <!-- Date of Birth -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Date of Birth</label>
-              <input type="date" id="input-dob" class="mendorbit-form-input">
             </div>
-
           </div>
 
-          <!-- Save Button -->
-          <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="submit" id="btn-save-personal" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 hover:to-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Save Personal Details</span>
-            </button>
-          </div>
-        </form>
+          <!-- ================================================ -->
+          <!-- TAB 3: MY PREFERENCES                             -->
+          <!-- ================================================ -->
+          <div id="tab-preferences" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">My Preferences</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Customize your learning schedule, medium of instruction and batch alerts</p>
+            </div>
 
-      </div>
+            <form id="form-preferences" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                
+                <div class="edtech-input-group">
+                  <label>Preferred Learning Mode</label>
+                  <select id="input-pref-mode" class="edtech-input">
+                    <option value="Live Interactive Batches">Live Interactive Batches</option>
+                    <option value="Recorded Video Lecture Notes">Recorded Video Lecture Notes</option>
+                    <option value="Self-Paced Mentorship & Doubts">Self-Paced Mentorship & Doubts</option>
+                  </select>
+                </div>
 
-      <!-- ==================================================== -->
-      <!-- TAB 2: BILLING ADDRESS                              -->
-      <!-- ==================================================== -->
-      <div id="tab-billing" class="profile-tab-content bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm hidden">
-        
-        <div class="flex items-center gap-2.5 pb-5 mb-6 border-b border-slate-100 dark:border-slate-800">
-          <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <div class="edtech-input-group">
+                  <label>Medium of Instruction</label>
+                  <select id="input-pref-lang" class="edtech-input">
+                    <option value="Hinglish (Hindi + English Mix)">Hinglish (Hindi + English Mix)</option>
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi (Pure)</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Daily Study Time Commitment</label>
+                  <select id="input-pref-hours" class="edtech-input">
+                    <option value="2-3 Hours / Day">2-3 Hours / Day</option>
+                    <option value="4-5 Hours / Day (Recommended)">4-5 Hours / Day (Recommended)</option>
+                    <option value="6+ Hours / Day (Target Toppers)">6+ Hours / Day (Target Toppers)</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Doubts & Notification Preference</label>
+                  <select id="input-pref-notify" class="edtech-input">
+                    <option value="WhatsApp & Email">WhatsApp & Email Alerts</option>
+                    <option value="Email Only">Email Only</option>
+                    <option value="In-App Notification Only">In-App Notification Only</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-preferences">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-preferences" class="btn-edtech-update">
+                  <span>Update</span>
+                </button>
+              </div>
+            </form>
           </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Billing & Residential Address</h2>
-            <p class="text-xs text-slate-400">Used for official course invoices and study material deliveries</p>
+
+          <!-- ================================================ -->
+          <!-- TAB 4: GUARDIAN DETAILS                           -->
+          <!-- ================================================ -->
+          <div id="tab-guardian" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Guardian Details</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Parent contact details for attendance reports, test score cards & mentorship</p>
+            </div>
+
+            <form id="form-guardian" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                
+                <div class="edtech-input-group">
+                  <label>Father's / Guardian's Full Name *</label>
+                  <input type="text" id="input-father-name" placeholder="Enter father's full name" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Father's Contact / WhatsApp *</label>
+                  <input type="tel" id="input-father-phone" placeholder="+91 98765 43210" class="edtech-input font-mono">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Mother's Full Name</label>
+                  <input type="text" id="input-mother-name" placeholder="Enter mother's full name" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Mother's Contact Number</label>
+                  <input type="tel" id="input-mother-phone" placeholder="+91 98765 43210" class="edtech-input font-mono">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Parent's Email Address (For Progress Reports)</label>
+                  <input type="email" id="input-parent-email" placeholder="parent@gmail.com" class="edtech-input font-mono">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Emergency Contact Preference</label>
+                  <select id="input-emergency-pref" class="edtech-input">
+                    <option value="Father">Father</option>
+                    <option value="Mother">Mother</option>
+                    <option value="Guardian">Guardian</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-guardian">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-guardian" class="btn-edtech-update">
+                  <span>Update</span>
+                </button>
+              </div>
+            </form>
           </div>
+
+          <!-- ================================================ -->
+          <!-- TAB 5: ADDRESS DETAILS                            -->
+          <!-- ================================================ -->
+          <div id="tab-address" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Address Details</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Residential & dispatch address for printed study modules and test booklets</p>
+            </div>
+
+            <form id="form-address" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                
+                <div class="edtech-input-group md:col-span-2">
+                  <label>Street Address Line 1 *</label>
+                  <input type="text" id="input-address1" placeholder="House / Flat No., Apartment, Street Name" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group md:col-span-2">
+                  <label>Address Line 2 (Landmark / Colony)</label>
+                  <input type="text" id="input-address2" placeholder="Nearby Landmark, Sector, Area" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>City / District *</label>
+                  <input type="text" id="input-city" placeholder="e.g. Patna, Delhi, Mumbai" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>State / Province *</label>
+                  <input type="text" id="input-state" placeholder="e.g. Bihar, Uttar Pradesh, Maharashtra" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>PIN / Postal Code *</label>
+                  <input type="text" id="input-pincode" placeholder="6-digit PIN" maxlength="10" class="edtech-input font-mono">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Country *</label>
+                  <input type="text" id="input-country" value="India" class="edtech-input">
+                </div>
+
+              </div>
+
+              <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-address">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-address" class="btn-edtech-update">
+                  <span>Update</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ================================================ -->
+          <!-- TAB 6: ACADEMIC DETAILS                           -->
+          <!-- ================================================ -->
+          <div id="tab-academic" class="profile-tab-pane hidden">
+            <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Academic Details</h2>
+              <p class="text-xs text-slate-400 mt-0.5">School background, examination board and target competitive exam goals</p>
+            </div>
+
+            <form id="form-academic" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                
+                <div class="edtech-input-group">
+                  <label>Current Class *</label>
+                  <select id="input-academic-class" class="edtech-input">
+                    <option value="Class 9">Class 9 (Foundations)</option>
+                    <option value="Class 10">Class 10 (Board Exam Batch)</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                    <option value="Dropper / Repeater">Dropper / Repeater Batch</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Education Board *</label>
+                  <select id="input-academic-board" class="edtech-input">
+                    <option value="CBSE">CBSE (Central Board)</option>
+                    <option value="ICSE / ISC">ICSE / ISC</option>
+                    <option value="State Board">State Board</option>
+                    <option value="IB / Cambridge">IB / Cambridge</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Target Competitive Exam *</label>
+                  <select id="input-academic-target" class="edtech-input">
+                    <option value="Foundations">Foundations & School Topper</option>
+                    <option value="CBSE Board Topper">CBSE Board Exam Topper</option>
+                    <option value="JEE Main & Advanced">JEE Main & Advanced</option>
+                    <option value="NEET UG">NEET UG</option>
+                    <option value="Olympiads & NTSE">Olympiads / NTSE</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Target Passing Year</label>
+                  <select id="input-academic-year" class="edtech-input font-mono">
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>School / College Name *</label>
+                  <input type="text" id="input-academic-school" placeholder="e.g. Delhi Public School" class="edtech-input">
+                </div>
+
+                <div class="edtech-input-group">
+                  <label>Stream / Subject Combination</label>
+                  <select id="input-academic-stream" class="edtech-input">
+                    <option value="Foundations (9-10)">Science & Math (Class 9-10 Foundations)</option>
+                    <option value="PCM">PCM (Physics, Chemistry, Maths)</option>
+                    <option value="PCB">PCB (Physics, Chemistry, Biology)</option>
+                    <option value="PCMB">PCMB (Maths & Biology)</option>
+                    <option value="Commerce with Maths">Commerce with Maths</option>
+                  </select>
+                </div>
+
+                <div class="edtech-input-group md:col-span-2">
+                  <label>Student Roll Number / Registration ID (Optional)</label>
+                  <input type="text" id="input-academic-rollno" placeholder="e.g. MND-10492" class="edtech-input font-mono">
+                </div>
+
+              </div>
+
+              <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-academic">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-academic" class="btn-edtech-update">
+                  <span>Update</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
         </div>
-
-        <form id="form-billing" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            
-            <div class="md:col-span-2">
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Street Address Line 1 *</label>
-              <input type="text" id="input-address1" placeholder="House / Flat No., Apartment, Street" class="mendorbit-form-input">
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Address Line 2</label>
-              <input type="text" id="input-address2" placeholder="Area, Landmark, Colony" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">City / District *</label>
-              <input type="text" id="input-city" placeholder="e.g. Mumbai, Patna, Delhi" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">State / Province *</label>
-              <input type="text" id="input-state" placeholder="e.g. Maharashtra, Bihar, Delhi" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">PIN / Postal Code *</label>
-              <input type="text" id="input-pincode" placeholder="6-digit PIN code" maxlength="10" class="mendorbit-form-input font-mono">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Country *</label>
-              <input type="text" id="input-country" value="India" class="mendorbit-form-input">
-            </div>
-
-          </div>
-
-          <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="submit" id="btn-save-billing" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Save Billing Address</span>
-            </button>
-          </div>
-        </form>
-
-      </div>
-
-      <!-- ==================================================== -->
-      <!-- TAB 3: PARENT INFORMATION                           -->
-      <!-- ==================================================== -->
-      <div id="tab-parent" class="profile-tab-content bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm hidden">
-        
-        <div class="flex items-center gap-2.5 pb-5 mb-6 border-b border-slate-100 dark:border-slate-800">
-          <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="users" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Parent / Guardian Information</h2>
-            <p class="text-xs text-slate-400">For academic report cards, attendance alerts, and mentorship communication</p>
-          </div>
-        </div>
-
-        <form id="form-parent" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Father's / Guardian's Full Name *</label>
-              <input type="text" id="input-father-name" placeholder="Enter father's name" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Father's Contact / WhatsApp *</label>
-              <input type="tel" id="input-father-phone" placeholder="+91 98765 43210" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Mother's Full Name</label>
-              <input type="text" id="input-mother-name" placeholder="Enter mother's name" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Mother's Contact Number</label>
-              <input type="tel" id="input-mother-phone" placeholder="+91 98765 43210" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Parent's Email Address (For Progress Reports)</label>
-              <input type="email" id="input-parent-email" placeholder="parent@gmail.com" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Emergency Contact Preference</label>
-              <select id="input-emergency-pref" class="mendorbit-form-input">
-                <option value="Father">Father</option>
-                <option value="Mother">Mother</option>
-                <option value="Guardian">Guardian</option>
-              </select>
-            </div>
-
-          </div>
-
-          <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="submit" id="btn-save-parent" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Save Parent Information</span>
-            </button>
-          </div>
-        </form>
-
-      </div>
-
-      <!-- ==================================================== -->
-      <!-- TAB 4: ACADEMIC INFORMATION                         -->
-      <!-- ==================================================== -->
-      <div id="tab-academic" class="profile-tab-content bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm hidden">
-        
-        <div class="flex items-center gap-2.5 pb-5 mb-6 border-b border-slate-100 dark:border-slate-800">
-          <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Academic & Examination Profile</h2>
-            <p class="text-xs text-slate-400">Tailors course recommendations, test series, and study materials</p>
-          </div>
-        </div>
-
-        <form id="form-academic" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">School / College Name *</label>
-              <input type="text" id="input-school" placeholder="e.g. Delhi Public School" class="mendorbit-form-input">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Education Board *</label>
-              <select id="input-board" class="mendorbit-form-input">
-                <option value="CBSE">CBSE (Central Board)</option>
-                <option value="ICSE / ISC">ICSE / ISC</option>
-                <option value="State Board">State Board</option>
-                <option value="IB / Cambridge">IB / Cambridge</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target Competitive Examination</label>
-              <select id="input-exam-target" class="mendorbit-form-input">
-                <option value="CBSE Board Topper">CBSE Board Exam Topper</option>
-                <option value="JEE Main & Advanced">JEE Main & Advanced</option>
-                <option value="NEET UG">NEET UG</option>
-                <option value="Olympiads & NTSE">Olympiads / NTSE Foundation</option>
-                <option value="CUET">CUET</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target Passing Year</label>
-              <select id="input-passing-year" class="mendorbit-form-input font-mono">
-                <option value="2025">2025</option>
-                <option value="2026" selected>2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Stream / Subject Focus</label>
-              <select id="input-stream" class="mendorbit-form-input">
-                <option value="General Science (9-10)">General Science & Mathematics (Class 9-10)</option>
-                <option value="PCM">PCM (Physics, Chemistry, Maths)</option>
-                <option value="PCB">PCB (Physics, Chemistry, Biology)</option>
-                <option value="PCMB">PCMB (Both Maths & Biology)</option>
-                <option value="Commerce">Commerce with Maths</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Roll No. / Student ID (Optional)</label>
-              <input type="text" id="input-rollno" placeholder="e.g. 10245" class="mendorbit-form-input font-mono">
-            </div>
-
-          </div>
-
-          <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="submit" id="btn-save-academic" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Save Academic Details</span>
-            </button>
-          </div>
-        </form>
 
       </div>
 
     </div>
-
   </main>
+
+  <!-- ======================================================== -->
+  <!-- QUICK "CHANGE TARGET / CLASS" POPUP MODAL                -->
+  <!-- ======================================================== -->
+  <div id="modal-quick-change" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 transform scale-95 transition-transform duration-200">
+      
+      <button type="button" id="btn-close-quick-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Change Target & Class</h3>
+          <p class="text-xs text-slate-400">Quickly adjust your target focus & examination board</p>
+        </div>
+      </div>
+
+      <form id="form-quick-target" class="space-y-4">
+        <div class="edtech-input-group">
+          <label>Current Class</label>
+          <select id="modal-input-class" class="edtech-input">
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+            <option value="Dropper">Dropper</option>
+          </select>
+        </div>
+
+        <div class="edtech-input-group">
+          <label>Board</label>
+          <select id="modal-input-board" class="edtech-input">
+            <option value="CBSE">CBSE</option>
+            <option value="ICSE">ICSE / ISC</option>
+            <option value="State Board">State Board</option>
+            <option value="IB">IB / Cambridge</option>
+          </select>
+        </div>
+
+        <div class="edtech-input-group">
+          <label>Primary Target Goal</label>
+          <select id="modal-input-target" class="edtech-input">
+            <option value="Foundations">Foundations & School Topper</option>
+            <option value="CBSE Board Topper">CBSE Board Exam Topper</option>
+            <option value="JEE Main & Advanced">JEE Main & Advanced</option>
+            <option value="NEET UG">NEET UG</option>
+          </select>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-3">
+          <button type="button" id="btn-cancel-quick-modal" class="btn-edtech-cancel">
+            Cancel
+          </button>
+          <button type="submit" id="btn-save-quick-target" class="btn-edtech-update">
+            <span>Save & Apply</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ======================================================== -->
   <!-- TOAST NOTIFICATION CONTAINER                             -->
@@ -666,7 +1015,7 @@
   <!-- ======================================================== -->
   <!-- FOOTER                                                   -->
   <!-- ======================================================== -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 py-6 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 py-6 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <img src="logo.png" alt="Mendorbit" class="w-5 h-5 object-contain">
@@ -706,7 +1055,6 @@
           if (window.lucide) lucide.createIcons();
         }
       }
-
       updateThemeIcons();
 
       if (themeToggle) {
@@ -734,103 +1082,192 @@
       const email = session.email.toLowerCase().trim();
       let userDoc = {};
 
-      // Load existing user record from Firestore or Worker
       try {
         if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
           userDoc = (await MendorbitBackend.getUserByEmail(email)) || {};
         }
       } catch (e) {
-        console.warn("Firestore lookup note:", e);
+        console.warn("Firestore profile fetch note:", e);
       }
 
-      // Populate Header
-      const fullName = userDoc.displayName || session.displayName || session.name || "Student";
-      const firstName = fullName.split(" ")[0];
-      const targetClass = userDoc.class || session.targetExam || session.class || "Class 10";
-      const initialChar = fullName.charAt(0).toUpperCase();
+      // Populate Hero Names & Stats
+      const rawFullName = userDoc.displayName || session.displayName || session.name || "Shivam Kumar";
+      const nameParts = rawFullName.trim().split(" ");
+      const firstName = userDoc.firstName || nameParts[0] || "Shivam";
+      const lastName = userDoc.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
+      const displayFullName = `${firstName} ${lastName}`.trim();
 
-      document.getElementById('header-user-fullname').textContent = fullName;
-      document.getElementById('header-user-email').textContent = email;
-      document.getElementById('header-avatar-initial').textContent = initialChar;
+      const phone = userDoc.phone || session.phone || "+91 9801085156";
+      const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "11";
+      const cleanClassNum = studentClass.replace(/[^0-9]/g, '') || studentClass;
+      const board = (userDoc.academicInfo && userDoc.academicInfo.board) || "CBSE";
+      const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundations";
+
+      // Render in Hero Header
+      document.getElementById('hero-user-fullname').textContent = displayFullName;
+      document.getElementById('hero-user-phone').innerHTML = `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phone}</span>`;
+      document.getElementById('hero-user-email').textContent = email;
+      document.getElementById('hero-stat-class').textContent = cleanClassNum || studentClass;
+      document.getElementById('hero-stat-board').textContent = board;
+      document.getElementById('hero-stat-target').textContent = target;
+
+      // Render in Navbar
       document.getElementById('nav-user-firstname').textContent = firstName;
-      document.getElementById('nav-user-target').textContent = targetClass;
+      document.getElementById('nav-user-target').textContent = studentClass;
+      const initialChar = firstName.charAt(0).toUpperCase();
+      document.getElementById('hero-avatar-initial').textContent = initialChar;
       document.getElementById('nav-avatar-initial').textContent = initialChar;
 
+      // Avatar Photo
       const photoURL = userDoc.photoURL || session.photoURL;
       if (photoURL) {
-        ['header-avatar-img', 'nav-avatar-img'].forEach(id => {
+        ['hero-avatar-img', 'nav-avatar-img'].forEach(id => {
           const img = document.getElementById(id);
           if (img) {
             img.src = photoURL;
             img.classList.remove('hidden');
           }
         });
-        ['header-avatar-initial', 'nav-avatar-initial'].forEach(id => {
+        ['hero-avatar-initial', 'nav-avatar-initial'].forEach(id => {
           const init = document.getElementById(id);
           if (init) init.classList.add('hidden');
         });
       }
 
-      // Populate Form Fields
-      document.getElementById('input-fullname').value = fullName;
-      document.getElementById('input-email').value = email;
-      document.getElementById('input-phone').value = userDoc.phone || "";
-      document.getElementById('input-target-class').value = targetClass;
-      document.getElementById('input-gender').value = userDoc.gender || "";
+      // Security Tab Label
+      document.getElementById('security-email-label').textContent = email;
+
+      // ========================================================
+      // 3. POPULATE FORM FIELDS
+      // ========================================================
+      // Personal
+      document.getElementById('input-first-name').value = firstName;
+      document.getElementById('input-last-name').value = lastName;
+      document.getElementById('input-gender').value = userDoc.gender || "Male";
+      document.getElementById('input-nationality').value = userDoc.nationality || "Indian";
       document.getElementById('input-dob').value = userDoc.dob || "";
+      document.getElementById('input-blood-group').value = userDoc.bloodGroup || "";
+      document.getElementById('input-phone').value = phone;
+      document.getElementById('input-email').value = email;
 
-      // Billing Fields
-      const billing = userDoc.billingAddress || {};
-      document.getElementById('input-address1').value = billing.address1 || "";
-      document.getElementById('input-address2').value = billing.address2 || "";
-      document.getElementById('input-city').value = billing.city || "";
-      document.getElementById('input-state').value = billing.state || "";
-      document.getElementById('input-pincode').value = billing.pincode || "";
-      document.getElementById('input-country').value = billing.country || "India";
+      // Preferences
+      const prefs = userDoc.preferences || {};
+      document.getElementById('input-pref-mode').value = prefs.learningMode || "Live Interactive Batches";
+      document.getElementById('input-pref-lang').value = prefs.language || "Hinglish (Hindi + English Mix)";
+      document.getElementById('input-pref-hours').value = prefs.studyHours || "4-5 Hours / Day (Recommended)";
+      document.getElementById('input-pref-notify').value = prefs.notification || "WhatsApp & Email";
 
-      // Parent Fields
-      const parent = userDoc.parentInfo || {};
-      document.getElementById('input-father-name').value = parent.fatherName || "";
-      document.getElementById('input-father-phone').value = parent.fatherPhone || "";
-      document.getElementById('input-mother-name').value = parent.motherName || "";
-      document.getElementById('input-mother-phone').value = parent.motherPhone || "";
-      document.getElementById('input-parent-email').value = parent.parentEmail || "";
-      document.getElementById('input-emergency-pref').value = parent.emergencyContact || "Father";
+      // Guardian
+      const guardian = userDoc.parentInfo || {};
+      document.getElementById('input-father-name').value = guardian.fatherName || "";
+      document.getElementById('input-father-phone').value = guardian.fatherPhone || "";
+      document.getElementById('input-mother-name').value = guardian.motherName || "";
+      document.getElementById('input-mother-phone').value = guardian.motherPhone || "";
+      document.getElementById('input-parent-email').value = guardian.parentEmail || "";
+      document.getElementById('input-emergency-pref').value = guardian.emergencyContact || "Father";
 
-      // Academic Fields
+      // Address
+      const address = userDoc.billingAddress || userDoc.address || {};
+      document.getElementById('input-address1').value = address.address1 || "";
+      document.getElementById('input-address2').value = address.address2 || "";
+      document.getElementById('input-city').value = address.city || "";
+      document.getElementById('input-state').value = address.state || "";
+      document.getElementById('input-pincode').value = address.pincode || "";
+      document.getElementById('input-country').value = address.country || "India";
+
+      // Academic
       const academic = userDoc.academicInfo || {};
-      document.getElementById('input-school').value = academic.school || "";
-      document.getElementById('input-board').value = academic.board || "CBSE";
-      document.getElementById('input-exam-target').value = academic.targetExam || "CBSE Board Topper";
-      document.getElementById('input-passing-year').value = academic.passingYear || "2026";
-      document.getElementById('input-stream').value = academic.stream || "General Science (9-10)";
-      document.getElementById('input-rollno').value = academic.rollNo || "";
+      document.getElementById('input-academic-class').value = academic.class || studentClass || "Class 11";
+      document.getElementById('input-academic-board').value = academic.board || board || "CBSE";
+      document.getElementById('input-academic-target').value = academic.targetExam || target || "Foundations";
+      document.getElementById('input-academic-year').value = academic.passingYear || "2026";
+      document.getElementById('input-academic-school').value = academic.school || "";
+      document.getElementById('input-academic-stream').value = academic.stream || "Science & Math (Class 9-10 Foundations)";
+      document.getElementById('input-academic-rollno').value = academic.rollNo || "";
+
+      // Modal inputs
+      document.getElementById('modal-input-class').value = studentClass;
+      document.getElementById('modal-input-board').value = board;
+      document.getElementById('modal-input-target').value = target;
 
       // ========================================================
-      // 3. TAB SWITCHING LOGIC (MATCHES SCREENSHOT TABS)
+      // 4. DYNAMIC KYC / PROFILE COMPLETION CALCULATION
       // ========================================================
-      const tabButtons = document.querySelectorAll('.profile-tab-btn');
-      const tabContents = document.querySelectorAll('.profile-tab-content');
+      function updateKycProgress() {
+        let score = 0;
+        const total = 100;
+
+        // Check each critical field
+        if (document.getElementById('input-first-name').value.trim()) score += 12;
+        if (document.getElementById('input-phone').value.trim()) score += 12;
+        if (document.getElementById('input-dob').value.trim()) score += 10;
+        if (document.getElementById('input-gender').value.trim()) score += 8;
+        if (document.getElementById('input-blood-group').value.trim()) score += 6;
+
+        // Guardian
+        if (document.getElementById('input-father-name').value.trim() || document.getElementById('input-mother-name').value.trim()) score += 14;
+
+        // Address
+        if (document.getElementById('input-address1').value.trim() && document.getElementById('input-city').value.trim()) score += 18;
+
+        // Academic
+        if (document.getElementById('input-academic-school').value.trim()) score += 20;
+
+        const clamped = Math.min(100, Math.max(score, 20));
+        const progressBar = document.getElementById('kyc-progress-bar');
+        const progressText = document.getElementById('kyc-progress-text');
+        const statusPill = document.getElementById('kyc-status-pill');
+
+        if (progressBar) progressBar.style.width = clamped + "%";
+        if (progressText) progressText.textContent = clamped + "% Completed";
+
+        if (statusPill) {
+          if (clamped >= 95) {
+            statusPill.textContent = "Completed";
+            statusPill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500 text-white shadow-sm";
+          } else {
+            statusPill.textContent = "Pending";
+            statusPill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-white shadow-sm";
+          }
+        }
+      }
+
+      updateKycProgress();
+
+      // ========================================================
+      // 5. MASTER-DETAIL TAB NAVIGATION (SIDEBAR SWITCHER)
+      // ========================================================
+      const tabButtons = document.querySelectorAll('.sidebar-tab-btn');
+      const tabPanes = document.querySelectorAll('.profile-tab-pane');
+
+      function switchTab(targetId) {
+        tabButtons.forEach(btn => {
+          if (btn.getAttribute('data-tab') === targetId) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        tabPanes.forEach(pane => {
+          if (pane.id === targetId) {
+            pane.classList.remove('hidden');
+          } else {
+            pane.classList.add('hidden');
+          }
+        });
+
+        if (window.lucide) lucide.createIcons();
+      }
 
       tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-          tabButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-
-          const targetId = btn.getAttribute('data-tab');
-          tabContents.forEach(content => {
-            if (content.id === targetId) {
-              content.classList.remove('hidden');
-            } else {
-              content.classList.add('hidden');
-            }
-          });
-          if (window.lucide) lucide.createIcons();
+          switchTab(btn.getAttribute('data-tab'));
         });
       });
 
       // ========================================================
-      // 4. TOAST NOTIFIER HELPER
+      // 6. TOAST NOTIFIER HELPER
       // ========================================================
       function showToast(message, type = "success") {
         const container = document.getElementById('toast-container');
@@ -858,11 +1295,12 @@
         }, 3200);
       }
 
-      // Universal Persistence Helper (Syncs to Worker API + Firestore SDK + SSO Session)
-      async function saveProfilePayload(updateFields, successMessage, submitBtn, defaultBtnHtml) {
+      // Universal Persistence Helper (Worker API + Firestore SDK + SSO Session)
+      async function saveProfileData(updateFields, successMessage, submitBtn) {
+        const originalContent = submitBtn ? submitBtn.innerHTML : "Update";
         if (submitBtn) {
           submitBtn.disabled = true;
-          submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Saving...</span>`;
+          submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Updating...</span>`;
           if (window.lucide) lucide.createIcons();
         }
 
@@ -872,23 +1310,18 @@
             await MendorbitAPI.updateProfile(email, updateFields);
           }
 
-          // 2. Direct Firestore SDK
+          // 2. Direct Firestore SDK (compat)
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
             await firestoreDb.collection("users").doc(email).set(updateFields, { merge: true });
           }
 
-          // 3. Update local session state if name/class changed
+          // 3. Update local session state
           const currentSession = MendorbitSSO.getSession() || {};
           if (updateFields.displayName) currentSession.displayName = updateFields.displayName;
           if (updateFields.class) currentSession.class = updateFields.class;
           MendorbitSSO.setSession(currentSession);
 
-          // Update header
-          if (updateFields.displayName) {
-            document.getElementById('header-user-fullname').textContent = updateFields.displayName;
-            document.getElementById('nav-user-firstname').textContent = updateFields.displayName.split(" ")[0];
-          }
-
+          updateKycProgress();
           showToast(successMessage, "success");
         } catch (err) {
           console.error("Save profile error:", err);
@@ -896,54 +1329,109 @@
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = defaultBtnHtml;
+            submitBtn.innerHTML = originalContent;
             if (window.lucide) lucide.createIcons();
           }
         }
       }
 
+      // Cancel button resets form
+      document.querySelectorAll('.btn-reset-form').forEach(btn => {
+        btn.addEventListener('click', () => {
+          showToast("Changes reverted.", "success");
+        });
+      });
+
       // ========================================================
-      // 5. FORM SUBMISSION HANDLERS
+      // 7. FORM SUBMISSIONS
       // ========================================================
 
       // Form 1: Personal Details
       document.getElementById('form-personal').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-save-personal');
-        const defaultHtml = `<i data-lucide="save" class="w-4 h-4"></i><span>Save Personal Details</span>`;
+        const fName = document.getElementById('input-first-name').value.trim();
+        const lName = document.getElementById('input-last-name').value.trim();
+        const combinedName = `${fName} ${lName}`.trim();
+        const phoneVal = document.getElementById('input-phone').value.trim();
+
         const payload = {
-          displayName: document.getElementById('input-fullname').value.trim(),
-          phone: document.getElementById('input-phone').value.trim(),
-          class: document.getElementById('input-target-class').value,
+          firstName: fName,
+          lastName: lName,
+          displayName: combinedName,
           gender: document.getElementById('input-gender').value,
-          dob: document.getElementById('input-dob').value
+          nationality: document.getElementById('input-nationality').value.trim(),
+          dob: document.getElementById('input-dob').value,
+          bloodGroup: document.getElementById('input-blood-group').value,
+          phone: phoneVal
         };
-        await saveProfilePayload(payload, "Personal details saved successfully!", btn, defaultHtml);
+
+        const btn = document.getElementById('btn-submit-personal');
+        await saveProfileData(payload, "Personal details updated successfully!", btn);
+
+        // Update header UI immediately
+        document.getElementById('hero-user-fullname').textContent = combinedName;
+        document.getElementById('nav-user-firstname').textContent = fName;
+        document.getElementById('hero-user-phone').innerHTML = `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phoneVal}</span>`;
+        if (window.lucide) lucide.createIcons();
       });
 
-      // Form 2: Billing Address
-      document.getElementById('form-billing').addEventListener('submit', async (e) => {
+      // Form 2: Sign-in & Security (Change Password)
+      document.getElementById('form-security').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-save-billing');
-        const defaultHtml = `<i data-lucide="save" class="w-4 h-4"></i><span>Save Billing Address</span>`;
+        const newPass = document.getElementById('input-new-password').value;
+        const confirmPass = document.getElementById('input-confirm-password').value;
+
+        if (newPass.length < 6) {
+          showToast("Password must be at least 6 characters long.", "error");
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showToast("Passwords do not match.", "error");
+          return;
+        }
+
+        const btn = document.getElementById('btn-submit-security');
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Updating...</span>`;
+        if (window.lucide) lucide.createIcons();
+
+        try {
+          if (firebase.auth().currentUser) {
+            await firebase.auth().currentUser.updatePassword(newPass);
+            showToast("Password updated successfully!", "success");
+            document.getElementById('form-security').reset();
+          } else {
+            // Redirect to OTP reset
+            window.location.href = "login.html?action=forgot";
+          }
+        } catch (err) {
+          console.error("Password change error:", err);
+          showToast(err.message || "Please re-login to change password.", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Update Password</span>`;
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+
+      // Form 3: Preferences
+      document.getElementById('form-preferences').addEventListener('submit', async (e) => {
+        e.preventDefault();
         const payload = {
-          billingAddress: {
-            address1: document.getElementById('input-address1').value.trim(),
-            address2: document.getElementById('input-address2').value.trim(),
-            city: document.getElementById('input-city').value.trim(),
-            state: document.getElementById('input-state').value.trim(),
-            pincode: document.getElementById('input-pincode').value.trim(),
-            country: document.getElementById('input-country').value.trim()
+          preferences: {
+            learningMode: document.getElementById('input-pref-mode').value,
+            language: document.getElementById('input-pref-lang').value,
+            studyHours: document.getElementById('input-pref-hours').value,
+            notification: document.getElementById('input-pref-notify').value
           }
         };
-        await saveProfilePayload(payload, "Billing address saved successfully!", btn, defaultHtml);
+        const btn = document.getElementById('btn-submit-preferences');
+        await saveProfileData(payload, "Learning preferences updated!", btn);
       });
 
-      // Form 3: Parent Information
-      document.getElementById('form-parent').addEventListener('submit', async (e) => {
+      // Form 4: Guardian Details
+      document.getElementById('form-guardian').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-save-parent');
-        const defaultHtml = `<i data-lucide="save" class="w-4 h-4"></i><span>Save Parent Information</span>`;
         const payload = {
           parentInfo: {
             fatherName: document.getElementById('input-father-name').value.trim(),
@@ -954,29 +1442,154 @@
             emergencyContact: document.getElementById('input-emergency-pref').value
           }
         };
-        await saveProfilePayload(payload, "Parent information saved successfully!", btn, defaultHtml);
+        const btn = document.getElementById('btn-submit-guardian');
+        await saveProfileData(payload, "Guardian details saved successfully!", btn);
       });
 
-      // Form 4: Academic Information
-      document.getElementById('form-academic').addEventListener('submit', async (e) => {
+      // Form 5: Address Details
+      document.getElementById('form-address').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-save-academic');
-        const defaultHtml = `<i data-lucide="save" class="w-4 h-4"></i><span>Save Academic Details</span>`;
         const payload = {
-          academicInfo: {
-            school: document.getElementById('input-school').value.trim(),
-            board: document.getElementById('input-board').value,
-            targetExam: document.getElementById('input-exam-target').value,
-            passingYear: document.getElementById('input-passing-year').value,
-            stream: document.getElementById('input-stream').value,
-            rollNo: document.getElementById('input-rollno').value.trim()
+          billingAddress: {
+            address1: document.getElementById('input-address1').value.trim(),
+            address2: document.getElementById('input-address2').value.trim(),
+            city: document.getElementById('input-city').value.trim(),
+            state: document.getElementById('input-state').value.trim(),
+            pincode: document.getElementById('input-pincode').value.trim(),
+            country: document.getElementById('input-country').value.trim()
           }
         };
-        await saveProfilePayload(payload, "Academic details saved successfully!", btn, defaultHtml);
+        const btn = document.getElementById('btn-submit-address');
+        await saveProfileData(payload, "Address updated successfully!", btn);
+      });
+
+      // Form 6: Academic Details
+      document.getElementById('form-academic').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const selectedClass = document.getElementById('input-academic-class').value;
+        const selectedBoard = document.getElementById('input-academic-board').value;
+        const selectedTarget = document.getElementById('input-academic-target').value;
+
+        const payload = {
+          class: selectedClass,
+          academicInfo: {
+            class: selectedClass,
+            board: selectedBoard,
+            targetExam: selectedTarget,
+            passingYear: document.getElementById('input-academic-year').value,
+            school: document.getElementById('input-academic-school').value.trim(),
+            stream: document.getElementById('input-academic-stream').value,
+            rollNo: document.getElementById('input-academic-rollno').value.trim()
+          }
+        };
+
+        const btn = document.getElementById('btn-submit-academic');
+        await saveProfileData(payload, "Academic details updated successfully!", btn);
+
+        // Update top bar stats
+        const cleanClass = selectedClass.replace(/[^0-9]/g, '') || selectedClass;
+        document.getElementById('hero-stat-class').textContent = cleanClass;
+        document.getElementById('hero-stat-board').textContent = selectedBoard;
+        document.getElementById('hero-stat-target').textContent = selectedTarget;
+        document.getElementById('nav-user-target').textContent = selectedClass;
       });
 
       // ========================================================
-      // 6. LOGOUT HANDLER
+      // 8. QUICK "CHANGE" POPUP MODAL (VEDANTU TOP BAR BUTTON)
+      // ========================================================
+      const quickChangeBtn = document.getElementById('btn-quick-change');
+      const quickModal = document.getElementById('modal-quick-change');
+      const closeQuickBtn = document.getElementById('btn-close-quick-modal');
+      const cancelQuickBtn = document.getElementById('btn-cancel-quick-modal');
+
+      function openQuickModal() {
+        if (!quickModal) return;
+        quickModal.classList.remove('hidden');
+        setTimeout(() => {
+          quickModal.classList.remove('opacity-0');
+          const panel = quickModal.querySelector('div');
+          if (panel) panel.classList.remove('scale-95');
+        }, 10);
+      }
+
+      function closeQuickModal() {
+        if (!quickModal) return;
+        quickModal.classList.add('opacity-0');
+        const panel = quickModal.querySelector('div');
+        if (panel) panel.classList.add('scale-95');
+        setTimeout(() => {
+          quickModal.classList.add('hidden');
+        }, 200);
+      }
+
+      if (quickChangeBtn) quickChangeBtn.addEventListener('click', openQuickModal);
+      if (closeQuickBtn) closeQuickBtn.addEventListener('click', closeQuickModal);
+      if (cancelQuickBtn) cancelQuickBtn.addEventListener('click', closeQuickModal);
+      if (quickModal) {
+        quickModal.addEventListener('click', (e) => {
+          if (e.target === quickModal) closeQuickModal();
+        });
+      }
+
+      document.getElementById('form-quick-target').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newClass = document.getElementById('modal-input-class').value;
+        const newBoard = document.getElementById('modal-input-board').value;
+        const newTarget = document.getElementById('modal-input-target').value;
+
+        const payload = {
+          class: newClass,
+          academicInfo: {
+            class: newClass,
+            board: newBoard,
+            targetExam: newTarget
+          }
+        };
+
+        const btn = document.getElementById('btn-save-quick-target');
+        await saveProfileData(payload, "Target & Class updated!", btn);
+
+        const cleanClass = newClass.replace(/[^0-9]/g, '') || newClass;
+        document.getElementById('hero-stat-class').textContent = cleanClass;
+        document.getElementById('hero-stat-board').textContent = newBoard;
+        document.getElementById('hero-stat-target').textContent = newTarget;
+        document.getElementById('nav-user-target').textContent = newClass;
+
+        // Also reflect in Academic Form tab
+        document.getElementById('input-academic-class').value = newClass;
+        document.getElementById('input-academic-board').value = newBoard;
+        document.getElementById('input-academic-target').value = newTarget;
+
+        closeQuickModal();
+      });
+
+      // ========================================================
+      // 9. AVATAR PHOTO UPDATE
+      // ========================================================
+      const editAvatarBtn = document.getElementById('btn-edit-avatar');
+      if (editAvatarBtn) {
+        editAvatarBtn.addEventListener('click', async () => {
+          const currentUrl = (userDoc && userDoc.photoURL) || (session && session.photoURL) || "";
+          const newPhotoUrl = prompt("Enter profile picture image URL (or Google photo link):", currentUrl);
+          if (newPhotoUrl && newPhotoUrl.trim().startsWith("http")) {
+            await saveProfileData({ photoURL: newPhotoUrl.trim() }, "Profile photo updated!", editAvatarBtn);
+            ['hero-avatar-img', 'nav-avatar-img'].forEach(id => {
+              const img = document.getElementById(id);
+              if (img) {
+                img.src = newPhotoUrl.trim();
+                img.classList.remove('hidden');
+              }
+            });
+            ['hero-avatar-initial', 'nav-avatar-initial'].forEach(id => {
+              const init = document.getElementById(id);
+              if (init) init.classList.add('hidden');
+            });
+          }
+        });
+      }
+
+      // ========================================================
+      // 10. LOGOUT
       // ========================================================
       const logoutBtn = document.getElementById('nav-btn-logout');
       if (logoutBtn) {
