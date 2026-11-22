@@ -128,18 +128,40 @@ const MendorbitBackend = {
     if (!email) return null;
     const normalized = email.toLowerCase().trim();
 
-    // 1. Try Firebase Client SDK
+    // 0. Fast Local Profile Cache Check
+    try {
+      const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && (parsed.email || parsed.displayName)) {
+          // If already verified or has complete kyc, return cached instantly
+          if (parsed.isVerified || parsed.kycCompleted) {
+            return parsed;
+          }
+        }
+      }
+    } catch(e) {}
+
+    // 1. Try Firebase Client SDK (Fast direct document lookup)
+    let firestoreFailed = false;
     if (isFirebaseConfigured && firestoreDb) {
       try {
-        let directDoc = await firestoreDb.collection("users").doc(normalized).get();
-        if (!directDoc.exists && email !== normalized) {
-          directDoc = await firestoreDb.collection("users").doc(email).get();
-        }
+        const directDoc = await firestoreDb.collection("users").doc(normalized).get();
         if (directDoc.exists) {
           const docData = directDoc.data() || {};
           if (!docData.email) docData.email = normalized;
           if (!docData.uid) docData.uid = normalized;
           return docData;
+        }
+
+        if (email !== normalized) {
+          const rawDoc = await firestoreDb.collection("users").doc(email).get();
+          if (rawDoc.exists) {
+            const docData = rawDoc.data() || {};
+            if (!docData.email) docData.email = normalized;
+            if (!docData.uid) docData.uid = normalized;
+            return docData;
+          }
         }
 
         const snapshot = await firestoreDb.collection("users").where("email", "==", normalized).limit(1).get();
@@ -149,24 +171,38 @@ const MendorbitBackend = {
           if (!found.uid) found.uid = normalized;
           return found;
         }
+
+        // IMPORTANT: Firestore SDK is online and healthy, and confirmed user does not exist.
+        // Return null immediately without waiting 4+ seconds for worker duplicate check!
+        return null;
       } catch (err) {
+        firestoreFailed = true;
         console.warn("[Mendorbit Backend] Firestore lookup note:", err);
       }
+    } else {
+      firestoreFailed = true;
     }
 
-    // 2. Try Cloudflare Worker Endpoint (Direct server-side lookup via Firestore REST API)
-    try {
-      const workerUrl = (typeof MENDORBIT_WORKER_URL !== 'undefined') ? MENDORBIT_WORKER_URL : "";
-      if (workerUrl) {
-        const res = await fetch(`${workerUrl}/api/auth/check-user?email=${encodeURIComponent(normalized)}`);
-        const data = await res.json();
-        if (data && data.status === "success" && data.exists && data.user) {
-          return data.user;
+    // 2. Try Cloudflare Worker Endpoint ONLY IF Firestore Client SDK was unavailable/errored
+    if (firestoreFailed) {
+      try {
+        const workerUrl = (typeof MENDORBIT_WORKER_URL !== 'undefined') ? MENDORBIT_WORKER_URL : "";
+        if (workerUrl) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2500); // Strict 2.5s timeout
+          const res = await fetch(`${workerUrl}/api/auth/check-user?email=${encodeURIComponent(normalized)}`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.status === "success" && data.exists && data.user) {
+              return data.user;
+            }
+          }
         }
-      }
-    } catch (e) {}
+      } catch (e) {}
+    }
 
-    // 3. Try Local Profile Cache & Encrypted Browser Vault
+    // 3. Try Local Profile Cache & Encrypted Browser Vault fallback
     try {
       const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
       if (cached) return JSON.parse(cached);
@@ -303,11 +339,14 @@ const MendorbitBackend = {
         console.warn("[Mendorbit Backend] Fetch sessions note:", err);
       }
 
-      // Fallback: check root user document map
+      // Fallback: check root user document map from local cache first
       try {
-        const userDoc = await this.getUserByEmail(normalized);
-        if (userDoc && userDoc.sessions && typeof userDoc.sessions === 'object') {
-          return Object.values(userDoc.sessions).sort((a, b) => (b.loginEpoch || 0) - (a.loginEpoch || 0));
+        const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
+        if (cached) {
+          const userDoc = JSON.parse(cached);
+          if (userDoc && userDoc.sessions && typeof userDoc.sessions === 'object') {
+            return Object.values(userDoc.sessions).sort((a, b) => (b.loginEpoch || 0) - (a.loginEpoch || 0));
+          }
         }
       } catch (e) {}
     }

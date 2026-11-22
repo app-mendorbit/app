@@ -1938,12 +1938,16 @@
   <script src="assets/js/mendorbit-loader.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", async function () {
+    document.addEventListener("DOMContentLoaded", function () {
+      // Guaranteed instant loader dismissal so profile is never blocked
       if (typeof MendorbitLoader !== 'undefined') {
-        MendorbitLoader.show("Loading Student Profile...", "Retrieving your secure learning records & preferences...", {
-          reason: "Database sync is taking slightly longer than usual. Please wait a moment."
-        });
+        MendorbitLoader.hide();
       }
+      setTimeout(() => {
+        if (typeof MendorbitLoader !== 'undefined') {
+          MendorbitLoader.hide();
+        }
+      }, 80);
 
       if (window.lucide) lucide.createIcons();
 
@@ -2010,30 +2014,6 @@
 
       // 3. SSO Session Fallback
       userDoc = Object.assign({}, session, userDoc);
-
-      // 4. Remote Firestore & Worker Sync (Non-blocking deep merge)
-      try {
-        if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
-          const remoteDoc = await MendorbitBackend.getUserByEmail(email) || await MendorbitBackend.getUserByEmail(normalizedEmail);
-          if (remoteDoc && typeof remoteDoc === 'object') {
-            Object.keys(remoteDoc).forEach(k => {
-              if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
-                if (typeof remoteDoc[k] === 'object' && !Array.isArray(remoteDoc[k])) {
-                  userDoc[k] = Object.assign({}, userDoc[k] || {}, remoteDoc[k]);
-                } else {
-                  userDoc[k] = remoteDoc[k];
-                }
-              }
-            });
-            try {
-              localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
-              localStorage.setItem("mendorbit_profile_" + normalizedEmail, JSON.stringify(userDoc));
-            } catch(e) {}
-          }
-        }
-      } catch (e) {
-        console.warn("Firestore profile fetch note:", e);
-      }
 
       // Course Map matching Login Portal
       const CLASS_COURSE_MAP = {
@@ -2147,71 +2127,6 @@
         return `+91 ${str.replace(/^\+91\s*/, '')}`;
       }
 
-      // Populate Hero Names & Stats
-      const rawFullName = userDoc.displayName || session.displayName || session.name || (email ? email.split('@')[0] : "Student");
-      const nameParts = rawFullName.trim().split(" ");
-      const firstName = userDoc.firstName || nameParts[0] || (email ? email.split('@')[0] : "Student");
-      const lastName = userDoc.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
-      const displayFullName = `${firstName} ${lastName}`.trim();
-
-      const phone = userDoc.phone || session.phone || "";
-      const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "Class 10";
-      const cleanClassNum = studentClass.replace(/[^0-9]/g, '') || studentClass;
-      const board = (userDoc.academicInfo && userDoc.academicInfo.board) || "CBSE";
-      const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundation";
-
-      // Render in Hero Header
-      document.getElementById('hero-user-fullname').textContent = displayFullName;
-      document.getElementById('hero-user-phone').innerHTML = phone
-        ? `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${formatHeroPhone(phone)}</span>`
-        : `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span class="text-slate-400 italic">No phone added</span>`;
-      document.getElementById('hero-user-email').textContent = email;
-      document.getElementById('hero-stat-class').textContent = cleanClassNum || studentClass;
-      document.getElementById('hero-stat-board').textContent = board;
-      document.getElementById('hero-stat-target').textContent = target;
-
-      // Render in Navbar
-      document.getElementById('nav-user-firstname').textContent = firstName;
-      document.getElementById('nav-user-target').textContent = studentClass;
-      const initialChar = firstName.charAt(0).toUpperCase();
-      document.getElementById('hero-avatar-initial').textContent = initialChar;
-      document.getElementById('nav-avatar-initial').textContent = initialChar;
-
-      // Avatar Photo
-      const photoURL = userDoc.photoURL || session.photoURL;
-      if (photoURL) {
-        ['hero-avatar-img', 'nav-avatar-img'].forEach(id => {
-          const img = document.getElementById(id);
-          if (img) {
-            img.src = photoURL;
-            img.classList.remove('hidden');
-          }
-        });
-        ['hero-avatar-initial', 'nav-avatar-initial'].forEach(id => {
-          const init = document.getElementById(id);
-          if (init) init.classList.add('hidden');
-        });
-      }
-
-      // Security Tab Label
-      document.getElementById('security-email-label').textContent = email;
-
-      // ========================================================
-      // 3. POPULATE FORM FIELDS
-      // ========================================================
-      // Personal
-      document.getElementById('input-first-name').value = firstName;
-      document.getElementById('input-last-name').value = lastName;
-      document.getElementById('input-gender').value = userDoc.gender || "Male";
-      document.getElementById('input-nationality').value = userDoc.nationality || "Indian";
-      document.getElementById('input-dob').value = userDoc.dob || "";
-      document.getElementById('input-blood-group').value = userDoc.bloodGroup || "";
-      
-      const phoneData = splitPhone(phone);
-      document.getElementById('input-phone-code').value = phoneData.code || "+91";
-      document.getElementById('input-phone-number').value = phoneData.number || "";
-      document.getElementById('input-email').value = email;
-
       function setSelectValueFuzzy(selectEl, value) {
         if (!selectEl) return;
         if (!value) {
@@ -2244,64 +2159,218 @@
         }
       }
 
-      // Preferences
-      const prefs = userDoc.preferences || {};
-      setSelectValueFuzzy(document.getElementById('input-pref-mode'), prefs.learningMode || "Live Interactive Batches");
-      setSelectValueFuzzy(document.getElementById('input-pref-lang'), prefs.language || "Hinglish");
-      setSelectValueFuzzy(document.getElementById('input-pref-hours'), prefs.studyHours || "4-5 Hours / Day");
-      setSelectValueFuzzy(document.getElementById('input-pref-notify'), prefs.notification || "WhatsApp & Email");
+      // Synchronous Instant Profile UI Population Function (Runs in 0ms on page load)
+      function populateProfileUI() {
+        const rawFullName = userDoc.displayName || session.displayName || session.name || (email ? email.split('@')[0] : "Student");
+        const nameParts = rawFullName.trim().split(" ");
+        const firstName = userDoc.firstName || nameParts[0] || (email ? email.split('@')[0] : "Student");
+        const lastName = userDoc.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
+        const displayFullName = `${firstName} ${lastName}`.trim();
 
-      // Guardian
-      const guardian = userDoc.parentInfo || {};
-      document.getElementById('input-father-name').value = guardian.fatherName || "";
-      const fatherPhoneData = splitPhone(guardian.fatherPhone || "");
-      document.getElementById('input-father-phone-code').value = fatherPhoneData.code || "+91";
-      document.getElementById('input-father-phone-number').value = fatherPhoneData.number || "";
+        const phone = userDoc.phone || session.phone || "";
+        const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "Class 10";
+        const cleanClassNum = studentClass.replace(/[^0-9]/g, '') || studentClass;
+        const board = (userDoc.academicInfo && userDoc.academicInfo.board) || "CBSE";
+        const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundation";
 
-      document.getElementById('input-mother-name').value = guardian.motherName || "";
-      const motherPhoneData = splitPhone(guardian.motherPhone || "");
-      document.getElementById('input-mother-phone-code').value = motherPhoneData.code || "+91";
-      document.getElementById('input-mother-phone-number').value = motherPhoneData.number || "";
+        // Render in Hero Header
+        const elHeroFullname = document.getElementById('hero-user-fullname');
+        if (elHeroFullname) elHeroFullname.textContent = displayFullName;
+        const elHeroPhone = document.getElementById('hero-user-phone');
+        if (elHeroPhone) {
+          elHeroPhone.innerHTML = phone
+            ? `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${formatHeroPhone(phone)}</span>`
+            : `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span class="text-slate-400 italic">No phone added</span>`;
+        }
+        const elHeroEmail = document.getElementById('hero-user-email');
+        if (elHeroEmail) elHeroEmail.textContent = email;
+        const elHeroStatClass = document.getElementById('hero-stat-class');
+        if (elHeroStatClass) elHeroStatClass.textContent = cleanClassNum || studentClass;
+        const elHeroStatBoard = document.getElementById('hero-stat-board');
+        if (elHeroStatBoard) elHeroStatBoard.textContent = board;
+        const elHeroStatTarget = document.getElementById('hero-stat-target');
+        if (elHeroStatTarget) elHeroStatTarget.textContent = target;
 
-      document.getElementById('input-parent-email').value = guardian.parentEmail || "";
-      document.getElementById('input-emergency-pref').value = guardian.emergencyContact || "Father";
+        // Render in Navbar
+        const elNavFirstName = document.getElementById('nav-user-firstname');
+        if (elNavFirstName) elNavFirstName.textContent = firstName;
+        const elNavTarget = document.getElementById('nav-user-target');
+        if (elNavTarget) elNavTarget.textContent = studentClass;
+        const initialChar = firstName.charAt(0).toUpperCase();
+        const elHeroInit = document.getElementById('hero-avatar-initial');
+        if (elHeroInit) elHeroInit.textContent = initialChar;
+        const elNavInit = document.getElementById('nav-avatar-initial');
+        if (elNavInit) elNavInit.textContent = initialChar;
 
-      // Address
-      const address = userDoc.billingAddress || userDoc.address || {};
-      document.getElementById('input-address1').value = address.address1 || "";
-      document.getElementById('input-address2').value = address.address2 || "";
-      document.getElementById('input-pincode').value = address.pincode || "";
-      document.getElementById('input-city').value = address.city || "";
-      document.getElementById('input-district').value = address.district || "";
-      document.getElementById('input-state').value = address.state || "";
-      document.getElementById('input-country').value = address.country || "India";
+        // Avatar Photo
+        const photoURL = userDoc.photoURL || session.photoURL;
+        if (photoURL) {
+          ['hero-avatar-img', 'nav-avatar-img'].forEach(id => {
+            const img = document.getElementById(id);
+            if (img) {
+              img.src = photoURL;
+              img.classList.remove('hidden');
+            }
+          });
+          ['hero-avatar-initial', 'nav-avatar-initial'].forEach(id => {
+            const init = document.getElementById(id);
+            if (init) init.classList.add('hidden');
+          });
+        }
 
-      // Academic
-      const academic = userDoc.academicInfo || {};
-      const currentAcademicClass = academic.class || studentClass || "Class 10";
-      const currentAcademicTarget = academic.targetExam || target || "Foundation";
-      document.getElementById('input-academic-class').value = currentAcademicClass;
-      document.getElementById('input-academic-board').value = academic.board || board || "CBSE";
-      populateCourseOptions(document.getElementById('input-academic-target'), currentAcademicClass, currentAcademicTarget);
-      document.getElementById('input-academic-year').value = academic.passingYear || "2026";
-      document.getElementById('input-academic-school').value = academic.school || "";
-      syncStreamOptions(currentAcademicClass, academic.stream);
+        // Security Tab Label
+        const elSecEmail = document.getElementById('security-email-label');
+        if (elSecEmail) elSecEmail.textContent = email;
+
+        // ========================================================
+        // 3. POPULATE FORM FIELDS
+        // ========================================================
+        // Personal
+        const inFirst = document.getElementById('input-first-name');
+        if (inFirst) inFirst.value = firstName;
+        const inLast = document.getElementById('input-last-name');
+        if (inLast) inLast.value = lastName;
+        const inGender = document.getElementById('input-gender');
+        if (inGender) inGender.value = userDoc.gender || "Male";
+        const inNat = document.getElementById('input-nationality');
+        if (inNat) inNat.value = userDoc.nationality || "Indian";
+        const inDob = document.getElementById('input-dob');
+        if (inDob) inDob.value = userDoc.dob || "";
+        const inBlood = document.getElementById('input-blood-group');
+        if (inBlood) inBlood.value = userDoc.bloodGroup || "";
+        
+        const phoneData = splitPhone(phone);
+        const inPhoneCode = document.getElementById('input-phone-code');
+        if (inPhoneCode) inPhoneCode.value = phoneData.code || "+91";
+        const inPhoneNum = document.getElementById('input-phone-number');
+        if (inPhoneNum) inPhoneNum.value = phoneData.number || "";
+        const inEmail = document.getElementById('input-email');
+        if (inEmail) inEmail.value = email;
+
+        // Preferences
+        const prefs = userDoc.preferences || {};
+        setSelectValueFuzzy(document.getElementById('input-pref-mode'), prefs.learningMode || "Live Interactive Batches");
+        setSelectValueFuzzy(document.getElementById('input-pref-lang'), prefs.language || "Hinglish");
+        setSelectValueFuzzy(document.getElementById('input-pref-hours'), prefs.studyHours || "4-5 Hours / Day");
+        setSelectValueFuzzy(document.getElementById('input-pref-notify'), prefs.notification || "WhatsApp & Email");
+
+        // Guardian
+        const guardian = userDoc.parentInfo || {};
+        const inFather = document.getElementById('input-father-name');
+        if (inFather) inFather.value = guardian.fatherName || "";
+        const fatherPhoneData = splitPhone(guardian.fatherPhone || "");
+        const inFatherCode = document.getElementById('input-father-phone-code');
+        if (inFatherCode) inFatherCode.value = fatherPhoneData.code || "+91";
+        const inFatherNum = document.getElementById('input-father-phone-number');
+        if (inFatherNum) inFatherNum.value = fatherPhoneData.number || "";
+
+        const inMother = document.getElementById('input-mother-name');
+        if (inMother) inMother.value = guardian.motherName || "";
+        const motherPhoneData = splitPhone(guardian.motherPhone || "");
+        const inMotherCode = document.getElementById('input-mother-phone-code');
+        if (inMotherCode) inMotherCode.value = motherPhoneData.code || "+91";
+        const inMotherNum = document.getElementById('input-mother-phone-number');
+        if (inMotherNum) inMotherNum.value = motherPhoneData.number || "";
+
+        const inParentEmail = document.getElementById('input-parent-email');
+        if (inParentEmail) inParentEmail.value = guardian.parentEmail || "";
+        const inEmerg = document.getElementById('input-emergency-pref');
+        if (inEmerg) inEmerg.value = guardian.emergencyContact || "Father";
+
+        // Address
+        const address = userDoc.billingAddress || userDoc.address || {};
+        const inAddr1 = document.getElementById('input-address1');
+        if (inAddr1) inAddr1.value = address.address1 || "";
+        const inAddr2 = document.getElementById('input-address2');
+        if (inAddr2) inAddr2.value = address.address2 || "";
+        const inPin = document.getElementById('input-pincode');
+        if (inPin) inPin.value = address.pincode || "";
+        const inCity = document.getElementById('input-city');
+        if (inCity) inCity.value = address.city || "";
+        const inDist = document.getElementById('input-district');
+        if (inDist) inDist.value = address.district || "";
+        const inState = document.getElementById('input-state');
+        if (inState) inState.value = address.state || "";
+        const inCountry = document.getElementById('input-country');
+        if (inCountry) inCountry.value = address.country || "India";
+
+        // Academic
+        const academic = userDoc.academicInfo || {};
+        const currentAcademicClass = academic.class || studentClass || "Class 10";
+        const currentAcademicTarget = academic.targetExam || target || "Foundation";
+        const inAcadClass = document.getElementById('input-academic-class');
+        if (inAcadClass) inAcadClass.value = currentAcademicClass;
+        const inAcadBoard = document.getElementById('input-academic-board');
+        if (inAcadBoard) inAcadBoard.value = academic.board || board || "CBSE";
+        populateCourseOptions(document.getElementById('input-academic-target'), currentAcademicClass, currentAcademicTarget);
+        const inAcadYear = document.getElementById('input-academic-year');
+        if (inAcadYear) inAcadYear.value = academic.passingYear || "2026";
+        const inAcadSchool = document.getElementById('input-academic-school');
+        if (inAcadSchool) inAcadSchool.value = academic.school || "";
+        syncStreamOptions(currentAcademicClass, academic.stream);
+
+        // Modal inputs
+        const modalClass = document.getElementById('modal-input-class');
+        if (modalClass) modalClass.value = studentClass;
+        const modalBoard = document.getElementById('modal-input-board');
+        if (modalBoard) modalBoard.value = board;
+        populateCourseOptions(document.getElementById('modal-input-target'), studentClass, target || "Foundation");
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Initial Synchronous Rendering
+      populateProfileUI();
 
       // Dynamic Class to Target & Stream sync in Academic form
-      document.getElementById('input-academic-class').addEventListener('change', function() {
-        populateCourseOptions(document.getElementById('input-academic-target'), this.value);
-        syncStreamOptions(this.value, document.getElementById('input-academic-stream').value);
-      });
-
-      // Modal inputs
-      document.getElementById('modal-input-class').value = studentClass;
-      document.getElementById('modal-input-board').value = board;
-      populateCourseOptions(document.getElementById('modal-input-target'), studentClass, target || "Foundation");
+      const inAcadClass = document.getElementById('input-academic-class');
+      if (inAcadClass) {
+        inAcadClass.addEventListener('change', function() {
+          populateCourseOptions(document.getElementById('input-academic-target'), this.value);
+          syncStreamOptions(this.value, document.getElementById('input-academic-stream') ? document.getElementById('input-academic-stream').value : "");
+        });
+      }
 
       // Dynamic Class to Target sync in Modal
-      document.getElementById('modal-input-class').addEventListener('change', function() {
-        populateCourseOptions(document.getElementById('modal-input-target'), this.value);
-      });
+      const modalClass = document.getElementById('modal-input-class');
+      if (modalClass) {
+        modalClass.addEventListener('change', function() {
+          populateCourseOptions(document.getElementById('modal-input-target'), this.value);
+        });
+      }
+
+      // 4. Non-blocking Background Remote Firestore & Worker Sync
+      (async () => {
+        try {
+          if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
+            const remoteDoc = await MendorbitBackend.getUserByEmail(normalizedEmail);
+            if (remoteDoc && typeof remoteDoc === 'object') {
+              let changed = false;
+              Object.keys(remoteDoc).forEach(k => {
+                if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
+                  if (typeof remoteDoc[k] === 'object' && !Array.isArray(remoteDoc[k])) {
+                    userDoc[k] = Object.assign({}, userDoc[k] || {}, remoteDoc[k]);
+                  } else {
+                    userDoc[k] = remoteDoc[k];
+                  }
+                  changed = true;
+                }
+              });
+              if (changed) {
+                try {
+                  localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+                  localStorage.setItem("mendorbit_profile_" + normalizedEmail, JSON.stringify(userDoc));
+                } catch(e) {}
+                populateProfileUI();
+                if (typeof syncAllFields === 'function') syncAllFields();
+                if (typeof updateKycProgress === 'function') updateKycProgress();
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Background profile sync note:", e);
+        }
+      })();
 
       // ========================================================
       // 4. DYNAMIC KYC / PROFILE COMPLETION CALCULATION & FIELD STYLING

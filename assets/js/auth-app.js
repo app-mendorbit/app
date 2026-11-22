@@ -897,11 +897,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (res && res.status === "success") {
-        await completeAuthSession(res.user, "SIGNUP", "Password", !!(res.user && res.user.sessionId));
+        await completeAuthSession(res.user, "SIGNUP", "Password", true);
         notify("Account created successfully! Redirecting...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
-        }, 900);
+        }, 500);
         return;
       }
     } catch (e) {
@@ -914,12 +914,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const profile = { displayName: data.name, email: docId, class: data.studentClass };
 
     await MendorbitBackend.saveUserProfile(docId, profile, attribution, encryptedPassword);
-    await completeAuthSession({ uid: docId, email: docId, displayName: data.name, class: data.studentClass }, "SIGNUP");
+    await completeAuthSession({ uid: docId, email: docId, displayName: data.name, class: data.studentClass }, "SIGNUP", "Password", true);
 
     notify("Account created successfully! Redirecting...", "success");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
-    }, 900);
+    }, 500);
   }
 
   // --- 2. PASSWORD SIGN IN SUBMIT ---
@@ -1266,12 +1266,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (res && res.status === "success") {
         const sessionUser = { ...res.user, photoURL: photoURL || (res.user && res.user.photoURL) || "" };
-        await completeAuthSession(sessionUser, "SIGNUP");
+        await completeAuthSession(sessionUser, "SIGNUP", "Google Sign-In", true);
         setButtonLoading(btn, false, "Complete Setup & Enter");
         notify("Account setup complete! Entering Mendorbit...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
-        }, 900);
+        }, 500);
         return;
       }
     } catch (e) {
@@ -1293,13 +1293,13 @@ document.addEventListener("DOMContentLoaded", function () {
       displayName: pendingGoogleUser.displayName || "Google Student",
       class: selectedClass,
       photoURL: photoURL
-    }, "SIGNUP");
+    }, "SIGNUP", "Google Sign-In", true);
 
     setButtonLoading(btn, false, "Complete Setup & Enter");
     notify("Account setup complete! Entering Mendorbit...", "success");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
-    }, 900);
+    }, 500);
   });
 
   // UI Button Loading Helper with Global Dimmed Dot-Circle Loader
