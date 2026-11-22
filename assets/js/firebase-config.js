@@ -352,6 +352,54 @@ const MendorbitBackend = {
   },
 
   /**
+   * Permanently delete a terminated/logged-out session from history
+   */
+  async deleteUserSession(email, sessionId) {
+    if (!email || !sessionId) return false;
+    const normalized = email.toLowerCase().trim();
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        await firestoreDb.collection("users").doc(normalized).collection("sessions").doc(sessionId).delete();
+        const updateMap = {};
+        updateMap[`sessions.${sessionId}`] = firebase.firestore.FieldValue.delete();
+        await firestoreDb.collection("users").doc(normalized).update(updateMap).catch(() => {});
+        console.log(`[Mendorbit Backend] Session ${sessionId} deleted from history for ${normalized}`);
+        return true;
+      } catch (err) {
+        console.warn("[Mendorbit Backend] Delete session error:", err);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Clear all logged-out sessions from history
+   */
+  async clearLoggedOutSessions(email) {
+    if (!email) return false;
+    const normalized = email.toLowerCase().trim();
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const snap = await firestoreDb.collection("users").doc(normalized).collection("sessions").where("status", "==", "LOGGED_OUT").get();
+        const batch = firestoreDb.batch();
+        const updateMap = {};
+        snap.forEach(doc => {
+          batch.delete(doc.ref);
+          updateMap[`sessions.${doc.id}`] = firebase.firestore.FieldValue.delete();
+        });
+        await batch.commit();
+        if (Object.keys(updateMap).length > 0) {
+          await firestoreDb.collection("users").doc(normalized).update(updateMap).catch(() => {});
+        }
+        return true;
+      } catch (err) {
+        console.warn("[Mendorbit Backend] Clear history error:", err);
+      }
+    }
+    return false;
+  },
+
+  /**
    * Migrate User Email (Copies Firestore Doc & Sessions to new email)
    */
   async migrateUserEmail(oldEmail, newEmail) {

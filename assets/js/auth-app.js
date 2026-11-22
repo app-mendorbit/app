@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let pendingGoogleUser = null;
 
   // Unified Session Completion Engine (Guarantees Session ID & Firestore Tracking on EVERY Login)
-  async function completeAuthSession(userPayload, eventType = "LOGIN", authMethod = null) {
+  async function completeAuthSession(userPayload, eventType = "LOGIN", authMethod = null, alreadyRecorded = false) {
     const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
     const sessionWithId = { ...userPayload, sessionId };
 
@@ -70,7 +70,9 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     const exactLoc = (typeof MendorbitTracker !== 'undefined' && MendorbitTracker.getExactLocation) ? MendorbitTracker.getExactLocation() : null;
-    if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
+
+    // Only record in Firestore if NOT already recorded server-side by Worker
+    if (!alreadyRecorded && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
       try {
         await MendorbitBackend.recordUserSession(sessionWithId.email, {
           sessionId: sessionId,
@@ -188,7 +190,27 @@ document.addEventListener("DOMContentLoaded", function () {
   let qrTimerInterval = null;
   let qrRefreshCountdown = 60;
   let qrUnsubscribe = null;
+  let qrPollInterval = null;
   let activeQrSessionId = null;
+  let qrHandled = false;
+
+  async function handleQrSuccess(user) {
+    if (qrHandled) return;
+    qrHandled = true;
+    stopQrAutoRefresh();
+
+    const liveStatus = document.getElementById("qr-live-status");
+    if (liveStatus) {
+      liveStatus.className = "text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5";
+      liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Device Verified! Logging in...</span>';
+    }
+
+    notify("Device authorized via QR! Welcome to Mendorbit.", "success");
+    await completeAuthSession(user, "QR_LOGIN", "QR Linked Device");
+    setTimeout(() => {
+      MendorbitTracker.executePostLoginRedirect();
+    }, 800);
+  }
 
   function renderQrCode() {
     const container = document.getElementById("qr-target-container");
@@ -198,7 +220,12 @@ document.addEventListener("DOMContentLoaded", function () {
       try { qrUnsubscribe(); } catch (e) {}
       qrUnsubscribe = null;
     }
+    if (qrPollInterval) {
+      clearInterval(qrPollInterval);
+      qrPollInterval = null;
+    }
 
+    qrHandled = false;
     const sessionId = "mndrbt_qr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     activeQrSessionId = sessionId;
 
@@ -208,33 +235,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${sessionId}`);
-    // High error correction (ecc=H) guarantees 100% scan reliability with center logo
-    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-xl w-44 h-44 object-contain" />`;
+    // High error correction (ecc=H) guarantees 100% scan reliability with camera viewfinder
+    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-xl w-44 h-44 object-contain shadow-inner" />`;
 
-    // Real-Time Approval Listener: Fires as soon as authorized from profile "Link a Device"
+    // Dual-Channel 1: Real-Time Firestore Snapshot Listener
     if (typeof firestoreDb !== 'undefined' && firestoreDb) {
       try {
         qrUnsubscribe = firestoreDb.collection("qr_auth").doc(sessionId).onSnapshot(async (doc) => {
           if (doc.exists) {
             const data = doc.data();
             if (data && (data.status === "AUTHORIZED" || data.status === "SUCCESS") && data.user) {
-              if (qrUnsubscribe) {
-                qrUnsubscribe();
-                qrUnsubscribe = null;
-              }
-              stopQrAutoRefresh();
-
-              const liveStatus = document.getElementById("qr-live-status");
-              if (liveStatus) {
-                liveStatus.className = "text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5";
-                liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Device Verified! Logging in...</span>';
-              }
-
-              notify("Device authorized via QR! Welcome to Mendorbit.", "success");
-              await completeAuthSession(data.user, "QR_LOGIN", "QR Linked Device");
-              setTimeout(() => {
-                MendorbitTracker.executePostLoginRedirect();
-              }, 800);
+              await handleQrSuccess(data.user);
             }
           }
         }, err => console.warn("[QR Auth] Listener note:", err));
@@ -242,6 +253,19 @@ document.addEventListener("DOMContentLoaded", function () {
         console.warn("[QR Auth] setup error:", err);
       }
     }
+
+    // Dual-Channel 2: Edge Polling (1.5s interval fallback for unauthenticated clients)
+    qrPollInterval = setInterval(async () => {
+      if (qrHandled) return;
+      try {
+        if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.pollQrSession) {
+          const res = await MendorbitAPI.pollQrSession(sessionId);
+          if (res && res.status === "success" && (res.user || res.data?.user)) {
+            await handleQrSuccess(res.user || res.data.user);
+          }
+        }
+      } catch (e) {}
+    }, 1500);
   }
 
   function startQrAutoRefresh() {
@@ -266,6 +290,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (qrTimerInterval) {
       clearInterval(qrTimerInterval);
       qrTimerInterval = null;
+    }
+    if (qrPollInterval) {
+      clearInterval(qrPollInterval);
+      qrPollInterval = null;
     }
     if (qrUnsubscribe) {
       try { qrUnsubscribe(); } catch (e) {}
@@ -389,7 +417,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (otpDigits[0]) otpDigits[0].focus();
   }
 
-  function startOtpTimer(seconds = 120) {
+  function startOtpTimer(seconds = 300) {
     if (otpCountdown) clearInterval(otpCountdown);
     let remaining = seconds;
     currentOtpContext.expiresAt = Date.now() + (seconds * 1000);
@@ -433,12 +461,12 @@ document.addEventListener("DOMContentLoaded", function () {
       purpose,
       name,
       extraData,
-      expiresAt: Date.now() + (120 * 1000),
+      expiresAt: Date.now() + (300 * 1000),
       isExpired: false
     };
     inlineOtpEmail.textContent = email;
     clearOtpInputs();
-    startOtpTimer(120);
+    startOtpTimer(300);
     showView("otp-verify");
   }
 
@@ -557,7 +585,7 @@ document.addEventListener("DOMContentLoaded", function () {
       await requestOtpDispatch(currentOtpContext.email, currentOtpContext.purpose, currentOtpContext.name);
       setButtonLoading(btnInlineResend, false, "Resend OTP");
       clearOtpInputs();
-      startOtpTimer(120);
+      startOtpTimer(300);
     });
   }
 
@@ -727,7 +755,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (res && res.status === "success") {
-        await completeAuthSession(res.user, "SIGNUP");
+        await completeAuthSession(res.user, "SIGNUP", "Password", !!(res.user && res.user.sessionId));
         notify("Account created successfully! Redirecting...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -772,7 +800,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const res = await MendorbitAPI.login(identifier, password);
       if (res && res.status === "success") {
         setButtonLoading(btn, false, "Sign In");
-        await completeAuthSession(res.user, "LOGIN", "Password");
+        await completeAuthSession(res.user, "LOGIN", "Password", !!(res.user && res.user.sessionId));
         notify("Welcome back, " + res.user.displayName + "!", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -860,7 +888,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const res = await MendorbitAPI.otpLogin(email, getOtpCode());
       if (res && res.status === "success") {
-        await completeAuthSession(res.user, "LOGIN_OTP");
+        await completeAuthSession(res.user, "LOGIN_OTP", "Email OTP", !!(res.user && res.user.sessionId));
         notify("Verified! Redirecting to dashboard...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -1013,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             }
 
-            await completeAuthSession(userSession, "GOOGLE_LOGIN");
+            await completeAuthSession(userSession, "GOOGLE_LOGIN", "Google Sign-In", !!(userSession && userSession.sessionId));
             if (typeof MendorbitLoader !== 'undefined') {
               MendorbitLoader.show("Verified!", "Redirecting to your student dashboard...");
             }

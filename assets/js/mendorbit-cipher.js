@@ -136,6 +136,8 @@
     MASTER_PLATFORM_KEY: MASTER_PLATFORM_KEY,
     encrypt: encrypt,
     decrypt: decrypt,
+    encrypt2Digit: encrypt,
+    decrypt2Digit: decrypt,
     testIntegrity: testIntegrity
   };
 });

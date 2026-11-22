@@ -57,6 +57,9 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- HTML5 QR Code Scanner Library (Direct Device Camera Viewfinder) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   <!-- Firebase Client SDK (Compat v9) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -184,6 +187,28 @@
       background-color: #1e293b !important;
       color: #94a3b8;
       border-color: #334155;
+    }
+
+    /* Fixed Phone Number + Country Code Row (Never collapses or wraps) */
+    .phone-input-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      width: 100% !important;
+    }
+    .phone-code-select {
+      width: 100px !important;
+      min-width: 100px !important;
+      max-width: 100px !important;
+      flex-shrink: 0 !important;
+      padding: 11px 8px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+    }
+    .phone-number-field {
+      flex: 1 1 0% !important;
+      min-width: 0 !important;
+      width: 100% !important;
     }
 
     /* Sidebar Navigation Links */
@@ -611,8 +636,8 @@
                 <!-- Phone / WhatsApp Number * with Country Code -->
                 <div class="edtech-input-group">
                   <label>Phone / WhatsApp Number *</label>
-                  <div class="flex items-center gap-2">
-                    <select id="input-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                  <div class="phone-input-row">
+                    <select id="input-phone-code" class="edtech-input phone-code-select font-mono text-xs font-bold">
                       <option value="+91" selected>🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>
                       <option value="+44">🇬🇧 +44</option>
@@ -623,7 +648,7 @@
                       <option value="+880">🇧🇩 +880</option>
                       <option value="+977">🇳🇵 +977</option>
                     </select>
-                    <input type="tel" id="input-phone-number" required maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                    <input type="tel" id="input-phone-number" required maxlength="10" placeholder="10-digit mobile number" pattern="[0-9]{10}" class="edtech-input phone-number-field font-mono">
                   </div>
                 </div>
 
@@ -808,8 +833,8 @@
 
                 <div class="edtech-input-group">
                   <label>Father's Contact / WhatsApp *</label>
-                  <div class="flex items-center gap-2">
-                    <select id="input-father-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                  <div class="phone-input-row">
+                    <select id="input-father-phone-code" class="edtech-input phone-code-select font-mono text-xs font-bold">
                       <option value="+91" selected>🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>
                       <option value="+44">🇬🇧 +44</option>
@@ -820,7 +845,7 @@
                       <option value="+880">🇧🇩 +880</option>
                       <option value="+977">🇳🇵 +977</option>
                     </select>
-                    <input type="tel" id="input-father-phone-number" maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                    <input type="tel" id="input-father-phone-number" maxlength="10" placeholder="10-digit mobile number" pattern="[0-9]{10}" class="edtech-input phone-number-field font-mono">
                   </div>
                 </div>
 
@@ -831,8 +856,8 @@
 
                 <div class="edtech-input-group">
                   <label>Mother's Contact Number</label>
-                  <div class="flex items-center gap-2">
-                    <select id="input-mother-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                  <div class="phone-input-row">
+                    <select id="input-mother-phone-code" class="edtech-input phone-code-select font-mono text-xs font-bold">
                       <option value="+91" selected>🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>
                       <option value="+44">🇬🇧 +44</option>
@@ -843,7 +868,7 @@
                       <option value="+880">🇧🇩 +880</option>
                       <option value="+977">🇳🇵 +977</option>
                     </select>
-                    <input type="tel" id="input-mother-phone-number" maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                    <input type="tel" id="input-mother-phone-number" maxlength="10" placeholder="10-digit mobile number" pattern="[0-9]{10}" class="edtech-input phone-number-field font-mono">
                   </div>
                 </div>
 
@@ -1052,13 +1077,18 @@
 
             <!-- Device Logout History Collapsible Section -->
             <div class="mt-8 pt-5 border-t border-slate-200/80 dark:border-slate-800">
-              <button type="button" id="btn-toggle-logout-history" class="w-full flex items-center justify-between text-left py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="history" class="w-4 h-4 text-slate-400"></i>
-                  <span>Device Logout History (<span id="logout-history-count">0</span>)</span>
-                </div>
-                <i data-lucide="chevron-down" id="icon-history-chevron" class="w-4 h-4 text-slate-400 transition-transform"></i>
-              </button>
+              <div class="flex items-center justify-between py-2">
+                <button type="button" id="btn-toggle-logout-history" class="flex-1 flex items-center justify-between text-left text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="history" class="w-4 h-4 text-slate-400"></i>
+                    <span>Device Logout History (<span id="logout-history-count">0</span>)</span>
+                  </div>
+                  <i data-lucide="chevron-down" id="icon-history-chevron" class="w-4 h-4 text-slate-400 transition-transform mr-3"></i>
+                </button>
+                <button type="button" id="btn-clear-all-history" class="text-[11px] font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 hover:underline px-2 py-1 rounded transition hidden">
+                  Clear All History
+                </button>
+              </div>
               <div id="logout-history-container" class="hidden mt-3 space-y-2">
                 <!-- Populated dynamically -->
               </div>
@@ -1259,6 +1289,10 @@
             <label>6-Digit Verification Code</label>
             <input type="text" id="input-forgot-otp-code" maxlength="6" placeholder="• • • • • •" class="edtech-input text-center font-mono tracking-widest text-lg font-bold">
           </div>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span id="forgot-otp-timer">Code valid for 5:00 mins</span>
+            <button type="button" id="btn-resend-forgot-otp" class="text-orange-600 dark:text-orange-400 hover:underline font-bold hidden">Resend Code</button>
+          </div>
 
           <div class="edtech-input-group">
             <label>New Password</label>
@@ -1289,48 +1323,77 @@
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
   <!-- ======================================================== -->
-  <!-- LINK A DEVICE VIA QR / LINK CODE MODAL                   -->
+  <!-- LINK A DEVICE VIA CAMERA QR SCANNER MODAL                -->
   <!-- ======================================================== -->
-  <div id="modal-link-device" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+  <div id="modal-link-device" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
     <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 transform scale-95 transition-transform duration-200">
       
       <button type="button" id="btn-close-link-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <div class="flex items-center gap-3 mb-5">
+      <div class="flex items-center gap-3 mb-4">
         <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center flex-shrink-0">
-          <i data-lucide="qr-code" class="w-5 h-5"></i>
+          <i data-lucide="scan" class="w-5 h-5"></i>
         </div>
         <div>
-          <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Link a New Device</h3>
-          <p class="text-xs text-slate-400">Authorize login instantly via QR Link Code</p>
+          <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Scan QR to Link Device</h3>
+          <p class="text-xs text-slate-400">Point your camera at the QR code on the login screen</p>
         </div>
       </div>
 
-      <div class="space-y-4">
-        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-          Open <strong>app.mendorbit.in/login</strong> on the other device, click <strong>QR Login</strong>, and enter or paste the <strong>Link Code</strong> below to authorize instant access:
-        </p>
-
-        <div class="edtech-input-group">
-          <label>QR Link Code or Session URL *</label>
-          <input type="text" id="input-qr-link-code" placeholder="e.g. mndrbt_qr_..." class="edtech-input font-mono text-center tracking-wider text-sm">
+      <!-- Live Camera Scanner Viewport -->
+      <div class="relative w-full aspect-square max-w-[270px] mx-auto rounded-2xl overflow-hidden bg-slate-950 border-2 border-orange-500/50 shadow-inner flex items-center justify-center">
+        <div id="qr-camera-reader" class="w-full h-full object-cover"></div>
+        
+        <!-- Live Scanning Overlay Reticle -->
+        <div id="qr-camera-overlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
+          <div class="w-44 h-44 border border-dashed border-orange-400/80 rounded-2xl relative">
+            <!-- Reticle corner highlights -->
+            <div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-orange-500 rounded-tl"></div>
+            <div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-orange-500 rounded-tr"></div>
+            <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-orange-500 rounded-bl"></div>
+            <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-orange-500 rounded-br"></div>
+            <!-- Animated Scanline -->
+            <div class="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse" style="top: 50%;"></div>
+          </div>
         </div>
 
-        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-3 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
-          <i data-lucide="shield-check" class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600"></i>
-          <span>Only authorize devices that belong to you. Authorizing a device grants full access to your learning courses and personal account.</span>
+        <!-- Camera Status / Permission Notice -->
+        <div id="qr-camera-loading" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center text-center p-4">
+          <i data-lucide="camera" class="w-8 h-8 text-orange-500 animate-pulse mb-2"></i>
+          <span class="text-xs font-semibold text-slate-200">Opening camera...</span>
+          <span class="text-[11px] text-slate-400 mt-1">Please allow camera permissions if prompted</span>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-3 pt-6 mt-4 border-t border-slate-100 dark:border-slate-800">
-        <button type="button" id="btn-cancel-link-modal" class="btn-edtech-cancel">
-          Cancel
+      <!-- Scanner status text -->
+      <div class="text-center mt-3">
+        <p id="qr-scan-status-text" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Align QR code inside the frame to link</p>
+      </div>
+
+      <!-- Manual Code Accordion Toggle -->
+      <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" id="btn-toggle-manual-qr" class="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline flex items-center justify-center gap-1 w-full">
+          <span>Camera not working? Enter code manually</span>
+          <i data-lucide="chevron-down" id="icon-manual-chevron" class="w-3.5 h-3.5 transition-transform"></i>
         </button>
-        <button type="button" id="btn-submit-link-device" class="btn-edtech-update flex items-center gap-2">
-          <i data-lucide="check-circle" class="w-4 h-4"></i>
-          <span>Authorize Device</span>
+
+        <div id="qr-manual-input-box" class="hidden mt-3 space-y-3">
+          <div class="edtech-input-group">
+            <label>QR Link Code or Session URL</label>
+            <input type="text" id="input-qr-link-code" placeholder="mndrbt_qr_..." class="edtech-input font-mono text-center tracking-wider text-xs">
+          </div>
+          <button type="button" id="btn-submit-link-device" class="btn-edtech-update w-full text-xs py-2 flex items-center justify-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Authorize Device Manually</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end pt-3">
+        <button type="button" id="btn-cancel-link-modal" class="btn-edtech-cancel text-xs py-2 px-4">
+          Close
         </button>
       </div>
 
@@ -1922,7 +1985,8 @@
           }
 
           // Encrypt new password
-          const newEncrypted = (typeof MendorbitCipher !== 'undefined') ? MendorbitCipher.encrypt2Digit(newPass) : newPass;
+          const cipherFn = (typeof MendorbitCipher !== 'undefined') ? (MendorbitCipher.encrypt2Digit || MendorbitCipher.encrypt) : null;
+          const newEncrypted = cipherFn ? cipherFn(newPass) : newPass;
 
           // Update in Firestore
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
@@ -2149,20 +2213,12 @@
         try { localStorage.setItem("mendorbit_session_id", currentSessionId); } catch(e) {}
       }
 
-      // Ensure current session is tracked
-      if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
-        MendorbitBackend.recordUserSession(email, {
-          sessionId: currentSessionId,
-          device: navigator.userAgent,
-          status: "ACTIVE"
-        });
-      }
-
       async function renderSessions() {
         const listContainer = document.getElementById('active-sessions-list');
         const historyContainer = document.getElementById('logout-history-container');
         const countPill = document.getElementById('active-sessions-count-pill');
         const historyCount = document.getElementById('logout-history-count');
+        const btnClearAllHistory = document.getElementById('btn-clear-all-history');
         if (!listContainer) return;
 
         try {
@@ -2184,26 +2240,72 @@
               ip: "Current Device",
               location: { city: "India" },
               loginTime: new Date().toISOString(),
+              loginEpoch: Date.now(),
+              lastActive: new Date().toISOString(),
+              lastActiveEpoch: Date.now(),
+              isOnline: true,
               status: "ACTIVE"
             }];
           }
+
+          // Strict Deduplication by SessionId (Ensures no phantom or duplicate cards appear)
+          const seenIds = new Set();
+          const cleanSessions = [];
+          for (const s of sessions) {
+            if (!s || !s.sessionId) continue;
+            if (!seenIds.has(s.sessionId)) {
+              seenIds.add(s.sessionId);
+              cleanSessions.push(s);
+            }
+          }
+          sessions = cleanSessions;
 
           const activeList = sessions.filter(s => s.status === "ACTIVE" || !s.status);
           const historyList = sessions.filter(s => s.status === "LOGGED_OUT" || s.status === "logged_out");
 
           if (countPill) countPill.textContent = `${activeList.length} Active`;
           if (historyCount) historyCount.textContent = historyList.length;
+          if (btnClearAllHistory) {
+            if (historyList.length > 0) btnClearAllHistory.classList.remove('hidden');
+            else btnClearAllHistory.classList.add('hidden');
+          }
 
           // Render Active Sessions
           listContainer.innerHTML = "";
           activeList.sort((a, b) => (a.sessionId === currentSessionId ? -1 : 1));
 
+          const now = Date.now();
           activeList.forEach(s => {
             const isCurrent = (s.sessionId === currentSessionId);
             const devType = (s.deviceType || "Desktop").toLowerCase();
             let iconName = "monitor";
             if (devType === "mobile") iconName = "smartphone";
             else if (devType === "tablet") iconName = "tablet";
+
+            // Real-Time Online Status & Last Seen Engine
+            const lastActiveEpoch = s.lastActiveEpoch || (s.lastActive ? new Date(s.lastActive).getTime() : 0);
+            const diffSec = lastActiveEpoch ? Math.floor((now - lastActiveEpoch) / 1000) : 9999;
+            const isOnline = isCurrent || (s.isOnline !== false && diffSec < 75);
+
+            let onlineBadge = '';
+            if (isOnline) {
+              onlineBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Online now
+              </span>`;
+            } else {
+              let lastSeenText = "Offline";
+              if (lastActiveEpoch > 0) {
+                if (diffSec < 60) lastSeenText = "Offline • Seen just now";
+                else if (diffSec < 3600) lastSeenText = `Offline • Seen ${Math.floor(diffSec / 60)}m ago`;
+                else if (diffSec < 86400) lastSeenText = `Offline • Seen ${Math.floor(diffSec / 3600)}h ago`;
+                else lastSeenText = `Offline • Seen on ${new Date(lastActiveEpoch).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+              }
+              onlineBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                ${lastSeenText}
+              </span>`;
+            }
 
             // Authentication Method Badge (Google Sign-In, Password, Email OTP, QR Linked Device)
             const method = (s.authMethod || s.type || "").toLowerCase();
@@ -2249,21 +2351,22 @@
                   <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-sm font-extrabold text-slate-900 dark:text-white">${s.friendlyDevice || 'Device'}</span>
                     ${authBadge}
-                    ${isCurrent ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>This Device (Current Session)</span>' : ''}
+                    ${onlineBadge}
+                    ${isCurrent ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300">This Device</span>' : ''}
                   </div>
                   <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
                     <span>📍 ${locStr}</span>
                     <span>•</span>
                     <span class="font-mono">IP: ${s.ip || '127.0.0.1'}</span>
                     <span>•</span>
-                    <span>Active since ${timeStr}</span>
+                    <span>Login: ${timeStr}</span>
                   </p>
                 </div>
               </div>
               ${!isCurrent ? `
                 <button type="button" class="btn-logout-device px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
                   <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                  <span>Logout Device</span>
+                  <span>Terminate</span>
                 </button>
               ` : ''}
             `;
@@ -2288,9 +2391,12 @@
                       <span class="text-slate-400 font-mono ml-2">(${s.ip || 'IP hidden'})</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2.5">
                     <span class="text-slate-400">Terminated ${loggedOutTime}</span>
                     <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200/80 text-slate-600 dark:bg-slate-800 dark:text-slate-400">Logged Out</span>
+                    <button type="button" class="btn-delete-session p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition" data-session-id="${s.sessionId}" title="Delete record permanently">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
                   </div>
                 `;
                 historyContainer.appendChild(item);
@@ -2300,13 +2406,13 @@
 
           if (window.lucide) lucide.createIcons();
 
-          // Wire individual "Logout Device" buttons
+          // Wire individual "Terminate" buttons
           document.querySelectorAll('.btn-logout-device').forEach(btn => {
             btn.addEventListener('click', async () => {
               const targetSessId = btn.getAttribute('data-session-id');
               if (!targetSessId) return;
               btn.disabled = true;
-              btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Logging out...</span>`;
+              btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Revoking...</span>`;
               if (window.lucide) lucide.createIcons();
 
               try {
@@ -2316,11 +2422,33 @@
                 if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.revokeSession) {
                   await MendorbitAPI.revokeSession(email, targetSessId);
                 }
-                showToast("Device successfully logged out remotely.", "success");
+                showToast("Device session terminated.", "success");
                 await renderSessions();
               } catch (e) {
                 console.error("Revoke error:", e);
                 showToast("Failed to logout device.", "error");
+              }
+            });
+          });
+
+          // Wire delete single session from history
+          document.querySelectorAll('.btn-delete-session').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const targetSessId = btn.getAttribute('data-session-id');
+              if (!targetSessId) return;
+              btn.disabled = true;
+
+              try {
+                if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.deleteUserSession) {
+                  await MendorbitBackend.deleteUserSession(email, targetSessId);
+                }
+                if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.deleteSession) {
+                  await MendorbitAPI.deleteSession(email, targetSessId);
+                }
+                showToast("Session record deleted from history.", "success");
+                await renderSessions();
+              } catch (e) {
+                showToast("Failed to delete session record.", "error");
               }
             });
           });
@@ -2360,6 +2488,32 @@
         });
       }
 
+      // "Clear All History" button
+      const btnClearAllHistory = document.getElementById('btn-clear-all-history');
+      if (btnClearAllHistory) {
+        btnClearAllHistory.addEventListener('click', async () => {
+          if (!confirm("Clear all past logged-out session records?")) return;
+          btnClearAllHistory.disabled = true;
+          btnClearAllHistory.textContent = "Clearing...";
+
+          try {
+            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.clearLoggedOutSessions) {
+              await MendorbitBackend.clearLoggedOutSessions(email);
+            }
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.clearSessionHistory) {
+              await MendorbitAPI.clearSessionHistory(email);
+            }
+            showToast("History cleared successfully.", "success");
+            await renderSessions();
+          } catch (e) {
+            showToast("Failed to clear history.", "error");
+          } finally {
+            btnClearAllHistory.disabled = false;
+            btnClearAllHistory.textContent = "Clear All History";
+          }
+        });
+      }
+
       // Collapsible History Toggle
       const btnToggleHistory = document.getElementById('btn-toggle-logout-history');
       const historyCont = document.getElementById('logout-history-container');
@@ -2377,28 +2531,192 @@
         });
       }
 
-      // "Link a Device" Modal Open/Close & Authorization
+      // ========================================================
+      // LIVE CAMERA QR SCANNER & LINK DEVICE ENGINE
+      // ========================================================
+      let html5QrScanner = null;
+      let isQrAuthorizing = false;
+
+      async function startCameraScanner() {
+        const loadingEl = document.getElementById('qr-camera-loading');
+        const statusEl = document.getElementById('qr-scan-status-text');
+        isQrAuthorizing = false;
+        if (loadingEl) loadingEl.classList.remove('hidden');
+
+        if (typeof Html5Qrcode === 'undefined') {
+          if (statusEl) statusEl.textContent = "Camera scanner loading... please wait";
+          return;
+        }
+
+        try {
+          if (html5QrScanner) {
+            try { await html5QrScanner.stop(); } catch(e) {}
+            try { html5QrScanner.clear(); } catch(e) {}
+            html5QrScanner = null;
+          }
+
+          html5QrScanner = new Html5Qrcode("qr-camera-reader");
+          const cameras = await Html5Qrcode.getCameras().catch(() => []);
+
+          const qrConfig = {
+            fps: 15,
+            qrbox: { width: 190, height: 190 },
+            aspectRatio: 1.0
+          };
+
+          const cameraIdOrConfig = (cameras && cameras.length > 0)
+            ? (cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('environment'))?.id || cameras[0].id)
+            : { facingMode: "environment" };
+
+          await html5QrScanner.start(
+            cameraIdOrConfig,
+            qrConfig,
+            async (decodedText) => {
+              if (isQrAuthorizing) return;
+              isQrAuthorizing = true;
+              console.log("[QR Scanner] Decoded:", decodedText);
+              if (statusEl) {
+                statusEl.innerHTML = `<span class="text-emerald-500 font-bold">QR Detected! Authorizing...</span>`;
+              }
+              await authorizeQrPayload(decodedText);
+            },
+            (error) => {
+              // frame parse noise - silent
+            }
+          );
+
+          if (loadingEl) loadingEl.classList.add('hidden');
+          if (statusEl) statusEl.textContent = "Scanning... Hold camera steady over QR code.";
+        } catch (err) {
+          console.warn("[QR Scanner] Start error:", err);
+          if (loadingEl) loadingEl.classList.add('hidden');
+          if (statusEl) statusEl.innerHTML = `<span class="text-rose-500 font-semibold">Camera permission denied. Use manual code below.</span>`;
+          const manualBox = document.getElementById('qr-manual-input-box');
+          if (manualBox) manualBox.classList.remove('hidden');
+        }
+      }
+
+      async function stopCameraScanner() {
+        if (html5QrScanner) {
+          try {
+            await html5QrScanner.stop();
+            html5QrScanner.clear();
+          } catch(e) {}
+          html5QrScanner = null;
+        }
+      }
+
+      async function authorizeQrPayload(rawCode) {
+        if (!rawCode) return;
+        await stopCameraScanner();
+
+        // Extract session ID
+        let targetSession = rawCode.trim();
+        if (targetSession.includes("session=")) {
+          try {
+            const urlObj = new URL(targetSession);
+            targetSession = urlObj.searchParams.get("session") || targetSession;
+          } catch(e) {
+            const m = targetSession.match(/session=([a-zA-Z0-9_-]+)/);
+            if (m) targetSession = m[1];
+          }
+        }
+
+        showToast("QR Verified! Authorizing login...", "info");
+
+        try {
+          const userPayload = {
+            uid: (typeof userDoc !== 'undefined' && userDoc.uid) || email,
+            email: email,
+            displayName: (typeof displayFullName !== 'undefined' && displayFullName) || (typeof userDoc !== 'undefined' && userDoc.displayName) || "Student",
+            class: (typeof studentClass !== 'undefined' && studentClass) || "Class 10",
+            photoURL: (typeof userDoc !== 'undefined' && userDoc.photoURL) || photoURL || ""
+          };
+
+          // 1. Dual-Channel: Authorize via Worker endpoint
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.authorizeQrSession) {
+            await MendorbitAPI.authorizeQrSession(targetSession, userPayload, email).catch(e => console.warn("Worker QR error:", e));
+          }
+
+          // 2. Dual-Channel: Also write to Firestore qr_auth
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            await firestoreDb.collection("qr_auth").doc(targetSession).set({
+              status: "AUTHORIZED",
+              sessionId: targetSession,
+              authorizedBy: email,
+              user: userPayload,
+              authorizedAt: new Date().toISOString()
+            }).catch(e => console.warn("Firestore QR set error:", e));
+
+            // Record linked device in user's active sessions
+            const remoteSessId = "sess_qr_" + Date.now();
+            await firestoreDb.collection("users").doc(email).collection("sessions").doc(remoteSessId).set({
+              sessionId: remoteSessId,
+              friendlyDevice: "Remote Browser (QR Linked)",
+              deviceType: "Desktop",
+              ip: "Remote Device",
+              location: { city: "India" },
+              loginTime: new Date().toISOString(),
+              loginEpoch: Date.now(),
+              lastActive: new Date().toISOString(),
+              lastActiveEpoch: Date.now(),
+              isOnline: true,
+              authMethod: "QR Linked Device",
+              status: "ACTIVE"
+            }).catch(() => {});
+
+            const updateMap = {};
+            updateMap[`sessions.${remoteSessId}`] = {
+              sessionId: remoteSessId,
+              friendlyDevice: "Remote Browser (QR Linked)",
+              deviceType: "Desktop",
+              authMethod: "QR Linked Device",
+              status: "ACTIVE",
+              loginTime: new Date().toISOString(),
+              loginEpoch: Date.now(),
+              lastActive: new Date().toISOString(),
+              lastActiveEpoch: Date.now(),
+              isOnline: true
+            };
+            await firestoreDb.collection("users").doc(email).set(updateMap, { merge: true }).catch(() => {});
+          }
+
+          closeLinkDeviceModal();
+          showToast("Device linked successfully! Login approved on other screen.", "success");
+          await renderSessions();
+        } catch (err) {
+          console.error("Authorize QR error:", err);
+          showToast("Failed to link device. Please try again.", "error");
+        }
+      }
+
+      // "Link a Device" Modal Open/Close
       const modalLinkDevice = document.getElementById('modal-link-device');
       const btnOpenLinkDevice = document.getElementById('btn-open-link-device');
       const btnCloseLinkModal = document.getElementById('btn-close-link-modal');
       const btnCancelLinkModal = document.getElementById('btn-cancel-link-modal');
+      const btnToggleManualQr = document.getElementById('btn-toggle-manual-qr');
+      const qrManualInputBox = document.getElementById('qr-manual-input-box');
+      const iconManualChevron = document.getElementById('icon-manual-chevron');
       const btnSubmitLinkDevice = document.getElementById('btn-submit-link-device');
       const inputQrLinkCode = document.getElementById('input-qr-link-code');
 
       function openLinkDeviceModal() {
         if (!modalLinkDevice) return;
         if (inputQrLinkCode) inputQrLinkCode.value = '';
+        if (qrManualInputBox) qrManualInputBox.classList.add('hidden');
         modalLinkDevice.classList.remove('hidden');
         requestAnimationFrame(() => {
           modalLinkDevice.classList.remove('opacity-0');
           modalLinkDevice.firstElementChild.classList.remove('scale-95');
         });
-        if (inputQrLinkCode) inputQrLinkCode.focus();
         if (window.lucide) lucide.createIcons();
+        startCameraScanner();
       }
 
       function closeLinkDeviceModal() {
         if (!modalLinkDevice) return;
+        stopCameraScanner();
         modalLinkDevice.classList.add('opacity-0');
         modalLinkDevice.firstElementChild.classList.add('scale-95');
         setTimeout(() => modalLinkDevice.classList.add('hidden'), 200);
@@ -2408,6 +2726,22 @@
       if (btnCloseLinkModal) btnCloseLinkModal.addEventListener('click', closeLinkDeviceModal);
       if (btnCancelLinkModal) btnCancelLinkModal.addEventListener('click', closeLinkDeviceModal);
 
+      // Toggle Manual QR Input
+      if (btnToggleManualQr && qrManualInputBox) {
+        btnToggleManualQr.addEventListener('click', () => {
+          const isHidden = qrManualInputBox.classList.contains('hidden');
+          if (isHidden) {
+            qrManualInputBox.classList.remove('hidden');
+            if (iconManualChevron) iconManualChevron.classList.add('rotate-180');
+            if (inputQrLinkCode) inputQrLinkCode.focus();
+          } else {
+            qrManualInputBox.classList.add('hidden');
+            if (iconManualChevron) iconManualChevron.classList.remove('rotate-180');
+          }
+        });
+      }
+
+      // Manual Code Submit
       if (btnSubmitLinkDevice) {
         btnSubmitLinkDevice.addEventListener('click', async () => {
           const rawCode = (inputQrLinkCode ? inputQrLinkCode.value : '').trim();
@@ -2415,79 +2749,15 @@
             showToast("Please enter the QR Link Code from the login screen.", "error");
             return;
           }
-
-          // Extract session if full URL was scanned/entered
-          let targetSession = rawCode;
-          if (rawCode.includes("session=")) {
-            try {
-              const urlObj = new URL(rawCode);
-              targetSession = urlObj.searchParams.get("session") || rawCode;
-            } catch(e) {
-              const match = rawCode.match(/session=([a-zA-Z0-9_-]+)/);
-              if (match) targetSession = match[1];
-            }
-          }
-
           btnSubmitLinkDevice.disabled = true;
           btnSubmitLinkDevice.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Authorizing...</span>`;
           if (window.lucide) lucide.createIcons();
 
           try {
-            const userPayload = {
-              uid: userDoc.uid || email,
-              email: email,
-              displayName: displayFullName || userDoc.displayName || "Student",
-              class: studentClass || "Class 10",
-              photoURL: userDoc.photoURL || photoURL || ""
-            };
-
-            // Write approval to Firestore qr_auth collection
-            if (typeof firestoreDb !== 'undefined' && firestoreDb) {
-              await firestoreDb.collection("qr_auth").doc(targetSession).set({
-                status: "AUTHORIZED",
-                sessionId: targetSession,
-                authorizedBy: email,
-                user: userPayload,
-                authorizedAt: new Date().toISOString()
-              });
-
-              // Also record linked device in user's active sessions
-              const remoteSessId = "sess_qr_" + Date.now();
-              await firestoreDb.collection("users").doc(email).collection("sessions").doc(remoteSessId).set({
-                sessionId: remoteSessId,
-                device: "Linked Remote Browser (via QR)",
-                friendlyDevice: "Remote Browser (QR Linked)",
-                deviceType: "Desktop",
-                ip: "Remote Device",
-                location: { city: "Patna", country: "India" },
-                loginTime: new Date().toISOString(),
-                loginEpoch: Date.now(),
-                lastActive: new Date().toISOString(),
-                authMethod: "QR Linked Device",
-                status: "ACTIVE"
-              });
-
-              const updateMap = {};
-              updateMap[`sessions.${remoteSessId}`] = {
-                sessionId: remoteSessId,
-                friendlyDevice: "Remote Browser (QR Linked)",
-                deviceType: "Desktop",
-                authMethod: "QR Linked Device",
-                status: "ACTIVE",
-                loginTime: new Date().toISOString()
-              };
-              await firestoreDb.collection("users").doc(email).set(updateMap, { merge: true });
-            }
-
-            closeLinkDeviceModal();
-            showToast("Device successfully linked! Login approved on other screen.", "success");
-            await renderSessions();
-          } catch (err) {
-            console.error("Link device error:", err);
-            showToast("Failed to link device. Please check the code.", "error");
+            await authorizeQrPayload(rawCode);
           } finally {
             btnSubmitLinkDevice.disabled = false;
-            btnSubmitLinkDevice.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>Authorize Device</span>`;
+            btnSubmitLinkDevice.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>Authorize Device Manually</span>`;
             if (window.lucide) lucide.createIcons();
           }
         });
@@ -2542,6 +2812,7 @@
             showToast(`Verification code sent to ${email}`, "success");
             btnSendForgotOtp.classList.add('hidden');
             if (forgotFields) forgotFields.classList.remove('hidden');
+            startForgotOtpTimer(300);
             syncAllFields();
           } catch (e) {
             showToast("Failed to send OTP. Please try again.", "error");
@@ -2549,6 +2820,55 @@
             btnSendForgotOtp.innerHTML = `<span>Send Verification OTP</span>`;
           }
           if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      let forgotOtpCountdown = null;
+      function startForgotOtpTimer(durationSeconds = 300) {
+        if (forgotOtpCountdown) clearInterval(forgotOtpCountdown);
+        let remaining = durationSeconds;
+        const timerElem = document.getElementById('forgot-otp-timer');
+        const resendBtn = document.getElementById('btn-resend-forgot-otp');
+        if (resendBtn) resendBtn.classList.add('hidden');
+
+        function formatTimer() {
+          const mins = Math.floor(remaining / 60);
+          const secs = remaining % 60;
+          if (timerElem) timerElem.textContent = `Code valid for ${mins}:${secs < 10 ? '0' : ''}${secs} mins`;
+        }
+        formatTimer();
+
+        forgotOtpCountdown = setInterval(() => {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(forgotOtpCountdown);
+            if (timerElem) timerElem.textContent = "Code expired. Please resend.";
+            if (resendBtn) resendBtn.classList.remove('hidden');
+          } else {
+            formatTimer();
+          }
+        }, 1000);
+      }
+
+      const btnResendForgotOtp = document.getElementById('btn-resend-forgot-otp');
+      if (btnResendForgotOtp) {
+        btnResendForgotOtp.addEventListener('click', async () => {
+          btnResendForgotOtp.disabled = true;
+          btnResendForgotOtp.textContent = "Sending...";
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(email, "reset", firstName);
+            }
+            showToast("New OTP sent successfully!", "success");
+            startForgotOtpTimer(300);
+            const otpInp = document.getElementById('input-forgot-otp-code');
+            if (otpInp) { otpInp.value = ''; otpInp.focus(); }
+          } catch(e) {
+            showToast("Failed to resend OTP.", "error");
+          } finally {
+            btnResendForgotOtp.disabled = false;
+            btnResendForgotOtp.textContent = "Resend Code";
+          }
         });
       }
 
@@ -2584,7 +2904,8 @@
             }
           }
 
-          const newEncrypted = (typeof MendorbitCipher !== 'undefined') ? MendorbitCipher.encrypt2Digit(newPass) : newPass;
+          const cipherFn = (typeof MendorbitCipher !== 'undefined') ? (MendorbitCipher.encrypt2Digit || MendorbitCipher.encrypt) : null;
+          const newEncrypted = cipherFn ? cipherFn(newPass) : newPass;
 
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
             await firestoreDb.collection("users").doc(email).set({
@@ -2661,6 +2982,7 @@
             showToast(`Verification code sent to ${email}`, "success");
             btnSendStep1Otp.classList.add('hidden');
             if (step1OtpInputs) step1OtpInputs.classList.remove('hidden');
+            startStep1Timer(300);
             syncAllFields();
           } catch (e) {
             showToast("Failed to send verification code.", "error");
@@ -2668,6 +2990,56 @@
             btnSendStep1Otp.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send OTP to Current Email</span>`;
           }
           if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      // Step 1: 5-minute countdown and resend
+      let step1OtpCountdown = null;
+      function startStep1Timer(durationSeconds = 300) {
+        if (step1OtpCountdown) clearInterval(step1OtpCountdown);
+        let remaining = durationSeconds;
+        const timerElem = document.getElementById('step1-timer');
+        const resendBtn = document.getElementById('btn-resend-step1-otp');
+        if (resendBtn) resendBtn.classList.add('hidden');
+
+        function formatTimer() {
+          const mins = Math.floor(remaining / 60);
+          const secs = remaining % 60;
+          if (timerElem) timerElem.textContent = `Code valid for ${mins}:${secs < 10 ? '0' : ''}${secs} mins`;
+        }
+        formatTimer();
+
+        step1OtpCountdown = setInterval(() => {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(step1OtpCountdown);
+            if (timerElem) timerElem.textContent = "Code expired. Please resend.";
+            if (resendBtn) resendBtn.classList.remove('hidden');
+          } else {
+            formatTimer();
+          }
+        }, 1000);
+      }
+
+      const btnResendStep1Otp = document.getElementById('btn-resend-step1-otp');
+      if (btnResendStep1Otp) {
+        btnResendStep1Otp.addEventListener('click', async () => {
+          btnResendStep1Otp.disabled = true;
+          btnResendStep1Otp.textContent = "Sending...";
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(email, "EMAIL_CHANGE_OLD", firstName);
+            }
+            showToast("New OTP sent to current email!", "success");
+            startStep1Timer(300);
+            const otpInp = document.getElementById('input-step1-otp');
+            if (otpInp) { otpInp.value = ''; otpInp.focus(); }
+          } catch(e) {
+            showToast("Failed to resend code.", "error");
+          } finally {
+            btnResendStep1Otp.disabled = false;
+            btnResendStep1Otp.textContent = "Resend Code";
+          }
         });
       }
 
@@ -2752,6 +3124,7 @@
             showToast(`Verification code sent to ${newEmail}`, "success");
             btnSendStep2Otp.classList.add('hidden');
             if (step2OtpInputs) step2OtpInputs.classList.remove('hidden');
+            startStep2Timer(300);
             syncAllFields();
           } catch (err) {
             showToast(err.message || "Failed to send code to new email.", "error");
@@ -2759,6 +3132,57 @@
             btnSendStep2Otp.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send OTP to New Email</span>`;
           }
           if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      // Step 2: 5-minute countdown and resend
+      let step2OtpCountdown = null;
+      function startStep2Timer(durationSeconds = 300) {
+        if (step2OtpCountdown) clearInterval(step2OtpCountdown);
+        let remaining = durationSeconds;
+        const timerElem = document.getElementById('step2-timer');
+        const resendBtn = document.getElementById('btn-resend-step2-otp');
+        if (resendBtn) resendBtn.classList.add('hidden');
+
+        function formatTimer() {
+          const mins = Math.floor(remaining / 60);
+          const secs = remaining % 60;
+          if (timerElem) timerElem.textContent = `Code valid for ${mins}:${secs < 10 ? '0' : ''}${secs} mins`;
+        }
+        formatTimer();
+
+        step2OtpCountdown = setInterval(() => {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(step2OtpCountdown);
+            if (timerElem) timerElem.textContent = "Code expired. Please resend.";
+            if (resendBtn) resendBtn.classList.remove('hidden');
+          } else {
+            formatTimer();
+          }
+        }, 1000);
+      }
+
+      const btnResendStep2Otp = document.getElementById('btn-resend-step2-otp');
+      if (btnResendStep2Otp) {
+        btnResendStep2Otp.addEventListener('click', async () => {
+          if (!verifiedNewEmail) return;
+          btnResendStep2Otp.disabled = true;
+          btnResendStep2Otp.textContent = "Sending...";
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(verifiedNewEmail, "EMAIL_CHANGE_NEW", firstName);
+            }
+            showToast("New OTP sent to new email!", "success");
+            startStep2Timer(300);
+            const otpInp = document.getElementById('input-step2-otp');
+            if (otpInp) { otpInp.value = ''; otpInp.focus(); }
+          } catch(e) {
+            showToast("Failed to resend code.", "error");
+          } finally {
+            btnResendStep2Otp.disabled = false;
+            btnResendStep2Otp.textContent = "Resend Code";
+          }
         });
       }
 

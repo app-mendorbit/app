@@ -78,6 +78,12 @@
     getSessions: async (email) => get("/api/auth/sessions?email=" + encodeURIComponent(email)),
     revokeSession: async (email, sessionId) => post("/api/auth/revoke-session", { email, sessionId }),
     revokeAllOtherSessions: async (email, currentSessionId) => post("/api/auth/revoke-all-others", { email, currentSessionId }),
+    deleteSession: async (email, sessionId) => post("/api/auth/delete-session", { email, sessionId }),
+    clearSessionHistory: async (email) => post("/api/auth/clear-session-history", { email }),
+
+    // QR Handshake
+    authorizeQrSession: async (sessionId, user, authorizedBy) => post("/api/qr/authorize", { sessionId, user, authorizedBy }),
+    pollQrSession: async (sessionId) => get("/api/qr/poll?session=" + encodeURIComponent(sessionId)),
 
     // Admin
     adminDecrypt: async (ciphertext, adminKey) => post("/api/admin/decrypt", { ciphertext }, { "X-Admin-Key": adminKey }),

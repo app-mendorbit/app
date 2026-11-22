@@ -335,11 +335,77 @@
   }
 
   /**
-   * Heartbeat / Last-Seen Monitor (Passive mode - no unexpected logouts)
+   * Real-Time Heartbeat & Last-Seen Engine
+   * Broadcasts active state every 25 seconds and sets offline state on exit/unload
    */
+  let heartbeatInterval = null;
+
+  function updateHeartbeatState(isOnline = true) {
+    const session = getSession();
+    const sessionId = (session && session.sessionId) || localStorage.getItem("mendorbit_session_id");
+    if (!session || !session.email || !sessionId) return;
+    const emailNorm = session.email.toLowerCase().trim();
+    const nowIso = new Date().toISOString();
+    const nowEpoch = Date.now();
+
+    if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+      const updateData = {
+        lastActive: nowIso,
+        lastActiveEpoch: nowEpoch,
+        isOnline: isOnline
+      };
+      firestoreDb.collection("users").doc(emailNorm).collection("sessions").doc(sessionId).set(updateData, { merge: true }).catch(() => {});
+
+      const rootMap = {};
+      rootMap[`sessions.${sessionId}.lastActive`] = nowIso;
+      rootMap[`sessions.${sessionId}.lastActiveEpoch`] = nowEpoch;
+      rootMap[`sessions.${sessionId}.isOnline`] = isOnline;
+      firestoreDb.collection("users").doc(emailNorm).set(rootMap, { merge: true }).catch(() => {});
+    }
+  }
+
   function startHeartbeatMonitor() {
-    // Disabled destructive logouts per user requirement
-    return;
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+
+    // Initial ping
+    updateHeartbeatState(true);
+
+    // Periodic ping every 25 seconds
+    heartbeatInterval = setInterval(() => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        updateHeartbeatState(true);
+      }
+    }, 25000);
+
+    // Offline / Visibility change triggers
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        updateHeartbeatState(false);
+      } else if (navigator.onLine) {
+        updateHeartbeatState(true);
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      updateHeartbeatState(false);
+    });
+
+    window.addEventListener('offline', () => {
+      updateHeartbeatState(false);
+    });
+
+    window.addEventListener('online', () => {
+      updateHeartbeatState(true);
+    });
+  }
+
+  // Auto-start heartbeat if user is logged in
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      if (isLoggedIn()) {
+        startHeartbeatMonitor();
+      }
+    });
   }
 
   return {
