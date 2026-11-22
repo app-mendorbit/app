@@ -588,10 +588,23 @@
                   </select>
                 </div>
 
-                <!-- Phone / WhatsApp Number * -->
+                <!-- Phone / WhatsApp Number * with Country Code -->
                 <div class="edtech-input-group">
                   <label>Phone / WhatsApp Number *</label>
-                  <input type="tel" id="input-phone" required placeholder="+91 98765 43210" class="edtech-input font-mono">
+                  <div class="flex items-center gap-2">
+                    <select id="input-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                      <option value="+91" selected>🇮🇳 +91</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+966">🇸🇦 +966</option>
+                      <option value="+65">🇸🇬 +65</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+880">🇧🇩 +880</option>
+                      <option value="+977">🇳🇵 +977</option>
+                    </select>
+                    <input type="tel" id="input-phone-number" required maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                  </div>
                 </div>
 
                 <!-- Registered Email (Readonly) -->
@@ -690,32 +703,32 @@
                   <select id="input-pref-mode" class="edtech-input">
                     <option value="Live Interactive Batches">Live Interactive Batches</option>
                     <option value="Recorded Video Lecture Notes">Recorded Video Lecture Notes</option>
-                    <option value="Self-Paced Mentorship & Doubts">Self-Paced Mentorship & Doubts</option>
+                    <option value="Self-Paced Mentorship">Self-Paced Mentorship</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group">
                   <label>Medium of Instruction</label>
                   <select id="input-pref-lang" class="edtech-input">
-                    <option value="Hinglish (Hindi + English Mix)">Hinglish (Hindi + English Mix)</option>
+                    <option value="Hinglish">Hinglish</option>
                     <option value="English">English</option>
-                    <option value="Hindi">Hindi (Pure)</option>
+                    <option value="Hindi">Hindi</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Daily Study Time Commitment</label>
+                  <label>Daily Study Time</label>
                   <select id="input-pref-hours" class="edtech-input">
                     <option value="2-3 Hours / Day">2-3 Hours / Day</option>
-                    <option value="4-5 Hours / Day (Recommended)">4-5 Hours / Day (Recommended)</option>
-                    <option value="6+ Hours / Day (Target Toppers)">6+ Hours / Day (Target Toppers)</option>
+                    <option value="4-5 Hours / Day">4-5 Hours / Day</option>
+                    <option value="6+ Hours / Day">6+ Hours / Day</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Doubts & Notification Preference</label>
+                  <label>Notification Preference</label>
                   <select id="input-pref-notify" class="edtech-input">
-                    <option value="WhatsApp & Email">WhatsApp & Email Alerts</option>
+                    <option value="WhatsApp & Email">WhatsApp & Email</option>
                     <option value="Email Only">Email Only</option>
                     <option value="In-App Notification Only">In-App Notification Only</option>
                   </select>
@@ -747,13 +760,26 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 
                 <div class="edtech-input-group">
-                  <label>Father's / Guardian's Full Name *</label>
+                  <label>Father's Full Name *</label>
                   <input type="text" id="input-father-name" placeholder="Enter father's full name" class="edtech-input">
                 </div>
 
                 <div class="edtech-input-group">
                   <label>Father's Contact / WhatsApp *</label>
-                  <input type="tel" id="input-father-phone" placeholder="+91 98765 43210" class="edtech-input font-mono">
+                  <div class="flex items-center gap-2">
+                    <select id="input-father-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                      <option value="+91" selected>🇮🇳 +91</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+966">🇸🇦 +966</option>
+                      <option value="+65">🇸🇬 +65</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+880">🇧🇩 +880</option>
+                      <option value="+977">🇳🇵 +977</option>
+                    </select>
+                    <input type="tel" id="input-father-phone-number" maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                  </div>
                 </div>
 
                 <div class="edtech-input-group">
@@ -763,11 +789,24 @@
 
                 <div class="edtech-input-group">
                   <label>Mother's Contact Number</label>
-                  <input type="tel" id="input-mother-phone" placeholder="+91 98765 43210" class="edtech-input font-mono">
+                  <div class="flex items-center gap-2">
+                    <select id="input-mother-phone-code" class="edtech-input w-28 flex-shrink-0 font-mono text-xs font-bold">
+                      <option value="+91" selected>🇮🇳 +91</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+966">🇸🇦 +966</option>
+                      <option value="+65">🇸🇬 +65</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+880">🇧🇩 +880</option>
+                      <option value="+977">🇳🇵 +977</option>
+                    </select>
+                    <input type="tel" id="input-mother-phone-number" maxlength="10" placeholder="10-digit number" pattern="[0-9]{10}" class="edtech-input flex-1 font-mono">
+                  </div>
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Parent's Email Address (For Progress Reports)</label>
+                  <label>Parent's Email Address</label>
                   <input type="email" id="input-parent-email" placeholder="parent@gmail.com" class="edtech-input font-mono">
                 </div>
 
@@ -811,7 +850,7 @@
                 </div>
 
                 <div class="edtech-input-group md:col-span-2">
-                  <label>Address Line 2 (Landmark / Colony)</label>
+                  <label>Address Line 2</label>
                   <input type="text" id="input-address2" placeholder="Nearby Landmark, Sector, Area" class="edtech-input">
                 </div>
 
@@ -863,32 +902,29 @@
                 <div class="edtech-input-group">
                   <label>Current Class *</label>
                   <select id="input-academic-class" class="edtech-input">
-                    <option value="Class 9">Class 9 (Foundations)</option>
-                    <option value="Class 10">Class 10 (Board Exam Batch)</option>
-                    <option value="Class 11">Class 11</option>
-                    <option value="Class 12">Class 12</option>
-                    <option value="Dropper / Repeater">Dropper / Repeater Batch</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
+                    <option value="Banking">Banking</option>
+                    <option value="CLAT / AILET">CLAT / AILET</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Education Board *</label>
+                  <label>Education Board / Authority *</label>
                   <select id="input-academic-board" class="edtech-input">
-                    <option value="CBSE">CBSE (Central Board)</option>
+                    <option value="CBSE">CBSE</option>
                     <option value="ICSE / ISC">ICSE / ISC</option>
                     <option value="State Board">State Board</option>
-                    <option value="IB / Cambridge">IB / Cambridge</option>
+                    <option value="National">National Board</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Target Competitive Exam *</label>
+                  <label>Target Course / Exam *</label>
                   <select id="input-academic-target" class="edtech-input">
-                    <option value="Foundations">Foundations & School Topper</option>
-                    <option value="CBSE Board Topper">CBSE Board Exam Topper</option>
-                    <option value="JEE Main & Advanced">JEE Main & Advanced</option>
-                    <option value="NEET UG">NEET UG</option>
-                    <option value="Olympiads & NTSE">Olympiads / NTSE</option>
+                    <option value="Foundation">Foundation</option>
+                    <option value="Board Prep">Board Prep</option>
                   </select>
                 </div>
 
@@ -908,18 +944,17 @@
                 </div>
 
                 <div class="edtech-input-group">
-                  <label>Stream / Subject Combination</label>
+                  <label>Stream / Subject Focus</label>
                   <select id="input-academic-stream" class="edtech-input">
-                    <option value="Foundations (9-10)">Science & Math (Class 9-10 Foundations)</option>
-                    <option value="PCM">PCM (Physics, Chemistry, Maths)</option>
-                    <option value="PCB">PCB (Physics, Chemistry, Biology)</option>
-                    <option value="PCMB">PCMB (Maths & Biology)</option>
-                    <option value="Commerce with Maths">Commerce with Maths</option>
+                    <option value="General Science & Math">General Science & Math</option>
+                    <option value="General Studies">General Studies</option>
+                    <option value="Quantitative & Reasoning">Quantitative & Reasoning</option>
+                    <option value="English & Legal Aptitude">English & Legal Aptitude</option>
                   </select>
                 </div>
 
                 <div class="edtech-input-group md:col-span-2">
-                  <label>Student Roll Number / Registration ID (Optional)</label>
+                  <label>Roll Number / Student ID</label>
                   <input type="text" id="input-academic-rollno" placeholder="e.g. MND-10492" class="edtech-input font-mono">
                 </div>
 
@@ -969,9 +1004,9 @@
           <select id="modal-input-class" class="edtech-input">
             <option value="Class 9">Class 9</option>
             <option value="Class 10">Class 10</option>
-            <option value="Class 11">Class 11</option>
-            <option value="Class 12">Class 12</option>
-            <option value="Dropper">Dropper</option>
+            <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
+            <option value="Banking">Banking</option>
+            <option value="CLAT / AILET">CLAT / AILET</option>
           </select>
         </div>
 
@@ -979,19 +1014,17 @@
           <label>Board</label>
           <select id="modal-input-board" class="edtech-input">
             <option value="CBSE">CBSE</option>
-            <option value="ICSE">ICSE / ISC</option>
+            <option value="ICSE / ISC">ICSE / ISC</option>
             <option value="State Board">State Board</option>
-            <option value="IB">IB / Cambridge</option>
+            <option value="National">National Board</option>
           </select>
         </div>
 
         <div class="edtech-input-group">
           <label>Primary Target Goal</label>
           <select id="modal-input-target" class="edtech-input">
-            <option value="Foundations">Foundations & School Topper</option>
-            <option value="CBSE Board Topper">CBSE Board Exam Topper</option>
-            <option value="JEE Main & Advanced">JEE Main & Advanced</option>
-            <option value="NEET UG">NEET UG</option>
+            <option value="Foundation">Foundation</option>
+            <option value="Board Prep">Board Prep</option>
           </select>
         </div>
 
@@ -1097,6 +1130,61 @@
         console.warn("Firestore profile fetch note:", e);
       }
 
+      // Course Map matching Login Portal
+      const CLASS_COURSE_MAP = {
+        "Class 9": ["Foundation", "Board Prep"],
+        "Class 10": ["Foundation", "Board Prep"],
+        "SSC CGL / CHSL": ["SSC CGL", "SSC CHSL"],
+        "Banking": ["Bank PO", "Bank Clerk", "Bank Manager"],
+        "CLAT / AILET": ["CLAT", "AILET", "SLAT"]
+      };
+
+      function populateCourseOptions(selectEl, selectedClass, currentCourseValue) {
+        if (!selectEl) return;
+        const courses = CLASS_COURSE_MAP[selectedClass] || ["Foundation", "Board Prep"];
+        selectEl.innerHTML = "";
+        courses.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          if (c === currentCourseValue) opt.selected = true;
+          selectEl.appendChild(opt);
+        });
+        if (currentCourseValue && courses.includes(currentCourseValue)) {
+          selectEl.value = currentCourseValue;
+        } else {
+          selectEl.value = courses[0];
+        }
+      }
+
+      function splitPhone(fullPhone) {
+        if (!fullPhone) return { code: "+91", number: "" };
+        fullPhone = fullPhone.trim();
+        const knownCodes = ["+91", "+1", "+44", "+971", "+966", "+65", "+61", "+880", "+977"];
+        for (const c of knownCodes) {
+          if (fullPhone.startsWith(c)) {
+            const rest = fullPhone.substring(c.length).replace(/[^0-9]/g, "").slice(0, 10);
+            return { code: c, number: rest };
+          }
+        }
+        const digits = fullPhone.replace(/[^0-9]/g, "");
+        if (digits.length >= 10) {
+          return { code: "+91", number: digits.slice(-10) };
+        }
+        return { code: "+91", number: digits };
+      }
+
+      function enforceDigitsOnly(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        });
+      }
+
+      enforceDigitsOnly(document.getElementById('input-phone-number'));
+      enforceDigitsOnly(document.getElementById('input-father-phone-number'));
+      enforceDigitsOnly(document.getElementById('input-mother-phone-number'));
+
       // Populate Hero Names & Stats
       const rawFullName = userDoc.displayName || session.displayName || session.name || (email ? email.split('@')[0] : "Student");
       const nameParts = rawFullName.trim().split(" ");
@@ -1108,7 +1196,7 @@
       const studentClass = userDoc.class || (userDoc.academicInfo && userDoc.academicInfo.class) || session.class || "Class 10";
       const cleanClassNum = studentClass.replace(/[^0-9]/g, '') || studentClass;
       const board = (userDoc.academicInfo && userDoc.academicInfo.board) || "CBSE";
-      const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundations";
+      const target = (userDoc.academicInfo && userDoc.academicInfo.targetExam) || userDoc.targetExam || "Foundation";
 
       // Render in Hero Header
       document.getElementById('hero-user-fullname').textContent = displayFullName;
@@ -1156,22 +1244,31 @@
       document.getElementById('input-nationality').value = userDoc.nationality || "Indian";
       document.getElementById('input-dob').value = userDoc.dob || "";
       document.getElementById('input-blood-group').value = userDoc.bloodGroup || "";
-      document.getElementById('input-phone').value = phone;
+      
+      const phoneData = splitPhone(phone);
+      document.getElementById('input-phone-code').value = phoneData.code || "+91";
+      document.getElementById('input-phone-number').value = phoneData.number || "";
       document.getElementById('input-email').value = email;
 
       // Preferences
       const prefs = userDoc.preferences || {};
       document.getElementById('input-pref-mode').value = prefs.learningMode || "Live Interactive Batches";
-      document.getElementById('input-pref-lang').value = prefs.language || "Hinglish (Hindi + English Mix)";
-      document.getElementById('input-pref-hours').value = prefs.studyHours || "4-5 Hours / Day (Recommended)";
+      document.getElementById('input-pref-lang').value = prefs.language || "Hinglish";
+      document.getElementById('input-pref-hours').value = prefs.studyHours || "4-5 Hours / Day";
       document.getElementById('input-pref-notify').value = prefs.notification || "WhatsApp & Email";
 
       // Guardian
       const guardian = userDoc.parentInfo || {};
       document.getElementById('input-father-name').value = guardian.fatherName || "";
-      document.getElementById('input-father-phone').value = guardian.fatherPhone || "";
+      const fatherPhoneData = splitPhone(guardian.fatherPhone || "");
+      document.getElementById('input-father-phone-code').value = fatherPhoneData.code || "+91";
+      document.getElementById('input-father-phone-number').value = fatherPhoneData.number || "";
+
       document.getElementById('input-mother-name').value = guardian.motherName || "";
-      document.getElementById('input-mother-phone').value = guardian.motherPhone || "";
+      const motherPhoneData = splitPhone(guardian.motherPhone || "");
+      document.getElementById('input-mother-phone-code').value = motherPhoneData.code || "+91";
+      document.getElementById('input-mother-phone-number').value = motherPhoneData.number || "";
+
       document.getElementById('input-parent-email').value = guardian.parentEmail || "";
       document.getElementById('input-emergency-pref').value = guardian.emergencyContact || "Father";
 
@@ -1186,18 +1283,30 @@
 
       // Academic
       const academic = userDoc.academicInfo || {};
-      document.getElementById('input-academic-class').value = academic.class || studentClass || "Class 11";
+      const currentAcademicClass = academic.class || studentClass || "Class 10";
+      const currentAcademicTarget = academic.targetExam || target || "Foundation";
+      document.getElementById('input-academic-class').value = currentAcademicClass;
       document.getElementById('input-academic-board').value = academic.board || board || "CBSE";
-      document.getElementById('input-academic-target').value = academic.targetExam || target || "Foundations";
+      populateCourseOptions(document.getElementById('input-academic-target'), currentAcademicClass, currentAcademicTarget);
       document.getElementById('input-academic-year').value = academic.passingYear || "2026";
       document.getElementById('input-academic-school').value = academic.school || "";
-      document.getElementById('input-academic-stream').value = academic.stream || "Science & Math (Class 9-10 Foundations)";
+      document.getElementById('input-academic-stream').value = academic.stream || "General Science & Math";
       document.getElementById('input-academic-rollno').value = academic.rollNo || "";
+
+      // Dynamic Class to Target sync in Academic form
+      document.getElementById('input-academic-class').addEventListener('change', function() {
+        populateCourseOptions(document.getElementById('input-academic-target'), this.value);
+      });
 
       // Modal inputs
       document.getElementById('modal-input-class').value = studentClass;
       document.getElementById('modal-input-board').value = board;
-      document.getElementById('modal-input-target').value = target;
+      populateCourseOptions(document.getElementById('modal-input-target'), studentClass, target || "Foundation");
+
+      // Dynamic Class to Target sync in Modal
+      document.getElementById('modal-input-class').addEventListener('change', function() {
+        populateCourseOptions(document.getElementById('modal-input-target'), this.value);
+      });
 
       // ========================================================
       // 4. DYNAMIC KYC / PROFILE COMPLETION CALCULATION
@@ -1208,7 +1317,7 @@
 
         // Check each critical field
         if (document.getElementById('input-first-name').value.trim()) score += 12;
-        if (document.getElementById('input-phone').value.trim()) score += 12;
+        if (document.getElementById('input-phone-number').value.trim().length === 10) score += 12;
         if (document.getElementById('input-dob').value.trim()) score += 10;
         if (document.getElementById('input-gender').value.trim()) score += 8;
         if (document.getElementById('input-blood-group').value.trim()) score += 6;
@@ -1373,7 +1482,14 @@
         const fName = document.getElementById('input-first-name').value.trim();
         const lName = document.getElementById('input-last-name').value.trim();
         const combinedName = `${fName} ${lName}`.trim();
-        const phoneVal = document.getElementById('input-phone').value.trim();
+
+        const phoneCode = document.getElementById('input-phone-code').value;
+        const phoneNum = document.getElementById('input-phone-number').value.trim();
+        if (phoneNum && phoneNum.length !== 10) {
+          showToast("Please enter a valid 10-digit mobile number.", "error");
+          return;
+        }
+        const phoneVal = phoneNum ? `${phoneCode} ${phoneNum}` : "";
 
         const payload = {
           firstName: fName,
@@ -1392,7 +1508,9 @@
         // Update header UI immediately
         document.getElementById('hero-user-fullname').textContent = combinedName;
         document.getElementById('nav-user-firstname').textContent = fName;
-        document.getElementById('hero-user-phone').innerHTML = `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phoneVal}</span>`;
+        document.getElementById('hero-user-phone').innerHTML = phoneVal
+          ? `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span>${phoneVal}</span>`
+          : `<i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i><span class="text-slate-400 italic">No phone added</span>`;
         if (window.lucide) lucide.createIcons();
       });
 
@@ -1453,12 +1571,28 @@
       // Form 4: Guardian Details
       document.getElementById('form-guardian').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const fatherCode = document.getElementById('input-father-phone-code').value;
+        const fatherNum = document.getElementById('input-father-phone-number').value.trim();
+        if (fatherNum && fatherNum.length !== 10) {
+          showToast("Father's contact must be 10 digits.", "error");
+          return;
+        }
+        const fatherPhone = fatherNum ? `${fatherCode} ${fatherNum}` : "";
+
+        const motherCode = document.getElementById('input-mother-phone-code').value;
+        const motherNum = document.getElementById('input-mother-phone-number').value.trim();
+        if (motherNum && motherNum.length !== 10) {
+          showToast("Mother's contact must be 10 digits.", "error");
+          return;
+        }
+        const motherPhone = motherNum ? `${motherCode} ${motherNum}` : "";
+
         const payload = {
           parentInfo: {
             fatherName: document.getElementById('input-father-name').value.trim(),
-            fatherPhone: document.getElementById('input-father-phone').value.trim(),
+            fatherPhone: fatherPhone,
             motherName: document.getElementById('input-mother-name').value.trim(),
-            motherPhone: document.getElementById('input-mother-phone').value.trim(),
+            motherPhone: motherPhone,
             parentEmail: document.getElementById('input-parent-email').value.trim(),
             emergencyContact: document.getElementById('input-emergency-pref').value
           }
