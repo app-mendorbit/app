@@ -292,24 +292,44 @@
         padding: 9px 16px !important;
         font-size: 12.5px !important;
         gap: 8px !important;
-        border-left: none !important;
+        border: 1px solid #e2e8f0 !important;
         border-radius: 9999px !important;
-        background: #f1f5f9;
+        background: #ffffff !important;
+        color: #475569 !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+      }
+      .sidebar-tab-btn i,
+      .sidebar-tab-btn svg {
+        color: #64748b !important;
       }
       .dark .sidebar-tab-btn {
-        background: #1e293b;
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #94a3b8 !important;
       }
+      .dark .sidebar-tab-btn i,
+      .dark .sidebar-tab-btn svg {
+        color: #94a3b8 !important;
+      }
+
+      /* Active tab when clicked on mobile: vibrant orange with crisp white text & white icon */
       .sidebar-tab-btn.active {
         background: linear-gradient(135deg, #ff6600 0%, #f97316 100%) !important;
         color: #ffffff !important;
-        border-left: none !important;
-        box-shadow: 0 4px 12px rgba(255, 102, 0, 0.35) !important;
+        border-color: #ff6600 !important;
+        box-shadow: 0 4px 14px rgba(255, 102, 0, 0.4) !important;
       }
-      .sidebar-tab-btn.active i {
+      .sidebar-tab-btn.active i,
+      .sidebar-tab-btn.active svg {
         color: #ffffff !important;
       }
       .dark .sidebar-tab-btn.active {
-        background: linear-gradient(135deg, #ea580c 0%, #ea580c 100%) !important;
+        background: linear-gradient(135deg, #ff6600 0%, #ea580c 100%) !important;
+        color: #ffffff !important;
+        border-color: #ea580c !important;
+      }
+      .dark .sidebar-tab-btn.active i,
+      .dark .sidebar-tab-btn.active svg {
         color: #ffffff !important;
       }
     }
@@ -570,16 +590,18 @@
 
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 flex-wrap">
-                <h1 id="hero-user-fullname" class="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight break-words">Student Profile</h1>
-                <!-- Premium Verified Rosette Badge (Shown ONLY when 100% verified, NO extra "Verified" text pill) -->
-                <span id="hero-verified-badge" class="inline-flex items-center cursor-pointer hidden" title="Verified Student Profile • 100% KYC Complete">
-                  <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(29,155,240,0.35)] hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none"><path d="M10.021 2.227a1.6 1.6 0 0 1 1.958 0l1.24 1.008a1.6 1.6 0 0 0 1.25.334l1.583-.243a1.6 1.6 0 0 1 1.83 1.057l.555 1.504a1.6 1.6 0 0 0 .89 1.01l1.458.665a1.6 1.6 0 0 1 .917 1.898l-.427 1.547a1.6 1.6 0 0 0 .334 1.25l1.008 1.24a1.6 1.6 0 0 1 0 1.958l-1.008 1.24a1.6 1.6 0 0 0-.334 1.25l.427 1.547a1.6 1.6 0 0 1-.917 1.898l-1.458.665a1.6 1.6 0 0 0-.89 1.01l-.555 1.504a1.6 1.6 0 0 1-1.83 1.057l-1.583-.243a1.6 1.6 0 0 0-1.25.334l-1.24 1.008a1.6 1.6 0 0 1-1.958 0l-1.24-1.008a1.6 1.6 0 0 0-1.25-.334l-1.583.243a1.6 1.6 0 0 1-1.83-1.057l-.555-1.504a1.6 1.6 0 0 0-.89-1.01l-1.458-.665a1.6 1.6 0 0 1-.917-1.898l.427-1.547a1.6 1.6 0 0 0-.334-1.25l-1.008-1.24a1.6 1.6 0 0 1 0-1.958l1.008-1.24a1.6 1.6 0 0 0 .334-1.25l-.427-1.547a1.6 1.6 0 0 1 .917-1.898l1.458-.665a1.6 1.6 0 0 0 .89-1.01l.555-1.504a1.6 1.6 0 0 1 1.83-1.057l1.583.243a1.6 1.6 0 0 0 1.25-.334l1.24-1.008Z" fill="#1D9BF0"/><path d="m9.75 14.85-3.1-3.1 1.4-1.4 1.7 1.7 4.5-4.5 1.4 1.4-5.9 5.9Z" fill="#FFFFFF"/></svg>
-                </span>
-                <!-- Interactive Unverified Status Button (Shown when profile is incomplete) -->
-                <button type="button" id="hero-unverified-btn" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition cursor-pointer flex-shrink-0 shadow-xs" title="Complete profile to get verified tick">
+                <div class="inline-flex items-center gap-1.5 max-w-full">
+                  <h1 id="hero-user-fullname" class="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight break-words">Student Profile</h1>
+                  <!-- Premium Verified Rosette Badge (Shown ONLY when 100% verified, never shrinks, completely visible on all phones) -->
+                  <span id="hero-verified-badge" class="shrink-0 flex-shrink-0 inline-flex items-center cursor-pointer hidden" title="Verified Student Profile • 100% KYC Complete">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(29,155,240,0.35)] hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none"><path d="M10.021 2.227a1.6 1.6 0 0 1 1.958 0l1.24 1.008a1.6 1.6 0 0 0 1.25.334l1.583-.243a1.6 1.6 0 0 1 1.83 1.057l.555 1.504a1.6 1.6 0 0 0 .89 1.01l1.458.665a1.6 1.6 0 0 1 .917 1.898l-.427 1.547a1.6 1.6 0 0 0 .334 1.25l1.008 1.24a1.6 1.6 0 0 1 0 1.958l-1.008 1.24a1.6 1.6 0 0 0-.334 1.25l.427 1.547a1.6 1.6 0 0 1-.917 1.898l-1.458.665a1.6 1.6 0 0 0-.89 1.01l-.555 1.504a1.6 1.6 0 0 1-1.83 1.057l-1.583-.243a1.6 1.6 0 0 0-1.25.334l-1.24 1.008a1.6 1.6 0 0 1-1.958 0l-1.24-1.008a1.6 1.6 0 0 0-1.25-.334l-1.583.243a1.6 1.6 0 0 1-1.83-1.057l-.555-1.504a1.6 1.6 0 0 0-.89-1.01l-1.458-.665a1.6 1.6 0 0 1-.917-1.898l.427-1.547a1.6 1.6 0 0 0-.334-1.25l-1.008-1.24a1.6 1.6 0 0 1 0-1.958l1.008-1.24a1.6 1.6 0 0 0 .334-1.25l-.427-1.547a1.6 1.6 0 0 1 .917-1.898l1.458-.665a1.6 1.6 0 0 0 .89-1.01l.555-1.504a1.6 1.6 0 0 1 1.83-1.057l1.583.243a1.6 1.6 0 0 0 1.25-.334l1.24-1.008Z" fill="#1D9BF0"/><path d="m9.75 14.85-3.1-3.1 1.4-1.4 1.7 1.7 4.5-4.5 1.4 1.4-5.9 5.9Z" fill="#FFFFFF"/></svg>
+                  </span>
+                </div>
+                <!-- Interactive Incomplete Status Button (Opens Checklist Modal, shows "Incomplete" with popup tooltip) -->
+                <button type="button" id="hero-unverified-btn" class="shrink-0 flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition cursor-pointer shadow-xs" title="Complete profile to get verified tick">
                   <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                  <span id="hero-unverified-text">Pending Verification</span>
-                  <i data-lucide="help-circle" class="w-3 h-3 text-amber-500"></i>
+                  <span id="hero-unverified-text">Incomplete</span>
+                  <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-500"></i>
                 </button>
                 <span id="hero-status-pill" class="hidden"></span>
               </div>
@@ -637,9 +659,11 @@
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 class="text-sm sm:text-base md:text-lg font-extrabold text-slate-900 dark:text-white">KYC & Student Profile Form</h2>
-              <span id="kyc-status-pill" class="px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-extrabold bg-amber-500 text-white shadow-sm cursor-pointer hover:opacity-95 transition">
-                Calculating...
-              </span>
+              <button type="button" id="kyc-status-pill" class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm cursor-pointer transition flex items-center gap-1.5" title="Click to view checklist">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                <span id="kyc-status-pill-text">Incomplete (Click to view)</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
             <p class="text-[11px] sm:text-xs md:text-[13px] text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
               Filling out the KYC form is essential for your batches, certificates & personalized mentorship.
@@ -648,43 +672,16 @@
         </div>
 
         <!-- Right: Dynamic Progress Bar & Percent Indicator -->
-        <div id="kyc-progress-trigger" class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 sm:gap-4 min-w-[200px] sm:min-w-[260px] cursor-pointer">
+        <div id="kyc-progress-trigger" class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 sm:gap-4 min-w-[200px] sm:min-w-[260px] cursor-pointer group/bar" title="Click to view pending items">
           <div class="flex-1 md:w-48 bg-orange-200/70 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
             <div id="kyc-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out" style="width: 0%;"></div>
           </div>
-          <span id="kyc-progress-text" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex-shrink-0">
+          <span id="kyc-progress-text" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex-shrink-0 group-hover/bar:text-orange-600 dark:group-hover/bar:text-orange-400 transition-colors">
             0% Completed
           </span>
         </div>
 
-        <!-- Floating Hover KYC Checklist Card -->
-        <div id="kyc-checklist-popover" class="hidden absolute top-full left-0 md:left-auto md:right-0 mt-2 z-50 w-full sm:w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-4 transition-all duration-200">
-          <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">Profile KYC Checklist</h4>
-            </div>
-            <span id="popover-progress-badge" class="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
-              0% Done
-            </span>
-          </div>
-
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
-            Complete the pending sections below to earn the official <span class="font-bold text-blue-600 dark:text-blue-400">Verified Tick</span> badge:
-          </p>
-
-          <div id="kyc-checklist-items" class="py-2.5 space-y-2 text-xs">
-            <!-- Dynamically populated checklist items with green ticks / orange warnings -->
-          </div>
-
-          <div class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <span class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
-              <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"><path d="M10.021 2.227a1.6 1.6 0 0 1 1.958 0l1.24 1.008a1.6 1.6 0 0 0 1.25.334l1.583-.243a1.6 1.6 0 0 1 1.83 1.057l.555 1.504a1.6 1.6 0 0 0 .89 1.01l1.458.665a1.6 1.6 0 0 1 .917 1.898l-.427 1.547a1.6 1.6 0 0 0 .334 1.25l1.008 1.24a1.6 1.6 0 0 1 0 1.958l-1.008 1.24a1.6 1.6 0 0 0-.334 1.25l.427 1.547a1.6 1.6 0 0 1-.917 1.898l-1.458.665a1.6 1.6 0 0 0-.89 1.01l-.555 1.504a1.6 1.6 0 0 1-1.83 1.057l-1.583-.243a1.6 1.6 0 0 0-1.25.334l-1.24 1.008a1.6 1.6 0 0 1-1.958 0l-1.24-1.008a1.6 1.6 0 0 0-1.25-.334l-1.583.243a1.6 1.6 0 0 1-1.83-1.057l-.555-1.504a1.6 1.6 0 0 0-.89-1.01l-1.458-.665a1.6 1.6 0 0 1-.917-1.898l.427-1.547a1.6 1.6 0 0 0-.334-1.25l-1.008-1.24a1.6 1.6 0 0 1 0-1.958l1.008-1.24a1.6 1.6 0 0 0 .334-1.25l-.427-1.547a1.6 1.6 0 0 1 .917-1.898l1.458-.665a1.6 1.6 0 0 0 .89-1.01l.555-1.504a1.6 1.6 0 0 1 1.83-1.057l1.583.243a1.6 1.6 0 0 0 1.25-.334l1.24-1.008Z" fill="#1D9BF0"/><path d="m9.75 14.85-3.1-3.1 1.4-1.4 1.7 1.7 4.5-4.5 1.4 1.4-5.9 5.9Z" fill="#FFFFFF"/></svg>
-              Complete all for Verified Tick
-            </span>
-            <button type="button" id="btn-popover-close" class="text-xs font-bold text-orange-600 hover:text-orange-700 cursor-pointer">Close</button>
-          </div>
-        </div>
+      </div>
 
       </div>
 
@@ -1110,16 +1107,10 @@
 
                 <!-- PIN Code moved BEFORE City, District & State -->
                 <div class="edtech-input-group">
-                  <label class="flex items-center justify-between">
-                    <span>PIN Code *</span>
-                    <span id="pincode-fetch-indicator" class="text-[11px] font-bold text-orange-600 hidden inline-flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping"></span>
-                      Auto-detecting...
-                    </span>
-                  </label>
+                  <label>PIN Code *</label>
                   <div class="relative">
                     <input type="text" id="input-pincode" placeholder="6-digit PIN (e.g. 848210)" maxlength="6" class="edtech-input font-mono pr-10">
-                    <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <div id="pincode-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
                       <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i>
                     </div>
                   </div>
@@ -1143,12 +1134,14 @@
                   <input type="text" id="input-state" placeholder="e.g. Bihar, Delhi" class="edtech-input">
                 </div>
 
-                <!-- Country (Fixed to India) -->
+                <!-- Country (India with Flag) -->
                 <div class="edtech-input-group md:col-span-2">
                   <label>Country *</label>
                   <div class="relative">
-                    <input type="text" id="input-country" value="India" readonly class="edtech-input !bg-slate-50 dark:!bg-slate-800/80 cursor-not-allowed">
-                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">🇮🇳 Only India</span>
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-base">
+                      🇮🇳
+                    </div>
+                    <input type="text" id="input-country" value="India" readonly class="edtech-input pl-10 cursor-not-allowed font-semibold !bg-slate-50 dark:!bg-slate-800/80">
                   </div>
                 </div>
 
@@ -1482,6 +1475,54 @@
 
     </div>
   </main>
+
+  <!-- ======================================================== -->
+  <!-- PROFILE KYC COMPLETION CHECKLIST MODAL (NO HOVER OVERLAP) -->
+  <!-- ======================================================== -->
+  <div id="modal-kyc-checklist" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-7 transform scale-95 transition-transform duration-200 max-h-[90vh] overflow-y-auto no-scrollbar">
+      
+      <!-- Close Button -->
+      <button type="button" id="btn-close-kyc-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+          <i data-lucide="list-checks" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Profile KYC Checklist</h3>
+          <p class="text-xs text-slate-400">Complete pending items to get the official <span class="font-bold text-blue-600 dark:text-blue-400">Verified Tick</span></p>
+        </div>
+      </div>
+
+      <!-- Progress Meter -->
+      <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-700/80 mb-5">
+        <div class="flex items-center justify-between text-xs mb-2">
+          <span class="font-extrabold text-slate-700 dark:text-slate-300">Completion Status</span>
+          <span id="modal-kyc-progress-badge" class="font-mono font-black text-orange-600 dark:text-orange-400">0% Done</span>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+          <div id="modal-kyc-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Checklist Items Container -->
+      <div id="modal-kyc-checklist-items" class="space-y-3">
+        <!-- Dynamically rendered checklist cards -->
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span class="text-[11px] text-slate-400">100% completion unlocks instant verified status</span>
+        <button type="button" id="btn-done-kyc-modal" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition cursor-pointer">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- ======================================================== -->
   <!-- QUICK "CHANGE TARGET / CLASS" POPUP MODAL                -->
@@ -2257,25 +2298,26 @@
 
         if (progressBar) progressBar.style.width = clamped + "%";
         if (progressText) progressText.textContent = clamped + "% Completed";
-        if (popoverBadge) popoverBadge.textContent = clamped + "% Done";
+
+        const modalBar = document.getElementById('modal-kyc-progress-bar');
+        const modalBadge = document.getElementById('modal-kyc-progress-badge');
+        if (modalBar) modalBar.style.width = clamped + "%";
+        if (modalBadge) modalBadge.textContent = clamped + "% Done";
 
         const isFullyVerified = (clamped >= 100);
 
         if (statusPill) {
           if (isFullyVerified) {
-            statusPill.textContent = "Verified 100%";
-            statusPill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-600 text-white shadow-sm flex items-center gap-1 cursor-pointer";
-          } else if (clamped >= 80) {
-            statusPill.textContent = "Almost Done (Click to check)";
-            statusPill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500 text-white shadow-sm cursor-pointer";
+            statusPill.innerHTML = `<span>Verified 100%</span>`;
+            statusPill.className = "px-3 py-1 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer";
           } else {
-            statusPill.textContent = "Pending (Hover to view)";
-            statusPill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-white shadow-sm cursor-pointer";
+            statusPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>Incomplete (Click to view)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>`;
+            statusPill.className = "px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm cursor-pointer transition flex items-center gap-1.5";
+            if (window.lucide) lucide.createIcons();
           }
         }
 
-        // Hero bar: user requested "isme verified likha hua hata do bs tick rahe"
-        // When 100% verified, show ONLY the blue verified rosette tick! No extra "Verified" text pill!
+        // Hero bar: User requested "name mai 20 % wala nhi rahe waha incomplete rahe and popup aaye complete to get verified tick esa krdo"
         if (heroStatusPill) heroStatusPill.classList.add('hidden');
 
         if (heroVerifiedBadge) {
@@ -2291,7 +2333,8 @@
             heroUnverifiedBtn.classList.add('hidden');
           } else {
             heroUnverifiedBtn.classList.remove('hidden');
-            if (heroUnverifiedText) heroUnverifiedText.textContent = `${clamped}% Profile`;
+            if (heroUnverifiedText) heroUnverifiedText.textContent = "Incomplete";
+            heroUnverifiedBtn.setAttribute("title", "Complete profile to get verified tick");
           }
         }
 
@@ -2300,12 +2343,12 @@
           else navVerifiedBadge.classList.add('hidden');
         }
 
-        // Dynamic KYC Checklist Items Generation
-        const checklistContainer = document.getElementById('kyc-checklist-items');
+        // Dynamic KYC Checklist Items Generation inside Clean Modal (No hover overlap!)
+        const checklistContainer = document.getElementById('modal-kyc-checklist-items');
         if (checklistContainer) {
           if (isFullyVerified) {
             checklistContainer.innerHTML = `
-              <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-2.5 text-emerald-800 dark:text-emerald-200 font-bold">
+              <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-3 text-emerald-800 dark:text-emerald-200 font-bold text-xs">
                 <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m5 13 4 4L19 7"/></svg>
                 <span>All profile sections completed! Official verified tick is active.</span>
               </div>
@@ -2329,7 +2372,7 @@
                 title: 'Guardian Details',
                 isComplete: isGuardianSet,
                 missing: [
-                  !isGuardianSet && "Father / Mother Name"
+                  !isGuardianSet && "Father or Mother Name"
                 ].filter(Boolean)
               },
               {
@@ -2347,7 +2390,7 @@
                 title: 'Academic Details',
                 isComplete: isAcademicSet,
                 missing: [
-                  !isAcademicSet && 'School / College Name'
+                  !academicSchool && 'School or College Name'
                 ].filter(Boolean)
               }
             ];
@@ -2355,28 +2398,28 @@
             checklistContainer.innerHTML = sections.map(sec => {
               if (sec.isComplete) {
                 return `
-                  <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40">
-                    <div class="flex items-center gap-2 min-w-0">
-                      <span class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black flex-shrink-0">✓</span>
-                      <span class="font-bold text-slate-800 dark:text-slate-200 truncate">${sec.title}</span>
+                  <div class="flex items-center justify-between p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black flex-shrink-0">✓</span>
+                      <span class="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">${sec.title}</span>
                     </div>
-                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0">Complete</span>
+                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0">Completed</span>
                   </div>
                 `;
               } else {
                 return `
-                  <div class="flex items-center justify-between p-2 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/40 gap-2">
+                  <div class="flex items-center justify-between p-3 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/40 gap-3">
                     <div class="min-w-0 flex-1">
                       <div class="flex items-center gap-2">
-                        <span class="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-black flex-shrink-0">!</span>
-                        <span class="font-bold text-slate-900 dark:text-white truncate">${sec.title}</span>
+                        <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-black flex-shrink-0">!</span>
+                        <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${sec.title}</span>
                       </div>
-                      <p class="text-[10px] text-amber-700 dark:text-amber-400 ml-6 truncate">
+                      <p class="text-[11px] text-amber-800 dark:text-amber-400 ml-7 mt-0.5 truncate">
                         Pending: <span class="font-semibold">${sec.missing.join(', ')}</span>
                       </p>
                     </div>
-                    <button type="button" class="btn-fill-section px-2.5 py-1 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-[10.5px] transition shadow-xs flex-shrink-0 cursor-pointer" data-tab="${sec.id}">
-                      Fill
+                    <button type="button" class="btn-fill-section px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs transition shadow-xs flex-shrink-0 cursor-pointer" data-tab="${sec.id}">
+                      Fill Now
                     </button>
                   </div>
                 `;
@@ -2389,7 +2432,7 @@
                 const tabTarget = btn.getAttribute('data-tab');
                 if (tabTarget && typeof switchTab === 'function') {
                   switchTab(tabTarget);
-                  hideKycPopover();
+                  closeKycChecklistModal();
                 }
               });
             });
@@ -2405,37 +2448,39 @@
         }
       }
 
-      // KYC Popover Hover and Click Handlers
-      const kycBanner = document.getElementById('kyc-banner-container');
-      const kycPopover = document.getElementById('kyc-checklist-popover');
-      let kycHideTimeout = null;
+      // ========================================================
+      // CLEAN PROFILE KYC CHECKLIST MODAL (NO HOVER OVERLAP)
+      // ========================================================
+      const kycModal = document.getElementById('modal-kyc-checklist');
+      const btnCloseKycModal = document.getElementById('btn-close-kyc-modal');
+      const btnDoneKycModal = document.getElementById('btn-done-kyc-modal');
 
-      function showKycPopover() {
-        clearTimeout(kycHideTimeout);
-        if (kycPopover) kycPopover.classList.remove('hidden');
+      function openKycChecklistModal() {
+        if (!kycModal) return;
+        updateKycProgress();
+        kycModal.classList.remove('hidden');
+        setTimeout(() => {
+          kycModal.classList.remove('opacity-0');
+          const panel = kycModal.querySelector('div');
+          if (panel) panel.classList.remove('scale-95');
+        }, 10);
       }
 
-      function hideKycPopover(delay = 200) {
-        clearTimeout(kycHideTimeout);
-        kycHideTimeout = setTimeout(() => {
-          if (kycPopover) kycPopover.classList.add('hidden');
-        }, delay);
+      function closeKycChecklistModal() {
+        if (!kycModal) return;
+        kycModal.classList.add('opacity-0');
+        const panel = kycModal.querySelector('div');
+        if (panel) panel.classList.add('scale-95');
+        setTimeout(() => {
+          kycModal.classList.add('hidden');
+        }, 200);
       }
 
-      if (kycBanner) {
-        kycBanner.addEventListener('mouseenter', () => showKycPopover());
-        kycBanner.addEventListener('mouseleave', () => hideKycPopover(350));
-      }
-      if (kycPopover) {
-        kycPopover.addEventListener('mouseenter', () => clearTimeout(kycHideTimeout));
-        kycPopover.addEventListener('mouseleave', () => hideKycPopover(200));
-      }
-
-      const btnPopoverClose = document.getElementById('btn-popover-close');
-      if (btnPopoverClose) {
-        btnPopoverClose.addEventListener('click', (e) => {
-          e.stopPropagation();
-          hideKycPopover(0);
+      if (btnCloseKycModal) btnCloseKycModal.addEventListener('click', closeKycChecklistModal);
+      if (btnDoneKycModal) btnDoneKycModal.addEventListener('click', closeKycChecklistModal);
+      if (kycModal) {
+        kycModal.addEventListener('click', (e) => {
+          if (e.target === kycModal) closeKycChecklistModal();
         });
       }
 
@@ -2443,8 +2488,7 @@
       if (kycStatusPill) {
         kycStatusPill.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (kycPopover && kycPopover.classList.contains('hidden')) showKycPopover();
-          else hideKycPopover(0);
+          openKycChecklistModal();
         });
       }
 
@@ -2452,21 +2496,17 @@
       if (kycProgressTrigger) {
         kycProgressTrigger.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (kycPopover && kycPopover.classList.contains('hidden')) showKycPopover();
-          else hideKycPopover(0);
+          openKycChecklistModal();
         });
       }
 
-      // Hero Unverified button click: prompts user to complete profile
+      // Hero Incomplete button click: Opens Checklist Modal with prompt
       const heroUnverifiedBtn = document.getElementById('hero-unverified-btn');
       if (heroUnverifiedBtn) {
         heroUnverifiedBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           showToast("Complete profile to get verified tick!", "info");
-          if (kycBanner) {
-            kycBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            showKycPopover();
-          }
+          openKycChecklistModal();
         });
       }
 
@@ -2479,56 +2519,209 @@
         });
       }
 
-      // Postal Pincode Auto-fetch Listener
+      // ========================================================
+      // POSTAL PINCODE AUTO-FETCH ENGINE (WITH ANIMATED SPINNER)
+      // ========================================================
       const pinInput = document.getElementById('input-pincode');
       const districtInput = document.getElementById('input-district');
       const stateInput = document.getElementById('input-state');
       const cityInput = document.getElementById('input-city');
-      const pinSpinner = document.getElementById('pincode-fetch-indicator');
+      const pinStatusIcon = document.getElementById('pincode-status-icon');
       let pincodeDebounceTimer = null;
+
+      // Indian State Circle Table based on 2-digit PIN prefixes
+      const PIN_STATE_MAP = {
+        "11": { state: "Delhi", district: "New Delhi" },
+        "12": { state: "Haryana", district: "Gurugram" },
+        "13": { state: "Haryana", district: "Ambala" },
+        "14": { state: "Punjab", district: "Ludhiana" },
+        "15": { state: "Punjab", district: "Bathinda" },
+        "16": { state: "Punjab", district: "Chandigarh" },
+        "17": { state: "Himachal Pradesh", district: "Shimla" },
+        "18": { state: "Jammu and Kashmir", district: "Jammu" },
+        "19": { state: "Jammu and Kashmir", district: "Srinagar" },
+        "20": { state: "Uttar Pradesh", district: "Aligarh" },
+        "21": { state: "Uttar Pradesh", district: "Allahabad" },
+        "22": { state: "Uttar Pradesh", district: "Lucknow" },
+        "23": { state: "Uttar Pradesh", district: "Varanasi" },
+        "24": { state: "Uttarakhand", district: "Dehradun" },
+        "25": { state: "Uttar Pradesh", district: "Meerut" },
+        "26": { state: "Uttar Pradesh", district: "Bareilly" },
+        "27": { state: "Uttar Pradesh", district: "Gorakhpur" },
+        "28": { state: "Uttar Pradesh", district: "Jhansi" },
+        "30": { state: "Rajasthan", district: "Jaipur" },
+        "31": { state: "Rajasthan", district: "Udaipur" },
+        "32": { state: "Rajasthan", district: "Kota" },
+        "33": { state: "Rajasthan", district: "Bikaner" },
+        "34": { state: "Rajasthan", district: "Jodhpur" },
+        "36": { state: "Gujarat", district: "Rajkot" },
+        "37": { state: "Gujarat", district: "Kutch" },
+        "38": { state: "Gujarat", district: "Ahmedabad" },
+        "39": { state: "Gujarat", district: "Surat" },
+        "40": { state: "Maharashtra", district: "Mumbai" },
+        "41": { state: "Maharashtra", district: "Pune" },
+        "42": { state: "Maharashtra", district: "Nashik" },
+        "43": { state: "Maharashtra", district: "Aurangabad" },
+        "44": { state: "Maharashtra", district: "Nagpur" },
+        "45": { state: "Madhya Pradesh", district: "Indore" },
+        "46": { state: "Madhya Pradesh", district: "Bhopal" },
+        "47": { state: "Madhya Pradesh", district: "Gwalior" },
+        "48": { state: "Madhya Pradesh", district: "Jabalpur" },
+        "49": { state: "Chhattisgarh", district: "Raipur" },
+        "50": { state: "Telangana", district: "Hyderabad" },
+        "51": { state: "Andhra Pradesh", district: "Tirupati" },
+        "52": { state: "Andhra Pradesh", district: "Vijayawada" },
+        "53": { state: "Andhra Pradesh", district: "Visakhapatnam" },
+        "56": { state: "Karnataka", district: "Bengaluru" },
+        "57": { state: "Karnataka", district: "Mangaluru" },
+        "58": { state: "Karnataka", district: "Belagavi" },
+        "59": { state: "Karnataka", district: "Hubballi" },
+        "60": { state: "Tamil Nadu", district: "Chennai" },
+        "61": { state: "Tamil Nadu", district: "Thanjavur" },
+        "62": { state: "Tamil Nadu", district: "Madurai" },
+        "63": { state: "Tamil Nadu", district: "Salem" },
+        "64": { state: "Tamil Nadu", district: "Coimbatore" },
+        "67": { state: "Kerala", district: "Kozhikode" },
+        "68": { state: "Kerala", district: "Kochi" },
+        "69": { state: "Kerala", district: "Thiruvananthapuram" },
+        "70": { state: "West Bengal", district: "Kolkata" },
+        "71": { state: "West Bengal", district: "Howrah" },
+        "72": { state: "West Bengal", district: "Medinipur" },
+        "73": { state: "West Bengal", district: "Siliguri" },
+        "74": { state: "West Bengal", district: "North 24 Parganas" },
+        "75": { state: "Odisha", district: "Bhubaneswar" },
+        "76": { state: "Odisha", district: "Cuttack" },
+        "77": { state: "Odisha", district: "Rourkela" },
+        "78": { state: "Assam", district: "Guwahati" },
+        "79": { state: "Meghalaya", district: "Shillong" },
+        "80": { state: "Bihar", district: "Patna" },
+        "81": { state: "Bihar", district: "Bhagalpur" },
+        "82": { state: "Bihar", district: "Gaya" },
+        "83": { state: "Jharkhand", district: "Ranchi" },
+        "84": { state: "Bihar", district: "Muzaffarpur" },
+        "85": { state: "Bihar", district: "Purnia" }
+      };
 
       async function fetchPincodeDetails(pin) {
         if (!pin || pin.length !== 6 || !/^\d{6}$/.test(pin)) return;
-        if (pinSpinner) pinSpinner.classList.remove('hidden');
+
+        // Animated Spinning Loader (NO raw text)
+        if (pinStatusIcon) {
+          pinStatusIcon.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 text-orange-500 animate-spin"></i>`;
+          if (window.lucide) lucide.createIcons();
+        }
+
+        let detected = null;
+
+        // Tier 1: Try Postal Pincode India API (4s timeout)
         try {
-          const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-          if (!res.ok) throw new Error('API request failed');
-          const data = await res.json();
-          if (Array.isArray(data) && data[0] && data[0].Status === 'Success' && Array.isArray(data[0].PostOffice) && data[0].PostOffice.length > 0) {
-            const po = data[0].PostOffice[0];
-            if (districtInput && po.District) {
-              districtInput.value = po.District;
-              syncFieldFilledState(districtInput);
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 4000);
+          const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`, { signal: controller.signal });
+          clearTimeout(timer);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data[0] && data[0].Status === 'Success' && Array.isArray(data[0].PostOffice) && data[0].PostOffice.length > 0) {
+              const po = data[0].PostOffice[0];
+              detected = {
+                city: po.Name || po.District,
+                district: po.District,
+                state: po.State
+              };
             }
-            if (stateInput && po.State) {
-              stateInput.value = po.State;
-              syncFieldFilledState(stateInput);
-            }
-            if (cityInput && (!cityInput.value.trim() || cityInput.dataset.autoFilled === 'true')) {
-              cityInput.value = po.Name || po.District;
-              cityInput.dataset.autoFilled = 'true';
-              syncFieldFilledState(cityInput);
-            }
-            updateKycProgress();
-            showToast(`Location auto-detected: ${po.District}, ${po.State}`, 'success');
           }
-        } catch (err) {
-          console.warn('Pincode fetch notice:', err);
-        } finally {
-          if (pinSpinner) pinSpinner.classList.add('hidden');
+        } catch (e) {
+          console.warn("Tier 1 pincode lookup note:", e.message);
+        }
+
+        // Tier 2: Try Zippopotam API if Tier 1 failed
+        if (!detected) {
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3000);
+            const res = await fetch(`https://api.zippopotam.us/in/${pin}`, { signal: controller.signal });
+            clearTimeout(timer);
+            if (res.ok) {
+              const data = await res.json();
+              if (data && Array.isArray(data.places) && data.places.length > 0) {
+                const pl = data.places[0];
+                detected = {
+                  city: pl["place name"],
+                  district: pl["place name"],
+                  state: pl.state
+                };
+              }
+            }
+          } catch (e) {
+            console.warn("Tier 2 pincode lookup note:", e.message);
+          }
+        }
+
+        // Tier 3: Built-in State & District circle fallback
+        if (!detected) {
+          const prefix2 = pin.substring(0, 2);
+          if (PIN_STATE_MAP[prefix2]) {
+            detected = {
+              city: "",
+              district: PIN_STATE_MAP[prefix2].district,
+              state: PIN_STATE_MAP[prefix2].state
+            };
+          }
+        }
+
+        // Populate fields
+        if (detected) {
+          if (districtInput && detected.district) {
+            districtInput.value = detected.district;
+            syncFieldFilledState(districtInput);
+          }
+          if (stateInput && detected.state) {
+            stateInput.value = detected.state;
+            syncFieldFilledState(stateInput);
+          }
+          if (cityInput && detected.city && (!cityInput.value.trim() || cityInput.dataset.autoFilled === 'true')) {
+            cityInput.value = detected.city;
+            cityInput.dataset.autoFilled = 'true';
+            syncFieldFilledState(cityInput);
+          }
+          updateKycProgress();
+          showToast(`Location detected: ${detected.district ? detected.district + ', ' : ''}${detected.state}`, 'success');
+
+          // Green check icon on success
+          if (pinStatusIcon) {
+            pinStatusIcon.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        } else {
+          if (pinStatusIcon) {
+            pinStatusIcon.innerHTML = `<i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i>`;
+            if (window.lucide) lucide.createIcons();
+          }
         }
       }
 
       if (pinInput) {
-        pinInput.addEventListener('input', (e) => {
-          let val = e.target.value.replace(/\D/g, '').slice(0, 6);
-          e.target.value = val;
+        const triggerPincode = (rawVal) => {
+          let val = String(rawVal || '').replace(/\D/g, '').slice(0, 6);
+          pinInput.value = val;
           clearTimeout(pincodeDebounceTimer);
           if (val.length === 6) {
-            pincodeDebounceTimer = setTimeout(() => fetchPincodeDetails(val), 250);
+            pincodeDebounceTimer = setTimeout(() => fetchPincodeDetails(val), 200);
+          } else {
+            if (pinStatusIcon) {
+              pinStatusIcon.innerHTML = `<i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i>`;
+              if (window.lucide) lucide.createIcons();
+            }
           }
+        };
+
+        pinInput.addEventListener('input', (e) => triggerPincode(e.target.value));
+        pinInput.addEventListener('change', (e) => triggerPincode(e.target.value));
+        pinInput.addEventListener('paste', () => {
+          setTimeout(() => triggerPincode(pinInput.value), 50);
         });
       }
+
 
       updateKycProgress();
       syncAllFields();

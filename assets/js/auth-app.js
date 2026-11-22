@@ -333,8 +333,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${shortCode}`);
-    // High error correction (ecc=H) with lower matrix density makes scanning instant
-    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-2xl w-48 h-48 object-contain shadow-inner" />`;
+    // Crisp QR Code with high-contrast matrix and clean white quiet zone for lightning-fast scan
+    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${payload}&margin=2&ecc=Q&color=0f172a&bgcolor=ffffff" alt="Mendorbit QR Login" class="rounded-xl w-44 h-44 sm:w-48 sm:h-48 object-contain select-none" />`;
 
     // Dual-Channel 1: Real-Time Firestore Snapshot Listener
     if (typeof firestoreDb !== 'undefined' && firestoreDb) {
