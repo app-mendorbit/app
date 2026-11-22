@@ -200,25 +200,195 @@ const MendorbitBackend = {
   },
 
   /**
+   * Helper to determine friendly device and browser string
+   */
+  getFriendlyDevice(ua) {
+    if (!ua) return { friendly: "Windows PC • Chrome", type: "Desktop" };
+    let os = "Desktop";
+    let type = "Desktop";
+    if (/Android/i.test(ua)) { os = "Android"; type = "Mobile"; }
+    else if (/iPhone/i.test(ua)) { os = "Apple iPhone"; type = "Mobile"; }
+    else if (/iPad/i.test(ua)) { os = "Apple iPad"; type = "Tablet"; }
+    else if (/Windows/i.test(ua)) { os = "Windows PC"; type = "Desktop"; }
+    else if (/Macintosh|Mac OS/i.test(ua)) { os = "Mac"; type = "Desktop"; }
+    else if (/Linux/i.test(ua)) { os = "Linux"; type = "Desktop"; }
+
+    let browser = "Chrome";
+    if (/Edg/i.test(ua)) browser = "Edge";
+    else if (/Firefox/i.test(ua)) browser = "Firefox";
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+    else if (/Chrome/i.test(ua)) browser = "Chrome";
+
+    return { friendly: `${os} • ${browser}`, type };
+  },
+
+  /**
    * Record active student login session in Firestore
    */
-  async recordUserSession(email, sessionData) {
-    if (!email) return;
+  async recordUserSession(email, sessionData = {}) {
+    if (!email) return null;
     const normalized = email.toLowerCase().trim();
+    const sessionId = sessionData.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+    const ua = sessionData.device || navigator.userAgent || "Unknown Device";
+    const devInfo = this.getFriendlyDevice(ua);
+
+    const record = {
+      sessionId: sessionId,
+      device: ua,
+      friendlyDevice: sessionData.friendlyDevice || devInfo.friendly,
+      deviceType: sessionData.deviceType || devInfo.type,
+      ip: sessionData.ip || "127.0.0.1",
+      location: sessionData.location || { city: "Patna", region: "Bihar", country: "India" },
+      loginTime: sessionData.loginTime || new Date().toISOString(),
+      loginEpoch: Date.now(),
+      lastActive: new Date().toISOString(),
+      status: "ACTIVE"
+    };
+
+    try {
+      localStorage.setItem("mendorbit_session_id", sessionId);
+    } catch(e) {}
+
     if (isFirebaseConfigured && firestoreDb) {
       try {
-        const sessionId = "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
-        const record = {
-          ...sessionData,
-          sessionId,
-          loginTime: new Date().toISOString()
-        };
         await firestoreDb.collection("users").doc(normalized).collection("sessions").doc(sessionId).set(record);
-        console.log("[Mendorbit Backend] Session recorded in Firestore subcollection for " + normalized);
+        
+        // Also keep updated in user's root document sessions map
+        const updateMap = {};
+        updateMap[`sessions.${sessionId}`] = record;
+        updateMap["lastLogin"] = record.loginTime;
+        await firestoreDb.collection("users").doc(normalized).set(updateMap, { merge: true });
+        console.log("[Mendorbit Backend] Session recorded in Firestore for " + normalized + ": " + sessionId);
       } catch (err) {
         console.warn("[Mendorbit Backend] Session record note:", err);
       }
     }
+
+    return sessionId;
+  },
+
+  /**
+   * Retrieve all login sessions for a user
+   */
+  async getUserSessions(email) {
+    if (!email) return [];
+    const normalized = email.toLowerCase().trim();
+    const sessionsList = [];
+
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const snapshot = await firestoreDb.collection("users").doc(normalized).collection("sessions").orderBy("loginEpoch", "desc").get();
+        snapshot.forEach(doc => {
+          sessionsList.push(doc.data());
+        });
+        if (sessionsList.length > 0) return sessionsList;
+      } catch (err) {
+        console.warn("[Mendorbit Backend] Fetch sessions note:", err);
+      }
+
+      // Fallback: check root user document map
+      try {
+        const userDoc = await this.getUserByEmail(normalized);
+        if (userDoc && userDoc.sessions && typeof userDoc.sessions === 'object') {
+          return Object.values(userDoc.sessions).sort((a, b) => (b.loginEpoch || 0) - (a.loginEpoch || 0));
+        }
+      } catch (e) {}
+    }
+
+    return sessionsList;
+  },
+
+  /**
+   * Revoke / Terminate a specific user session (Remote Logout)
+   */
+  async revokeUserSession(email, sessionId) {
+    if (!email || !sessionId) return false;
+    const normalized = email.toLowerCase().trim();
+    const nowIso = new Date().toISOString();
+
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        await firestoreDb.collection("users").doc(normalized).collection("sessions").doc(sessionId).set({
+          status: "LOGGED_OUT",
+          loggedOutAt: nowIso
+        }, { merge: true });
+
+        const updateMap = {};
+        updateMap[`sessions.${sessionId}.status`] = "LOGGED_OUT";
+        updateMap[`sessions.${sessionId}.loggedOutAt`] = nowIso;
+        await firestoreDb.collection("users").doc(normalized).set(updateMap, { merge: true });
+        console.log(`[Mendorbit Backend] Session ${sessionId} revoked for ${normalized}`);
+        return true;
+      } catch (err) {
+        console.warn("[Mendorbit Backend] Revoke session error:", err);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Revoke all other active sessions except current
+   */
+  async revokeAllOtherSessions(email, currentSessionId) {
+    if (!email) return false;
+    const normalized = email.toLowerCase().trim();
+    const allSessions = await this.getUserSessions(normalized);
+    let count = 0;
+
+    for (const sess of allSessions) {
+      if (sess.sessionId !== currentSessionId && sess.status === "ACTIVE") {
+        await this.revokeUserSession(normalized, sess.sessionId);
+        count++;
+      }
+    }
+    return count;
+  },
+
+  /**
+   * Migrate User Email (Copies Firestore Doc & Sessions to new email)
+   */
+  async migrateUserEmail(oldEmail, newEmail) {
+    if (!oldEmail || !newEmail) return false;
+    const oldNorm = oldEmail.toLowerCase().trim();
+    const newNorm = newEmail.toLowerCase().trim();
+
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const oldDocRef = firestoreDb.collection("users").doc(oldNorm);
+        const oldDocSnap = await oldDocRef.get();
+        if (!oldDocSnap.exists) {
+          throw new Error("Old account record not found.");
+        }
+
+        const data = oldDocSnap.data();
+        data.email = newNorm;
+        data.uid = newNorm;
+        data.updatedAt = new Date().toISOString();
+
+        // 1. Create new user document
+        await firestoreDb.collection("users").doc(newNorm).set(data);
+
+        // 2. Copy sessions subcollection
+        const sessionsSnap = await oldDocRef.collection("sessions").get();
+        for (const sDoc of sessionsSnap.docs) {
+          await firestoreDb.collection("users").doc(newNorm).collection("sessions").doc(sDoc.id).set(sDoc.data());
+        }
+
+        // 3. Mark old user document as migrated or delete
+        await oldDocRef.set({
+          migratedTo: newNorm,
+          migratedAt: new Date().toISOString(),
+          accountLocked: true
+        }, { merge: true });
+
+        console.log(`[Mendorbit Backend] User account migrated from ${oldNorm} to ${newNorm}`);
+        return true;
+      } catch (err) {
+        console.error("[Mendorbit Backend] Email migration error:", err);
+        throw err;
+      }
+    }
+    return false;
   },
 
   /**

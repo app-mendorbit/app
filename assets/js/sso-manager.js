@@ -117,9 +117,16 @@
       displayName: user.displayName || user.name || "Student",
       class: user.class || "General",
       photoURL: user.photoURL || "",
+      sessionId: user.sessionId || localStorage.getItem("mendorbit_session_id") || ("sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8)),
       issuedAt: user.issuedAt || Date.now(),
       expiresAt: Date.now() + (SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000)
     };
+
+    if (sessionPayload.sessionId) {
+      try {
+        localStorage.setItem("mendorbit_session_id", sessionPayload.sessionId);
+      } catch (e) {}
+    }
 
     const payloadString = JSON.stringify(sessionPayload);
     const signature = generateSignature(payloadString);
@@ -187,6 +194,13 @@
       }
     }
 
+    // Ensure sessionId is attached
+    if (payload && !payload.sessionId) {
+      try {
+        payload.sessionId = localStorage.getItem("mendorbit_session_id") || null;
+      } catch (e) {}
+    }
+
     // Expiry check
     if (payload && payload.expiresAt && Date.now() > payload.expiresAt) {
       clearSession();
@@ -210,6 +224,10 @@
     const domain = getCookieDomain();
     eraseCookie(COOKIE_NAME, domain);
 
+    try {
+      localStorage.removeItem("mendorbit_session_id");
+    } catch (e) {}
+
     if (typeof MendorbitSecureStorage !== 'undefined') {
       MendorbitSecureStorage.removeItem(STORAGE_KEY, localStorage);
       MendorbitSecureStorage.removeItem("mendorbit_current_session", localStorage);
@@ -227,6 +245,71 @@
         syncChannel.postMessage({ type: 'SSO_LOGOUT' });
       } catch (e) {}
     }
+  }
+
+  /**
+   * Real-time remote revocation listener
+   * Instantly terminates user session when marked LOGGED_OUT from another device
+   */
+  let activeSessionListenerUnsub = null;
+
+  function listenToRemoteSessionStatus(onRevoked) {
+    const session = getSession();
+    if (!session || !session.email) return null;
+    const currentSessionId = localStorage.getItem("mendorbit_session_id") || session.sessionId;
+    if (!currentSessionId) return null;
+
+    if (activeSessionListenerUnsub) {
+      try { activeSessionListenerUnsub(); } catch(e) {}
+      activeSessionListenerUnsub = null;
+    }
+
+    if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+      try {
+        activeSessionListenerUnsub = firestoreDb.collection("users")
+          .doc(session.email.toLowerCase().trim())
+          .collection("sessions")
+          .doc(currentSessionId)
+          .onSnapshot((docSnap) => {
+            if (docSnap.exists) {
+              const data = docSnap.data();
+              if (data && (data.status === "LOGGED_OUT" || data.status === "logged_out")) {
+                console.warn("[MendorbitSSO] Current session revoked remotely!");
+                clearSession();
+                if (typeof onRevoked === 'function') {
+                  onRevoked("Your session was terminated from another device.");
+                } else {
+                  triggerDefaultRevokedUI();
+                }
+              }
+            }
+          }, (err) => {
+            console.warn("[MendorbitSSO] Session snapshot error:", err);
+          });
+      } catch (e) {
+        console.warn("[MendorbitSSO] Error setting up session listener:", e);
+      }
+    }
+    return activeSessionListenerUnsub;
+  }
+
+  function triggerDefaultRevokedUI() {
+    clearSession();
+    const overlay = document.createElement("div");
+    overlay.id = "mendorbit-remote-logout-overlay";
+    overlay.style.cssText = "position:fixed;inset:0;z-index:999999;background:rgba(15,23,42,0.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:sans-serif;color:white;";
+    overlay.innerHTML = `
+      <div style="background:#1e293b;border:1px solid rgba(239,68,68,0.4);border-radius:24px;max-width:440px;width:100%;padding:32px;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+        <div style="width:56px;height:56px;background:rgba(239,68,68,0.15);border-radius:18px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:26px;">⚠️</div>
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;color:#f8fafc;">Session Terminated</h2>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.5;margin-bottom:24px;">Your account was logged out remotely from another device.</p>
+        <a href="login.html?session_expired=true" style="display:inline-block;background:#ff6600;color:white;font-weight:700;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none;">Go to Login Portal</a>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+      window.location.replace("login.html?session_expired=true");
+    }, 1500);
   }
 
   /**
@@ -266,6 +349,8 @@
     clearSession: clearSession,
     onAuthStateChanged: onAuthStateChanged,
     getCookieDomain: getCookieDomain,
+    listenToRemoteSessionStatus: listenToRemoteSessionStatus,
+    triggerDefaultRevokedUI: triggerDefaultRevokedUI,
     startHeartbeatMonitor: startHeartbeatMonitor
   };
 });

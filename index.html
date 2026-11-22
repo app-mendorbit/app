@@ -502,12 +502,21 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/secure-storage.js"></script>
   <script src="assets/js/sso-manager.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       if (window.lucide) lucide.createIcons();
+
+      // Listen for instant remote logout from other devices
+      if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.listenToRemoteSessionStatus) {
+        MendorbitSSO.listenToRemoteSessionStatus();
+      }
 
       // Strip query parameters from URL address bar for clean display
       if (window.location.search) {

@@ -16,10 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
   if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.isLoggedIn()) {
     const actionParam = getParam('action');
     const tokenParam = getParam('token');
-    if (actionParam !== 'lock' && !tokenParam && getParam('force_login') !== 'true') {
+    const sessionExpired = getParam('session_expired') === 'true' || getParam('session_revoked') === 'true';
+    if (!sessionExpired && actionParam !== 'lock' && !tokenParam && getParam('force_login') !== 'true') {
       MendorbitTracker.executePostLoginRedirect();
       return;
     }
+  }
+
+  if (getParam('session_expired') === 'true' || getParam('session_revoked') === 'true') {
+    setTimeout(() => {
+      notify("Your session was terminated from another device. Please sign in again.", "error");
+    }, 400);
   }
 
   // Navigation Elements
@@ -43,6 +50,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // In-flight Google user state
   let pendingGoogleUser = null;
+
+  // Unified Session Completion Engine (Guarantees Session ID & Firestore Tracking on EVERY Login)
+  async function completeAuthSession(userPayload, eventType = "LOGIN") {
+    const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+    const sessionWithId = { ...userPayload, sessionId };
+
+    MendorbitSSO.setSession(sessionWithId);
+    try {
+      localStorage.setItem("mendorbit_session_id", sessionId);
+    } catch(e) {}
+
+    const exactLoc = (typeof MendorbitTracker !== 'undefined' && MendorbitTracker.getExactLocation) ? MendorbitTracker.getExactLocation() : null;
+    if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
+      try {
+        await MendorbitBackend.recordUserSession(sessionWithId.email, {
+          sessionId: sessionId,
+          device: navigator.userAgent,
+          location: exactLoc || {},
+          type: eventType,
+          status: "ACTIVE"
+        });
+      } catch (e) {
+        console.warn("[Auth] Session record warning:", e);
+      }
+    }
+
+    dispatchClientSecurityAlert(sessionWithId.email, sessionWithId.displayName || "Student", eventType);
+    return sessionWithId;
+  }
 
   // View state switcher
   function showView(viewName) {
@@ -627,8 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (res && res.status === "success") {
-        MendorbitSSO.setSession(res.user);
-        dispatchClientSecurityAlert(data.email, data.name, "SIGNUP");
+        await completeAuthSession(res.user, "SIGNUP");
         notify("Account created successfully! Redirecting...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -645,8 +680,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const profile = { displayName: data.name, email: docId, class: data.studentClass };
 
     await MendorbitBackend.saveUserProfile(docId, profile, attribution, encryptedPassword);
-    MendorbitSSO.setSession({ uid: docId, email: docId, displayName: data.name, class: data.studentClass });
-    dispatchClientSecurityAlert(data.email, data.name, "SIGNUP");
+    await completeAuthSession({ uid: docId, email: docId, displayName: data.name, class: data.studentClass }, "SIGNUP");
 
     notify("Account created successfully! Redirecting...", "success");
     setTimeout(() => {
@@ -673,8 +707,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const res = await MendorbitAPI.login(identifier, password);
       if (res && res.status === "success") {
         setButtonLoading(btn, false, "Sign In");
-        MendorbitSSO.setSession(res.user);
-        dispatchClientSecurityAlert(res.user.email, res.user.displayName, "LOGIN");
+        await completeAuthSession(res.user, "LOGIN");
         notify("Welcome back, " + res.user.displayName + "!", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -708,14 +741,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    MendorbitSSO.setSession({
+    await completeAuthSession({
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
       class: user.class
-    });
+    }, "LOGIN");
 
-    dispatchClientSecurityAlert(user.email, user.displayName, "LOGIN");
     notify("Welcome back, " + user.displayName + "!", "success");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
@@ -752,8 +784,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const res = await MendorbitAPI.otpLogin(email, getOtpCode());
       if (res && res.status === "success") {
-        MendorbitSSO.setSession(res.user);
-        dispatchClientSecurityAlert(res.user.email, res.user.displayName, "LOGIN_OTP");
+        await completeAuthSession(res.user, "LOGIN_OTP");
         notify("Verified! Redirecting to dashboard...", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
@@ -769,8 +800,7 @@ document.addEventListener("DOMContentLoaded", function () {
       displayName: user ? user.displayName : "Student",
       class: user ? user.class : "General"
     };
-    MendorbitSSO.setSession(session);
-    dispatchClientSecurityAlert(session.email, session.displayName, "LOGIN_OTP");
+    await completeAuthSession(session, "LOGIN_OTP");
 
     notify("Verified! Redirecting to dashboard...", "success");
     setTimeout(() => {
@@ -907,17 +937,7 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             }
 
-            MendorbitSSO.setSession(userSession);
-            const exactLoc = (typeof MendorbitTracker !== 'undefined' && MendorbitTracker.getExactLocation) ? MendorbitTracker.getExactLocation() : null;
-            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
-              MendorbitBackend.recordUserSession(userSession.email, {
-                device: navigator.userAgent,
-                location: exactLoc || {},
-                type: "GOOGLE_LOGIN"
-              });
-            }
-            dispatchClientSecurityAlert(userSession.email, userSession.displayName, "GOOGLE_LOGIN");
-
+            await completeAuthSession(userSession, "GOOGLE_LOGIN");
             if (typeof MendorbitLoader !== 'undefined') {
               MendorbitLoader.show("Verified!", "Redirecting to your student dashboard...");
             }
@@ -998,8 +1018,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (res && res.status === "success") {
         const sessionUser = { ...res.user, photoURL: photoURL || (res.user && res.user.photoURL) || "" };
-        MendorbitSSO.setSession(sessionUser);
-        dispatchClientSecurityAlert(normalizedEmail, pendingGoogleUser.displayName || "Google Student", "SIGNUP");
+        await completeAuthSession(sessionUser, "SIGNUP");
         setButtonLoading(btn, false, "Complete Setup & Enter");
         notify("Account setup complete! Entering Mendorbit...", "success");
         setTimeout(() => {
@@ -1020,14 +1039,13 @@ document.addEventListener("DOMContentLoaded", function () {
       photoURL: photoURL
     }, attribution, encryptedPassword);
 
-    MendorbitSSO.setSession({
+    await completeAuthSession({
       uid: pendingGoogleUser.uid || normalizedEmail,
       email: normalizedEmail,
       displayName: pendingGoogleUser.displayName || "Google Student",
       class: selectedClass,
       photoURL: photoURL
-    });
-    dispatchClientSecurityAlert(normalizedEmail, pendingGoogleUser.displayName || "Google Student", "SIGNUP");
+    }, "SIGNUP");
 
     setButtonLoading(btn, false, "Complete Setup & Enter");
     notify("Account setup complete! Entering Mendorbit...", "success");

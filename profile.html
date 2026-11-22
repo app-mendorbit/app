@@ -133,9 +133,12 @@
     .dark .edtech-input-group label {
       color: #94a3b8;
     }
-    .edtech-input {
+    /* Input Field Polish: Pure white (#ffffff) when unfilled/empty, Soft Dim White (#f8fafc) when filled */
+    .edtech-input,
+    .edtech-input.is-empty,
+    .edtech-input:not(.is-filled) {
       width: 100%;
-      background: #ffffff;
+      background-color: #ffffff !important;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 11px 16px;
@@ -145,30 +148,40 @@
       transition: all 0.2s ease;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
-    .dark .edtech-input {
-      background: #0f172a;
+    .dark .edtech-input,
+    .dark .edtech-input.is-empty,
+    .dark .edtech-input:not(.is-filled) {
+      background-color: #030712 !important;
       border-color: #334155;
       color: #f1f5f9;
     }
+    .edtech-input.is-filled {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    .dark .edtech-input.is-filled {
+      background-color: #0f172a !important;
+      border-color: #334155;
+      color: #f8fafc;
+    }
     .edtech-input:focus {
       outline: none;
-      border-color: #ff6600;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
+      border-color: #ff6600 !important;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12) !important;
     }
     .dark .edtech-input:focus {
-      background: #0f172a;
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
     }
     .edtech-input:read-only, .edtech-input:disabled {
-      background: #f8fafc;
+      background-color: #f1f5f9 !important;
       color: #64748b;
       cursor: not-allowed;
       border-color: #e2e8f0;
     }
     .dark .edtech-input:read-only, .dark .edtech-input:disabled {
-      background: #1e293b;
+      background-color: #1e293b !important;
       color: #94a3b8;
       border-color: #334155;
     }
@@ -553,6 +566,7 @@
                 <div class="edtech-input-group">
                   <label>Select your Gender</label>
                   <select id="input-gender" class="edtech-input">
+                    <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -633,55 +647,113 @@
           <div id="tab-security" class="profile-tab-pane hidden">
             <div class="pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
               <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">Sign-in & Security</h2>
-              <p class="text-xs text-slate-400 mt-0.5">Manage authentication, SSO passwords and connected devices</p>
+              <p class="text-xs text-slate-400 mt-0.5">Manage authentication, SSO passwords, email verification and connected devices</p>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-8">
               
-              <!-- Registered Account Badge Card -->
-              <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <!-- Registered Account Badge Card with Email Change Action -->
+              <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
-                  <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center">
+                  <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0">
                     <i data-lucide="shield-check" class="w-5 h-5"></i>
                   </div>
                   <div>
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="security-email-label">student@gmail.com</h3>
-                    <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      Single Sign-On (SSO) Active across *.mendorbit.in
-                    </p>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="security-email-label">student@gmail.com</h3>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">Verified</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Single Sign-On (SSO) & Learning Account Primary ID</p>
                   </div>
                 </div>
-                <a href="login.html?action=forgot" class="px-4 py-2 rounded-xl text-xs font-bold text-brand-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition">
-                  Reset Password via OTP
-                </a>
+                <div class="flex items-center gap-2">
+                  <button type="button" id="btn-open-change-email" class="px-4 py-2 rounded-xl text-xs font-bold text-brand-600 dark:text-blue-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="mail" class="w-3.5 h-3.5 text-brand-600"></i>
+                    <span>Change Email</span>
+                  </button>
+                </div>
               </div>
 
-              <!-- Quick Password Change Form -->
-              <form id="form-security" class="space-y-6">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Change Password</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Password Change Form (Requires Current Password, With OTP Fallback) -->
+              <div class="p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Change Account Password</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Enter your old password to create a new one</p>
+                  </div>
+                  <button type="button" id="btn-trigger-forgot-otp" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+                    <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                    <span>Forgot Password? Reset via OTP</span>
+                  </button>
+                </div>
+
+                <form id="form-security" class="space-y-5">
                   <div class="edtech-input-group">
-                    <label>New Password *</label>
-                    <input type="password" id="input-new-password" placeholder="At least 6 characters" minlength="6" class="edtech-input font-mono">
+                    <label>Current / Old Password *</label>
+                    <input type="password" id="input-current-password" placeholder="Enter your current password" class="edtech-input font-mono">
                   </div>
 
-                  <div class="edtech-input-group">
-                    <label>Confirm New Password *</label>
-                    <input type="password" id="input-confirm-password" placeholder="Re-type new password" minlength="6" class="edtech-input font-mono">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="edtech-input-group">
+                      <label>New Password *</label>
+                      <input type="password" id="input-new-password" placeholder="At least 6 characters" minlength="6" class="edtech-input font-mono">
+                    </div>
+
+                    <div class="edtech-input-group">
+                      <label>Confirm New Password *</label>
+                      <input type="password" id="input-confirm-password" placeholder="Re-type new password" minlength="6" class="edtech-input font-mono">
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-security">
+                      Cancel
+                    </button>
+                    <button type="submit" id="btn-submit-security" class="btn-edtech-update">
+                      <span>Update Password</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Active Sessions & Connected Devices -->
+              <div class="p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-sm font-bold text-slate-900 dark:text-white">Active Sessions & Connected Devices</h3>
+                      <span id="active-sessions-count-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">1 Active</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5">Where your account is currently signed in. Terminating a session logs out that device instantly.</p>
+                  </div>
+                  <button type="button" id="btn-logout-all-others" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                    <span>Logout All Other Devices</span>
+                  </button>
+                </div>
+
+                <!-- Active Sessions List -->
+                <div id="active-sessions-list" class="space-y-3">
+                  <!-- Dynamically populated -->
+                  <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-center text-xs text-slate-400">
+                    Loading active sessions...
                   </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <button type="button" class="btn-edtech-cancel btn-reset-form" data-form="form-security">
-                    Cancel
+                <!-- Device Logout History Collapsible Section -->
+                <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <button type="button" id="btn-toggle-logout-history" class="w-full flex items-center justify-between text-left py-1 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="history" class="w-4 h-4 text-slate-400"></i>
+                      <span>Device Logout History (<span id="logout-history-count">0</span>)</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="icon-history-chevron" class="w-4 h-4 text-slate-400 transition-transform"></i>
                   </button>
-                  <button type="submit" id="btn-submit-security" class="btn-edtech-update">
-                    <span>Update Password</span>
-                  </button>
+                  <div id="logout-history-container" class="hidden mt-3 space-y-2">
+                    <!-- Populated dynamically -->
+                  </div>
                 </div>
-              </form>
+              </div>
 
             </div>
           </div>
@@ -701,6 +773,7 @@
                 <div class="edtech-input-group">
                   <label>Preferred Learning Mode</label>
                   <select id="input-pref-mode" class="edtech-input">
+                    <option value="">Select Learning Mode</option>
                     <option value="Live Interactive Batches">Live Interactive Batches</option>
                     <option value="Recorded Video Lecture Notes">Recorded Video Lecture Notes</option>
                     <option value="Self-Paced Mentorship">Self-Paced Mentorship</option>
@@ -710,6 +783,7 @@
                 <div class="edtech-input-group">
                   <label>Medium of Instruction</label>
                   <select id="input-pref-lang" class="edtech-input">
+                    <option value="">Select Medium of Instruction</option>
                     <option value="Hinglish">Hinglish</option>
                     <option value="English">English</option>
                     <option value="Hindi">Hindi</option>
@@ -719,6 +793,7 @@
                 <div class="edtech-input-group">
                   <label>Daily Study Time</label>
                   <select id="input-pref-hours" class="edtech-input">
+                    <option value="">Select Daily Study Hours</option>
                     <option value="2-3 Hours / Day">2-3 Hours / Day</option>
                     <option value="4-5 Hours / Day">4-5 Hours / Day</option>
                     <option value="6+ Hours / Day">6+ Hours / Day</option>
@@ -728,6 +803,7 @@
                 <div class="edtech-input-group">
                   <label>Notification Preference</label>
                   <select id="input-pref-notify" class="edtech-input">
+                    <option value="">Select Notification Channel</option>
                     <option value="WhatsApp & Email">WhatsApp & Email</option>
                     <option value="Email Only">Email Only</option>
                     <option value="In-App Notification Only">In-App Notification Only</option>
@@ -813,6 +889,7 @@
                 <div class="edtech-input-group">
                   <label>Emergency Contact Preference</label>
                   <select id="input-emergency-pref" class="edtech-input">
+                    <option value="">Select Emergency Contact</option>
                     <option value="Father">Father</option>
                     <option value="Mother">Mother</option>
                     <option value="Guardian">Guardian</option>
@@ -902,6 +979,7 @@
                 <div class="edtech-input-group">
                   <label>Current Class *</label>
                   <select id="input-academic-class" class="edtech-input">
+                    <option value="">Select Current Class / Exam</option>
                     <option value="Class 9">Class 9</option>
                     <option value="Class 10">Class 10</option>
                     <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
@@ -913,6 +991,7 @@
                 <div class="edtech-input-group">
                   <label>Education Board / Authority *</label>
                   <select id="input-academic-board" class="edtech-input">
+                    <option value="">Select Board</option>
                     <option value="CBSE">CBSE</option>
                     <option value="ICSE / ISC">ICSE / ISC</option>
                     <option value="State Board">State Board</option>
@@ -923,6 +1002,7 @@
                 <div class="edtech-input-group">
                   <label>Target Course / Exam *</label>
                   <select id="input-academic-target" class="edtech-input">
+                    <option value="">Select Target Course</option>
                     <option value="Foundation">Foundation</option>
                     <option value="Board Prep">Board Prep</option>
                   </select>
@@ -931,6 +1011,7 @@
                 <div class="edtech-input-group">
                   <label>Target Passing Year</label>
                   <select id="input-academic-year" class="edtech-input font-mono">
+                    <option value="">Select Passing Year</option>
                     <option value="2025">2025</option>
                     <option value="2026" selected>2026</option>
                     <option value="2027">2027</option>
@@ -946,6 +1027,7 @@
                 <div class="edtech-input-group">
                   <label>Stream / Subject Focus</label>
                   <select id="input-academic-stream" class="edtech-input">
+                    <option value="">Select Stream Focus</option>
                     <option value="General Science & Math">General Science & Math</option>
                     <option value="General Studies">General Studies</option>
                     <option value="Quantitative & Reasoning">Quantitative & Reasoning</option>
@@ -1041,6 +1123,155 @@
   </div>
 
   <!-- ======================================================== -->
+  <!-- DUAL-OTP EMAIL CHANGE WIZARD POPUP MODAL                 -->
+  <!-- ======================================================== -->
+  <div id="modal-change-email" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 transform scale-95 transition-transform duration-200">
+      
+      <button type="button" id="btn-close-email-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-11 h-11 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="mail-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Change Registered Email</h3>
+          <p class="text-xs text-slate-400">Two-step security verification required to transfer student account</p>
+        </div>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2" id="email-step1-indicator">
+          <div class="w-7 h-7 rounded-full bg-orange-600 text-white text-xs font-black flex items-center justify-center" id="email-step1-badge">1</div>
+          <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Verify Current Email</span>
+        </div>
+        <div class="h-0.5 flex-1 mx-3 bg-slate-200 dark:bg-slate-700" id="email-step-divider"></div>
+        <div class="flex items-center gap-2 opacity-50" id="email-step2-indicator">
+          <div class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-black flex items-center justify-center" id="email-step2-badge">2</div>
+          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Verify New Email</span>
+        </div>
+      </div>
+
+      <!-- STEP 1 CONTAINER: Verify Old Email -->
+      <div id="email-wizard-step1" class="space-y-4">
+        <div class="p-3.5 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50 text-xs text-orange-800 dark:text-orange-300">
+          We will send a 6-digit verification code to your current email: <strong id="step1-current-email-text" class="font-mono">...</strong>
+        </div>
+
+        <button type="button" id="btn-send-step1-otp" class="btn-edtech-update w-full text-xs py-2.5">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>Send OTP to Current Email</span>
+        </button>
+
+        <div id="step1-otp-inputs" class="hidden space-y-4 pt-2">
+          <div class="edtech-input-group">
+            <label>Enter 6-Digit OTP from Current Email</label>
+            <input type="text" id="input-step1-otp" maxlength="6" placeholder="• • • • • •" class="edtech-input text-center font-mono tracking-widest text-lg font-bold">
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span id="step1-timer">Code valid for 5 mins</span>
+            <button type="button" id="btn-resend-step1-otp" class="text-brand-600 dark:text-blue-400 hover:underline font-bold hidden">Resend Code</button>
+          </div>
+          <button type="button" id="btn-verify-step1-otp" class="btn-edtech-update w-full">
+            <span>Verify & Continue to Step 2</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2 CONTAINER: Verify New Email -->
+      <div id="email-wizard-step2" class="hidden space-y-4">
+        <div class="edtech-input-group">
+          <label>Enter Your New Email Address *</label>
+          <input type="email" id="input-new-email-addr" placeholder="new.email@example.com" class="edtech-input font-mono">
+        </div>
+
+        <button type="button" id="btn-send-step2-otp" class="btn-edtech-update w-full text-xs py-2.5">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>Send OTP to New Email</span>
+        </button>
+
+        <div id="step2-otp-inputs" class="hidden space-y-4 pt-2">
+          <div class="edtech-input-group">
+            <label>Enter 6-Digit OTP from New Email</label>
+            <input type="text" id="input-step2-otp" maxlength="6" placeholder="• • • • • •" class="edtech-input text-center font-mono tracking-widest text-lg font-bold">
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span id="step2-timer">Code valid for 5 mins</span>
+            <button type="button" id="btn-resend-step2-otp" class="text-brand-600 dark:text-blue-400 hover:underline font-bold hidden">Resend Code</button>
+          </div>
+          <button type="button" id="btn-verify-step2-otp" class="btn-edtech-update w-full">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Confirm & Update Email</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- FORGOT PASSWORD RESET VIA OTP POPUP MODAL                -->
+  <!-- ======================================================== -->
+  <div id="modal-forgot-password-otp" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 transform scale-95 transition-transform duration-200">
+      
+      <button type="button" id="btn-close-forgot-modal" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center">
+          <i data-lucide="key" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Reset Password with OTP</h3>
+          <p class="text-xs text-slate-400">A verification code will be sent to your registered email</p>
+        </div>
+      </div>
+
+      <form id="form-forgot-password-otp" class="space-y-4">
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-300 font-medium">
+          Sending OTP to: <strong id="forgot-modal-email-text" class="font-mono text-orange-600 dark:text-orange-400">...</strong>
+        </div>
+
+        <button type="button" id="btn-send-forgot-otp" class="btn-edtech-update w-full text-xs py-2">
+          <span>Send Verification OTP</span>
+        </button>
+
+        <div id="forgot-otp-form-fields" class="hidden space-y-4">
+          <div class="edtech-input-group">
+            <label>6-Digit Verification Code</label>
+            <input type="text" id="input-forgot-otp-code" maxlength="6" placeholder="• • • • • •" class="edtech-input text-center font-mono tracking-widest text-lg font-bold">
+          </div>
+
+          <div class="edtech-input-group">
+            <label>New Password</label>
+            <input type="password" id="input-forgot-new-password" minlength="6" placeholder="At least 6 characters" class="edtech-input font-mono">
+          </div>
+
+          <div class="edtech-input-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="input-forgot-confirm-password" minlength="6" placeholder="Re-type new password" class="edtech-input font-mono">
+          </div>
+
+          <div class="pt-2 flex items-center justify-end gap-3">
+            <button type="button" id="btn-cancel-forgot-modal" class="btn-edtech-cancel">
+              Cancel
+            </button>
+            <button type="submit" id="btn-submit-forgot-reset" class="btn-edtech-update">
+              <span>Set New Password</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
   <!-- TOAST NOTIFICATION CONTAINER                             -->
   <!-- ======================================================== -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
@@ -1067,6 +1298,7 @@
   <!-- Scripts -->
   <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/api-client.js"></script>
+  <script src="assets/js/mendorbit-cipher.js"></script>
   <script src="assets/js/secure-storage.js"></script>
   <script src="assets/js/sso-manager.js"></script>
   <script src="assets/js/mendorbit-loader.js"></script>
@@ -1309,8 +1541,35 @@
       });
 
       // ========================================================
-      // 4. DYNAMIC KYC / PROFILE COMPLETION CALCULATION
+      // 4. DYNAMIC KYC / PROFILE COMPLETION CALCULATION & FIELD STYLING
       // ========================================================
+      function syncFieldFilledState(el) {
+        if (!el) return;
+        const val = (el.value || '').trim();
+        if (val !== '' && !val.toLowerCase().startsWith('select ') && val !== 'Select...') {
+          el.classList.add('is-filled');
+          el.classList.remove('is-empty');
+        } else {
+          el.classList.remove('is-filled');
+          el.classList.add('is-empty');
+        }
+      }
+
+      function syncAllFields() {
+        document.querySelectorAll('.edtech-input').forEach(syncFieldFilledState);
+      }
+
+      document.addEventListener('input', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('edtech-input')) {
+          syncFieldFilledState(e.target);
+        }
+      });
+      document.addEventListener('change', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('edtech-input')) {
+          syncFieldFilledState(e.target);
+        }
+      });
+
       function updateKycProgress() {
         let score = 0;
         const total = 100;
@@ -1351,6 +1610,7 @@
       }
 
       updateKycProgress();
+      syncAllFields();
       if (typeof MendorbitLoader !== 'undefined') {
         MendorbitLoader.hide();
       }
@@ -1514,38 +1774,74 @@
         if (window.lucide) lucide.createIcons();
       });
 
-      // Form 2: Sign-in & Security (Change Password)
+      // Form 2: Sign-in & Security (Change Password with Current Password Verification)
       document.getElementById('form-security').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const currentPass = document.getElementById('input-current-password').value;
         const newPass = document.getElementById('input-new-password').value;
         const confirmPass = document.getElementById('input-confirm-password').value;
 
+        if (!currentPass) {
+          showToast("Please enter your current password, or click 'Forgot Password?' to reset via OTP.", "error");
+          return;
+        }
         if (newPass.length < 6) {
-          showToast("Password must be at least 6 characters long.", "error");
+          showToast("New password must be at least 6 characters long.", "error");
           return;
         }
         if (newPass !== confirmPass) {
-          showToast("Passwords do not match.", "error");
+          showToast("New passwords do not match.", "error");
           return;
         }
 
         const btn = document.getElementById('btn-submit-security');
         btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Updating...</span>`;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Verifying...</span>`;
         if (window.lucide) lucide.createIcons();
 
         try {
-          if (firebase.auth().currentUser) {
-            await firebase.auth().currentUser.updatePassword(newPass);
-            showToast("Password updated successfully!", "success");
-            document.getElementById('form-security').reset();
-          } else {
-            // Redirect to OTP reset
-            window.location.href = "login.html?action=forgot";
+          // Verify old password against stored encrypted password
+          const storedEncrypted = userDoc.encryptedPassword;
+          let isValidOld = false;
+
+          if (storedEncrypted && typeof MendorbitCipher !== 'undefined') {
+            const decrypted = MendorbitCipher.decrypt2Digit(storedEncrypted);
+            isValidOld = (decrypted === currentPass);
+          } else if (storedEncrypted && storedEncrypted === currentPass) {
+            isValidOld = true;
           }
+
+          if (!isValidOld && storedEncrypted) {
+            showToast("Incorrect current password. If you forgot your password, please reset via OTP.", "error");
+            btn.disabled = false;
+            btn.innerHTML = `<span>Update Password</span>`;
+            if (window.lucide) lucide.createIcons();
+            return;
+          }
+
+          // Encrypt new password
+          const newEncrypted = (typeof MendorbitCipher !== 'undefined') ? MendorbitCipher.encrypt2Digit(newPass) : newPass;
+
+          // Update in Firestore
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            await firestoreDb.collection("users").doc(email).set({
+              encryptedPassword: newEncrypted,
+              updatedAt: new Date().toISOString()
+            }, { merge: true });
+          }
+
+          // Update via Worker API
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.resetPassword) {
+            await MendorbitAPI.resetPassword(email, newPass);
+          }
+
+          userDoc.encryptedPassword = newEncrypted;
+          showToast("Password updated successfully!", "success");
+          document.getElementById('form-security').reset();
+          syncAllFields();
         } catch (err) {
-          console.error("Password change error:", err);
-          showToast(err.message || "Please re-login to change password.", "error");
+          console.error("Password update error:", err);
+          showToast("Failed to update password. Please try again.", "error");
         } finally {
           btn.disabled = false;
           btn.innerHTML = `<span>Update Password</span>`;
@@ -1744,11 +2040,570 @@
       }
 
       // ========================================================
-      // 10. LOGOUT
+      // 10. ACTIVE SESSIONS & CONNECTED DEVICES MANAGEMENT
+      // ========================================================
+      let currentSessionId = localStorage.getItem("mendorbit_session_id") || session.sessionId;
+      if (!currentSessionId) {
+        currentSessionId = "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+        try { localStorage.setItem("mendorbit_session_id", currentSessionId); } catch(e) {}
+      }
+
+      // Ensure current session is tracked
+      if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
+        MendorbitBackend.recordUserSession(email, {
+          sessionId: currentSessionId,
+          device: navigator.userAgent,
+          status: "ACTIVE"
+        });
+      }
+
+      async function renderSessions() {
+        const listContainer = document.getElementById('active-sessions-list');
+        const historyContainer = document.getElementById('logout-history-container');
+        const countPill = document.getElementById('active-sessions-count-pill');
+        const historyCount = document.getElementById('logout-history-count');
+        if (!listContainer) return;
+
+        try {
+          let sessions = [];
+          if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserSessions) {
+            sessions = await MendorbitBackend.getUserSessions(email);
+          }
+          if ((!sessions || sessions.length === 0) && typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getSessions) {
+            const res = await MendorbitAPI.getSessions(email);
+            if (res && res.status === "success" && res.sessions) sessions = res.sessions;
+          }
+
+          if (!sessions || sessions.length === 0) {
+            const devInfo = (typeof MendorbitBackend !== 'undefined' ? MendorbitBackend.getFriendlyDevice(navigator.userAgent) : { friendly: "Windows PC • Chrome", type: "Desktop" });
+            sessions = [{
+              sessionId: currentSessionId,
+              friendlyDevice: devInfo.friendly,
+              deviceType: devInfo.type,
+              ip: "Current Device",
+              location: { city: "India" },
+              loginTime: new Date().toISOString(),
+              status: "ACTIVE"
+            }];
+          }
+
+          const activeList = sessions.filter(s => s.status === "ACTIVE" || !s.status);
+          const historyList = sessions.filter(s => s.status === "LOGGED_OUT" || s.status === "logged_out");
+
+          if (countPill) countPill.textContent = `${activeList.length} Active`;
+          if (historyCount) historyCount.textContent = historyList.length;
+
+          // Render Active Sessions
+          listContainer.innerHTML = "";
+          activeList.sort((a, b) => (a.sessionId === currentSessionId ? -1 : 1));
+
+          activeList.forEach(s => {
+            const isCurrent = (s.sessionId === currentSessionId);
+            const devType = (s.deviceType || "Desktop").toLowerCase();
+            let iconName = "monitor";
+            if (devType === "mobile") iconName = "smartphone";
+            else if (devType === "tablet") iconName = "tablet";
+
+            const card = document.createElement("div");
+            card.className = `p-4 rounded-2xl border transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 ${
+              isCurrent 
+                ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/40 shadow-sm'
+                : 'bg-white dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
+            }`;
+
+            const locStr = [s.location?.city, s.location?.region, s.location?.country].filter(Boolean).join(", ") || "India";
+            const timeStr = s.loginTime ? new Date(s.loginTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : "Recently";
+
+            card.innerHTML = `
+              <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl ${isCurrent ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'} flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="${iconName}" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-extrabold text-slate-900 dark:text-white">${s.friendlyDevice || 'Device'}</span>
+                    ${isCurrent ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>This Device (Current Session)</span>' : ''}
+                  </div>
+                  <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
+                    <span>📍 ${locStr}</span>
+                    <span>•</span>
+                    <span class="font-mono">IP: ${s.ip || '127.0.0.1'}</span>
+                    <span>•</span>
+                    <span>Active since ${timeStr}</span>
+                  </p>
+                </div>
+              </div>
+              ${!isCurrent ? `
+                <button type="button" class="btn-logout-device px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/60 transition flex items-center gap-1.5 flex-shrink-0" data-session-id="${s.sessionId}">
+                  <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                  <span>Logout Device</span>
+                </button>
+              ` : ''}
+            `;
+            listContainer.appendChild(card);
+          });
+
+          // Render Logout History
+          if (historyContainer) {
+            historyContainer.innerHTML = "";
+            if (historyList.length === 0) {
+              historyContainer.innerHTML = `<div class="p-3 text-xs text-slate-400 text-center">No past logout records.</div>`;
+            } else {
+              historyList.forEach(s => {
+                const item = document.createElement("div");
+                item.className = "p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between text-xs";
+                const loggedOutTime = s.loggedOutAt ? new Date(s.loggedOutAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : "Previously";
+                item.innerHTML = `
+                  <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-x" class="w-4 h-4 text-slate-400"></i>
+                    <div>
+                      <span class="font-bold text-slate-700 dark:text-slate-300">${s.friendlyDevice || 'Device'}</span>
+                      <span class="text-slate-400 font-mono ml-2">(${s.ip || 'IP hidden'})</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-400">Terminated ${loggedOutTime}</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200/80 text-slate-600 dark:bg-slate-800 dark:text-slate-400">Logged Out</span>
+                  </div>
+                `;
+                historyContainer.appendChild(item);
+              });
+            }
+          }
+
+          if (window.lucide) lucide.createIcons();
+
+          // Wire individual "Logout Device" buttons
+          document.querySelectorAll('.btn-logout-device').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const targetSessId = btn.getAttribute('data-session-id');
+              if (!targetSessId) return;
+              btn.disabled = true;
+              btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Logging out...</span>`;
+              if (window.lucide) lucide.createIcons();
+
+              try {
+                if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession) {
+                  await MendorbitBackend.revokeUserSession(email, targetSessId);
+                }
+                if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.revokeSession) {
+                  await MendorbitAPI.revokeSession(email, targetSessId);
+                }
+                showToast("Device successfully logged out remotely.", "success");
+                await renderSessions();
+              } catch (e) {
+                console.error("Revoke error:", e);
+                showToast("Failed to logout device.", "error");
+              }
+            });
+          });
+
+        } catch (err) {
+          console.warn("Render sessions error:", err);
+        }
+      }
+
+      renderSessions();
+
+      // "Logout All Other Devices" button
+      const btnLogoutAllOthers = document.getElementById('btn-logout-all-others');
+      if (btnLogoutAllOthers) {
+        btnLogoutAllOthers.addEventListener('click', async () => {
+          if (!confirm("Are you sure you want to terminate all other active device sessions?")) return;
+          btnLogoutAllOthers.disabled = true;
+          btnLogoutAllOthers.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Revoking...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeAllOtherSessions) {
+              await MendorbitBackend.revokeAllOtherSessions(email, currentSessionId);
+            }
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.revokeAllOtherSessions) {
+              await MendorbitAPI.revokeAllOtherSessions(email, currentSessionId);
+            }
+            showToast("All other devices logged out.", "success");
+            await renderSessions();
+          } catch (e) {
+            showToast("Failed to revoke other sessions.", "error");
+          } finally {
+            btnLogoutAllOthers.disabled = false;
+            btnLogoutAllOthers.innerHTML = `<i data-lucide="shield-alert" class="w-3.5 h-3.5"></i><span>Logout All Other Devices</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        });
+      }
+
+      // Collapsible History Toggle
+      const btnToggleHistory = document.getElementById('btn-toggle-logout-history');
+      const historyCont = document.getElementById('logout-history-container');
+      const iconChevron = document.getElementById('icon-history-chevron');
+      if (btnToggleHistory && historyCont) {
+        btnToggleHistory.addEventListener('click', () => {
+          const isHidden = historyCont.classList.contains('hidden');
+          if (isHidden) {
+            historyCont.classList.remove('hidden');
+            if (iconChevron) iconChevron.classList.add('rotate-180');
+          } else {
+            historyCont.classList.add('hidden');
+            if (iconChevron) iconChevron.classList.remove('rotate-180');
+          }
+        });
+      }
+
+      // ========================================================
+      // 11. FORGOT PASSWORD POPUP MODAL (RESET VIA OTP)
+      // ========================================================
+      const btnTriggerForgot = document.getElementById('btn-trigger-forgot-otp');
+      const modalForgot = document.getElementById('modal-forgot-password-otp');
+      const btnCloseForgot = document.getElementById('btn-close-forgot-modal');
+      const btnCancelForgot = document.getElementById('btn-cancel-forgot-modal');
+      const btnSendForgotOtp = document.getElementById('btn-send-forgot-otp');
+      const forgotFields = document.getElementById('forgot-otp-form-fields');
+      const forgotModalEmailText = document.getElementById('forgot-modal-email-text');
+
+      function openForgotModal() {
+        if (!modalForgot) return;
+        if (forgotModalEmailText) forgotModalEmailText.textContent = email;
+        modalForgot.classList.remove('hidden');
+        setTimeout(() => {
+          modalForgot.classList.remove('opacity-0');
+          const panel = modalForgot.querySelector('div');
+          if (panel) panel.classList.remove('scale-95');
+        }, 10);
+      }
+
+      function closeForgotModal() {
+        if (!modalForgot) return;
+        modalForgot.classList.add('opacity-0');
+        const panel = modalForgot.querySelector('div');
+        if (panel) panel.classList.add('scale-95');
+        setTimeout(() => {
+          modalForgot.classList.add('hidden');
+        }, 200);
+      }
+
+      if (btnTriggerForgot) btnTriggerForgot.addEventListener('click', openForgotModal);
+      if (btnCloseForgot) btnCloseForgot.addEventListener('click', closeForgotModal);
+      if (btnCancelForgot) btnCancelForgot.addEventListener('click', closeForgotModal);
+
+      if (btnSendForgotOtp) {
+        btnSendForgotOtp.addEventListener('click', async () => {
+          btnSendForgotOtp.disabled = true;
+          btnSendForgotOtp.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Sending OTP...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(email, "reset", firstName);
+            }
+            showToast(`Verification code sent to ${email}`, "success");
+            btnSendForgotOtp.classList.add('hidden');
+            if (forgotFields) forgotFields.classList.remove('hidden');
+            syncAllFields();
+          } catch (e) {
+            showToast("Failed to send OTP. Please try again.", "error");
+            btnSendForgotOtp.disabled = false;
+            btnSendForgotOtp.innerHTML = `<span>Send Verification OTP</span>`;
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      document.getElementById('form-forgot-password-otp').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const otpCode = document.getElementById('input-forgot-otp-code').value.trim();
+        const newPass = document.getElementById('input-forgot-new-password').value;
+        const confirmPass = document.getElementById('input-forgot-confirm-password').value;
+
+        if (otpCode.length !== 6) {
+          showToast("Please enter a valid 6-digit OTP code.", "error");
+          return;
+        }
+        if (newPass.length < 6) {
+          showToast("Password must be at least 6 characters.", "error");
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showToast("Passwords do not match.", "error");
+          return;
+        }
+
+        const submitBtn = document.getElementById('btn-submit-forgot-reset');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Verifying...</span>`;
+        if (window.lucide) lucide.createIcons();
+
+        try {
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
+            const verifyRes = await MendorbitAPI.verifyOtp(email, otpCode, "reset");
+            if (verifyRes && verifyRes.status !== "success") {
+              throw new Error(verifyRes.message || "Invalid or expired OTP code.");
+            }
+          }
+
+          const newEncrypted = (typeof MendorbitCipher !== 'undefined') ? MendorbitCipher.encrypt2Digit(newPass) : newPass;
+
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            await firestoreDb.collection("users").doc(email).set({
+              encryptedPassword: newEncrypted,
+              updatedAt: new Date().toISOString()
+            }, { merge: true });
+          }
+
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.resetPassword) {
+            await MendorbitAPI.resetPassword(email, newPass);
+          }
+
+          userDoc.encryptedPassword = newEncrypted;
+          showToast("Password has been reset successfully!", "success");
+          closeForgotModal();
+          document.getElementById('form-forgot-password-otp').reset();
+        } catch (err) {
+          showToast(err.message || "Failed to reset password.", "error");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Set New Password</span>`;
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+
+      // ========================================================
+      // 12. DUAL-OTP EMAIL CHANGE WIZARD
+      // ========================================================
+      const btnOpenChangeEmail = document.getElementById('btn-open-change-email');
+      const modalEmail = document.getElementById('modal-change-email');
+      const btnCloseEmailModal = document.getElementById('btn-close-email-modal');
+      const step1EmailText = document.getElementById('step1-current-email-text');
+      let verifiedOldOtp = null;
+
+      function openEmailModal() {
+        if (!modalEmail) return;
+        if (step1EmailText) step1EmailText.textContent = email;
+        modalEmail.classList.remove('hidden');
+        setTimeout(() => {
+          modalEmail.classList.remove('opacity-0');
+          const panel = modalEmail.querySelector('div');
+          if (panel) panel.classList.remove('scale-95');
+        }, 10);
+      }
+
+      function closeEmailModal() {
+        if (!modalEmail) return;
+        modalEmail.classList.add('opacity-0');
+        const panel = modalEmail.querySelector('div');
+        if (panel) panel.classList.add('scale-95');
+        setTimeout(() => {
+          modalEmail.classList.add('hidden');
+        }, 200);
+      }
+
+      if (btnOpenChangeEmail) btnOpenChangeEmail.addEventListener('click', openEmailModal);
+      if (btnCloseEmailModal) btnCloseEmailModal.addEventListener('click', closeEmailModal);
+
+      // Step 1: Send OTP to Old Email
+      const btnSendStep1Otp = document.getElementById('btn-send-step1-otp');
+      const step1OtpInputs = document.getElementById('step1-otp-inputs');
+      const btnVerifyStep1Otp = document.getElementById('btn-verify-step1-otp');
+
+      if (btnSendStep1Otp) {
+        btnSendStep1Otp.addEventListener('click', async () => {
+          btnSendStep1Otp.disabled = true;
+          btnSendStep1Otp.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Sending code...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(email, "EMAIL_CHANGE_OLD", firstName);
+            }
+            showToast(`Verification code sent to ${email}`, "success");
+            btnSendStep1Otp.classList.add('hidden');
+            if (step1OtpInputs) step1OtpInputs.classList.remove('hidden');
+            syncAllFields();
+          } catch (e) {
+            showToast("Failed to send verification code.", "error");
+            btnSendStep1Otp.disabled = false;
+            btnSendStep1Otp.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send OTP to Current Email</span>`;
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      // Step 1: Verify Old Email OTP
+      if (btnVerifyStep1Otp) {
+        btnVerifyStep1Otp.addEventListener('click', async () => {
+          const code = document.getElementById('input-step1-otp').value.trim();
+          if (code.length !== 6) {
+            showToast("Please enter the 6-digit code.", "error");
+            return;
+          }
+
+          btnVerifyStep1Otp.disabled = true;
+          btnVerifyStep1Otp.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Verifying...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
+              const res = await MendorbitAPI.verifyOtp(email, code, "EMAIL_CHANGE_OLD");
+              if (res && res.status !== "success") {
+                throw new Error(res.message || "Invalid or expired OTP code.");
+              }
+            }
+            verifiedOldOtp = code;
+            showToast("Current email verified! Now enter your new email.", "success");
+
+            // Switch to Step 2
+            document.getElementById('email-wizard-step1').classList.add('hidden');
+            document.getElementById('email-wizard-step2').classList.remove('hidden');
+
+            document.getElementById('email-step1-badge').innerHTML = "✓";
+            document.getElementById('email-step1-badge').className = "w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center";
+            document.getElementById('email-step-divider').className = "h-0.5 flex-1 mx-3 bg-orange-500";
+            document.getElementById('email-step2-indicator').classList.remove('opacity-50');
+            document.getElementById('email-step2-badge').className = "w-7 h-7 rounded-full bg-orange-600 text-white text-xs font-black flex items-center justify-center";
+            syncAllFields();
+          } catch (err) {
+            showToast(err.message || "OTP verification failed.", "error");
+          } finally {
+            btnVerifyStep1Otp.disabled = false;
+            btnVerifyStep1Otp.innerHTML = `<span>Verify & Continue to Step 2</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        });
+      }
+
+      // Step 2: Send OTP to New Email
+      const btnSendStep2Otp = document.getElementById('btn-send-step2-otp');
+      const step2OtpInputs = document.getElementById('step2-otp-inputs');
+      const btnVerifyStep2Otp = document.getElementById('btn-verify-step2-otp');
+      let verifiedNewEmail = "";
+
+      if (btnSendStep2Otp) {
+        btnSendStep2Otp.addEventListener('click', async () => {
+          const newEmail = document.getElementById('input-new-email-addr').value.trim().toLowerCase();
+          if (!newEmail || !newEmail.includes('@') || !newEmail.includes('.')) {
+            showToast("Please enter a valid new email address.", "error");
+            return;
+          }
+          if (newEmail === email) {
+            showToast("New email cannot be the same as current email.", "error");
+            return;
+          }
+
+          btnSendStep2Otp.disabled = true;
+          btnSendStep2Otp.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Checking & Sending...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.checkUser) {
+              const check = await MendorbitAPI.checkUser(newEmail);
+              if (check && check.exists) {
+                throw new Error("This email is already registered to another account.");
+              }
+            }
+
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+              await MendorbitAPI.sendOtp(newEmail, "EMAIL_CHANGE_NEW", firstName);
+            }
+
+            verifiedNewEmail = newEmail;
+            showToast(`Verification code sent to ${newEmail}`, "success");
+            btnSendStep2Otp.classList.add('hidden');
+            if (step2OtpInputs) step2OtpInputs.classList.remove('hidden');
+            syncAllFields();
+          } catch (err) {
+            showToast(err.message || "Failed to send code to new email.", "error");
+            btnSendStep2Otp.disabled = false;
+            btnSendStep2Otp.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send OTP to New Email</span>`;
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      // Step 2: Verify New Email OTP & Finalize Migration
+      if (btnVerifyStep2Otp) {
+        btnVerifyStep2Otp.addEventListener('click', async () => {
+          const code = document.getElementById('input-step2-otp').value.trim();
+          if (code.length !== 6) {
+            showToast("Please enter the 6-digit code sent to your new email.", "error");
+            return;
+          }
+
+          btnVerifyStep2Otp.disabled = true;
+          btnVerifyStep2Otp.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Migrating Account...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          if (typeof MendorbitLoader !== 'undefined') {
+            MendorbitLoader.show("Transferring Student Records...", `Safely migrating your courses and learning history to ${verifiedNewEmail}...`);
+          }
+
+          try {
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
+              const res = await MendorbitAPI.verifyOtp(verifiedNewEmail, code, "EMAIL_CHANGE_NEW");
+              if (res && res.status !== "success") {
+                throw new Error(res.message || "Invalid or expired OTP for new email.");
+              }
+            }
+
+            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.migrateUserEmail) {
+              await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail);
+            }
+
+            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.changeEmail) {
+              await MendorbitAPI.changeEmail(email, verifiedNewEmail, verifiedOldOtp, code);
+            }
+
+            const currentSession = MendorbitSSO.getSession() || {};
+            currentSession.email = verifiedNewEmail;
+            currentSession.uid = verifiedNewEmail;
+            MendorbitSSO.setSession(currentSession);
+
+            showToast(`Email updated successfully to ${verifiedNewEmail}!`, "success");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1200);
+          } catch (err) {
+            if (typeof MendorbitLoader !== 'undefined') MendorbitLoader.hide();
+            showToast(err.message || "Failed to update email.", "error");
+            btnVerifyStep2Otp.disabled = false;
+            btnVerifyStep2Otp.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>Confirm & Update Email</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        });
+      }
+
+      // ========================================================
+      // 13. REAL-TIME INSTANT REMOTE LOGOUT WATCHER
+      // ========================================================
+      if (typeof firestoreDb !== 'undefined' && firestoreDb && currentSessionId) {
+        try {
+          firestoreDb.collection("users").doc(email).collection("sessions").doc(currentSessionId).onSnapshot((docSnap) => {
+            if (docSnap.exists) {
+              const sData = docSnap.data();
+              if (sData && (sData.status === "LOGGED_OUT" || sData.status === "logged_out")) {
+                console.warn("[Profile] Remote logout triggered!");
+                MendorbitSSO.clearSession();
+                MendorbitSSO.triggerDefaultRevokedUI();
+              }
+            }
+          }, (err) => {
+            console.warn("[Profile] Session listener snapshot note:", err);
+          });
+        } catch (e) {
+          console.warn("[Profile] Could not attach session snapshot:", e);
+        }
+      }
+
+      // ========================================================
+      // 14. LOGOUT
       // ========================================================
       const logoutBtn = document.getElementById('nav-btn-logout');
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
+          if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.revokeUserSession && currentSessionId) {
+            try {
+              await MendorbitBackend.revokeUserSession(email, currentSessionId);
+            } catch(e) {}
+          }
           MendorbitSSO.clearSession();
           window.location.href = "login.html?force_login=true";
         });
