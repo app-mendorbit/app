@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let pendingGoogleUser = null;
 
   // Unified Session Completion Engine (Guarantees Session ID & Firestore Tracking on EVERY Login)
-  async function completeAuthSession(userPayload, eventType = "LOGIN") {
+  async function completeAuthSession(userPayload, eventType = "LOGIN", authMethod = null) {
     const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
     const sessionWithId = { ...userPayload, sessionId };
 
@@ -60,6 +60,14 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       localStorage.setItem("mendorbit_session_id", sessionId);
     } catch(e) {}
+
+    // Infer friendly authMethod if not explicitly passed
+    const resolvedMethod = authMethod || (
+      eventType === "GOOGLE_LOGIN" ? "Google Sign-In" :
+      eventType === "LOGIN_OTP" ? "Email OTP" :
+      eventType === "QR_LOGIN" ? "QR Linked Device" :
+      "Password"
+    );
 
     const exactLoc = (typeof MendorbitTracker !== 'undefined' && MendorbitTracker.getExactLocation) ? MendorbitTracker.getExactLocation() : null;
     if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.recordUserSession) {
@@ -69,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
           device: navigator.userAgent,
           location: exactLoc || {},
           type: eventType,
+          authMethod: resolvedMethod,
           status: "ACTIVE"
         });
       } catch (e) {
@@ -175,17 +184,64 @@ document.addEventListener("DOMContentLoaded", function () {
     showView("signin");
   };
 
-  // Dynamic QR Code Handshake with 1-Minute Auto Refresh
+  // Dynamic QR Code Handshake with 1-Minute Auto Refresh & Real-Time Approval Listener
   let qrTimerInterval = null;
   let qrRefreshCountdown = 60;
+  let qrUnsubscribe = null;
+  let activeQrSessionId = null;
 
   function renderQrCode() {
     const container = document.getElementById("qr-target-container");
     if (!container) return;
+
+    if (qrUnsubscribe) {
+      try { qrUnsubscribe(); } catch (e) {}
+      qrUnsubscribe = null;
+    }
+
     const sessionId = "mndrbt_qr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
+    activeQrSessionId = sessionId;
+
+    const linkCodeElem = document.getElementById("qr-link-code-display");
+    if (linkCodeElem) {
+      linkCodeElem.textContent = sessionId;
+    }
+
     const payload = encodeURIComponent(`https://mendorbit.in/qr-auth?session=${sessionId}`);
     // High error correction (ecc=H) guarantees 100% scan reliability with center logo
     container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}&margin=4&ecc=H&color=0f172a" alt="Mendorbit QR Login" class="rounded-xl w-44 h-44 object-contain" />`;
+
+    // Real-Time Approval Listener: Fires as soon as authorized from profile "Link a Device"
+    if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+      try {
+        qrUnsubscribe = firestoreDb.collection("qr_auth").doc(sessionId).onSnapshot(async (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && (data.status === "AUTHORIZED" || data.status === "SUCCESS") && data.user) {
+              if (qrUnsubscribe) {
+                qrUnsubscribe();
+                qrUnsubscribe = null;
+              }
+              stopQrAutoRefresh();
+
+              const liveStatus = document.getElementById("qr-live-status");
+              if (liveStatus) {
+                liveStatus.className = "text-xs font-semibold text-emerald-600 bg-emerald-50 py-1 px-3 rounded-full inline-flex items-center gap-1.5";
+                liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Device Verified! Logging in...</span>';
+              }
+
+              notify("Device authorized via QR! Welcome to Mendorbit.", "success");
+              await completeAuthSession(data.user, "QR_LOGIN", "QR Linked Device");
+              setTimeout(() => {
+                MendorbitTracker.executePostLoginRedirect();
+              }, 800);
+            }
+          }
+        }, err => console.warn("[QR Auth] Listener note:", err));
+      } catch (err) {
+        console.warn("[QR Auth] setup error:", err);
+      }
+    }
   }
 
   function startQrAutoRefresh() {
@@ -210,6 +266,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (qrTimerInterval) {
       clearInterval(qrTimerInterval);
       qrTimerInterval = null;
+    }
+    if (qrUnsubscribe) {
+      try { qrUnsubscribe(); } catch (e) {}
+      qrUnsubscribe = null;
     }
   }
 
@@ -393,8 +453,12 @@ document.addEventListener("DOMContentLoaded", function () {
         notify("OTP sent successfully to your email.", "success");
         return true;
       } else if (res && res.message) {
-        notify(res.message, "error");
-        return false;
+        // If it was a 404 or "Endpoint not found", do NOT show error; let it fall through to Apps Script
+        const msgLow = res.message.toLowerCase();
+        if (!msgLow.includes("endpoint not found") && !msgLow.includes("not found")) {
+          notify(res.message, "error");
+          return false;
+        }
       }
     } catch (e) {
       console.warn("[Mendorbit] Worker OTP dispatch note, attempting Apps Script fallback:", e);
@@ -703,31 +767,43 @@ document.addEventListener("DOMContentLoaded", function () {
     setButtonLoading(btn, true, "Signing In...");
 
     // 1. Try Cloudflare Worker Server-Side Login
+    let workerErrorMsg = null;
     try {
       const res = await MendorbitAPI.login(identifier, password);
       if (res && res.status === "success") {
         setButtonLoading(btn, false, "Sign In");
-        await completeAuthSession(res.user, "LOGIN");
+        await completeAuthSession(res.user, "LOGIN", "Password");
         notify("Welcome back, " + res.user.displayName + "!", "success");
         setTimeout(() => {
           MendorbitTracker.executePostLoginRedirect();
         }, 800);
         return;
       } else if (res && res.message) {
-        setButtonLoading(btn, false, "Sign In");
-        notify(res.message, "error");
-        return;
+        const msgLow = res.message.toLowerCase();
+        // If password is explicitly wrong or account is locked, show error immediately
+        if (msgLow.includes("incorrect password") || msgLow.includes("locked") || msgLow.includes("google")) {
+          setButtonLoading(btn, false, "Sign In");
+          notify(res.message, "error");
+          return;
+        }
+        workerErrorMsg = res.message;
       }
     } catch (e) {
       console.warn("[Mendorbit] Worker login fallback:", e);
     }
 
-    // 2. Client-Side Fallback
+    // 2. Client-Side Fallback via Firebase SDK
     const user = await MendorbitBackend.getUserByEmail(identifier);
     setButtonLoading(btn, false, "Sign In");
 
     if (!user) {
-      notify("No account found with this email. Please register.", "error");
+      notify(workerErrorMsg || "No account found with this email. Please register.", "error");
+      return;
+    }
+
+    // Check if account has no password set (e.g. registered via Google SSO)
+    if (!user.encryptedPassword) {
+      notify("This account was registered via Google Sign-In. Please sign in with Google or use OTP login.", "error");
       return;
     }
 
@@ -742,13 +818,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     await completeAuthSession({
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      class: user.class
-    }, "LOGIN");
+      uid: user.uid || identifier,
+      email: user.email || identifier,
+      displayName: user.displayName || "Student",
+      class: user.class || "Class 10"
+    }, "LOGIN", "Password");
 
-    notify("Welcome back, " + user.displayName + "!", "success");
+    notify("Welcome back, " + (user.displayName || "Student") + "!", "success");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
     }, 800);

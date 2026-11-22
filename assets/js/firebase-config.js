@@ -133,12 +133,18 @@ const MendorbitBackend = {
       try {
         const directDoc = await firestoreDb.collection("users").doc(normalized).get();
         if (directDoc.exists) {
-          return directDoc.data();
+          const docData = directDoc.data() || {};
+          if (!docData.email) docData.email = normalized;
+          if (!docData.uid) docData.uid = normalized;
+          return docData;
         }
 
         const snapshot = await firestoreDb.collection("users").where("email", "==", normalized).limit(1).get();
         if (!snapshot.empty) {
-          return snapshot.docs[0].data();
+          const found = snapshot.docs[0].data() || {};
+          if (!found.email) found.email = normalized;
+          if (!found.uid) found.uid = normalized;
+          return found;
         }
       } catch (err) {
         console.warn("[Mendorbit Backend] Firestore lookup note:", err);
@@ -242,6 +248,7 @@ const MendorbitBackend = {
       loginTime: sessionData.loginTime || new Date().toISOString(),
       loginEpoch: Date.now(),
       lastActive: new Date().toISOString(),
+      authMethod: sessionData.authMethod || sessionData.type || "Password",
       status: "ACTIVE"
     };
 
