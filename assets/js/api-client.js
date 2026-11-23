@@ -74,7 +74,7 @@
     lockAccount: async (email, token) => post("/api/auth/lock-account", { email, token }),
     googleSetup: async (data) => post("/api/auth/google-setup", { ...data, location: getClientLocation() }),
     updateProfile: async (email, profileData) => post("/api/auth/update-profile", { email, profileData }),
-    changeEmail: async (oldEmail, newEmail, oldOtp, newOtp) => post("/api/auth/change-email", { oldEmail, newEmail, oldOtp, newOtp }),
+    changeEmail: async (oldEmail, newEmail, oldOtp, newOtp, fullProfile) => post("/api/auth/change-email", { oldEmail, newEmail, oldOtp, newOtp, fullProfile, location: getClientLocation() }),
     getSessions: async (email) => get("/api/auth/sessions?email=" + encodeURIComponent(email)),
     revokeSession: async (email, sessionId) => post("/api/auth/revoke-session", { email, sessionId }),
     revokeAllOtherSessions: async (email, currentSessionId) => post("/api/auth/revoke-all-others", { email, currentSessionId }),

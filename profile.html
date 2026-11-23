@@ -1917,7 +1917,7 @@
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <img src="logo.png" alt="Mendorbit" class="w-5 h-5 object-contain">
-        <span class="font-extrabold text-slate-700 dark:text-slate-300">Mendorbit Education</span>
+        <span class="font-extrabold text-slate-700 dark:text-slate-300">Mendorbit</span>
         <span>• Orbit of Knowledge</span>
       </div>
       <p>© 2026 Mendorbit. Secure Student Portal.</p>
@@ -5065,18 +5065,127 @@
           try {
             await verifyProfileOtp(verifiedNewEmail, code, "EMAIL_CHANGE_NEW");
 
+            // Compile 100% comprehensive student profile payload directly from form state & memory
+            const elFirst = document.getElementById('input-first-name');
+            const elLast = document.getElementById('input-last-name');
+            const elPhone = document.getElementById('input-phone-number');
+            const elDob = document.getElementById('input-dob');
+            const elGender = document.getElementById('input-gender');
+            const elNat = document.getElementById('input-nationality');
+            const elBlood = document.getElementById('input-blood-group');
+            const elFather = document.getElementById('input-father-name');
+            const elMother = document.getElementById('input-mother-name');
+            const elGPhone = document.getElementById('input-guardian-phone');
+            const elGOcc = document.getElementById('input-guardian-occ');
+            const elAddr1 = document.getElementById('input-address1');
+            const elAddr2 = document.getElementById('input-address2');
+            const elPin = document.getElementById('input-pincode');
+            const elCity = document.getElementById('input-city');
+            const elDist = document.getElementById('input-district');
+            const elState = document.getElementById('input-state');
+            const elSchool = document.getElementById('input-academic-school');
+            const elClass = document.getElementById('input-academic-class');
+            const elBoard = document.getElementById('input-academic-board');
+            const elStream = document.getElementById('input-academic-stream');
+            const elTarget = document.getElementById('input-academic-target');
+
+            const firstName = (elFirst && elFirst.value.trim()) || userDoc.firstName || "";
+            const lastName = (elLast && elLast.value.trim()) || userDoc.lastName || "";
+            const displayName = [firstName, lastName].filter(Boolean).join(" ") || userDoc.displayName || "Student";
+            const phone = (elPhone && elPhone.value.trim()) || userDoc.phone || "";
+
+            const fullMigrationPayload = Object.assign({}, userDoc, {
+              email: verifiedNewEmail,
+              uid: verifiedNewEmail,
+              firstName: firstName,
+              lastName: lastName,
+              displayName: displayName,
+              phone: phone,
+              gender: (elGender && elGender.value) || userDoc.gender || "Male",
+              nationality: (elNat && elNat.value) || userDoc.nationality || "Indian",
+              dob: (elDob && elDob.value) || userDoc.dob || "",
+              bloodGroup: (elBlood && elBlood.value) || userDoc.bloodGroup || "",
+              parentInfo: Object.assign({}, userDoc.parentInfo || {}, {
+                fatherName: (elFather && elFather.value.trim()) || (userDoc.parentInfo && userDoc.parentInfo.fatherName) || "",
+                motherName: (elMother && elMother.value.trim()) || (userDoc.parentInfo && userDoc.parentInfo.motherName) || "",
+                guardianPhone: (elGPhone && elGPhone.value.trim()) || (userDoc.parentInfo && userDoc.parentInfo.guardianPhone) || "",
+                guardianOccupation: (elGOcc && elGOcc.value) || (userDoc.parentInfo && userDoc.parentInfo.guardianOccupation) || ""
+              }),
+              billingAddress: Object.assign({}, userDoc.billingAddress || userDoc.address || {}, {
+                addressLine1: (elAddr1 && elAddr1.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.addressLine1) || "",
+                addressLine2: (elAddr2 && elAddr2.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.addressLine2) || "",
+                pincode: (elPin && elPin.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.pincode) || "",
+                city: (elCity && elCity.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.city) || "",
+                district: (elDist && elDist.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.district) || "",
+                state: (elState && elState.value.trim()) || (userDoc.billingAddress && userDoc.billingAddress.state) || "",
+                country: "India"
+              }),
+              address: Object.assign({}, userDoc.address || userDoc.billingAddress || {}, {
+                addressLine1: (elAddr1 && elAddr1.value.trim()) || (userDoc.address && userDoc.address.addressLine1) || "",
+                addressLine2: (elAddr2 && elAddr2.value.trim()) || (userDoc.address && userDoc.address.addressLine2) || "",
+                pincode: (elPin && elPin.value.trim()) || (userDoc.address && userDoc.address.pincode) || "",
+                city: (elCity && elCity.value.trim()) || (userDoc.address && userDoc.address.city) || "",
+                district: (elDist && elDist.value.trim()) || (userDoc.address && userDoc.address.district) || "",
+                state: (elState && elState.value.trim()) || (userDoc.address && userDoc.address.state) || "",
+                country: "India"
+              }),
+              academicInfo: Object.assign({}, userDoc.academicInfo || {}, {
+                schoolName: (elSchool && elSchool.value.trim()) || (userDoc.academicInfo && userDoc.academicInfo.schoolName) || "",
+                class: (elClass && elClass.value) || userDoc.class || "Class 10",
+                board: (elBoard && elBoard.value) || userDoc.board || "CBSE",
+                stream: (elStream && elStream.value) || (userDoc.academicInfo && userDoc.academicInfo.stream) || "",
+                targetExam: (elTarget && elTarget.value) || userDoc.targetExam || "Foundation"
+              }),
+              class: (elClass && elClass.value) || userDoc.class || "Class 10",
+              board: (elBoard && elBoard.value) || userDoc.board || "CBSE",
+              targetExam: (elTarget && elTarget.value) || userDoc.targetExam || "Foundation",
+              preferences: Object.assign({}, userDoc.preferences || {}),
+              photoURL: userDoc.photoURL || "",
+              hasCustomAvatar: !!(userDoc.hasCustomAvatar || userDoc.photoURL),
+              isVerified: true,
+              kycCompleted: true,
+              kycStatus: "VERIFIED",
+              kycPercentage: 100,
+              previousEmail: email,
+              updatedAt: new Date().toISOString()
+            });
+
+            // 1. Transfer complete profile in Firestore
             if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.migrateUserEmail) {
-              await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail);
+              await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail, fullMigrationPayload);
             }
 
+            // 2. Transfer in Cloudflare Worker backend
             if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.changeEmail) {
-              await MendorbitAPI.changeEmail(email, verifiedNewEmail, verifiedOldOtp, code);
+              await MendorbitAPI.changeEmail(email, verifiedNewEmail, verifiedOldOtp, code, fullMigrationPayload).catch(e => console.warn("Worker changeEmail note:", e));
             }
 
+            // 3. Dispatch confirmation emails via Apps Script
+            try {
+              const gasUrl = (typeof MENDORBIT_APPS_SCRIPT_URL !== 'undefined') ? MENDORBIT_APPS_SCRIPT_URL : "";
+              if (gasUrl) {
+                fetch(`${gasUrl}?action=sendSecurityAlert&email=${encodeURIComponent(verifiedNewEmail)}&name=${encodeURIComponent(displayName)}&eventType=EMAIL_MIGRATION`, { mode: 'no-cors' }).catch(() => {});
+                fetch(`${gasUrl}?action=sendSecurityAlert&email=${encodeURIComponent(email)}&name=${encodeURIComponent(displayName)}&eventType=EMAIL_MIGRATION_OLD`, { mode: 'no-cors' }).catch(() => {});
+              }
+            } catch (e) {}
+
+            // 4. Update local session state
             const currentSession = MendorbitSSO.getSession() || {};
             currentSession.email = verifiedNewEmail;
             currentSession.uid = verifiedNewEmail;
+            currentSession.displayName = displayName;
+            if (phone) currentSession.phone = phone;
+            currentSession.isVerified = true;
+            currentSession.kycCompleted = true;
             MendorbitSSO.setSession(currentSession);
+
+            // 5. Clean local cache of old email & establish new email cache
+            try {
+              localStorage.removeItem("mendorbit_profile_" + email);
+              localStorage.removeItem("mendorbit_profile_" + (email || '').toLowerCase().trim());
+              localStorage.setItem("mendorbit_profile_" + verifiedNewEmail, JSON.stringify(fullMigrationPayload));
+              localStorage.setItem("mendorbit_profile_" + verifiedNewEmail.toLowerCase().trim(), JSON.stringify(fullMigrationPayload));
+            } catch (e) {}
 
             showToast(`Email updated successfully to ${verifiedNewEmail}!`, "success");
             setTimeout(() => {

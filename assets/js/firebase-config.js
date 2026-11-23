@@ -128,21 +128,7 @@ const MendorbitBackend = {
     if (!email) return null;
     const normalized = email.toLowerCase().trim();
 
-    // 0. Fast Local Profile Cache Check
-    try {
-      const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed && (parsed.email || parsed.displayName)) {
-          // If already verified or has complete kyc, return cached instantly
-          if (parsed.isVerified || parsed.kycCompleted) {
-            return parsed;
-          }
-        }
-      }
-    } catch(e) {}
-
-    // 1. Try Firebase Client SDK (Fast direct document lookup)
+    // 1. Try Firebase Client SDK (Fast direct live document lookup)
     let firestoreFailed = false;
     if (isFirebaseConfigured && firestoreDb) {
       try {
@@ -151,6 +137,10 @@ const MendorbitBackend = {
           const docData = directDoc.data() || {};
           if (!docData.email) docData.email = normalized;
           if (!docData.uid) docData.uid = normalized;
+          try {
+            localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(docData));
+            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(docData));
+          } catch (e) {}
           return docData;
         }
 
@@ -160,6 +150,10 @@ const MendorbitBackend = {
             const docData = rawDoc.data() || {};
             if (!docData.email) docData.email = normalized;
             if (!docData.uid) docData.uid = normalized;
+            try {
+              localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(docData));
+              localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(docData));
+            } catch (e) {}
             return docData;
           }
         }
@@ -169,11 +163,14 @@ const MendorbitBackend = {
           const found = snapshot.docs[0].data() || {};
           if (!found.email) found.email = normalized;
           if (!found.uid) found.uid = normalized;
+          try {
+            localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(found));
+            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(found));
+          } catch (e) {}
           return found;
         }
 
         // IMPORTANT: Firestore SDK is online and healthy, and confirmed user does not exist.
-        // Return null immediately without waiting 4+ seconds for worker duplicate check!
         return null;
       } catch (err) {
         firestoreFailed = true;
@@ -202,7 +199,7 @@ const MendorbitBackend = {
       } catch (e) {}
     }
 
-    // 3. Try Local Profile Cache & Encrypted Browser Vault fallback
+    // 3. Fallback to Local Profile Cache ONLY IF network/Firestore failed
     try {
       const cached = localStorage.getItem("mendorbit_profile_" + normalized) || localStorage.getItem("mendorbit_profile_" + email);
       if (cached) return JSON.parse(cached);
@@ -455,9 +452,9 @@ const MendorbitBackend = {
   },
 
   /**
-   * Migrate User Email (Copies Firestore Doc & Sessions to new email)
+   * Migrate User Email (Transfers 100% Student Profile, Sessions, & Locks Old Account)
    */
-  async migrateUserEmail(oldEmail, newEmail) {
+  async migrateUserEmail(oldEmail, newEmail, clientFullPayload = null) {
     if (!oldEmail || !newEmail) return false;
     const oldNorm = oldEmail.toLowerCase().trim();
     const newNorm = newEmail.toLowerCase().trim();
@@ -466,32 +463,90 @@ const MendorbitBackend = {
       try {
         const oldDocRef = firestoreDb.collection("users").doc(oldNorm);
         const oldDocSnap = await oldDocRef.get();
-        if (!oldDocSnap.exists) {
-          throw new Error("Old account record not found.");
+        let oldData = {};
+        if (oldDocSnap.exists) {
+          oldData = oldDocSnap.data() || {};
         }
 
-        const data = oldDocSnap.data();
-        data.email = newNorm;
-        data.uid = newNorm;
-        data.updatedAt = new Date().toISOString();
+        // Comprehensive merge: Prioritize rich client payload over partial old doc
+        const clientData = (clientFullPayload && typeof clientFullPayload === 'object') ? clientFullPayload : {};
+        const fullMigratedData = Object.assign({}, oldData, clientData);
 
-        // 1. Create new user document
-        await firestoreDb.collection("users").doc(newNorm).set(data);
+        fullMigratedData.email = newNorm;
+        fullMigratedData.uid = newNorm;
+        fullMigratedData.updatedAt = new Date().toISOString();
+        fullMigratedData.previousEmail = oldNorm;
 
-        // 2. Copy sessions subcollection
-        const sessionsSnap = await oldDocRef.collection("sessions").get();
-        for (const sDoc of sessionsSnap.docs) {
-          await firestoreDb.collection("users").doc(newNorm).collection("sessions").doc(sDoc.id).set(sDoc.data());
+        if (!Array.isArray(fullMigratedData.emailHistory)) {
+          fullMigratedData.emailHistory = [];
+        }
+        if (!fullMigratedData.emailHistory.includes(oldNorm)) {
+          fullMigratedData.emailHistory.push(oldNorm);
         }
 
-        // 3. Mark old user document as migrated or delete
+        // If previously verified or completed kyc, ensure status is preserved 100%
+        if (oldData.isVerified || clientData.isVerified || oldData.kycCompleted || clientData.kycCompleted) {
+          fullMigratedData.isVerified = true;
+          fullMigratedData.kycCompleted = true;
+          fullMigratedData.kycStatus = "VERIFIED";
+          fullMigratedData.kycPercentage = 100;
+        }
+
+        // 1. Create / Overwrite 100% full user document in Firestore under new email key
+        await firestoreDb.collection("users").doc(newNorm).set(fullMigratedData);
+
+        // 2. Transfer active sessions subcollection to new email doc
+        try {
+          const sessionsSnap = await oldDocRef.collection("sessions").get();
+          if (!sessionsSnap.empty) {
+            const batch = firestoreDb.batch();
+            sessionsSnap.forEach(sDoc => {
+              const newSessionRef = firestoreDb.collection("users").doc(newNorm).collection("sessions").doc(sDoc.id);
+              batch.set(newSessionRef, sDoc.data());
+              batch.delete(sDoc.ref); // Clean up from old account
+            });
+            await batch.commit();
+          }
+        } catch (sessErr) {
+          console.warn("[Mendorbit Backend] Session migration note:", sessErr);
+        }
+
+        // 3. Permanently lock & neutralize old account in Firestore (Blocks any login attempt)
         await oldDocRef.set({
+          email: oldNorm,
+          accountLocked: true,
+          isMigrated: true,
           migratedTo: newNorm,
           migratedAt: new Date().toISOString(),
-          accountLocked: true
-        }, { merge: true });
+          encryptedPassword: "",
+          passwordHash: "",
+          status: "migrated",
+          updatedAt: new Date().toISOString()
+        }, false);
 
-        console.log(`[Mendorbit Backend] User account migrated from ${oldNorm} to ${newNorm}`);
+        // 4. Clean local storage and secure vault cache
+        try {
+          localStorage.removeItem("mendorbit_profile_" + oldNorm);
+          localStorage.removeItem("mendorbit_profile_" + oldEmail);
+          localStorage.setItem("mendorbit_profile_" + newNorm, JSON.stringify(fullMigratedData));
+
+          if (typeof MendorbitSecureStorage !== 'undefined') {
+            const users = MendorbitSecureStorage.getItem("mendorbit_users_db") || {};
+            delete users[oldNorm];
+            delete users[oldEmail];
+            users[newNorm] = fullMigratedData;
+            MendorbitSecureStorage.setItem("mendorbit_users_db", users);
+          }
+          const rawUsers = JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
+          delete rawUsers[oldNorm];
+          delete rawUsers[oldEmail];
+          rawUsers[newNorm] = fullMigratedData;
+          localStorage.setItem("mendorbit_users_db", JSON.stringify(rawUsers));
+        } catch (cacheErr) {
+          console.warn("[Mendorbit Backend] Local cache migration note:", cacheErr);
+        }
+
+        console.log(`[Mendorbit Backend] User account 100% migrated from ${oldNorm} to ${newNorm}`);
         return true;
       } catch (err) {
         console.error("[Mendorbit Backend] Email migration error:", err);

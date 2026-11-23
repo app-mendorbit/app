@@ -1016,8 +1016,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       } else if (res && res.message) {
         const msgLow = res.message.toLowerCase();
-        // If password is explicitly wrong or account is locked, show error immediately
-        if (msgLow.includes("incorrect password") || msgLow.includes("locked") || msgLow.includes("google")) {
+        // If password is explicitly wrong, account is locked, or account was migrated, show error immediately
+        if (msgLow.includes("incorrect password") || msgLow.includes("locked") || msgLow.includes("google") || msgLow.includes("migrated")) {
           setButtonLoading(btn, false, "Sign In");
           notify(res.message, "error");
           return;
@@ -1034,6 +1034,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!user) {
       notify(workerErrorMsg || "No account found with this email. Please register.", "error");
+      return;
+    }
+
+    // Strictly block migrated accounts
+    if (user.isMigrated || user.migratedTo) {
+      notify("This account has been migrated to a new email address. Please sign in with your updated email.", "error");
       return;
     }
 
@@ -1091,6 +1097,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    if (user.isMigrated || user.migratedTo) {
+      notify("This account has been migrated to a new email address. Please sign in with your updated email.", "error");
+      return;
+    }
+
     const dispatched = await requestOtpDispatch(email, "login", user.displayName);
     if (dispatched) {
       openInlineOtpView(email, "login", user.displayName);
@@ -1111,6 +1122,10 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (e) {}
 
     const user = await MendorbitBackend.getUserByEmail(email);
+    if (user && (user.isMigrated || user.migratedTo)) {
+      notify("This account has been migrated to a new email address. Please sign in with your updated email.", "error");
+      return;
+    }
     const session = {
       ...(user || {}),
       uid: user ? (user.uid || email) : ("usr_" + Date.now()),
@@ -1147,6 +1162,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!user) {
       notify("No account found with this email.", "error");
+      return;
+    }
+
+    if (user.isMigrated || user.migratedTo) {
+      notify("This account has been migrated to a new email address. Please sign in with your updated email.", "error");
       return;
     }
 
@@ -1210,6 +1230,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // 1. Check if user already has an established account in Firestore
           const existing = await MendorbitBackend.getUserByEmail(normalizedEmail);
+
+          if (existing && (existing.isMigrated || existing.migratedTo)) {
+            if (typeof MendorbitLoader !== 'undefined') MendorbitLoader.hide();
+            notify("This account has been migrated to a new email address. Please sign in with your updated email.", "error");
+            return;
+          }
           const storedClass = (typeof MendorbitSecureStorage !== 'undefined')
             ? MendorbitSecureStorage.getItem("mendorbit_user_class_" + normalizedEmail)
             : localStorage.getItem("mendorbit_user_class_" + normalizedEmail);
