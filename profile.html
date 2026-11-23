@@ -5163,14 +5163,40 @@
               updatedAt: new Date().toISOString()
             });
 
-            // 1. Transfer complete profile in Firestore
+            // Build rich migration audit record with exact timing, IP, and device metadata
+            const clientLocation = (typeof getClientLocation === 'function')
+              ? getClientLocation()
+              : { city: "Direct Web", country: "India", ip: "" };
+            const devInfo = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getFriendlyDevice)
+              ? MendorbitBackend.getFriendlyDevice(navigator.userAgent)
+              : { friendly: "Windows PC • Chrome", type: "Desktop" };
+
+            const migrationMeta = {
+              migrationId: "mig_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
+              fromEmail: (email || '').toLowerCase().trim(),
+              toEmail: verifiedNewEmail.toLowerCase().trim(),
+              migratedAt: new Date().toISOString(),
+              migratedAtEpoch: Date.now(),
+              exactTiming: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "long" }),
+              ip: clientLocation.ip || (userDoc && userDoc.lastIp) || "Direct Web",
+              device: devInfo.friendly || navigator.userAgent,
+              deviceType: devInfo.type || "Desktop",
+              userAgent: navigator.userAgent || "",
+              location: `${clientLocation.city || "Unknown City"}, ${clientLocation.country || "India"}`
+            };
+
+            const existingHistory = Array.isArray(userDoc.migrationHistory) ? userDoc.migrationHistory : [];
+            fullMigrationPayload.migrationHistory = [ ...existingHistory, migrationMeta ];
+            fullMigrationPayload.previousEmail = email;
+
+            // 1. Transfer complete profile & migration history in Firestore, and completely delete old account
             if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.migrateUserEmail) {
-              await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail, fullMigrationPayload);
+              await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail, fullMigrationPayload, migrationMeta);
             }
 
             // 2. Transfer in Cloudflare Worker backend
             if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.changeEmail) {
-              await MendorbitAPI.changeEmail(email, verifiedNewEmail, verifiedOldOtp, code, fullMigrationPayload).catch(e => console.warn("Worker changeEmail note:", e));
+              await MendorbitAPI.changeEmail(email, verifiedNewEmail, verifiedOldOtp, code, fullMigrationPayload, migrationMeta).catch(e => console.warn("Worker changeEmail note:", e));
             }
 
             // 3. Dispatch confirmation emails via Apps Script
@@ -5196,6 +5222,12 @@
             try {
               localStorage.removeItem("mendorbit_profile_" + email);
               localStorage.removeItem("mendorbit_profile_" + (email || '').toLowerCase().trim());
+              localStorage.removeItem("mendorbit_user_class_" + email);
+              localStorage.removeItem("mendorbit_user_class_" + (email || '').toLowerCase().trim());
+              if (typeof MendorbitSecureStorage !== 'undefined') {
+                MendorbitSecureStorage.removeItem("mendorbit_user_class_" + email);
+                MendorbitSecureStorage.removeItem("mendorbit_user_class_" + (email || '').toLowerCase().trim());
+              }
               localStorage.setItem("mendorbit_profile_" + verifiedNewEmail, JSON.stringify(fullMigrationPayload));
               localStorage.setItem("mendorbit_profile_" + verifiedNewEmail.toLowerCase().trim(), JSON.stringify(fullMigrationPayload));
             } catch (e) {}

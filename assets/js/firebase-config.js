@@ -470,9 +470,9 @@ const MendorbitBackend = {
   },
 
   /**
-   * Migrate User Email (Transfers 100% Student Profile, Sessions, & Locks Old Account)
+   * Migrate User Email (Transfers 100% Student Profile, Sessions, Logs Migration History & Wipes Old Account)
    */
-  async migrateUserEmail(oldEmail, newEmail, clientFullPayload = null) {
+  async migrateUserEmail(oldEmail, newEmail, clientFullPayload = null, migrationMeta = null) {
     if (!oldEmail || !newEmail) return false;
     const oldNorm = oldEmail.toLowerCase().trim();
     const newNorm = newEmail.toLowerCase().trim();
@@ -495,6 +495,24 @@ const MendorbitBackend = {
         fullMigratedData.updatedAt = new Date().toISOString();
         fullMigratedData.previousEmail = oldNorm;
 
+        // Structured Migration Audit Record with exact timing, IP, and device metadata
+        const migrationRecord = migrationMeta || {
+          migrationId: "mig_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
+          fromEmail: oldNorm,
+          toEmail: newNorm,
+          migratedAt: new Date().toISOString(),
+          migratedAtEpoch: Date.now(),
+          exactTiming: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "full", timeStyle: "long" }),
+          ip: (clientData && clientData.lastIp) || "Direct Web",
+          device: (typeof navigator !== 'undefined' ? navigator.userAgent : "Desktop"),
+          location: "India"
+        };
+
+        if (!Array.isArray(fullMigratedData.migrationHistory)) {
+          fullMigratedData.migrationHistory = [];
+        }
+        fullMigratedData.migrationHistory.push(migrationRecord);
+
         if (!Array.isArray(fullMigratedData.emailHistory)) {
           fullMigratedData.emailHistory = [];
         }
@@ -513,7 +531,14 @@ const MendorbitBackend = {
         // 1. Create / Overwrite 100% full user document in Firestore under new email key
         await firestoreDb.collection("users").doc(newNorm).set(fullMigratedData);
 
-        // 2. Transfer active sessions subcollection to new email doc
+        // 2. Write migration audit record to subcollection on new account
+        try {
+          await firestoreDb.collection("users").doc(newNorm).collection("migrations").doc(migrationRecord.migrationId).set(migrationRecord);
+        } catch (mErr) {
+          console.warn("[Mendorbit Backend] Migration subcollection write note:", mErr);
+        }
+
+        // 3. Transfer active sessions subcollection to new email doc
         try {
           const sessionsSnap = await oldDocRef.collection("sessions").get();
           if (!sessionsSnap.empty) {
@@ -529,23 +554,22 @@ const MendorbitBackend = {
           console.warn("[Mendorbit Backend] Session migration note:", sessErr);
         }
 
-        // 3. Permanently lock & neutralize old account in Firestore (Blocks any login attempt)
-        await oldDocRef.set({
-          email: oldNorm,
-          accountLocked: true,
-          isMigrated: true,
-          migratedTo: newNorm,
-          migratedAt: new Date().toISOString(),
-          encryptedPassword: "",
-          passwordHash: "",
-          status: "migrated",
-          updatedAt: new Date().toISOString()
-        }, false);
+        // 4. COMPLETELY WIPE & DELETE old account in Firestore so it can be re-registered fresh
+        try {
+          await oldDocRef.delete();
+          if (oldEmail !== oldNorm) {
+            await firestoreDb.collection("users").doc(oldEmail).delete().catch(() => {});
+          }
+        } catch (delErr) {
+          console.warn("[Mendorbit Backend] Old account deletion note:", delErr);
+        }
 
-        // 4. Clean local storage and secure vault cache
+        // 5. Clean local storage and secure vault cache
         try {
           localStorage.removeItem("mendorbit_profile_" + oldNorm);
           localStorage.removeItem("mendorbit_profile_" + oldEmail);
+          localStorage.removeItem("mendorbit_user_class_" + oldNorm);
+          localStorage.removeItem("mendorbit_user_class_" + oldEmail);
           localStorage.setItem("mendorbit_profile_" + newNorm, JSON.stringify(fullMigratedData));
 
           if (typeof MendorbitSecureStorage !== 'undefined') {
@@ -567,7 +591,7 @@ const MendorbitBackend = {
           console.warn("[Mendorbit Backend] Local cache migration note:", cacheErr);
         }
 
-        console.log(`[Mendorbit Backend] User account 100% migrated from ${oldNorm} to ${newNorm}`);
+        console.log(`[Mendorbit Backend] User account 100% migrated from ${oldNorm} to ${newNorm}, old account deleted for fresh registration`);
         return true;
       } catch (err) {
         console.error("[Mendorbit Backend] Email migration error:", err);

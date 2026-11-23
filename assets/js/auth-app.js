@@ -859,7 +859,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 1. Strict Duplicate Account Guard (Same email se baar baar account na bane)
     const existing = await MendorbitBackend.getUserByEmail(email);
-    if (existing) {
+    if (existing && !existing.isMigrated && !existing.migratedTo && existing.status !== "migrated") {
       setButtonLoading(btn, false, "Register");
       notify("An account with this email already exists. Please sign in.", "error");
       showView("signin");
