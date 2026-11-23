@@ -2458,16 +2458,14 @@
           userDoc.isVerified = true;
           userDoc.kycCompleted = true;
           userDoc.kycStatus = "VERIFIED";
+          isPermanentlyVerified = true;
           const normEmail = (email || '').toLowerCase().trim();
           try {
             localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
             localStorage.setItem("mendorbit_profile_" + normEmail, JSON.stringify(userDoc));
           } catch(e) {}
           if (typeof firestoreDb !== 'undefined' && firestoreDb) {
-            firestoreDb.collection("users").doc(email).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
-            if (normEmail !== email) {
-              firestoreDb.collection("users").doc(normEmail).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
-            }
+            firestoreDb.collection("users").doc(normEmail).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
           }
         }
         const progressBar = document.getElementById('kyc-progress-bar');
@@ -3120,17 +3118,20 @@
             MendorbitSSO.setSession(currentSession);
           } catch (e) {}
 
-          // 5. Worker API (Dual-Channel Cloud Sync)
-          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.updateProfile) {
-            await MendorbitAPI.updateProfile(email, updateFields).catch(e => console.warn("Worker updateProfile note:", e));
+          // 5. High-Efficiency Firestore Persistence (Direct single write, Worker fallback only on error)
+          let directSaved = false;
+          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+            try {
+              await firestoreDb.collection("users").doc(normEmail).set(updateFields, { merge: true });
+              directSaved = true;
+            } catch (fsErr) {
+              console.warn("Direct Firestore set note:", fsErr);
+            }
           }
 
-          // 6. Direct Firestore SDK (compat)
-          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
-            await firestoreDb.collection("users").doc(email).set(updateFields, { merge: true }).catch(e => console.warn("Firestore set error:", e));
-            if (normEmail !== email) {
-              await firestoreDb.collection("users").doc(normEmail).set(updateFields, { merge: true }).catch(e => console.warn("Firestore norm set error:", e));
-            }
+          // Fallback to Worker API only if direct Firestore write was unavailable
+          if (!directSaved && typeof MendorbitAPI !== 'undefined' && MendorbitAPI.updateProfile) {
+            await MendorbitAPI.updateProfile(normEmail, updateFields).catch(e => console.warn("Worker updateProfile note:", e));
           }
 
           updateKycProgress();
@@ -3791,7 +3792,9 @@
         try { localStorage.setItem("mendorbit_session_id", currentSessionId); } catch(e) {}
       }
 
-      async function renderSessions() {
+      let cachedSessionsList = null;
+
+      async function renderSessions(forceRemote = false) {
         const listContainer = document.getElementById('active-sessions-list');
         const historyContainer = document.getElementById('logout-history-container');
         const countPill = document.getElementById('active-sessions-count-pill');
@@ -3801,12 +3804,17 @@
 
         try {
           let sessions = [];
-          if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserSessions) {
-            sessions = await MendorbitBackend.getUserSessions(email);
-          }
-          if ((!sessions || sessions.length === 0) && typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getSessions) {
-            const res = await MendorbitAPI.getSessions(email);
-            if (res && res.status === "success" && res.sessions) sessions = res.sessions;
+          if (!forceRemote && Array.isArray(cachedSessionsList) && cachedSessionsList.length > 0) {
+            sessions = cachedSessionsList;
+          } else {
+            if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserSessions) {
+              sessions = await MendorbitBackend.getUserSessions(normalizedEmail);
+            }
+            if ((!sessions || sessions.length === 0) && typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getSessions) {
+              const res = await MendorbitAPI.getSessions(normalizedEmail);
+              if (res && res.status === "success" && res.sessions) sessions = res.sessions;
+            }
+            cachedSessionsList = sessions;
           }
 
           if (!sessions || sessions.length === 0) {
@@ -4050,7 +4058,7 @@
                   await MendorbitAPI.revokeSession(email, targetSessId);
                 }
                 showToast("Device session terminated.", "success");
-                await renderSessions();
+                await renderSessions(true);
               } catch (e) {
                 console.error("Revoke error:", e);
                 showToast("Failed to logout device.", "error");
@@ -4073,7 +4081,7 @@
                   await MendorbitAPI.deleteSession(email, targetSessId);
                 }
                 showToast("Session record deleted from history.", "success");
-                await renderSessions();
+                await renderSessions(true);
               } catch (e) {
                 showToast("Failed to delete session record.", "error");
               }
@@ -4087,22 +4095,27 @@
 
       renderSessions();
 
-      // Real-Time Live Sync: Automatically re-render instantly whenever any session logs in, heartbeats, or disconnects
+      // Real-Time Live Sync: Efficiently receives document batch without triggering extra Firestore get() calls
       if (typeof firestoreDb !== 'undefined' && firestoreDb) {
         try {
-          firestoreDb.collection("users").doc(email).collection("sessions").onSnapshot(() => {
-            renderSessions();
+          firestoreDb.collection("users").doc(normalizedEmail).collection("sessions").onSnapshot((snapshot) => {
+            if (snapshot && snapshot.docs) {
+              const list = [];
+              snapshot.forEach(doc => list.push(doc.data()));
+              cachedSessionsList = list;
+              renderSessions(false);
+            }
           }, (err) => console.warn("[Sessions] Snapshot sync note:", err));
-        } catch(e) {}
+        } catch (e) {}
       }
 
-      // Live Ticker: Re-render every 10 seconds so elapsed last-seen times update dynamically without reload
+      // Live Ticker: Re-renders elapsed relative times (30s interval) using memory cache with 0 Firebase reads
       setInterval(() => {
         const tabSessions = document.getElementById('tab-sessions');
         if (tabSessions && !tabSessions.classList.contains('hidden')) {
-          renderSessions();
+          renderSessions(false);
         }
-      }, 10000);
+      }, 30000);
 
       // "Logout All Other Devices" button
       const btnLogoutAllOthers = document.getElementById('btn-logout-all-others');
@@ -4121,7 +4134,7 @@
               await MendorbitAPI.revokeAllOtherSessions(email, currentSessionId);
             }
             showToast("All other devices logged out.", "success");
-            await renderSessions();
+            await renderSessions(true);
           } catch (e) {
             showToast("Failed to revoke other sessions.", "error");
           } finally {
@@ -4148,7 +4161,7 @@
               await MendorbitAPI.clearSessionHistory(email);
             }
             showToast("History cleared successfully.", "success");
-            await renderSessions();
+            await renderSessions(true);
           } catch (e) {
             showToast("Failed to clear history.", "error");
           } finally {

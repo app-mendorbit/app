@@ -475,17 +475,25 @@
 
   /**
    * Real-Time Heartbeat & Last-Seen Engine
-   * Broadcasts active state every 15 seconds and sends guaranteed offline beacon on unload/hide
+   * Optimized for minimal Firebase write limits: 60s interval with smart throttling
    */
   let heartbeatInterval = null;
+  let lastHeartbeatSentEpoch = 0;
 
-  function updateHeartbeatState(isOnline = true) {
+  function updateHeartbeatState(isOnline = true, force = false) {
     const session = getSession();
     const sessionId = (session && session.sessionId) || localStorage.getItem("mendorbit_session_id");
     if (!session || !session.email || !sessionId) return;
+
+    const nowEpoch = Date.now();
+    // Throttle positive pings to at most once every 45 seconds to conserve Firebase writes
+    if (!force && isOnline && (nowEpoch - lastHeartbeatSentEpoch < 45000)) {
+      return;
+    }
+    lastHeartbeatSentEpoch = nowEpoch;
+
     const emailNorm = session.email.toLowerCase().trim();
     const nowIso = new Date().toISOString();
-    const nowEpoch = Date.now();
 
     if (typeof firestoreDb !== 'undefined' && firestoreDb) {
       const updateData = {
@@ -493,13 +501,8 @@
         lastActiveEpoch: nowEpoch,
         isOnline: isOnline
       };
+      // Write to session doc in subcollection (Clean & quota-friendly)
       firestoreDb.collection("users").doc(emailNorm).collection("sessions").doc(sessionId).set(updateData, { merge: true }).catch(() => {});
-
-      const rootMap = {};
-      rootMap[`sessions.${sessionId}.lastActive`] = nowIso;
-      rootMap[`sessions.${sessionId}.lastActiveEpoch`] = nowEpoch;
-      rootMap[`sessions.${sessionId}.isOnline`] = isOnline;
-      firestoreDb.collection("users").doc(emailNorm).set(rootMap, { merge: true }).catch(() => {});
     }
   }
 
@@ -509,8 +512,8 @@
     if (!session || !session.email || !sessionId) return;
     const emailNorm = session.email.toLowerCase().trim();
 
-    // 1. Direct Firestore write
-    updateHeartbeatState(false);
+    // 1. Direct Firestore write (forced immediately)
+    updateHeartbeatState(false, true);
 
     // 2. Guaranteed background beacon (delivered even after browser window destroys)
     const payload = JSON.stringify({ email: emailNorm, sessionId: sessionId });
@@ -528,14 +531,14 @@
     if (heartbeatInterval) clearInterval(heartbeatInterval);
 
     // Initial online ping
-    updateHeartbeatState(true);
+    updateHeartbeatState(true, true);
 
-    // Periodic ping every 15 seconds (responsive & lightweight)
+    // Periodic ping every 60 seconds (Quota-friendly & battery-efficient)
     heartbeatInterval = setInterval(() => {
       if (document.visibilityState === 'visible' && navigator.onLine) {
         updateHeartbeatState(true);
       }
-    }, 15000);
+    }, 60000);
 
     // Visibility change triggers (immediate online / offline state)
     document.addEventListener('visibilitychange', () => {

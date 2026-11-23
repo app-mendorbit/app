@@ -45,6 +45,10 @@ try {
 /**
  * Backend Data Service
  */
+// In-Memory Profile Cache (TTL: 30s) to minimize Firebase read quota consumption
+const _profileMemCache = new Map();
+const PROFILE_MEM_TTL_MS = 30000;
+
 const MendorbitBackend = {
   isConfigured: () => isFirebaseConfigured,
   getAppsScriptUrl: () => MENDORBIT_APPS_SCRIPT_URL,
@@ -118,15 +122,24 @@ const MendorbitBackend = {
     users[docId] = safeLocalDoc;
     saveLocalUsersDb(users);
 
+    _profileMemCache.set(docId, { data: safeLocalDoc, time: Date.now() });
     return safeLocalDoc;
   },
 
   /**
    * Fetch user by email (Keyed directly by email with query fallback)
    */
-  async getUserByEmail(email) {
+  async getUserByEmail(email, bypassCache = false) {
     if (!email) return null;
     const normalized = email.toLowerCase().trim();
+
+    // 0. High-efficiency memory cache: eliminates rapid redundant reads on the same page
+    if (!bypassCache && _profileMemCache.has(normalized)) {
+      const entry = _profileMemCache.get(normalized);
+      if (entry && (Date.now() - entry.time < PROFILE_MEM_TTL_MS)) {
+        return entry.data;
+      }
+    }
 
     // 1. Try Firebase Client SDK (Fast direct live document lookup)
     let firestoreFailed = false;
@@ -137,6 +150,7 @@ const MendorbitBackend = {
           const docData = directDoc.data() || {};
           if (!docData.email) docData.email = normalized;
           if (!docData.uid) docData.uid = normalized;
+          _profileMemCache.set(normalized, { data: docData, time: Date.now() });
           try {
             localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(docData));
             localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(docData));
@@ -150,6 +164,7 @@ const MendorbitBackend = {
             const docData = rawDoc.data() || {};
             if (!docData.email) docData.email = normalized;
             if (!docData.uid) docData.uid = normalized;
+            _profileMemCache.set(normalized, { data: docData, time: Date.now() });
             try {
               localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(docData));
               localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(docData));
@@ -163,6 +178,7 @@ const MendorbitBackend = {
           const found = snapshot.docs[0].data() || {};
           if (!found.email) found.email = normalized;
           if (!found.uid) found.uid = normalized;
+          _profileMemCache.set(normalized, { data: found, time: Date.now() });
           try {
             localStorage.setItem("mendorbit_profile_" + normalized, JSON.stringify(found));
             localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(found));
@@ -170,7 +186,8 @@ const MendorbitBackend = {
           return found;
         }
 
-        // IMPORTANT: Firestore SDK is online and healthy, and confirmed user does not exist.
+        // IMPORTANT: Firestore SDK confirmed user does not exist
+        _profileMemCache.set(normalized, { data: null, time: Date.now() });
         return null;
       } catch (err) {
         firestoreFailed = true;
@@ -192,6 +209,7 @@ const MendorbitBackend = {
           if (res.ok) {
             const data = await res.json();
             if (data && data.status === "success" && data.exists && data.user) {
+              _profileMemCache.set(normalized, { data: data.user, time: Date.now() });
               return data.user;
             }
           }
@@ -542,6 +560,9 @@ const MendorbitBackend = {
           delete rawUsers[oldEmail];
           rawUsers[newNorm] = fullMigratedData;
           localStorage.setItem("mendorbit_users_db", JSON.stringify(rawUsers));
+          _profileMemCache.delete(oldNorm);
+          _profileMemCache.delete(oldEmail);
+          _profileMemCache.set(newNorm, { data: fullMigratedData, time: Date.now() });
         } catch (cacheErr) {
           console.warn("[Mendorbit Backend] Local cache migration note:", cacheErr);
         }
