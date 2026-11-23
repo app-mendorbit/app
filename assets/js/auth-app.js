@@ -70,13 +70,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const norm = userPayload.email.toLowerCase().trim();
       try {
         if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
-          const remoteDoc = await MendorbitBackend.getUserByEmail(norm);
+          const remoteDoc = await MendorbitBackend.getUserByEmail(norm, true);
           if (remoteDoc && typeof remoteDoc === 'object') {
             Object.keys(remoteDoc).forEach(k => {
-              if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
-                if (userPayload[k] === undefined || userPayload[k] === null || userPayload[k] === "") {
-                  userPayload[k] = remoteDoc[k];
-                }
+              if (k !== 'password' && k !== 'encryptedPassword' && remoteDoc[k] !== undefined && remoteDoc[k] !== null) {
+                userPayload[k] = remoteDoc[k];
+                sessionWithId[k] = remoteDoc[k];
               }
             });
             if (remoteDoc.photoURL) {
@@ -85,38 +84,28 @@ document.addEventListener("DOMContentLoaded", function () {
               userPayload.photoURL = remoteDoc.photoURL;
               userPayload.hasCustomAvatar = true;
             }
-            if (remoteDoc.isVerified || remoteDoc.kycCompleted) {
-              sessionWithId.isVerified = true;
-              sessionWithId.kycCompleted = true;
-              sessionWithId.kycStatus = "VERIFIED";
-              userPayload.isVerified = true;
-              userPayload.kycCompleted = true;
-              userPayload.kycStatus = "VERIFIED";
-            }
+            sessionWithId.isVerified = !!remoteDoc.isVerified;
+            sessionWithId.kycCompleted = !!remoteDoc.kycCompleted;
+            sessionWithId.kycStatus = remoteDoc.kycStatus || (remoteDoc.isVerified ? "VERIFIED" : "PENDING");
+            sessionWithId.kycPercentage = typeof remoteDoc.kycPercentage === 'number' ? remoteDoc.kycPercentage : 0;
+            userPayload.isVerified = sessionWithId.isVerified;
+            userPayload.kycCompleted = sessionWithId.kycCompleted;
+            userPayload.kycStatus = sessionWithId.kycStatus;
+            userPayload.kycPercentage = sessionWithId.kycPercentage;
           }
         }
       } catch (e) {
         console.warn("[Auth] Real-time remote fetch note:", e);
       }
 
-      // PRESERVE CUSTOM AVATAR & VERIFICATION FROM LOCAL CACHE FALLBACK
+      // PRESERVE CUSTOM AVATAR & VERIFICATION FROM LOCAL CACHE FALLBACK ONLY IF REMOTE LOOKUP HAD NO RECORD
       try {
         const cached = JSON.parse(localStorage.getItem("mendorbit_profile_" + norm) || "{}");
-        if (cached) {
-          if (cached.hasCustomAvatar || (cached.photoURL && !userPayload.photoURL)) {
-            sessionWithId.photoURL = cached.photoURL;
-            sessionWithId.hasCustomAvatar = true;
-            userPayload.photoURL = cached.photoURL;
-            userPayload.hasCustomAvatar = true;
-          }
-          if (cached.isVerified || cached.kycCompleted) {
-            sessionWithId.isVerified = true;
-            sessionWithId.kycCompleted = true;
-            sessionWithId.kycStatus = "VERIFIED";
-            userPayload.isVerified = true;
-            userPayload.kycCompleted = true;
-            userPayload.kycStatus = "VERIFIED";
-          }
+        if (cached && !sessionWithId.photoURL && cached.photoURL) {
+          sessionWithId.photoURL = cached.photoURL;
+          sessionWithId.hasCustomAvatar = true;
+          userPayload.photoURL = cached.photoURL;
+          userPayload.hasCustomAvatar = true;
         }
       } catch (e) {}
     }
@@ -321,18 +310,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // REAL-TIME FIRESTORE PULL: Ensure newly linked device gets live, fresh data instead of stale snapshot
     if (normEmail && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
       try {
-        const liveDoc = await MendorbitBackend.getUserByEmail(normEmail);
+        const liveDoc = await MendorbitBackend.getUserByEmail(normEmail, true);
         if (liveDoc && typeof liveDoc === 'object') {
-          realTimeUser = Object.assign({}, liveDoc, realTimeUser);
+          realTimeUser = Object.assign({}, realTimeUser, liveDoc);
           if (liveDoc.photoURL) {
             realTimeUser.photoURL = liveDoc.photoURL;
             realTimeUser.hasCustomAvatar = true;
           }
-          if (liveDoc.isVerified || liveDoc.kycCompleted) {
-            realTimeUser.isVerified = true;
-            realTimeUser.kycCompleted = true;
-            realTimeUser.kycStatus = "VERIFIED";
-          }
+          realTimeUser.isVerified = !!liveDoc.isVerified;
+          realTimeUser.kycCompleted = !!liveDoc.kycCompleted;
+          realTimeUser.kycStatus = liveDoc.kycStatus || (liveDoc.isVerified ? "VERIFIED" : "PENDING");
+          realTimeUser.kycPercentage = typeof liveDoc.kycPercentage === 'number' ? liveDoc.kycPercentage : 0;
         }
       } catch (err) {
         console.warn("[QR Auth] Real-time live doc fetch note:", err);
@@ -1067,8 +1055,10 @@ document.addEventListener("DOMContentLoaded", function () {
       class: user.class || "Class 10",
       photoURL: user.photoURL || "",
       hasCustomAvatar: !!user.photoURL || !!user.hasCustomAvatar,
-      isVerified: !!user.isVerified || !!user.kycCompleted,
-      kycCompleted: !!user.kycCompleted || !!user.isVerified
+      isVerified: !!user.isVerified,
+      kycCompleted: !!user.kycCompleted,
+      kycStatus: user.kycStatus || (user.isVerified ? "VERIFIED" : "PENDING"),
+      kycPercentage: typeof user.kycPercentage === 'number' ? user.kycPercentage : 0
     }, "LOGIN", "Password");
 
     notify("Welcome back, " + (user.displayName || "Student") + "!", "success");
@@ -1134,8 +1124,10 @@ document.addEventListener("DOMContentLoaded", function () {
       class: user ? (user.class || "Class 10") : "Class 10",
       photoURL: user ? (user.photoURL || "") : "",
       hasCustomAvatar: user ? (!!user.photoURL || !!user.hasCustomAvatar) : false,
-      isVerified: user ? (!!user.isVerified || !!user.kycCompleted) : false,
-      kycCompleted: user ? (!!user.kycCompleted || !!user.isVerified) : false
+      isVerified: user ? !!user.isVerified : false,
+      kycCompleted: user ? !!user.kycCompleted : false,
+      kycStatus: user ? (user.kycStatus || (user.isVerified ? "VERIFIED" : "PENDING")) : "PENDING",
+      kycPercentage: user ? (typeof user.kycPercentage === 'number' ? user.kycPercentage : 0) : 0
     };
     await completeAuthSession(session, "LOGIN_OTP", "Email OTP");
 

@@ -2412,9 +2412,6 @@
       function updateKycProgress() {
         let score = 0;
 
-        // Perpetual Verification Lock: If verified once, status is permanently locked at 100%
-        const isPermanentlyVerified = !!(userDoc && (userDoc.isVerified === true || userDoc.kycCompleted === true || userDoc.kycStatus === 'VERIFIED'));
-
         // Check each critical field (Declared in function scope so accessible in checklist modal)
         const fName = (document.getElementById('input-first-name')?.value || '').trim();
         const phone = (document.getElementById('input-phone-number')?.value || '').trim();
@@ -2439,34 +2436,37 @@
         const academicSchool = (document.getElementById('input-academic-school')?.value || '').trim();
         const isAcademicSet = !!academicSchool;
 
-        if (isPermanentlyVerified) {
-          score = 100;
-        } else {
-          if (fName) score += 12;
-          if (phone.length === 10) score += 12;
-          if (dob) score += 10;
-          if (gender) score += 8;
-          if (isBloodSet) score += 6;
-          if (isGuardianSet) score += 14;
-          if (isAddressSet) score += 18;
-          if (isAcademicSet) score += 20;
-        }
+        if (fName) score += 12;
+        if (phone.length === 10) score += 12;
+        if (dob) score += 10;
+        if (gender) score += 8;
+        if (isBloodSet) score += 6;
+        if (isGuardianSet) score += 14;
+        if (isAddressSet) score += 18;
+        if (isAcademicSet) score += 20;
 
-        const clamped = Math.min(100, Math.max(score, 20));
+        // True Verification: Explicit manual verification OR genuine 100% completion
+        const isManualVerified = !!(userDoc && userDoc.manualVerification === true);
+        const clamped = isManualVerified ? 100 : Math.min(100, Math.max(score, 0));
         const isFullyVerified = (clamped >= 100);
-        if (isFullyVerified && !isPermanentlyVerified) {
-          userDoc.isVerified = true;
-          userDoc.kycCompleted = true;
-          userDoc.kycStatus = "VERIFIED";
-          isPermanentlyVerified = true;
-          const normEmail = (email || '').toLowerCase().trim();
-          try {
-            localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
-            localStorage.setItem("mendorbit_profile_" + normEmail, JSON.stringify(userDoc));
-          } catch(e) {}
-          if (typeof firestoreDb !== 'undefined' && firestoreDb) {
-            firestoreDb.collection("users").doc(normEmail).set({ isVerified: true, kycCompleted: true, kycStatus: "VERIFIED" }, { merge: true }).catch(() => {});
-          }
+
+        userDoc.kycPercentage = clamped;
+        userDoc.isVerified = isFullyVerified;
+        userDoc.kycCompleted = isFullyVerified;
+        userDoc.kycStatus = isFullyVerified ? "VERIFIED" : "PENDING";
+
+        const normEmail = (email || '').toLowerCase().trim();
+        try {
+          localStorage.setItem("mendorbit_profile_" + email, JSON.stringify(userDoc));
+          localStorage.setItem("mendorbit_profile_" + normEmail, JSON.stringify(userDoc));
+        } catch(e) {}
+        if (typeof firestoreDb !== 'undefined' && firestoreDb) {
+          firestoreDb.collection("users").doc(normEmail).set({
+            isVerified: isFullyVerified,
+            kycCompleted: isFullyVerified,
+            kycStatus: userDoc.kycStatus,
+            kycPercentage: clamped
+          }, { merge: true }).catch(() => {});
         }
         const progressBar = document.getElementById('kyc-progress-bar');
         const progressText = document.getElementById('kyc-progress-text');
@@ -3065,10 +3065,9 @@
         try {
           // 1. In-Memory Deep Merge (Instant reactive updates in DOM)
           const normEmail = (email || '').toLowerCase().trim();
-          if (userDoc.isVerified || userDoc.kycCompleted) {
-            updateFields.isVerified = true;
-            updateFields.kycCompleted = true;
-            updateFields.kycStatus = "VERIFIED";
+          if (typeof userDoc.isVerified === 'boolean') {
+            updateFields.isVerified = userDoc.isVerified;
+            updateFields.kycCompleted = !!userDoc.kycCompleted;
           }
 
           Object.keys(updateFields).forEach(k => {
@@ -3111,10 +3110,8 @@
               currentSession.photoURL = updateFields.photoURL;
               currentSession.hasCustomAvatar = true;
             }
-            if (userDoc.isVerified) {
-              currentSession.isVerified = true;
-              currentSession.kycCompleted = true;
-            }
+            currentSession.isVerified = !!userDoc.isVerified;
+            currentSession.kycCompleted = !!userDoc.kycCompleted;
             MendorbitSSO.setSession(currentSession);
           } catch (e) {}
 
@@ -4591,7 +4588,7 @@
         // 2. Dual-Channel: Direct Google Apps Script Fallback
         const appsScriptUrl = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAppsScriptUrl)
           ? MendorbitBackend.getAppsScriptUrl()
-          : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+          : (typeof MENDORBIT_APPS_SCRIPT_URL !== 'undefined' ? MENDORBIT_APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbwWiLcXeggeJ34fx-Nc0Ded1MJ-O0a-7_ohHKtTI96BBm2KbZ4G8r3sttpu0qx43Sgwfw/exec");
 
         if (appsScriptUrl && !appsScriptUrl.includes("YOUR_")) {
           try {
@@ -4636,7 +4633,7 @@
         // 2. Dual-Channel: Direct Google Apps Script Fallback
         const appsScriptUrl = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAppsScriptUrl)
           ? MendorbitBackend.getAppsScriptUrl()
-          : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+          : (typeof MENDORBIT_APPS_SCRIPT_URL !== 'undefined' ? MENDORBIT_APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbwWiLcXeggeJ34fx-Nc0Ded1MJ-O0a-7_ohHKtTI96BBm2KbZ4G8r3sttpu0qx43Sgwfw/exec");
 
         if (appsScriptUrl && !appsScriptUrl.includes("YOUR_")) {
           try {
@@ -5155,10 +5152,10 @@
               preferences: Object.assign({}, userDoc.preferences || {}),
               photoURL: userDoc.photoURL || "",
               hasCustomAvatar: !!(userDoc.hasCustomAvatar || userDoc.photoURL),
-              isVerified: true,
-              kycCompleted: true,
-              kycStatus: "VERIFIED",
-              kycPercentage: 100,
+              isVerified: (userDoc && typeof userDoc.isVerified === 'boolean') ? userDoc.isVerified : false,
+              kycCompleted: (userDoc && typeof userDoc.kycCompleted === 'boolean') ? userDoc.kycCompleted : false,
+              kycStatus: (userDoc && userDoc.kycStatus) || "PENDING",
+              kycPercentage: (userDoc && typeof userDoc.kycPercentage === 'number') ? userDoc.kycPercentage : 0,
               previousEmail: email,
               updatedAt: new Date().toISOString()
             });
@@ -5214,8 +5211,10 @@
             currentSession.uid = verifiedNewEmail;
             currentSession.displayName = displayName;
             if (phone) currentSession.phone = phone;
-            currentSession.isVerified = true;
-            currentSession.kycCompleted = true;
+            currentSession.isVerified = !!fullMigrationPayload.isVerified;
+            currentSession.kycCompleted = !!fullMigrationPayload.kycCompleted;
+            currentSession.kycStatus = fullMigrationPayload.kycStatus || "PENDING";
+            currentSession.kycPercentage = fullMigrationPayload.kycPercentage || 0;
             MendorbitSSO.setSession(currentSession);
 
             // 5. Clean local cache of old email & establish new email cache

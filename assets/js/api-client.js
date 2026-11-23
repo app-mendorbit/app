@@ -16,9 +16,10 @@
   }
 })(typeof self !== 'undefined' ? self : this, function () {
 
-  // Point to your deployed Cloudflare Worker URL (or keep relative if hosted on same domain)
-  // Example: "https://auth-api.mendorbit.in"
-  let workerBaseUrl = (typeof MENDORBIT_WORKER_URL !== 'undefined') ? MENDORBIT_WORKER_URL : "";
+  // Point to deployed Cloudflare Worker URL
+  let workerBaseUrl = (typeof MENDORBIT_WORKER_URL !== 'undefined' && MENDORBIT_WORKER_URL)
+    ? MENDORBIT_WORKER_URL
+    : "https://auth.app-mendorbit.workers.dev";
 
   function setBaseUrl(url) {
     workerBaseUrl = (url || "").replace(/\/$/, "");
@@ -96,7 +97,7 @@
 
       const gasUrl = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAppsScriptUrl)
         ? MendorbitBackend.getAppsScriptUrl()
-        : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+        : "https://script.google.com/macros/s/AKfycbwWiLcXeggeJ34fx-Nc0Ded1MJ-O0a-7_ohHKtTI96BBm2KbZ4G8r3sttpu0qx43Sgwfw/exec";
       const res = await fetch(`${gasUrl}?action=getOtpStats`);
       return await res.json();
     }

@@ -520,13 +520,11 @@ const MendorbitBackend = {
           fullMigratedData.emailHistory.push(oldNorm);
         }
 
-        // If previously verified or completed kyc, ensure status is preserved 100%
-        if (oldData.isVerified || clientData.isVerified || oldData.kycCompleted || clientData.kycCompleted) {
-          fullMigratedData.isVerified = true;
-          fullMigratedData.kycCompleted = true;
-          fullMigratedData.kycStatus = "VERIFIED";
-          fullMigratedData.kycPercentage = 100;
-        }
+        // Preserve actual verification & KYC status from original account
+        fullMigratedData.isVerified = typeof oldData.isVerified === 'boolean' ? oldData.isVerified : !!clientData.isVerified;
+        fullMigratedData.kycCompleted = typeof oldData.kycCompleted === 'boolean' ? oldData.kycCompleted : !!clientData.kycCompleted;
+        fullMigratedData.kycStatus = oldData.kycStatus || clientData.kycStatus || "PENDING";
+        fullMigratedData.kycPercentage = typeof oldData.kycPercentage === 'number' ? oldData.kycPercentage : ((clientData && clientData.kycPercentage) || 0);
 
         // 1. Create / Overwrite 100% full user document in Firestore under new email key
         await firestoreDb.collection("users").doc(newNorm).set(fullMigratedData);
