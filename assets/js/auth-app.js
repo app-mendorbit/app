@@ -65,16 +65,58 @@ document.addEventListener("DOMContentLoaded", function () {
     const sessionId = userPayload.sessionId || "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
     const sessionWithId = { ...userPayload, sessionId };
 
-    // PRESERVE CUSTOM AVATAR: Custom uploaded avatar must NEVER be overwritten by Google Sign-In or default photo
+    // REAL-TIME CLOUD FETCH: Freshly pull full profile, custom avatar, & verification records from Firestore
     if (userPayload && userPayload.email) {
       const norm = userPayload.email.toLowerCase().trim();
       try {
+        if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
+          const remoteDoc = await MendorbitBackend.getUserByEmail(norm);
+          if (remoteDoc && typeof remoteDoc === 'object') {
+            Object.keys(remoteDoc).forEach(k => {
+              if (remoteDoc[k] !== undefined && remoteDoc[k] !== null && remoteDoc[k] !== "") {
+                if (userPayload[k] === undefined || userPayload[k] === null || userPayload[k] === "") {
+                  userPayload[k] = remoteDoc[k];
+                }
+              }
+            });
+            if (remoteDoc.photoURL) {
+              sessionWithId.photoURL = remoteDoc.photoURL;
+              sessionWithId.hasCustomAvatar = true;
+              userPayload.photoURL = remoteDoc.photoURL;
+              userPayload.hasCustomAvatar = true;
+            }
+            if (remoteDoc.isVerified || remoteDoc.kycCompleted) {
+              sessionWithId.isVerified = true;
+              sessionWithId.kycCompleted = true;
+              sessionWithId.kycStatus = "VERIFIED";
+              userPayload.isVerified = true;
+              userPayload.kycCompleted = true;
+              userPayload.kycStatus = "VERIFIED";
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("[Auth] Real-time remote fetch note:", e);
+      }
+
+      // PRESERVE CUSTOM AVATAR & VERIFICATION FROM LOCAL CACHE FALLBACK
+      try {
         const cached = JSON.parse(localStorage.getItem("mendorbit_profile_" + norm) || "{}");
-        if (cached && (cached.hasCustomAvatar || (cached.photoURL && !userPayload.hasCustomAvatar))) {
-          sessionWithId.photoURL = cached.photoURL;
-          sessionWithId.hasCustomAvatar = true;
-          userPayload.photoURL = cached.photoURL;
-          userPayload.hasCustomAvatar = true;
+        if (cached) {
+          if (cached.hasCustomAvatar || (cached.photoURL && !userPayload.photoURL)) {
+            sessionWithId.photoURL = cached.photoURL;
+            sessionWithId.hasCustomAvatar = true;
+            userPayload.photoURL = cached.photoURL;
+            userPayload.hasCustomAvatar = true;
+          }
+          if (cached.isVerified || cached.kycCompleted) {
+            sessionWithId.isVerified = true;
+            sessionWithId.kycCompleted = true;
+            sessionWithId.kycStatus = "VERIFIED";
+            userPayload.isVerified = true;
+            userPayload.kycCompleted = true;
+            userPayload.kycStatus = "VERIFIED";
+          }
         }
       } catch (e) {}
     }
@@ -273,15 +315,39 @@ document.addEventListener("DOMContentLoaded", function () {
       manualCodeBox.innerHTML = '<span class="text-emerald-600 font-black flex items-center justify-center gap-2 text-2xl">✓ Verified</span>';
     }
 
-    // Cache complete profile state locally so target device receives 100% verified status & all fields instantly
-    if (user && user.email) {
-      const norm = user.email.toLowerCase().trim();
+    let realTimeUser = Object.assign({}, user || {});
+    const normEmail = (realTimeUser && realTimeUser.email) ? realTimeUser.email.toLowerCase().trim() : "";
+
+    // REAL-TIME FIRESTORE PULL: Ensure newly linked device gets live, fresh data instead of stale snapshot
+    if (normEmail && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
       try {
-        localStorage.setItem("mendorbit_profile_" + user.email, JSON.stringify(user));
-        localStorage.setItem("mendorbit_profile_" + norm, JSON.stringify(user));
+        const liveDoc = await MendorbitBackend.getUserByEmail(normEmail);
+        if (liveDoc && typeof liveDoc === 'object') {
+          realTimeUser = Object.assign({}, liveDoc, realTimeUser);
+          if (liveDoc.photoURL) {
+            realTimeUser.photoURL = liveDoc.photoURL;
+            realTimeUser.hasCustomAvatar = true;
+          }
+          if (liveDoc.isVerified || liveDoc.kycCompleted) {
+            realTimeUser.isVerified = true;
+            realTimeUser.kycCompleted = true;
+            realTimeUser.kycStatus = "VERIFIED";
+          }
+        }
+      } catch (err) {
+        console.warn("[QR Auth] Real-time live doc fetch note:", err);
+      }
+    }
+
+    // Cache complete profile state locally so target device receives 100% verified status & all fields instantly
+    if (realTimeUser && realTimeUser.email) {
+      const norm = realTimeUser.email.toLowerCase().trim();
+      try {
+        localStorage.setItem("mendorbit_profile_" + realTimeUser.email, JSON.stringify(realTimeUser));
+        localStorage.setItem("mendorbit_profile_" + norm, JSON.stringify(realTimeUser));
         const users = JSON.parse(localStorage.getItem("mendorbit_users_db") || "{}");
-        users[user.email] = Object.assign({}, users[user.email] || {}, user);
-        users[norm] = Object.assign({}, users[norm] || {}, user);
+        users[realTimeUser.email] = Object.assign({}, users[realTimeUser.email] || {}, realTimeUser);
+        users[norm] = Object.assign({}, users[norm] || {}, realTimeUser);
         localStorage.setItem("mendorbit_users_db", JSON.stringify(users));
       } catch (e) {
         console.warn("[QR Auth] Cache write note:", e);
@@ -289,7 +355,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     notify("Device authorized successfully! Redirecting to Dashboard...", "success");
-    await completeAuthSession({ ...user, sessionId: activeQrSessionId }, "QR_LOGIN", "QR Linked Device");
+    await completeAuthSession({ ...realTimeUser, sessionId: activeQrSessionId }, "QR_LOGIN", "QR Linked Device");
     setTimeout(() => {
       MendorbitTracker.executePostLoginRedirect();
     }, 600);
@@ -988,10 +1054,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     await completeAuthSession({
+      ...user,
       uid: user.uid || identifier,
       email: user.email || identifier,
       displayName: user.displayName || "Student",
-      class: user.class || "Class 10"
+      class: user.class || "Class 10",
+      photoURL: user.photoURL || "",
+      hasCustomAvatar: !!user.photoURL || !!user.hasCustomAvatar,
+      isVerified: !!user.isVerified || !!user.kycCompleted,
+      kycCompleted: !!user.kycCompleted || !!user.isVerified
     }, "LOGIN", "Password");
 
     notify("Welcome back, " + (user.displayName || "Student") + "!", "success");
@@ -1041,12 +1112,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const user = await MendorbitBackend.getUserByEmail(email);
     const session = {
-      uid: user ? user.uid : "usr_" + Date.now(),
-      email: user ? user.email : email,
-      displayName: user ? user.displayName : "Student",
-      class: user ? user.class : "General"
+      ...(user || {}),
+      uid: user ? (user.uid || email) : ("usr_" + Date.now()),
+      email: user ? (user.email || email) : email,
+      displayName: user ? (user.displayName || "Student") : "Student",
+      class: user ? (user.class || "Class 10") : "Class 10",
+      photoURL: user ? (user.photoURL || "") : "",
+      hasCustomAvatar: user ? (!!user.photoURL || !!user.hasCustomAvatar) : false,
+      isVerified: user ? (!!user.isVerified || !!user.kycCompleted) : false,
+      kycCompleted: user ? (!!user.kycCompleted || !!user.isVerified) : false
     };
-    await completeAuthSession(session, "LOGIN_OTP");
+    await completeAuthSession(session, "LOGIN_OTP", "Email OTP");
 
     notify("Verified! Redirecting to dashboard...", "success");
     setTimeout(() => {

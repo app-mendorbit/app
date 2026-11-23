@@ -4307,7 +4307,10 @@
           fullPayload.email = email;
           fullPayload.displayName = (typeof displayFullName !== 'undefined' && displayFullName) || fullPayload.displayName || "Student";
           fullPayload.class = (typeof studentClass !== 'undefined' && studentClass) || fullPayload.class || "Class 10";
-          fullPayload.photoURL = (typeof photoURL !== 'undefined' && photoURL) || fullPayload.photoURL || "";
+          const heroImg = document.getElementById('hero-avatar-img');
+          const currentDomAvatar = (heroImg && heroImg.src && !heroImg.classList.contains('hidden')) ? heroImg.src : "";
+          fullPayload.photoURL = userDoc.photoURL || session.photoURL || currentDomAvatar || fullPayload.photoURL || "";
+          fullPayload.hasCustomAvatar = !!fullPayload.photoURL;
 
           // Collect current field values from DOM to guarantee fresh state
           const getVal = (id) => (document.getElementById(id)?.value || '').trim();
@@ -4546,7 +4549,103 @@
       }
 
       // ========================================================
-      // 11. FORGOT PASSWORD POPUP MODAL (RESET VIA OTP)
+      // 11. PROFILE SECURITY OTP ENGINE (DUAL-CHANNEL: WORKER + APPS SCRIPT)
+      // ========================================================
+      function getStudentFirstName() {
+        return userDoc.firstName || (userDoc.displayName ? userDoc.displayName.trim().split(" ")[0] : "") || (session.displayName ? session.displayName.trim().split(" ")[0] : "") || "Student";
+      }
+
+      async function sendProfileOtp(targetEmail, purpose) {
+        const studentName = getStudentFirstName();
+        const normTarget = (targetEmail || "").trim().toLowerCase();
+        let lastError = null;
+
+        // 1. Dual-Channel: Try Cloudflare Worker Endpoint
+        try {
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
+            const res = await MendorbitAPI.sendOtp(normTarget, purpose, studentName);
+            if (res && res.status === "success") {
+              return true;
+            }
+            if (res && res.message && !res.message.toLowerCase().includes("not found")) {
+              lastError = res.message;
+            }
+          }
+        } catch (e) {
+          console.warn("[Profile OTP] Worker dispatch note:", e);
+        }
+
+        // 2. Dual-Channel: Direct Google Apps Script Fallback
+        const appsScriptUrl = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAppsScriptUrl)
+          ? MendorbitBackend.getAppsScriptUrl()
+          : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+
+        if (appsScriptUrl && !appsScriptUrl.includes("YOUR_")) {
+          try {
+            const gasRes = await fetch(appsScriptUrl, {
+              method: "POST",
+              redirect: "follow",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: "sendOtp", email: normTarget, purpose: purpose, name: studentName })
+            });
+            const gasData = await gasRes.json();
+            if (gasData && gasData.status === "success") {
+              return true;
+            }
+            if (gasData && gasData.message) {
+              lastError = gasData.message;
+            }
+          } catch (err) {
+            console.warn("[Profile OTP] Apps Script fallback note:", err);
+          }
+        }
+
+        throw new Error(lastError || "Failed to send verification code. Please check your connection and try again.");
+      }
+
+      async function verifyProfileOtp(targetEmail, code, purpose) {
+        const normTarget = (targetEmail || "").trim().toLowerCase();
+        let lastError = null;
+
+        // 1. Dual-Channel: Try Cloudflare Worker
+        try {
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
+            const res = await MendorbitAPI.verifyOtp(normTarget, code, purpose);
+            if (res && res.status === "success") return true;
+            if (res && res.message && !res.message.toLowerCase().includes("not found")) {
+              lastError = res.message;
+            }
+          }
+        } catch (e) {
+          console.warn("[Profile OTP Verify] Worker verify note:", e);
+        }
+
+        // 2. Dual-Channel: Direct Google Apps Script Fallback
+        const appsScriptUrl = (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAppsScriptUrl)
+          ? MendorbitBackend.getAppsScriptUrl()
+          : "https://script.google.com/macros/s/AKfycby0v_XfpxlQWoDuGAlCvChokiBD6ZhQ9ijLk6B4yiSmup_duBZ4ERytZLMaz7JbOYlu2w/exec";
+
+        if (appsScriptUrl && !appsScriptUrl.includes("YOUR_")) {
+          try {
+            const gasRes = await fetch(appsScriptUrl, {
+              method: "POST",
+              redirect: "follow",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: "verifyOtp", email: normTarget, otp: code, purpose: purpose })
+            });
+            const gasData = await gasRes.json();
+            if (gasData && gasData.status === "success") return true;
+            if (gasData && gasData.message) lastError = gasData.message;
+          } catch (err) {
+            console.warn("[Profile OTP Verify] Apps Script note:", err);
+          }
+        }
+
+        throw new Error(lastError || "Invalid or expired verification code.");
+      }
+
+      // ========================================================
+      // 11b. FORGOT PASSWORD POPUP MODAL (RESET VIA OTP)
       // ========================================================
       const btnTriggerForgot = document.getElementById('btn-trigger-forgot-otp');
       const modalForgot = document.getElementById('modal-forgot-password-otp');
@@ -4588,16 +4687,14 @@
           if (window.lucide) lucide.createIcons();
 
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(email, "reset", firstName);
-            }
+            await sendProfileOtp(email, "reset");
             showToast(`Verification code sent to ${email}`, "success");
             btnSendForgotOtp.classList.add('hidden');
             if (forgotFields) forgotFields.classList.remove('hidden');
             startForgotOtpTimer(300);
             syncAllFields();
           } catch (e) {
-            showToast("Failed to send OTP. Please try again.", "error");
+            showToast(e.message || "Failed to send OTP. Please try again.", "error");
             btnSendForgotOtp.disabled = false;
             btnSendForgotOtp.innerHTML = `<span>Send Verification OTP</span>`;
           }
@@ -4638,15 +4735,13 @@
           btnResendForgotOtp.disabled = true;
           btnResendForgotOtp.textContent = "Sending...";
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(email, "reset", firstName);
-            }
+            await sendProfileOtp(email, "reset");
             showToast("New OTP sent successfully!", "success");
             startForgotOtpTimer(300);
             const otpInp = document.getElementById('input-forgot-otp-code');
             if (otpInp) { otpInp.value = ''; otpInp.focus(); }
           } catch(e) {
-            showToast("Failed to resend OTP.", "error");
+            showToast(e.message || "Failed to resend OTP.", "error");
           } finally {
             btnResendForgotOtp.disabled = false;
             btnResendForgotOtp.textContent = "Resend Code";
@@ -4679,12 +4774,7 @@
         if (window.lucide) lucide.createIcons();
 
         try {
-          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
-            const verifyRes = await MendorbitAPI.verifyOtp(email, otpCode, "reset");
-            if (verifyRes && verifyRes.status !== "success") {
-              throw new Error(verifyRes.message || "Invalid or expired OTP code.");
-            }
-          }
+          await verifyProfileOtp(email, otpCode, "reset");
 
           const cipherFn = (typeof MendorbitCipher !== 'undefined') ? (MendorbitCipher.encrypt2Digit || MendorbitCipher.encrypt) : null;
           const newEncrypted = cipherFn ? cipherFn(newPass) : newPass;
@@ -4758,16 +4848,14 @@
           if (window.lucide) lucide.createIcons();
 
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(email, "EMAIL_CHANGE_OLD", firstName);
-            }
+            await sendProfileOtp(email, "EMAIL_CHANGE_OLD");
             showToast(`Verification code sent to ${email}`, "success");
             btnSendStep1Otp.classList.add('hidden');
             if (step1OtpInputs) step1OtpInputs.classList.remove('hidden');
             startStep1Timer(300);
             syncAllFields();
           } catch (e) {
-            showToast("Failed to send verification code.", "error");
+            showToast(e.message || "Failed to send verification code.", "error");
             btnSendStep1Otp.disabled = false;
             btnSendStep1Otp.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send OTP to Current Email</span>`;
           }
@@ -4809,15 +4897,13 @@
           btnResendStep1Otp.disabled = true;
           btnResendStep1Otp.textContent = "Sending...";
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(email, "EMAIL_CHANGE_OLD", firstName);
-            }
+            await sendProfileOtp(email, "EMAIL_CHANGE_OLD");
             showToast("New OTP sent to current email!", "success");
             startStep1Timer(300);
             const otpInp = document.getElementById('input-step1-otp');
             if (otpInp) { otpInp.value = ''; otpInp.focus(); }
           } catch(e) {
-            showToast("Failed to resend code.", "error");
+            showToast(e.message || "Failed to resend code.", "error");
           } finally {
             btnResendStep1Otp.disabled = false;
             btnResendStep1Otp.textContent = "Resend Code";
@@ -4839,12 +4925,7 @@
           if (window.lucide) lucide.createIcons();
 
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
-              const res = await MendorbitAPI.verifyOtp(email, code, "EMAIL_CHANGE_OLD");
-              if (res && res.status !== "success") {
-                throw new Error(res.message || "Invalid or expired OTP code.");
-              }
-            }
+            await verifyProfileOtp(email, code, "EMAIL_CHANGE_OLD");
             verifiedOldOtp = code;
             showToast("Current email verified! Now enter your new email.", "success");
 
@@ -4898,9 +4979,7 @@
               }
             }
 
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(newEmail, "EMAIL_CHANGE_NEW", firstName);
-            }
+            await sendProfileOtp(newEmail, "EMAIL_CHANGE_NEW");
 
             verifiedNewEmail = newEmail;
             showToast(`Verification code sent to ${newEmail}`, "success");
@@ -4952,15 +5031,13 @@
           btnResendStep2Otp.disabled = true;
           btnResendStep2Otp.textContent = "Sending...";
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.sendOtp) {
-              await MendorbitAPI.sendOtp(verifiedNewEmail, "EMAIL_CHANGE_NEW", firstName);
-            }
+            await sendProfileOtp(verifiedNewEmail, "EMAIL_CHANGE_NEW");
             showToast("New OTP sent to new email!", "success");
             startStep2Timer(300);
             const otpInp = document.getElementById('input-step2-otp');
             if (otpInp) { otpInp.value = ''; otpInp.focus(); }
           } catch(e) {
-            showToast("Failed to resend code.", "error");
+            showToast(e.message || "Failed to resend code.", "error");
           } finally {
             btnResendStep2Otp.disabled = false;
             btnResendStep2Otp.textContent = "Resend Code";
@@ -4986,12 +5063,7 @@
           }
 
           try {
-            if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.verifyOtp) {
-              const res = await MendorbitAPI.verifyOtp(verifiedNewEmail, code, "EMAIL_CHANGE_NEW");
-              if (res && res.status !== "success") {
-                throw new Error(res.message || "Invalid or expired OTP for new email.");
-              }
-            }
+            await verifyProfileOtp(verifiedNewEmail, code, "EMAIL_CHANGE_NEW");
 
             if (typeof MendorbitBackend !== 'undefined' && MendorbitBackend.migrateUserEmail) {
               await MendorbitBackend.migrateUserEmail(email, verifiedNewEmail);

@@ -117,6 +117,10 @@
       displayName: user.displayName || user.name || "Student",
       class: user.class || "General",
       photoURL: user.photoURL || "",
+      hasCustomAvatar: !!user.hasCustomAvatar || !!user.photoURL,
+      isVerified: !!user.isVerified || !!user.kycCompleted,
+      kycCompleted: !!user.kycCompleted || !!user.isVerified,
+      phone: user.phone || "",
       sessionId: user.sessionId || localStorage.getItem("mendorbit_session_id") || ("sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8)),
       issuedAt: user.issuedAt || Date.now(),
       expiresAt: Date.now() + (SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000)
@@ -128,7 +132,12 @@
       } catch (e) {}
     }
 
-    const payloadString = JSON.stringify(sessionPayload);
+    // Strip oversized photoURL from cookie payload so cookie stays < 2KB (safe from browser 4096-byte limit)
+    const cookiePayload = {
+      ...sessionPayload,
+      photoURL: (sessionPayload.photoURL && sessionPayload.photoURL.length > 500) ? "" : (sessionPayload.photoURL || "")
+    };
+    const payloadString = JSON.stringify(cookiePayload);
     const signature = generateSignature(payloadString);
     const packagedToken = btoa(encodeURIComponent(payloadString)) + "." + signature;
 
@@ -205,6 +214,30 @@
     if (payload && payload.expiresAt && Date.now() > payload.expiresAt) {
       clearSession();
       return null;
+    }
+
+    // Hydrate cached custom avatar and verified status if omitted from lightweight cookie
+    if (payload && payload.email) {
+      const norm = payload.email.toLowerCase().trim();
+      try {
+        const cached = JSON.parse(localStorage.getItem("mendorbit_profile_" + norm) || "{}");
+        if (cached) {
+          if (cached.photoURL && !payload.photoURL) {
+            payload.photoURL = cached.photoURL;
+            payload.hasCustomAvatar = true;
+          }
+          if (cached.hasCustomAvatar) {
+            payload.hasCustomAvatar = true;
+          }
+          if (cached.isVerified || cached.kycCompleted) {
+            payload.isVerified = true;
+            payload.kycCompleted = true;
+          }
+          if (cached.phone && !payload.phone) {
+            payload.phone = cached.phone;
+          }
+        }
+      } catch (e) {}
     }
 
     return payload;

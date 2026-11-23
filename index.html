@@ -514,12 +514,22 @@
       const menuAvatarInit = document.getElementById('menu-avatar-initial');
       if (menuAvatarInit) menuAvatarInit.textContent = initialChar;
 
-      // Photo handling (if Google photo exists)
-      if (session.photoURL) {
+      // Photo & Avatar handling (session or local cache)
+      const normEmail = (email || '').toLowerCase().trim();
+      let photoURL = session.photoURL || '';
+      if (!photoURL) {
+        try {
+          const cached = JSON.parse(localStorage.getItem('mendorbit_profile_' + normEmail) || '{}');
+          if (cached && cached.photoURL) photoURL = cached.photoURL;
+        } catch(e) {}
+      }
+
+      function updateAvatarImages(url) {
+        if (!url) return;
         ['nav-avatar-img', 'menu-avatar-img'].forEach(id => {
           const img = document.getElementById(id);
           if (img) {
-            img.src = session.photoURL;
+            img.src = url;
             img.classList.remove('hidden');
           }
         });
@@ -527,6 +537,28 @@
           const init = document.getElementById(id);
           if (init) init.classList.add('hidden');
         });
+      }
+
+      if (photoURL) {
+        updateAvatarImages(photoURL);
+      }
+
+      // Non-blocking real-time remote fetch on index.html
+      if (normEmail && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
+        MendorbitBackend.getUserByEmail(normEmail).then(remoteDoc => {
+          if (remoteDoc && remoteDoc.photoURL && remoteDoc.photoURL !== photoURL) {
+            updateAvatarImages(remoteDoc.photoURL);
+            session.photoURL = remoteDoc.photoURL;
+            session.hasCustomAvatar = true;
+            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) {
+              MendorbitSSO.setSession(session);
+            }
+          }
+          if (remoteDoc && (remoteDoc.isVerified || remoteDoc.kycCompleted)) {
+            const badge = document.getElementById('nav-verified-badge');
+            if (badge) badge.classList.remove('hidden');
+          }
+        }).catch(() => {});
       }
 
       // ========================================================
