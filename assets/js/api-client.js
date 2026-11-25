@@ -29,6 +29,23 @@
     return workerBaseUrl;
   }
 
+  function getAuthHeaders() {
+    try {
+      if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.getSession) {
+        const sess = MendorbitSSO.getSession();
+        if (sess && sess.email) {
+          const token = btoa(unescape(encodeURIComponent(JSON.stringify({
+            email: sess.email,
+            uid: sess.uid || sess.email,
+            sessionId: sess.sessionId || ""
+          }))));
+          return { "Authorization": `Bearer ${token}` };
+        }
+      }
+    } catch (e) {}
+    return {};
+  }
+
   async function post(endpoint, payload, headers = {}) {
     const url = `${workerBaseUrl}${endpoint}`;
     const res = await fetch(url, {
@@ -36,6 +53,7 @@
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        ...getAuthHeaders(),
         ...headers
       },
       body: JSON.stringify(payload)
@@ -49,6 +67,7 @@
       method: "GET",
       credentials: "include",
       headers: {
+        ...getAuthHeaders(),
         ...headers
       }
     });

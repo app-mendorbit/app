@@ -311,69 +311,110 @@
   </main>
 
   <!-- ======================================================== -->
-  <!-- MODAL: CREATE BATCH                                      -->
+  <!-- MODAL: CREATE / EDIT BATCH (NO PREFILLED FAKE DATA)      -->
   <!-- ======================================================== -->
   <div id="modal-create-batch" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="font-extrabold text-lg text-white">Create New Batch</h3>
+        <h3 id="modal-batch-form-title" class="font-extrabold text-lg text-white">Create New Batch</h3>
         <button type="button" id="btn-close-create-batch" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form id="form-create-batch" class="space-y-4">
+        <input type="hidden" id="batch-edit-id" value="" />
+
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
-          <input type="text" id="batch-input-title" required placeholder="e.g. Class 10 Toppers Batch 2026-27" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
+          <input type="text" id="batch-input-title" required placeholder="e.g. Fighter Class 11 JEE 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">Target Class *</label>
-            <select id="batch-input-class" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500">
-              <option value="Class 10">Class 10 (Boards)</option>
-              <option value="Class 9">Class 9 (Foundation)</option>
-              <option value="Foundation">Olympiad & NTSE</option>
+            <input type="text" id="batch-input-class" list="admin-class-suggestions" required placeholder="e.g. Class 10, Class 11" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            <datalist id="admin-class-suggestions">
+              <option value="Class 9">
+              <option value="Class 10">
+              <option value="Class 11">
+              <option value="Class 12">
+              <option value="Foundation">
+              <option value="JEE">
+              <option value="NEET">
+            </datalist>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Board Tag</label>
+            <input type="text" id="batch-input-stream" placeholder="e.g. CBSE Board / JEE 2028" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Language *</label>
+            <select id="batch-input-language" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+              <option value="HINGLISH">HINGLISH</option>
+              <option value="ENGLISH">ENGLISH</option>
+              <option value="HINDI">HINDI</option>
             </select>
           </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Stream / Board</label>
-            <input type="text" id="batch-input-stream" value="CBSE" placeholder="e.g. CBSE / State Board" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
+            <label class="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
+            <input type="date" id="batch-input-startdate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹, 0 = Free)</label>
+            <input type="number" min="0" id="batch-input-price" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹, Optional)</label>
+            <input type="number" min="0" id="batch-input-original-price" placeholder="For discount % badge" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Subjects Covered (Comma-Separated) *</label>
-          <input type="text" id="batch-input-subjects" value="Physics, Chemistry, Mathematics, Biology" placeholder="Physics, Chemistry, Mathematics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">Schedule / Timings</label>
-            <input type="text" id="batch-input-schedule" value="Mon to Sat • 6:00 PM" placeholder="Mon to Sat • 6:00 PM" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
+            <input type="text" id="batch-input-schedule" placeholder="e.g. Mon to Sat • 6:00 PM" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Price (₹, 0 for Free)</label>
-            <input type="number" id="batch-input-price" value="0" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
+            <label class="block text-xs font-bold text-slate-300 mb-1">Top Badge Tag (Optional)</label>
+            <input type="text" id="batch-input-badge" placeholder="e.g. NEW, POPULAR, CRASH COURSE" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Image URL</label>
-          <input type="url" id="batch-input-thumb" value="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-500" />
+          <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner URL (Optional)</label>
+          <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Subjects (Comma-Separated)</label>
+            <input type="text" id="batch-input-subjects" placeholder="e.g. Physics, Chemistry, Mathematics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Faculty Names (Comma-Separated)</label>
+            <input type="text" id="batch-input-faculty" placeholder="e.g. Er. Aman Verma, Dr. Neha Sharma" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Batch Highlights (One per line, shown in View More)</label>
+          <textarea id="batch-input-features" rows="2" placeholder="Live Interactive Classes&#10;Handwritten PDF Notes&#10;Daily Practice Problems" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">Description</label>
-          <textarea id="batch-input-desc" rows="3" placeholder="Batch syllabus details, pedagogy, and goals..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-brand-500">Comprehensive syllabus preparation with daily live classes, handwritten notes, and DPPs.</textarea>
+          <textarea id="batch-input-desc" rows="3" placeholder="Enter batch syllabus, goals, and key details..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-3">
           <button type="button" id="btn-cancel-create-batch" class="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800 transition">
             Cancel
           </button>
-          <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white shadow-lg transition">
+          <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white shadow-lg transition">
             Publish Batch
           </button>
         </div>
@@ -598,42 +639,57 @@
           return;
         }
 
-        tbody.innerHTML = loadedBatches.map(b => `
-          <tr class="hover:bg-slate-800/40 transition">
-            <td class="py-3 px-4">
-              <div class="flex items-center gap-3">
-                <img src="${b.thumbnail}" alt="Thumbnail" class="w-10 h-10 rounded-xl object-cover border border-slate-700 flex-shrink-0" />
-                <div class="min-w-0">
-                  <div class="font-extrabold text-white text-xs truncate max-w-[200px]">${b.title}</div>
-                  <div class="text-[10px] text-slate-400 font-mono truncate max-w-[180px]">${b.id}</div>
+        tbody.innerHTML = loadedBatches.map(b => {
+          const thumbHtml = b.thumbnail
+            ? `<img src="${b.thumbnail}" alt="Thumbnail" class="w-12 h-9 rounded-xl object-cover border border-slate-700 flex-shrink-0" />`
+            : `<div class="w-12 h-9 rounded-xl bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-300 font-black text-xs flex-shrink-0">${(b.title || 'B').charAt(0).toUpperCase()}</div>`;
+          const priceLabel = Number(b.price) > 0
+            ? `₹${Number(b.price).toLocaleString('en-IN')}${Number(b.originalPrice) > Number(b.price) ? ` <span class="text-[10px] text-slate-500 line-through">₹${b.originalPrice}</span>` : ''}`
+            : 'FREE';
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4">
+                <div class="flex items-center gap-3">
+                  ${thumbHtml}
+                  <div class="min-w-0">
+                    <div class="font-extrabold text-white text-xs truncate max-w-[200px]">${b.title}</div>
+                    <div class="text-[10px] text-slate-400 flex items-center gap-1.5">
+                      <span>${b.language || 'HINGLISH'}</span>
+                      ${b.startDate ? `<span>• ${b.startDate}</span>` : ''}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="py-3 px-4">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-950 text-brand-300 border border-brand-800">
-                ${b.targetClass}
-              </span>
-            </td>
-            <td class="py-3 px-4 text-slate-400 text-[11px]">${b.schedule || 'Scheduled'}</td>
-            <td class="py-3 px-4 font-bold text-emerald-400">${b.totalEnrolled || 0} Students</td>
-            <td class="py-3 px-4 font-bold text-white">${b.price === 0 ? 'FREE' : '₹' + b.price}</td>
-            <td class="py-3 px-4 text-right">
-              <div class="flex items-center justify-end gap-1.5">
-                <button type="button" onclick="openCurriculumEditor('${b.id}')" class="px-2.5 py-1 bg-brand-600/30 hover:bg-brand-600 text-brand-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
-                  <i data-lucide="book-open" class="w-3 h-3"></i>
-                  <span>Curriculum</span>
-                </button>
-                <button type="button" onclick="openEnrollmentsViewer('${b.id}', '${b.title.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
-                  <i data-lucide="users" class="w-3 h-3"></i>
-                  <span>Students</span>
-                </button>
-                <button type="button" onclick="deleteBatch('${b.id}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `).join('');
+              </td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                  ${b.targetClass || 'All'}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-slate-400 text-[11px]">${b.schedule || b.stream || '-'}</td>
+              <td class="py-3 px-4 font-bold text-emerald-400">${b.totalEnrolled || 0} Students</td>
+              <td class="py-3 px-4 font-bold text-white">${priceLabel}</td>
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button type="button" onclick="openEditBatchModal('${b.id}')" class="px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                    <i data-lucide="pencil" class="w-3 h-3"></i>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="openCurriculumEditor('${b.id}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                    <i data-lucide="book-open" class="w-3 h-3"></i>
+                    <span>Content</span>
+                  </button>
+                  <button type="button" onclick="openEnrollmentsViewer('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                    <i data-lucide="users" class="w-3 h-3"></i>
+                    <span>Students</span>
+                  </button>
+                  <button type="button" onclick="deleteBatch('${b.id}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
 
         if (window.lucide) lucide.createIcons();
       }
@@ -641,9 +697,19 @@
       // Refresh Button
       document.getElementById('btn-refresh-batches').addEventListener('click', loadAdminBatches);
 
-      // Create Batch Modal
+      // Create / Edit Batch Modal Helpers
       const modalCreate = document.getElementById('modal-create-batch');
+      const batchForm = document.getElementById('form-create-batch');
+
+      function resetBatchForm() {
+        batchForm.reset();
+        document.getElementById('batch-edit-id').value = "";
+        document.getElementById('modal-batch-form-title').textContent = "Create New Batch";
+        document.getElementById('btn-submit-batch-form').textContent = "Publish Batch";
+      }
+
       document.getElementById('btn-open-create-batch').addEventListener('click', () => {
+        resetBatchForm();
         modalCreate.classList.remove('hidden');
       });
       document.getElementById('btn-close-create-batch').addEventListener('click', () => {
@@ -653,42 +719,95 @@
         modalCreate.classList.add('hidden');
       });
 
-      document.getElementById('form-create-batch').addEventListener('submit', async (e) => {
+      window.openEditBatchModal = function (batchId) {
+        const b = loadedBatches.find(x => x.id === batchId);
+        if (!b) return;
+        resetBatchForm();
+        document.getElementById('batch-edit-id').value = b.id;
+        document.getElementById('modal-batch-form-title').textContent = "Edit Batch";
+        document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
+
+        document.getElementById('batch-input-title').value = b.title || "";
+        document.getElementById('batch-input-class').value = b.targetClass || "";
+        document.getElementById('batch-input-stream').value = b.stream || "";
+        document.getElementById('batch-input-language').value = (b.language || "HINGLISH").toUpperCase();
+        document.getElementById('batch-input-startdate').value = b.startDate || "";
+        document.getElementById('batch-input-price').value = b.price !== undefined ? b.price : "";
+        document.getElementById('batch-input-original-price').value = b.originalPrice || "";
+        document.getElementById('batch-input-schedule').value = b.schedule || "";
+        document.getElementById('batch-input-badge').value = b.badgeText || "";
+        document.getElementById('batch-input-thumb').value = b.thumbnail || "";
+        document.getElementById('batch-input-subjects').value = Array.isArray(b.subjects) ? b.subjects.join(", ") : "";
+        document.getElementById('batch-input-faculty').value = Array.isArray(b.faculty)
+          ? b.faculty.map(f => typeof f === 'string' ? f : f.name).filter(Boolean).join(", ")
+          : "";
+        document.getElementById('batch-input-features').value = Array.isArray(b.features) ? b.features.join("\n") : "";
+        document.getElementById('batch-input-desc').value = b.description || "";
+
+        modalCreate.classList.remove('hidden');
+      };
+
+      batchForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const editId = document.getElementById('batch-edit-id').value.trim();
         const title = document.getElementById('batch-input-title').value.trim();
-        const targetClass = document.getElementById('batch-input-class').value;
+        const targetClass = document.getElementById('batch-input-class').value.trim();
         const stream = document.getElementById('batch-input-stream').value.trim();
-        const subjectsStr = document.getElementById('batch-input-subjects').value.trim();
+        const language = document.getElementById('batch-input-language').value;
+        const startDate = document.getElementById('batch-input-startdate').value.trim();
+        const priceVal = document.getElementById('batch-input-price').value;
+        const price = priceVal === "" ? 0 : (Number(priceVal) || 0);
+        const origVal = document.getElementById('batch-input-original-price').value;
+        const originalPrice = origVal === "" ? 0 : (Number(origVal) || 0);
         const schedule = document.getElementById('batch-input-schedule').value.trim();
-        const price = Number(document.getElementById('batch-input-price').value) || 0;
+        const badgeText = document.getElementById('batch-input-badge').value.trim();
         const thumbnail = document.getElementById('batch-input-thumb').value.trim();
+        const subjectsStr = document.getElementById('batch-input-subjects').value.trim();
+        const facultyStr = document.getElementById('batch-input-faculty').value.trim();
+        const featuresStr = document.getElementById('batch-input-features').value.trim();
         const desc = document.getElementById('batch-input-desc').value.trim();
 
-        const subjects = subjectsStr.split(',').map(s => s.trim()).filter(Boolean);
+        const subjects = subjectsStr ? subjectsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        const faculty = facultyStr ? facultyStr.split(',').map(f => ({ name: f.trim() })).filter(f => f.name) : [];
+        const features = featuresStr ? featuresStr.split('\n').map(f => f.trim()).filter(Boolean) : [];
 
-        const newBatchData = {
+        const batchPayload = {
           title,
           targetClass,
           stream,
-          subjects,
+          language,
+          startDate,
           schedule,
+          badgeText,
           price,
+          originalPrice,
           isFree: price === 0,
           thumbnail,
+          subjects,
+          faculty,
+          features,
           description: desc
         };
 
         try {
-          const res = await MendorbitAPI.adminCreateBatch(newBatchData, activeAdminKey);
+          let res;
+          if (editId) {
+            batchPayload.id = editId;
+            res = await MendorbitAPI.adminUpdateBatch(batchPayload, activeAdminKey);
+          } else {
+            res = await MendorbitAPI.adminCreateBatch(batchPayload, activeAdminKey);
+          }
+
           if (res && res.status === "success") {
-            alert("Batch published successfully!");
+            alert(editId ? "Batch updated successfully!" : "Batch published successfully!");
             modalCreate.classList.add('hidden');
+            resetBatchForm();
             loadAdminBatches();
           } else {
-            alert(res.message || "Failed to create batch.");
+            alert((res && res.message) || "Failed to save batch.");
           }
         } catch(err) {
-          alert("Error creating batch. Check server connection.");
+          alert("Error saving batch. Check server connection.");
         }
       });
 
@@ -865,16 +984,16 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1">Video Stream / Embed URL *</label>
-              <input type="url" id="item-lec-url" placeholder="https://www.youtube.com/embed/..." value="https://www.youtube.com/embed/dQw4w9WgXcQ" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              <input type="url" id="item-lec-url" placeholder="https://www.youtube.com/embed/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-xs font-bold text-slate-300 mb-1">Teacher</label>
-                <input type="text" id="item-lec-teacher" value="Er. Aman Verma" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+                <input type="text" id="item-lec-teacher" placeholder="Teacher name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-300 mb-1">Duration</label>
-                <input type="text" id="item-lec-dur" value="1 hr 15 mins" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+                <input type="text" id="item-lec-dur" placeholder="e.g. 1 hr 15 mins" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
               </div>
             </div>
           `;
@@ -887,16 +1006,16 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1">PDF Download URL *</label>
-              <input type="url" id="item-note-url" placeholder="https://..." value="https://mendorbit.in/sample-notes.pdf" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              <input type="url" id="item-note-url" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-xs font-bold text-slate-300 mb-1">File Size</label>
-                <input type="text" id="item-note-size" value="4.2 MB" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+                <input type="text" id="item-note-size" placeholder="e.g. 4.2 MB" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-300 mb-1">Page Count</label>
-                <input type="number" id="item-note-pages" value="18" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+                <input type="number" id="item-note-pages" placeholder="e.g. 18" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
               </div>
             </div>
           `;
@@ -909,11 +1028,11 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1">Questions Sheet PDF URL *</label>
-              <input type="url" id="item-dpp-url" placeholder="https://..." value="https://mendorbit.in/sample-dpp.pdf" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              <input type="url" id="item-dpp-url" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1">Total Questions</label>
-              <input type="number" id="item-dpp-count" value="15" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              <input type="number" id="item-dpp-count" placeholder="e.g. 15" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
             </div>
           `;
         }
