@@ -270,7 +270,7 @@
 
       const urlParams = new URLSearchParams(window.location.search);
       let infoToken = urlParams.get("info") || "";
-      const fallbackBatchId = urlParams.get("id") || "";
+      const fallbackBatchId = urlParams.get("id") || urlParams.get("batch") || "";
 
       let activeBatch = null;
       let pricingState = { originalPrice: 0, sellingPrice: 0, baseDiscount: 0, couponDiscount: 0, finalAmount: 0 };
@@ -318,7 +318,7 @@
         if (res.isEnrolled) {
           if (loader) loader.classList.add('hidden');
           document.getElementById('checkout-success-sub').textContent = `You are already enrolled in ${activeBatch.title}.`;
-          document.getElementById('btn-success-go-batch').href = `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
+          document.getElementById('btn-success-go-batch').href = activeBatch.viewMoreUrl || `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
           successBox.classList.remove('hidden');
           if (window.lucide) lucide.createIcons();
           return;
@@ -342,8 +342,9 @@
             : `<div class="w-full h-full bg-gradient-to-br from-slate-900 to-brand-900 flex items-center justify-center p-2 text-center text-white font-black text-xs">${escapeHtml(activeBatch.title)}</div>`;
         }
 
-        document.getElementById('cart-item-badge').textContent = activeBatch.badgeText || (activeBatch.targetClass || "Batch");
-        document.getElementById('cart-class-label').textContent = activeBatch.targetClass || "Mendorbit";
+        const tagLabel = activeBatch.displayTag || activeBatch.targetClass || "Batch";
+        document.getElementById('cart-item-badge').textContent = tagLabel;
+        document.getElementById('cart-class-label').textContent = tagLabel;
         document.getElementById('cart-lang-label').textContent = activeBatch.language || "HINGLISH";
         document.getElementById('cart-batch-title').textContent = activeBatch.title;
         document.getElementById('mini-item-title').textContent = activeBatch.title;
@@ -360,19 +361,13 @@
           : `<span class="text-lg font-black text-emerald-600">FREE</span>
              ${op > 0 ? `<span class="text-xs text-slate-400 line-through">₹${op.toLocaleString('en-IN')}</span>` : ''}`;
 
-        // Benefits list from real batch properties
+        // Benefits list from real batch card fields
         const benList = document.getElementById('cart-benefits-list');
         const items = [];
-        if (activeBatch.stream) items.push(activeBatch.stream);
-        if (activeBatch.schedule) items.push(activeBatch.schedule);
-        if (activeBatch.startDate) items.push(`Starts ${activeBatch.startDate}`);
-        if (activeBatch.endDate) items.push(`Valid till ${activeBatch.endDate}`);
-        if (Array.isArray(activeBatch.subjects) && activeBatch.subjects.length) {
-          items.push(`Subjects: ${activeBatch.subjects.join(", ")}`);
-        }
-        if (Array.isArray(activeBatch.features)) {
-          activeBatch.features.forEach(f => items.push(f));
-        }
+        if (tagLabel) items.push(`Program: ${tagLabel}`);
+        if (activeBatch.stream) items.push(`Target: ${activeBatch.stream}`);
+        if (activeBatch.language) items.push(`Language: ${activeBatch.language}`);
+        if (activeBatch.startDate) items.push(`Start Date: ${activeBatch.startDate}`);
 
         if (items.length > 0 && benList) {
           benList.innerHTML = items.map(it => `
@@ -496,7 +491,7 @@
             }
             mainView.classList.add('hidden');
             document.getElementById('checkout-success-sub').textContent = `You have successfully enrolled in ${activeBatch.title}.`;
-            document.getElementById('btn-success-go-batch').href = `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
+            document.getElementById('btn-success-go-batch').href = activeBatch.viewMoreUrl || `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
             successBox.classList.remove('hidden');
             if (window.lucide) lucide.createIcons();
           } else if (res && res.code === "PAYMENT_GATEWAY_PENDING") {

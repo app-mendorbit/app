@@ -462,18 +462,24 @@
 
       <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- LEFT: FORM INPUTS -->
+        <!-- LEFT: STREAMLINED FORM INPUTS (EXACT CARD FIELDS ONLY) -->
         <form id="form-create-batch" class="lg:col-span-7 space-y-4">
           <input type="hidden" id="batch-edit-id" value="" />
 
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
-            <input type="text" id="batch-input-title" required placeholder="e.g. Sankalp Class 10 Boards 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
+              <input type="text" id="batch-input-title" required placeholder="e.g. Arjuna JEE 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Display Class / Tag Label (Orange Text) *</label>
+              <input type="text" id="batch-input-displaytag" required placeholder="e.g. Class 10 Boards / SSC CGL" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
           </div>
 
-          <!-- Multi-select Target Audience (6 Classes Only) -->
+          <!-- Separate Audience Selector (For Filtering on Batches Page) -->
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1.5">Target Audience (Select One or Multiple Classes) *</label>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Target Audience Filter (Select 1 or More Classes for Batches Page) *</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="admin-audience-checkboxes">
               <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
                 <input type="checkbox" name="targetClasses" value="Class 9" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
@@ -502,62 +508,34 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Board Subtitle</label>
-              <input type="text" id="batch-input-stream" placeholder="e.g. CBSE Board / IBPS PO" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Target Line (Book Icon)</label>
+              <input type="text" id="batch-input-stream" placeholder="e.g. CBSE 2027 / IBPS PO 2026" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Language *</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Language Pill *</label>
               <select id="batch-input-language" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
                 <option value="HINGLISH">HINGLISH</option>
                 <option value="ENGLISH">ENGLISH</option>
                 <option value="HINDI">HINDI</option>
               </select>
             </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Learning Mode</label>
-              <select id="batch-input-mode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                <option value="Online Live">Online Live</option>
-                <option value="Recorded + Live">Recorded + Live</option>
-                <option value="Recorded">Recorded</option>
-              </select>
-            </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Status Prefix (Red Dot)</label>
+              <input type="text" id="batch-input-statuslabel" placeholder="e.g. Ongoing / Upcoming" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
               <input type="date" id="batch-input-startdate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Validity Till</label>
-              <input type="date" id="batch-input-enddate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹)</label>
-              <input type="number" min="0" id="batch-input-price" placeholder="0 = Free" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹)</label>
-              <input type="number" min="0" id="batch-input-original-price" placeholder="Optional" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Schedule / Timings</label>
-              <input type="text" id="batch-input-schedule" placeholder="e.g. Mon-Sat • 6:00 PM" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Top Badge Tag</label>
-              <input type="text" id="batch-input-badge" placeholder="e.g. NEW, POPULAR" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Status</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Visibility</label>
               <select id="batch-input-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="UPCOMING">UPCOMING</option>
+                <option value="ACTIVE">ACTIVE (Visible)</option>
                 <option value="ARCHIVED">ARCHIVED (Hidden)</option>
               </select>
             </div>
@@ -565,45 +543,24 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner URL (Optional)</label>
-              <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹, 0 = Free)</label>
+              <input type="number" min="0" id="batch-input-price" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Orientation Video URL (Optional)</label>
-              <input type="url" id="batch-input-demovideo" placeholder="https://www.youtube.com/embed/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Subjects (Comma-Separated)</label>
-              <input type="text" id="batch-input-subjects" placeholder="e.g. Maths, Reasoning, English" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Faculty Names (Comma-Separated)</label>
-              <input type="text" id="batch-input-faculty" placeholder="e.g. Er. Aman Verma, Dr. Neha" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹, For % OFF)</label>
+              <input type="number" min="0" id="batch-input-original-price" placeholder="Optional, e.g. 6000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Syllabus Brochure PDF URL (Optional)</label>
-            <input type="url" id="batch-input-syllabuspdf" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Highlights (One per line)</label>
-              <textarea id="batch-input-features" rows="3" placeholder="Live Interactive Classes&#10;Handwritten PDF Notes&#10;Mock Test Series" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">FAQs (Question | Answer per line)</label>
-              <textarea id="batch-input-faqs" rows="3" placeholder="Who can join? | Students preparing for exams&#10;Are notes included? | Yes, full PDF notes provided" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
-            </div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner Image URL</label>
+            <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Batch Description</label>
-            <textarea id="batch-input-desc" rows="3" placeholder="Full batch overview and preparation roadmap..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+            <label class="block text-xs font-bold text-slate-300 mb-1">View More Page URL (Custom Batch Info Link)</label>
+            <input type="url" id="batch-input-viewmore" placeholder="https://mendorbit.in/your-batch-page" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            <p class="text-[10px] text-slate-400 mt-1">Clicking &gt; (View More), Banner, or Title opens this URL directly.</p>
           </div>
 
           <div class="pt-2 flex items-center justify-end gap-3">
@@ -611,23 +568,33 @@
               Cancel
             </button>
             <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-extrabold text-white shadow-lg transition">
-              Publish Batch
+              Publish Batch &amp; Generate Payment Link
             </button>
           </div>
         </form>
 
-        <!-- RIGHT: LIVE STUDENT VIEW CARD PREVIEW (EXACT BATCHES.HTML LOOK) -->
-        <div class="lg:col-span-5 lg:sticky lg:top-0 space-y-3">
+        <!-- RIGHT: EXACT STUDENT CARD LIVE PREVIEW + GENERATED PAYMENT LINK -->
+        <div class="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
           <div class="flex items-center justify-between">
             <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
               <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-              <span>Live Student Card Preview</span>
+              <span>Exact Batch Card Preview</span>
             </span>
-            <span class="text-[10px] text-slate-400">Exact match to Batches page</span>
+            <span class="text-[10px] text-slate-400">Live match to Batches page</span>
           </div>
 
           <div id="admin-live-card-preview" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl text-slate-900">
             <!-- Rendered live on every input -->
+          </div>
+
+          <!-- Direct Payment / Enroll Link Box (shown when editing/created) -->
+          <div id="admin-modal-enroll-link-box" class="hidden p-4 rounded-2xl bg-emerald-950/40 border border-emerald-700/60 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider">Direct Payment / Enroll Button Link</span>
+              <button type="button" id="btn-copy-modal-enroll-link" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold">Copy Link</button>
+            </div>
+            <input type="text" id="admin-modal-enroll-link-input" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-emerald-300 outline-none" />
+            <p class="text-[10px] text-slate-400">Paste this URL into your View More page's Enroll / Buy Now button.</p>
           </div>
         </div>
 
@@ -870,6 +837,22 @@
         ).join('');
       }
 
+      function getBatchPaymentLink(b) {
+        const base = window.location.origin;
+        if (b && b.enrollToken) {
+          return `${base}/payment.html?info=${encodeURIComponent(b.enrollToken)}`;
+        }
+        return `${base}/payment.html?id=${encodeURIComponent(b.id)}`;
+      }
+
+      window.copyBatchPaymentLink = function (batchId) {
+        const b = loadedBatches.find(x => x.id === batchId);
+        if (!b) return;
+        const link = getBatchPaymentLink(b);
+        navigator.clipboard.writeText(link);
+        alert("Direct Payment / Enroll Link copied!\n\n" + link);
+      };
+
       function renderAdminBatches() {
         const tbody = document.getElementById('admin-batches-tbody');
         if (!tbody) return;
@@ -892,6 +875,7 @@
           const audienceBadges = classesList.map(c =>
             `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">${c}</span>`
           ).join(' ');
+          const viewMoreHref = b.viewMoreUrl || `batch-detail.html?id=${encodeURIComponent(b.id)}`;
 
           return `
             <tr class="hover:bg-slate-800/40 transition">
@@ -900,11 +884,7 @@
                   ${thumbHtml}
                   <div class="min-w-0">
                     <div class="font-extrabold text-white text-xs truncate max-w-[200px]">${b.title}</div>
-                    <div class="text-[10px] text-slate-400 flex items-center gap-1.5">
-                      <span>${b.language || 'HINGLISH'}</span>
-                      ${b.startDate ? `<span>• ${b.startDate}</span>` : ''}
-                      ${b.status && b.status !== 'ACTIVE' ? `<span class="text-amber-400 font-bold">• ${b.status}</span>` : ''}
-                    </div>
+                    <div class="text-[10px] text-orange-400 font-bold">${b.displayTag || b.targetClass || ''} • <span class="text-slate-400">${b.language || 'HINGLISH'}</span></div>
                   </div>
                 </div>
               </td>
@@ -912,16 +892,19 @@
                 <div class="flex flex-wrap gap-1 max-w-[180px]">${audienceBadges || '<span class="text-slate-500">-</span>'}</div>
               </td>
               <td class="py-3 px-4 text-slate-400 text-[11px]">
-                <div>${b.schedule || b.stream || '-'}</div>
-                ${b.endDate ? `<div class="text-[10px] text-slate-500">Valid till ${b.endDate}</div>` : ''}
+                <div>${b.stream || '-'}</div>
+                ${b.startDate ? `<div class="text-[10px] text-rose-400">${b.statusLabel || 'Ongoing'} • ${b.startDate}</div>` : ''}
               </td>
               <td class="py-3 px-4 font-bold text-emerald-400">${b.totalEnrolled || 0} Students</td>
               <td class="py-3 px-4 font-bold text-white">${priceLabel}</td>
               <td class="py-3 px-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
-                  <a href="batch-detail.html?id=${encodeURIComponent(b.id)}" target="_blank" title="Preview Live Batch Page" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                  <button type="button" onclick="copyBatchPaymentLink('${b.id}')" title="Copy Direct Payment Link for View More Enroll Button" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                    <i data-lucide="link" class="w-3 h-3"></i>
+                    <span>Enroll Link</span>
+                  </button>
+                  <a href="${viewMoreHref}" target="_blank" title="Open View More Page" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
                     <i data-lucide="external-link" class="w-3 h-3"></i>
-                    <span>Preview</span>
                   </a>
                   <button type="button" onclick="openEditBatchModal('${b.id}')" class="px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
@@ -929,7 +912,6 @@
                   </button>
                   <button type="button" onclick="openEnrollmentsViewer('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
                     <i data-lucide="users" class="w-3 h-3"></i>
-                    <span>Students</span>
                   </button>
                   <button type="button" onclick="deleteBatch('${b.id}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -951,15 +933,17 @@
         return Array.from(document.querySelectorAll('.audience-cb:checked')).map(cb => cb.value);
       }
 
-      function formatPreviewDate(dateStr) {
-        if (!dateStr) return "";
+      function formatPreviewDate(dateStr, statusLabel) {
+        if (!dateStr) return statusLabel || "";
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
+        if (isNaN(d.getTime())) return `${statusLabel ? statusLabel + ' | ' : ''}${dateStr}`;
         const day = d.getDate();
         const suffix = (day % 10 === 1 && day !== 11) ? "st" : (day % 10 === 2 && day !== 12) ? "nd" : (day % 10 === 3 && day !== 13) ? "rd" : "th";
         const month = d.toLocaleString("en-US", { month: "short" });
         const yr = String(d.getFullYear()).slice(-2);
-        return `Starts on ${day}${suffix} ${month} '${yr}`;
+        const isPast = d.getTime() <= Date.now();
+        const prefix = isPast ? "Started on" : "Starts on";
+        return `${statusLabel ? statusLabel + ' | ' : ''}${prefix} ${day}${suffix} ${month}'${yr}`;
       }
 
       function escapeHtmlAdmin(str) {
@@ -974,14 +958,12 @@
         const container = document.getElementById('admin-live-card-preview');
         if (!container) return;
 
-        const title = document.getElementById('batch-input-title').value.trim() || "Batch Title Preview";
-        const classes = getSelectedAudienceClasses();
-        const audienceText = classes.length ? classes.join(" • ") : "Select Audience";
+        const title = document.getElementById('batch-input-title').value.trim() || "Batch Title";
+        const displayTag = document.getElementById('batch-input-displaytag').value.trim() || (getSelectedAudienceClasses()[0] || "Class / Tag");
         const stream = document.getElementById('batch-input-stream').value.trim();
         const lang = document.getElementById('batch-input-language').value || "HINGLISH";
+        const statusLabel = document.getElementById('batch-input-statuslabel').value.trim() || "Ongoing";
         const startDate = document.getElementById('batch-input-startdate').value.trim();
-        const schedule = document.getElementById('batch-input-schedule').value.trim();
-        const badgeText = document.getElementById('batch-input-badge').value.trim();
         const thumb = document.getElementById('batch-input-thumb').value.trim();
         const priceVal = document.getElementById('batch-input-price').value;
         const price = priceVal === "" ? 0 : (Number(priceVal) || 0);
@@ -992,7 +974,7 @@
         const bannerHtml = thumb
           ? `<img src="${escapeHtmlAdmin(thumb)}" alt="Banner" class="w-full h-full object-cover" />`
           : `<div class="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900 flex flex-col items-center justify-center p-5 text-center">
-               <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">${escapeHtmlAdmin(audienceText)}</span>
+               <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">${escapeHtmlAdmin(displayTag)}</span>
                <div class="text-white font-black text-base leading-snug line-clamp-2">${escapeHtmlAdmin(title)}</div>
              </div>`;
 
@@ -1012,29 +994,25 @@
                ${orig > 0 ? `<div class="text-[11px] font-extrabold text-emerald-600">100% OFF</div>` : '<div class="text-[11px] font-semibold text-slate-400">Free Enrollment</div>'}
              </div>`;
 
-        const metaLine1 = stream || "Exam / Board Info";
-        const metaLine2 = startDate ? formatPreviewDate(startDate) : (schedule || "Schedule / Start Date");
+        const dateDisplay = formatPreviewDate(startDate, statusLabel);
 
         container.innerHTML = `
-          <div>
-            <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+          <div class="p-3 pb-0">
+            <div class="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-100">
               ${bannerHtml}
-              ${badgeText ? `<div class="absolute top-3 left-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 shadow uppercase">${escapeHtmlAdmin(badgeText)}</span></div>` : ''}
-            </div>
-            <div class="p-4 sm:p-5">
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <span class="text-xs font-extrabold text-orange-600 truncate">${escapeHtmlAdmin(audienceText)}</span>
-                <span class="px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[10px] font-extrabold uppercase text-slate-600 flex-shrink-0">${escapeHtmlAdmin(lang)}</span>
-              </div>
-              <h3 class="text-base font-extrabold text-slate-900 line-clamp-1">${escapeHtmlAdmin(title)}</h3>
-              <div class="mt-2.5 space-y-1.5 text-xs text-slate-500">
-                <div class="flex items-center gap-2"><i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-400"></i><span class="truncate font-medium">${escapeHtmlAdmin(metaLine1)}</span></div>
-                <div class="flex items-center gap-2"><i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i><span class="truncate font-medium">${escapeHtmlAdmin(metaLine2)}</span></div>
-              </div>
             </div>
           </div>
-          <div class="px-4 sm:px-5 pb-4 sm:pb-5">
-            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div class="p-4">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-extrabold text-orange-600 truncate">${escapeHtmlAdmin(displayTag)}</span>
+              <span class="px-2.5 py-0.5 rounded-md border border-slate-300 bg-white text-[10px] font-extrabold uppercase text-slate-700 flex-shrink-0">${escapeHtmlAdmin(lang)}</span>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900 line-clamp-1">${escapeHtmlAdmin(title)}</h3>
+            <div class="mt-2 space-y-1.5 text-xs text-slate-600">
+              ${stream ? `<div class="flex items-center gap-2"><i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-500"></i><span class="truncate font-medium">${escapeHtmlAdmin(stream)}</span></div>` : ''}
+              ${dateDisplay ? `<div class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span></span><span class="truncate font-medium">${escapeHtmlAdmin(dateDisplay)}</span></div>` : ''}
+            </div>
+            <div class="pt-3.5 mt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
               ${priceHtml}
               <div class="flex items-center gap-2 flex-shrink-0">
                 <span class="px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs">${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
@@ -1046,20 +1024,27 @@
         if (window.lucide) lucide.createIcons();
       }
 
-      // Attach live listeners to all batch form inputs
       document.getElementById('form-create-batch').addEventListener('input', updateBatchLivePreview);
       document.getElementById('form-create-batch').addEventListener('change', updateBatchLivePreview);
 
-      // Create / Edit Batch Modal Helpers
       const modalCreate = document.getElementById('modal-create-batch');
       const batchForm = document.getElementById('form-create-batch');
+      const modalEnrollBox = document.getElementById('admin-modal-enroll-link-box');
+      const modalEnrollInput = document.getElementById('admin-modal-enroll-link-input');
+
+      document.getElementById('btn-copy-modal-enroll-link').addEventListener('click', () => {
+        if (!modalEnrollInput.value) return;
+        navigator.clipboard.writeText(modalEnrollInput.value);
+        alert("Direct Payment / Enroll link copied!");
+      });
 
       function resetBatchForm() {
         batchForm.reset();
         document.getElementById('batch-edit-id').value = "";
         document.querySelectorAll('.audience-cb').forEach(cb => cb.checked = false);
         document.getElementById('modal-batch-form-title').textContent = "Create New Batch";
-        document.getElementById('btn-submit-batch-form').textContent = "Publish Batch";
+        document.getElementById('btn-submit-batch-form').textContent = "Publish Batch & Generate Payment Link";
+        if (modalEnrollBox) modalEnrollBox.classList.add('hidden');
         updateBatchLivePreview();
       }
 
@@ -1083,6 +1068,7 @@
         document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
 
         document.getElementById('batch-input-title').value = b.title || "";
+        document.getElementById('batch-input-displaytag').value = b.displayTag || b.targetClass || "";
         const targetArr = Array.isArray(b.targetClasses) && b.targetClasses.length
           ? b.targetClasses
           : (b.targetClass ? b.targetClass.split(',').map(s => s.trim()) : []);
@@ -1092,26 +1078,18 @@
 
         document.getElementById('batch-input-stream').value = b.stream || "";
         document.getElementById('batch-input-language').value = (b.language || "HINGLISH").toUpperCase();
-        document.getElementById('batch-input-mode').value = b.mode || "Online Live";
+        document.getElementById('batch-input-statuslabel').value = b.statusLabel || "Ongoing";
         document.getElementById('batch-input-startdate').value = b.startDate || "";
-        document.getElementById('batch-input-enddate').value = b.endDate || "";
+        document.getElementById('batch-input-status').value = b.status || "ACTIVE";
         document.getElementById('batch-input-price').value = b.price !== undefined ? b.price : "";
         document.getElementById('batch-input-original-price').value = b.originalPrice || "";
-        document.getElementById('batch-input-schedule').value = b.schedule || "";
-        document.getElementById('batch-input-badge').value = b.badgeText || "";
-        document.getElementById('batch-input-status').value = b.status || "ACTIVE";
         document.getElementById('batch-input-thumb').value = b.thumbnail || "";
-        document.getElementById('batch-input-demovideo').value = b.demoVideoUrl || "";
-        document.getElementById('batch-input-syllabuspdf').value = b.syllabusPdfUrl || "";
-        document.getElementById('batch-input-subjects').value = Array.isArray(b.subjects) ? b.subjects.join(", ") : "";
-        document.getElementById('batch-input-faculty').value = Array.isArray(b.faculty)
-          ? b.faculty.map(f => typeof f === 'string' ? f : f.name).filter(Boolean).join(", ")
-          : "";
-        document.getElementById('batch-input-features').value = Array.isArray(b.features) ? b.features.join("\n") : "";
-        document.getElementById('batch-input-faqs').value = Array.isArray(b.faqs)
-          ? b.faqs.map(x => `${x.q} | ${x.a}`).join("\n")
-          : "";
-        document.getElementById('batch-input-desc').value = b.description || "";
+        document.getElementById('batch-input-viewmore').value = b.viewMoreUrl || "";
+
+        if (modalEnrollBox && modalEnrollInput) {
+          modalEnrollInput.value = getBatchPaymentLink(b);
+          modalEnrollBox.classList.remove('hidden');
+        }
 
         updateBatchLivePreview();
         modalCreate.classList.remove('hidden');
@@ -1121,6 +1099,7 @@
         e.preventDefault();
         const editId = document.getElementById('batch-edit-id').value.trim();
         const title = document.getElementById('batch-input-title').value.trim();
+        const displayTag = document.getElementById('batch-input-displaytag').value.trim();
         const targetClasses = getSelectedAudienceClasses();
         if (targetClasses.length === 0) {
           alert("Please select at least 1 Target Audience class (Class 9, Class 10, Banking, Law, SSC CGL, or SSC CHSL).");
@@ -1129,57 +1108,31 @@
 
         const stream = document.getElementById('batch-input-stream').value.trim();
         const language = document.getElementById('batch-input-language').value;
-        const mode = document.getElementById('batch-input-mode').value;
+        const statusLabel = document.getElementById('batch-input-statuslabel').value.trim() || "Ongoing";
         const startDate = document.getElementById('batch-input-startdate').value.trim();
-        const endDate = document.getElementById('batch-input-enddate').value.trim();
+        const status = document.getElementById('batch-input-status').value;
         const priceVal = document.getElementById('batch-input-price').value;
         const price = priceVal === "" ? 0 : (Number(priceVal) || 0);
         const origVal = document.getElementById('batch-input-original-price').value;
         const originalPrice = origVal === "" ? 0 : (Number(origVal) || 0);
-        const schedule = document.getElementById('batch-input-schedule').value.trim();
-        const badgeText = document.getElementById('batch-input-badge').value.trim();
-        const status = document.getElementById('batch-input-status').value;
         const thumbnail = document.getElementById('batch-input-thumb').value.trim();
-        const demoVideoUrl = document.getElementById('batch-input-demovideo').value.trim();
-        const syllabusPdfUrl = document.getElementById('batch-input-syllabuspdf').value.trim();
-        const subjectsStr = document.getElementById('batch-input-subjects').value.trim();
-        const facultyStr = document.getElementById('batch-input-faculty').value.trim();
-        const featuresStr = document.getElementById('batch-input-features').value.trim();
-        const faqsStr = document.getElementById('batch-input-faqs').value.trim();
-        const desc = document.getElementById('batch-input-desc').value.trim();
-
-        const subjects = subjectsStr ? subjectsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
-        const faculty = facultyStr ? facultyStr.split(',').map(f => ({ name: f.trim() })).filter(f => f.name) : [];
-        const features = featuresStr ? featuresStr.split('\n').map(f => f.trim()).filter(Boolean) : [];
-        const faqs = faqsStr ? faqsStr.split('\n').map(line => {
-          const [q, ...rest] = line.split('|');
-          const a = rest.join('|').trim();
-          return (q && q.trim() && a) ? { q: q.trim(), a } : null;
-        }).filter(Boolean) : [];
+        const viewMoreUrl = document.getElementById('batch-input-viewmore').value.trim();
 
         const batchPayload = {
           title,
+          displayTag,
           targetClasses,
           targetClass: targetClasses.join(", "),
           stream,
           language,
-          mode,
+          statusLabel,
           startDate,
-          endDate,
-          schedule,
-          badgeText,
           status,
           price,
           originalPrice,
           isFree: price === 0,
           thumbnail,
-          demoVideoUrl,
-          syllabusPdfUrl,
-          subjects,
-          faculty,
-          features,
-          faqs,
-          description: desc
+          viewMoreUrl
         };
 
         try {
@@ -1192,9 +1145,22 @@
           }
 
           if (res && res.status === "success") {
-            alert(editId ? "Batch updated successfully!" : "Batch published successfully!");
-            modalCreate.classList.add('hidden');
-            resetBatchForm();
+            const savedId = editId || (res.batch && res.batch.id) || "";
+            const savedToken = (res.batch && res.batch.enrollToken) || res.enrollToken || "";
+            const genLink = savedToken
+              ? `${window.location.origin}/payment.html?info=${encodeURIComponent(savedToken)}`
+              : `${window.location.origin}/payment.html?id=${encodeURIComponent(savedId)}`;
+
+            if (modalEnrollBox && modalEnrollInput) {
+              modalEnrollInput.value = genLink;
+              modalEnrollBox.classList.remove('hidden');
+            }
+            if (!editId) {
+              document.getElementById('batch-edit-id').value = savedId;
+              document.getElementById('modal-batch-form-title').textContent = "Batch Published! Copy Enroll Link Below";
+              document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
+            }
+            alert((editId ? "Batch updated!" : "Batch published!") + "\n\nDirect Enroll / Payment Link:\n" + genLink);
             loadAdminBatches();
           } else {
             alert((res && res.message) || "Failed to save batch.");
