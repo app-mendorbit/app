@@ -86,7 +86,27 @@
     authorizeQrSession: async (sessionId, user, authorizedBy) => post("/api/qr/authorize", { sessionId, user, authorizedBy }),
     pollQrSession: async (sessionId) => get("/api/qr/poll?session=" + encodeURIComponent(sessionId)),
 
-    // Admin
+    // EdTech Batches & Classroom Content
+    getBatches: async (targetClass, email) => {
+      let q = [];
+      if (targetClass && targetClass !== "all") q.push("class=" + encodeURIComponent(targetClass));
+      if (email) q.push("email=" + encodeURIComponent(email));
+      return get("/api/batches/list" + (q.length ? ("?" + q.join("&")) : ""));
+    },
+    getBatchDetail: async (batchId, email) => get("/api/batches/detail?id=" + encodeURIComponent(batchId) + (email ? ("&email=" + encodeURIComponent(email)) : "")),
+    enrollBatch: async (batchId, email) => post("/api/batches/enroll", { batchId, email }),
+    getBatchContent: async (batchId, email) => get("/api/batches/content?id=" + encodeURIComponent(batchId) + (email ? ("&email=" + encodeURIComponent(email)) : "")),
+    saveLectureProgress: async (batchId, lectureId, email) => post("/api/batches/progress", { batchId, lectureId, email }),
+
+    // Admin Batch & Curriculum Studio
+    adminGetBatches: async (adminKey) => get("/api/admin/batches/all", { "X-Admin-Key": adminKey }),
+    adminCreateBatch: async (batchData, adminKey) => post("/api/admin/batches/create", batchData, { "X-Admin-Key": adminKey }),
+    adminUpdateBatch: async (batchData, adminKey) => post("/api/admin/batches/update", batchData, { "X-Admin-Key": adminKey }),
+    adminDeleteBatch: async (batchId, adminKey) => post("/api/admin/batches/delete", { id: batchId }, { "X-Admin-Key": adminKey }),
+    adminUpdateCurriculum: async (batchId, subjects, adminKey) => post("/api/admin/batches/content/update", { batchId, subjects }, { "X-Admin-Key": adminKey }),
+    adminGetEnrollments: async (batchId, adminKey) => get("/api/admin/batches/enrollments" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : ""), { "X-Admin-Key": adminKey }),
+
+    // Admin Security & Cipher
     adminDecrypt: async (ciphertext, adminKey) => post("/api/admin/decrypt", { ciphertext }, { "X-Admin-Key": adminKey }),
     adminGetUsers: async (adminKey) => get("/api/admin/users", { "X-Admin-Key": adminKey }),
     adminGetOtpStats: async (adminKey) => {

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batches & Programs | Mendorbit</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Immediate Theme Preference Check -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            accent: {
+              orange: '#ff6600',
+              coral: '#ff3838',
+              emerald: '#10b981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .gradient-orange {
+      background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-glass {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .dark .nav-glass {
+      background: rgba(11, 15, 25, 0.88);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .apple-theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 52px;
+      height: 28px;
+      border-radius: 9999px;
+      padding: 2px;
+      cursor: pointer;
+      background-color: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+    }
+    .dark .apple-theme-toggle {
+      background-color: #1e293b;
+      border-color: #334155;
+    }
+    .apple-theme-thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 9999px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transform: translateX(0);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    }
+    .dark .apple-theme-thumb {
+      transform: translateX(24px);
+      background-color: #0f172a;
+    }
+
+    .batch-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .batch-card:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ======================================================== -->
+  <!-- NAVBAR: IDENTICAL TO MENDORBIT DASHBOARD & PROFILE       -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/80 nav-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group focus:outline-none">
+        <div class="relative w-9 h-9 sm:w-11 sm:h-11 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+          <img src="logo.png" alt="Mendorbit Logo" class="w-full h-full object-contain" />
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl sm:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white">
+            Mendorbit
+          </span>
+          <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-extrabold text-slate-400 dark:text-slate-500 mt-0.5">
+            Orbit of Knowledge
+          </span>
+        </div>
+      </a>
+
+      <!-- Center Links (Desktop) -->
+      <nav class="hidden md:flex items-center gap-7 text-sm font-bold text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Dashboard</a>
+        <a href="batches.html" class="text-brand-600 dark:text-brand-400 font-extrabold flex items-center gap-1.5">
+          <span>Batches</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+        </a>
+        <a href="https://mendorbit.in/notes.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Notes</a>
+        <a href="https://mendorbit.in/contact" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
+      </nav>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        
+        <!-- Apple-Style Theme Toggle -->
+        <button id="theme-toggle" type="button" class="apple-theme-toggle" aria-label="Toggle Dark Mode">
+          <div class="apple-theme-thumb">
+            <i id="theme-icon" data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+          </div>
+        </button>
+
+        <!-- User Profile Pill or Login Button -->
+        <div id="nav-auth-container" class="flex items-center">
+          <a id="btn-nav-login" href="login.html" class="hidden px-4 py-2 bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 text-white font-bold text-xs rounded-full shadow-md transition">
+            Student Login
+          </a>
+
+          <div id="nav-user-widget" class="relative hidden">
+            <button id="nav-user-btn" type="button" class="flex items-center gap-2 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:border-brand-500 transition">
+              <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
+                <span id="nav-avatar-initial">S</span>
+                <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
+              </div>
+              <div class="text-left hidden sm:block">
+                <div class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[100px] truncate" id="nav-user-name">Student</div>
+                <div class="text-[10px] text-brand-600 font-extrabold uppercase" id="nav-user-class">Class 10</div>
+              </div>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            </button>
+
+            <!-- Dropdown -->
+            <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-2 hidden z-50">
+              <a href="index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-600"></i>
+                <span>Dashboard</span>
+              </a>
+              <a href="profile.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i data-lucide="user" class="w-4 h-4 text-emerald-500"></i>
+                <span>Profile & KYC</span>
+              </a>
+              <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+              <button id="nav-btn-logout" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition text-left">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- HERO BANNER: EDTECH BATCHES DISCOVERY                   -->
+  <!-- ======================================================== -->
+  <section class="bg-gradient-to-b from-brand-50/60 via-white to-slate-50 dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800 py-10 sm:py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 font-bold text-xs mb-4">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+        <span>Academic Year 2026-27 Enrollment Open</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight max-w-3xl mx-auto leading-tight">
+        Master Your Syllabus with <span class="gradient-orange">Live Interactive Batches</span>
+      </h1>
+      
+      <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-4 max-w-2xl mx-auto leading-relaxed">
+        Full syllabus coverage, chapter-wise handwritten master notes, and Daily Practice Problems (DPP) with step-by-step video solutions.
+      </p>
+
+      <!-- Student Target Class Personalized Tag -->
+      <div id="personalized-class-banner" class="mt-5 hidden">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span>Curated specifically for your profile: <strong id="student-curated-class">Class 10</strong></span>
+        </span>
+      </div>
+
+      <!-- Class Filters Pill Bar -->
+      <div class="mt-8 flex items-center justify-center gap-2 sm:gap-3 flex-wrap" id="class-filter-container">
+        <button type="button" data-class="all" class="class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-brand-600 text-white shadow-md shadow-brand-600/25 transition">
+          All Batches
+        </button>
+        <button type="button" data-class="Class 10" class="class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition">
+          Class 10 (Boards)
+        </button>
+        <button type="button" data-class="Class 9" class="class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition">
+          Class 9 (Foundation)
+        </button>
+        <button type="button" data-class="Foundation" class="class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition">
+          Olympiad & NTSE
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======================================================== -->
+  <!-- MAIN BATCH CATALOG GRID                                  -->
+  <!-- ======================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 flex-1 w-full">
+    
+    <!-- Section Header & Real-time Search -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white" id="batch-grid-title">Available Programs</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Enroll now to unlock live classroom access, lecture recordings, notes & DPPs</p>
+      </div>
+
+      <!-- Search Input -->
+      <div class="relative w-full sm:w-72">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input type="text" id="batch-search-input" placeholder="Search by batch, subject, faculty..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 shadow-sm" />
+      </div>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div id="batches-loader" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 animate-pulse space-y-4">
+        <div class="w-full h-44 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+        <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+        <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 animate-pulse space-y-4">
+        <div class="w-full h-44 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+        <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+        <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 animate-pulse space-y-4">
+        <div class="w-full h-44 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+        <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+        <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+      </div>
+    </div>
+
+    <!-- Batches Cards Container -->
+    <div id="batches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 hidden">
+      <!-- Injected dynamically via JS -->
+    </div>
+
+    <!-- No Batches Empty State -->
+    <div id="batches-empty" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-md mx-auto">
+      <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="book-open" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white">No Batches Found</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Try switching class filters or search terms.</p>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: BATCH DETAILS SYLLABUS & ENROLL DRAWER             -->
+  <!-- ======================================================== -->
+  <div id="modal-batch-details" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-200">
+      
+      <!-- Close Button -->
+      <button type="button" id="btn-close-details-modal" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Content Placeholder -->
+      <div id="modal-details-content">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/api-client.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      if (window.lucide) lucide.createIcons();
+
+      // State
+      let allBatches = [];
+      let activeClassFilter = "all";
+      let userSession = null;
+
+      if (typeof MendorbitSSO !== 'undefined') {
+        userSession = MendorbitSSO.getSession();
+      }
+
+      // Initialize User Navbar
+      const navLogin = document.getElementById('btn-nav-login');
+      const navWidget = document.getElementById('nav-user-widget');
+      const navUserName = document.getElementById('nav-user-name');
+      const navUserClass = document.getElementById('nav-user-class');
+      const navAvatarInit = document.getElementById('nav-avatar-initial');
+      const navAvatarImg = document.getElementById('nav-avatar-img');
+      const classBanner = document.getElementById('personalized-class-banner');
+      const studentClassEl = document.getElementById('student-curated-class');
+
+      if (userSession && userSession.email) {
+        if (navLogin) navLogin.classList.add('hidden');
+        if (navWidget) navWidget.classList.remove('hidden');
+        if (navUserName) navUserName.textContent = userSession.displayName || "Student";
+        const stClass = userSession.class || "Class 10";
+        if (navUserClass) navUserClass.textContent = stClass;
+        if (navAvatarInit) navAvatarInit.textContent = (userSession.displayName || "S").charAt(0).toUpperCase();
+        if (userSession.photoURL && navAvatarImg) {
+          navAvatarImg.src = userSession.photoURL;
+          navAvatarImg.classList.remove('hidden');
+          if (navAvatarInit) navAvatarInit.classList.add('hidden');
+        }
+
+        // Auto-highlight student's registered class
+        if (classBanner && studentClassEl) {
+          studentClassEl.textContent = stClass;
+          classBanner.classList.remove('hidden');
+        }
+
+        // Set initial filter to student's class if matching
+        if (stClass === "Class 10" || stClass === "Class 9" || stClass.includes("Foundation")) {
+          activeClassFilter = stClass;
+          updateFilterPills(activeClassFilter);
+        }
+      } else {
+        if (navLogin) navLogin.classList.remove('hidden');
+        if (navWidget) navWidget.classList.add('hidden');
+      }
+
+      // Nav User Dropdown toggle
+      const userBtn = document.getElementById('nav-user-btn');
+      const userDropdown = document.getElementById('nav-user-dropdown');
+      if (userBtn && userDropdown) {
+        userBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          userDropdown.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => userDropdown.classList.add('hidden'));
+      }
+
+      // Logout handler
+      const logoutBtn = document.getElementById('nav-btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
+            await MendorbitSSO.logout("login.html?logged_out=true");
+          } else {
+            localStorage.removeItem('mendorbit_session');
+            window.location.reload();
+          }
+        });
+      }
+
+      // Theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+      function syncThemeIcon() {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+        if (window.lucide) lucide.createIcons();
+      }
+      syncThemeIcon();
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const isDark = document.documentElement.classList.toggle('dark');
+          localStorage.theme = isDark ? 'dark' : 'light';
+          syncThemeIcon();
+        });
+      }
+
+      // Load Batches from Cloudflare Worker API
+      async function loadBatches() {
+        const loader = document.getElementById('batches-loader');
+        const grid = document.getElementById('batches-grid');
+        const empty = document.getElementById('batches-empty');
+
+        if (loader) loader.classList.remove('hidden');
+        if (grid) grid.classList.add('hidden');
+        if (empty) empty.classList.add('hidden');
+
+        try {
+          const studentEmail = userSession ? userSession.email : "";
+          const res = await MendorbitAPI.getBatches("all", studentEmail);
+          if (res && res.status === "success" && Array.isArray(res.batches)) {
+            allBatches = res.batches;
+          }
+        } catch (e) {
+          console.warn("[Batches] Load fallback:", e);
+        } finally {
+          if (loader) loader.classList.add('hidden');
+          renderBatches();
+        }
+      }
+
+      // Render Batches Grid
+      function renderBatches() {
+        const grid = document.getElementById('batches-grid');
+        const empty = document.getElementById('batches-empty');
+        const searchVal = (document.getElementById('batch-search-input')?.value || "").toLowerCase().trim();
+
+        if (!grid) return;
+
+        let filtered = allBatches.filter(b => {
+          // Class filter
+          if (activeClassFilter !== "all" && b.targetClass.toLowerCase() !== activeClassFilter.toLowerCase()) {
+            return false;
+          }
+          // Search filter
+          if (searchVal) {
+            const matchTitle = (b.title || "").toLowerCase().includes(searchVal);
+            const matchSub = (b.subjects || []).some(s => s.toLowerCase().includes(searchVal));
+            const matchFaculty = (b.faculty || []).some(f => f.name.toLowerCase().includes(searchVal));
+            if (!matchTitle && !matchSub && !matchFaculty) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = "";
+          grid.classList.add('hidden');
+          if (empty) empty.classList.remove('hidden');
+          return;
+        }
+
+        if (empty) empty.classList.add('hidden');
+        grid.classList.remove('hidden');
+
+        grid.innerHTML = filtered.map(b => {
+          const isEnrolled = !!b.isEnrolled;
+          const subjectsHtml = (b.subjects || []).map(s => `
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              ${s}
+            </span>
+          `).join('');
+
+          const facultyHtml = (b.faculty || []).slice(0, 2).map(f => `
+            <div class="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+              <div class="w-5 h-5 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-600 flex items-center justify-center text-[10px] font-bold">
+                ${f.name.charAt(0)}
+              </div>
+              <span class="truncate max-w-[120px] font-medium">${f.name}</span>
+            </div>
+          `).join('');
+
+          const actionButton = isEnrolled ? `
+            <a href="batch-classroom.html?id=${b.id}" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 transition">
+              <i data-lucide="play-circle" class="w-4 h-4"></i>
+              <span>Go to Classroom</span>
+            </a>
+          ` : `
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="openBatchDetails('${b.id}')" class="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-slate-700 dark:text-slate-300 transition">
+                View Details
+              </button>
+              <button type="button" onclick="enrollInBatch('${b.id}')" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 text-white font-extrabold text-xs shadow-md shadow-brand-700/20 transition flex items-center justify-center gap-1.5">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-300"></i>
+                <span>Enroll Free</span>
+              </button>
+            </div>
+          `;
+
+          return `
+            <div class="batch-card bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800/90 overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-500/50 flex flex-col justify-between">
+              
+              <!-- Card Top Banner -->
+              <div>
+                <div class="relative w-full h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <img src="${b.thumbnail}" alt="${b.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                  
+                  <!-- Badges on Image -->
+                  <div class="absolute top-3 left-3 flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-600 text-white shadow">
+                      ${b.targetClass}
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-slate-950 flex items-center gap-1 shadow">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping"></span>
+                      <span>LIVE</span>
+                    </span>
+                  </div>
+
+                  ${isEnrolled ? `
+                    <div class="absolute top-3 right-3">
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-600 text-white flex items-center gap-1 shadow">
+                        <i data-lucide="check" class="w-3 h-3"></i>
+                        <span>Enrolled</span>
+                      </span>
+                    </div>
+                  ` : `
+                    <div class="absolute bottom-3 right-3 text-right">
+                      <span class="text-xs text-slate-300 line-through mr-1">₹${b.originalPrice || 3999}</span>
+                      <span class="text-sm font-black text-emerald-400">FREE</span>
+                    </div>
+                  `}
+                </div>
+
+                <!-- Body Content -->
+                <div class="p-5 sm:p-6 space-y-4">
+                  <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white line-clamp-1 leading-snug">
+                      ${b.title}
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                      ${b.description}
+                    </p>
+                  </div>
+
+                  <!-- Subjects Chips -->
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    ${subjectsHtml}
+                  </div>
+
+                  <!-- Schedule & Timing -->
+                  <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-600 flex-shrink-0"></i>
+                    <span class="truncate">${b.schedule}</span>
+                  </div>
+
+                  <!-- Faculty Avatars -->
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                    ${facultyHtml}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer Action -->
+              <div class="p-5 sm:p-6 pt-0">
+                ${actionButton}
+              </div>
+
+            </div>
+          `;
+        }).join('');
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Filter Button Clicks
+      function updateFilterPills(selectedClass) {
+        document.querySelectorAll('.class-filter-btn').forEach(btn => {
+          const c = btn.getAttribute('data-class');
+          if (c.toLowerCase() === selectedClass.toLowerCase()) {
+            btn.className = "class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-brand-600 text-white shadow-md shadow-brand-600/25 transition";
+          } else {
+            btn.className = "class-filter-btn px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition";
+          }
+        });
+      }
+
+      document.querySelectorAll('.class-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeClassFilter = btn.getAttribute('data-class');
+          updateFilterPills(activeClassFilter);
+          renderBatches();
+        });
+      });
+
+      // Search input listener
+      const searchInput = document.getElementById('batch-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => renderBatches());
+      }
+
+      // Global Functions for modal & enroll
+      window.openBatchDetails = function (batchId) {
+        const batch = allBatches.find(b => b.id === batchId);
+        if (!batch) return;
+
+        const modal = document.getElementById('modal-batch-details');
+        const container = document.getElementById('modal-details-content');
+        if (!modal || !container) return;
+
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full text-xs font-black uppercase bg-brand-100 dark:bg-brand-900/60 text-brand-600">
+                ${batch.targetClass}
+              </span>
+              <span class="text-xs text-slate-400 font-bold">${batch.stream || 'CBSE'}</span>
+            </div>
+
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                ${batch.title}
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                ${batch.description}
+              </p>
+            </div>
+
+            <!-- Features Checklist -->
+            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2.5">
+              <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider">What's Included in this Batch</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                ${(batch.features || []).map(feat => `
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0"></i>
+                    <span>${feat}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Faculty Info -->
+            <div>
+              <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider mb-3">Star Mentors</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${(batch.faculty || []).map(f => `
+                  <div class="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                      ${f.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white">${f.name}</div>
+                      <div class="text-[11px] text-brand-600 font-semibold">${f.subject}</div>
+                      <div class="text-[10px] text-slate-400">${f.exp}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- CTA Footer -->
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400 block font-semibold">Special Admission</span>
+                <span class="text-lg font-black text-emerald-500">Free Access</span>
+              </div>
+              <button type="button" onclick="enrollInBatch('${batch.id}')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 text-white font-extrabold text-xs shadow-lg shadow-brand-700/25 transition">
+                Enroll Now & Start Learning →
+              </button>
+            </div>
+          </div>
+        `;
+
+        if (window.lucide) lucide.createIcons();
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modal.classList.remove('opacity-0');
+          modal.querySelector('div').classList.remove('scale-95');
+        }, 10);
+      };
+
+      const btnCloseModal = document.getElementById('btn-close-details-modal');
+      if (btnCloseModal) {
+        btnCloseModal.addEventListener('click', closeDetailsModal);
+      }
+      function closeDetailsModal() {
+        const modal = document.getElementById('modal-batch-details');
+        if (!modal) return;
+        modal.classList.add('opacity-0');
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      }
+
+      window.enrollInBatch = async function (batchId) {
+        if (!userSession || !userSession.email) {
+          showToast("Please sign in to enroll in this batch.", "error");
+          setTimeout(() => {
+            window.location.href = `login.html?redirect=batches.html`;
+          }, 1000);
+          return;
+        }
+
+        try {
+          showToast("Enrolling you into batch...", "info");
+          const res = await MendorbitAPI.enrollBatch(batchId, userSession.email);
+          if (res && res.status === "success") {
+            showToast("Congratulations! Enrolled successfully.", "success");
+            closeDetailsModal();
+            // Update session cache
+            userSession.enrolledBatches = res.enrolledBatches || [batchId];
+            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) {
+              MendorbitSSO.setSession(userSession);
+            }
+            setTimeout(() => {
+              window.location.href = `batch-classroom.html?id=${batchId}`;
+            }, 800);
+          } else {
+            showToast(res.message || "Failed to enroll. Please try again.", "error");
+          }
+        } catch (e) {
+          showToast("Enrollment failed. Please check your connection.", "error");
+        }
+      };
+
+      function showToast(msg, type = "info") {
+        const c = document.getElementById('toast-container');
+        if (!c) return;
+        const toast = document.createElement('div');
+        const color = type === "success" ? "bg-emerald-600 text-white" : (type === "error" ? "bg-rose-600 text-white" : "bg-slate-900 text-white");
+        toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold ${color} flex items-center gap-2 transform translate-y-4 transition-all duration-200`;
+        toast.innerHTML = `<span>${msg}</span>`;
+        c.appendChild(toast);
+        setTimeout(() => toast.classList.remove('translate-y-4'), 10);
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-2');
+          setTimeout(() => toast.remove(), 250);
+        }, 3200);
+      }
+
+      // Initial Load
+      await loadBatches();
+    });
+  </script>
+</body>
+</html>

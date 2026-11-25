@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Classroom | Mendorbit</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Immediate Theme Preference Check -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .cinema-video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 1.5rem;
+      background: #000000;
+    }
+    .cinema-video-container iframe,
+    .cinema-video-container video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .curriculum-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .curriculum-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .curriculum-scroll::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans select-none">
+
+  <!-- ======================================================== -->
+  <!-- TOP CLASSROOM HEADER BAR                                 -->
+  <!-- ======================================================== -->
+  <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 h-16 flex items-center justify-between">
+    
+    <!-- Left: Return to Batches & Batch Title -->
+    <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+      <a href="batches.html" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center justify-center flex-shrink-0" title="Back to Batches Catalog">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </a>
+
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <span id="batch-class-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-brand-600 text-white flex-shrink-0">
+            Class 10
+          </span>
+          <h1 id="classroom-batch-title" class="text-xs sm:text-sm font-extrabold text-white truncate max-w-[200px] sm:max-w-md">
+            Loading Batch Classroom...
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Student Attendance & Progress Pill -->
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700">
+        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span id="classroom-progress-text" class="text-xs font-bold text-slate-300">0 Completed</span>
+      </div>
+
+      <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow transition flex items-center gap-1.5">
+        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Dashboard</span>
+      </a>
+    </div>
+
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- ACCESS RESTRICTED SCREEN (ANTI-BYPASS GUARD)             -->
+  <!-- ======================================================== -->
+  <div id="classroom-access-denied" class="hidden flex-1 flex items-center justify-center p-6 text-center">
+    <div class="max-w-md bg-slate-800/80 rounded-3xl border border-slate-700 p-8 shadow-2xl space-y-4">
+      <div class="w-16 h-16 rounded-full bg-rose-500/20 text-rose-400 mx-auto flex items-center justify-center">
+        <i data-lucide="lock" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-xl font-black text-white">Enrollment Required</h2>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Access to this classroom is strictly restricted to enrolled students. Please enroll in this batch to access video lectures, teacher notes, and DPP sheets.
+      </p>
+      <div class="pt-2">
+        <a href="batches.html" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg transition">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Explore & Enroll in Batches</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MAIN CLASSROOM DUAL-PANE WORKSPACE                       -->
+  <!-- ======================================================== -->
+  <div id="classroom-workspace" class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+    
+    <!-- LEFT PANE: VIDEO PLAYER & LECTURE DETAILS                -->
+    <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      
+      <!-- Cinema Video Player Container -->
+      <div class="cinema-video-container shadow-2xl border border-slate-800">
+        <iframe id="lecture-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <!-- Active Lecture Header & Action Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-semibold text-brand-400 mb-1">
+            <span id="lecture-subject-tag">Physics</span>
+            <span>•</span>
+            <span id="lecture-chapter-tag">Chapter 1: Light</span>
+          </div>
+          <h2 id="active-lecture-title" class="text-lg sm:text-2xl font-black text-white">
+            Select a lecture from the curriculum sidebar
+          </h2>
+          <div class="flex items-center gap-3 text-xs text-slate-400 mt-1.5">
+            <span id="lecture-teacher-name">Er. Aman Verma</span>
+            <span>•</span>
+            <span id="lecture-duration-tag">1 hr 12 mins</span>
+          </div>
+        </div>
+
+        <button type="button" id="btn-mark-completed" class="self-start sm:self-center px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold text-xs text-slate-200 flex items-center gap-2 transition">
+          <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+          <span id="mark-completed-text">Mark as Watched</span>
+        </button>
+      </div>
+
+      <!-- Resource Navigation Tabs (Notes, DPPs, Overview) -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+          <button type="button" data-tab="tab-res-notes" class="res-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-white transition flex items-center gap-2">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 text-brand-400"></i>
+            <span>Class Notes PDF</span>
+          </button>
+          <button type="button" data-tab="tab-res-dpps" class="res-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span>DPP (Daily Practice)</span>
+          </button>
+          <button type="button" data-tab="tab-res-info" class="res-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-400"></i>
+            <span>Lecture Overview</span>
+          </button>
+        </div>
+
+        <!-- 1. Notes Tab Content -->
+        <div id="tab-res-notes" class="res-tab-pane space-y-3">
+          <div id="current-notes-container" class="space-y-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- 2. DPP Tab Content -->
+        <div id="tab-res-dpps" class="res-tab-pane hidden space-y-3">
+          <div id="current-dpps-container" class="space-y-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- 3. Overview Tab Content -->
+        <div id="tab-res-info" class="res-tab-pane hidden">
+          <div class="p-5 rounded-2xl bg-slate-800/60 border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-2">
+            <h4 class="font-bold text-white text-sm">About this Lecture</h4>
+            <p id="lecture-desc-text">
+              Watch the complete lecture attentively. Solve the accompanying Daily Practice Problem (DPP) to test your conceptual clarity and refer to the handwritten class notes for quick revision.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANE: SUBJECT & CURRICULUM ACCORDION SIDEBAR       -->
+    <div class="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-950 flex flex-col h-auto lg:h-full">
+      
+      <!-- Subject Switcher Bar -->
+      <div class="p-3 border-b border-slate-800 bg-slate-900/60">
+        <span class="text-[10px] uppercase font-black tracking-wider text-slate-400 block mb-2 px-1">Select Subject</span>
+        <div id="subject-pills-container" class="flex items-center gap-1.5 overflow-x-auto pb-1">
+          <!-- Injected via JS: Physics, Chemistry, Math, etc. -->
+        </div>
+      </div>
+
+      <!-- Curriculum Chapters & Lectures List -->
+      <div id="curriculum-container" class="curriculum-scroll flex-1 overflow-y-auto p-3 space-y-3">
+        <!-- Injected via JS -->
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="classroom-toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/api-client.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      if (window.lucide) lucide.createIcons();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const batchId = urlParams.get('id');
+
+      if (!batchId) {
+        window.location.href = "batches.html";
+        return;
+      }
+
+      let userSession = null;
+      if (typeof MendorbitSSO !== 'undefined') {
+        userSession = MendorbitSSO.getSession();
+      }
+
+      const studentEmail = userSession ? userSession.email : "";
+
+      // DOM Elements
+      const accessDenied = document.getElementById('classroom-access-denied');
+      const workspace = document.getElementById('classroom-workspace');
+      const batchTitleEl = document.getElementById('classroom-batch-title');
+      const batchClassBadge = document.getElementById('batch-class-badge');
+      const subjectPillsContainer = document.getElementById('subject-pills-container');
+      const curriculumContainer = document.getElementById('curriculum-container');
+      const lectureIframe = document.getElementById('lecture-iframe');
+      const activeTitleEl = document.getElementById('active-lecture-title');
+      const subjectTagEl = document.getElementById('lecture-subject-tag');
+      const chapterTagEl = document.getElementById('lecture-chapter-tag');
+      const teacherNameEl = document.getElementById('lecture-teacher-name');
+      const durationTagEl = document.getElementById('lecture-duration-tag');
+      const progressTextEl = document.getElementById('classroom-progress-text');
+      const btnMarkWatched = document.getElementById('btn-mark-completed');
+      const markWatchedText = document.getElementById('mark-completed-text');
+
+      // State
+      let batchData = null;
+      let curriculumData = {};
+      let completedLectures = [];
+      let activeSubject = "";
+      let activeLecture = null;
+
+      // Anti-Bypass Guard: Fetch content from secure server endpoint
+      try {
+        const res = await MendorbitAPI.getBatchContent(batchId, studentEmail);
+
+        if (res && res.status === "success") {
+          batchData = res.batch;
+          curriculumData = res.curriculum || {};
+          completedLectures = res.completedLectures || [];
+          
+          if (batchTitleEl) batchTitleEl.textContent = batchData.title || "Batch Classroom";
+          if (batchClassBadge) batchClassBadge.textContent = batchData.targetClass || "Class 10";
+
+          initializeClassroom();
+        } else {
+          // Access Denied / Not Enrolled
+          if (workspace) workspace.classList.add('hidden');
+          if (accessDenied) accessDenied.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.warn("[Classroom] Content access error:", err);
+        if (workspace) workspace.classList.add('hidden');
+        if (accessDenied) accessDenied.classList.remove('hidden');
+      }
+
+      function initializeClassroom() {
+        const subjects = Object.keys(curriculumData);
+        if (subjects.length === 0) {
+          curriculumContainer.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">Curriculum is currently being uploaded by teachers.</div>`;
+          return;
+        }
+
+        activeSubject = subjects[0];
+        renderSubjectPills(subjects);
+        renderCurriculum(activeSubject);
+        updateProgressCounter();
+
+        // Auto-select first lecture
+        const firstChapter = (curriculumData[activeSubject]?.chapters || [])[0];
+        const firstLecture = (firstChapter?.lectures || [])[0];
+        if (firstLecture) {
+          selectLecture(firstLecture, firstChapter.title, activeSubject);
+        }
+      }
+
+      function renderSubjectPills(subjects) {
+        if (!subjectPillsContainer) return;
+        subjectPillsContainer.innerHTML = subjects.map(sub => `
+          <button type="button" data-subject="${sub}" class="subject-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${sub === activeSubject ? 'bg-brand-600 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+            ${sub}
+          </button>
+        `).join('');
+
+        subjectPillsContainer.querySelectorAll('.subject-pill-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            activeSubject = btn.getAttribute('data-subject');
+            renderSubjectPills(subjects);
+            renderCurriculum(activeSubject);
+          });
+        });
+      }
+
+      function renderCurriculum(subject) {
+        if (!curriculumContainer) return;
+        const chapters = curriculumData[subject]?.chapters || [];
+
+        if (chapters.length === 0) {
+          curriculumContainer.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No chapters added for ${subject} yet.</div>`;
+          return;
+        }
+
+        curriculumContainer.innerHTML = chapters.map((ch, chIdx) => {
+          const lectures = ch.lectures || [];
+          const notes = ch.notes || [];
+          const dpps = ch.dpps || [];
+
+          return `
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/90 overflow-hidden">
+              <!-- Chapter Header -->
+              <div class="p-3.5 bg-slate-800/40 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-[10px] font-black uppercase text-brand-400 tracking-wider">Chapter ${ch.chapterNumber || (chIdx + 1)}</div>
+                  <h4 class="text-xs font-extrabold text-white mt-0.5">${ch.title}</h4>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">
+                  ${lectures.length} Lec • ${notes.length} Notes • ${dpps.length} DPP
+                </span>
+              </div>
+
+              <!-- Chapter Lectures List -->
+              <div class="p-2 space-y-1">
+                ${lectures.map(lec => {
+                  const isDone = completedLectures.includes(lec.lectureId);
+                  const isActive = activeLecture && activeLecture.lectureId === lec.lectureId;
+
+                  return `
+                    <button type="button" onclick="handleLectureClick('${lec.lectureId}', '${ch.chapterId}')" class="w-full text-left p-2.5 rounded-xl flex items-center justify-between gap-3 transition ${isActive ? 'bg-brand-600/20 border border-brand-500/40 text-white' : 'hover:bg-slate-800/70 text-slate-300'}">
+                      <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-6 h-6 rounded-lg ${isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'} flex items-center justify-center flex-shrink-0">
+                          <i data-lucide="${isDone ? 'check' : 'play'}" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="text-xs font-bold truncate">${lec.title}</div>
+                          <div class="text-[10px] text-slate-400">${lec.duration || 'Lecture'}</div>
+                        </div>
+                      </div>
+                      ${isActive ? '<span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse flex-shrink-0"></span>' : ''}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      window.handleLectureClick = function (lectureId, chapterId) {
+        const chapters = curriculumData[activeSubject]?.chapters || [];
+        const chapter = chapters.find(c => c.chapterId === chapterId);
+        if (!chapter) return;
+        const lecture = (chapter.lectures || []).find(l => l.lectureId === lectureId);
+        if (!lecture) return;
+
+        selectLecture(lecture, chapter.title, activeSubject, chapter);
+      };
+
+      function selectLecture(lecture, chapterTitle, subjectName, chapterObj) {
+        activeLecture = lecture;
+
+        if (lectureIframe) {
+          // Format embed URL cleanly
+          let vUrl = lecture.videoUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ";
+          if (vUrl.includes("watch?v=")) {
+            vUrl = vUrl.replace("watch?v=", "embed/");
+          }
+          lectureIframe.src = vUrl;
+        }
+
+        if (activeTitleEl) activeTitleEl.textContent = lecture.title;
+        if (subjectTagEl) subjectTagEl.textContent = subjectName;
+        if (chapterTagEl) chapterTagEl.textContent = chapterTitle;
+        if (teacherNameEl) teacherNameEl.textContent = lecture.teacher || "Mendorbit Mentor";
+        if (durationTagEl) durationTagEl.textContent = lecture.duration || "Full HD";
+
+        // Check watched status
+        updateWatchedButton();
+
+        // Render chapter notes & DPPs for this lecture
+        renderLectureResources(chapterObj || getChapterForLecture(lecture.lectureId));
+
+        // Re-render curriculum to show active indicator
+        renderCurriculum(activeSubject);
+      }
+
+      function getChapterForLecture(lectureId) {
+        const chapters = curriculumData[activeSubject]?.chapters || [];
+        return chapters.find(ch => (ch.lectures || []).some(l => l.lectureId === lectureId));
+      }
+
+      function updateWatchedButton() {
+        if (!btnMarkWatched || !markWatchedText || !activeLecture) return;
+        const isDone = completedLectures.includes(activeLecture.lectureId);
+        if (isDone) {
+          btnMarkWatched.className = "self-start sm:self-center px-4 py-2.5 rounded-xl bg-emerald-600/20 border border-emerald-500/40 font-bold text-xs text-emerald-300 flex items-center gap-2 transition";
+          markWatchedText.textContent = "Completed ✓";
+        } else {
+          btnMarkWatched.className = "self-start sm:self-center px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold text-xs text-slate-200 flex items-center gap-2 transition";
+          markWatchedText.textContent = "Mark as Watched";
+        }
+      }
+
+      // Mark Watched Button Trigger
+      if (btnMarkWatched) {
+        btnMarkWatched.addEventListener('click', async () => {
+          if (!activeLecture || !studentEmail) return;
+          try {
+            const res = await MendorbitAPI.saveLectureProgress(batchId, activeLecture.lectureId, studentEmail);
+            if (res && res.status === "success") {
+              completedLectures = res.completedLectures || [];
+              updateWatchedButton();
+              updateProgressCounter();
+              renderCurriculum(activeSubject);
+              showClassroomToast("Lecture marked as completed! Great progress.", "success");
+            }
+          } catch(e) {}
+        });
+      }
+
+      function updateProgressCounter() {
+        if (!progressTextEl) return;
+        progressTextEl.textContent = `${completedLectures.length} Completed`;
+      }
+
+      function renderLectureResources(chapter) {
+        const notesContainer = document.getElementById('current-notes-container');
+        const dppsContainer = document.getElementById('current-dpps-container');
+
+        const notes = (chapter && chapter.notes) || [];
+        const dpps = (chapter && chapter.dpps) || [];
+
+        // Notes
+        if (notesContainer) {
+          if (notes.length === 0) {
+            notesContainer.innerHTML = `<div class="p-4 rounded-xl bg-slate-800/40 text-xs text-slate-400">Notes for this topic are being formatted.</div>`;
+          } else {
+            notesContainer.innerHTML = notes.map(n => `
+              <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-800 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-white truncate">${n.title}</div>
+                    <div class="text-[10px] text-slate-400">${n.fileSize || 'PDF'} • ${n.pages ? n.pages + ' Pages' : 'Official Handout'}</div>
+                  </div>
+                </div>
+                <a href="${n.pdfUrl}" target="_blank" download class="px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white flex items-center gap-1.5 transition flex-shrink-0">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download</span>
+                </a>
+              </div>
+            `).join('');
+          }
+        }
+
+        // DPPs
+        if (dppsContainer) {
+          if (dpps.length === 0) {
+            dppsContainer.innerHTML = `<div class="p-4 rounded-xl bg-slate-800/40 text-xs text-slate-400">Daily practice problems will be unlocked after class.</div>`;
+          } else {
+            dppsContainer.innerHTML = dpps.map(d => `
+              <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-800 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-white truncate">${d.title}</div>
+                    <div class="text-[10px] text-slate-400">${d.totalQuestions ? d.totalQuestions + ' Practice Questions' : 'Daily Problem Sheet'}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <a href="${d.pdfUrl}" target="_blank" download class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white flex items-center gap-1.5 transition">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Question Sheet</span>
+                  </a>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Resource Tabs Switcher
+      document.querySelectorAll('.res-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTab = btn.getAttribute('data-tab');
+
+          document.querySelectorAll('.res-tab-btn').forEach(b => {
+            b.className = "res-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-2";
+          });
+          btn.className = "res-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-white transition flex items-center gap-2";
+
+          document.querySelectorAll('.res-tab-pane').forEach(p => p.classList.add('hidden'));
+          const activePane = document.getElementById(targetTab);
+          if (activePane) activePane.classList.remove('hidden');
+        });
+      });
+
+      function showClassroomToast(msg, type = "info") {
+        const c = document.getElementById('classroom-toast-container');
+        if (!c) return;
+        const toast = document.createElement('div');
+        const color = type === "success" ? "bg-emerald-600 text-white" : "bg-slate-800 text-white border border-slate-700";
+        toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold ${color} flex items-center gap-2 transform translate-y-4 transition-all duration-200`;
+        toast.innerHTML = `<span>${msg}</span>`;
+        c.appendChild(toast);
+        setTimeout(() => toast.classList.remove('translate-y-4'), 10);
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-2');
+          setTimeout(() => toast.remove(), 250);
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
