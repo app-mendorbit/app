@@ -3,720 +3,698 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mendorbit Admin Security & EdTech Control Studio</title>
-
+  <title>Admin Console | Mendorbit</title>
   <link rel="icon" type="image/png" href="logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="assets/css/auth.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans select-none">
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex font-sans overflow-x-hidden">
 
   <!-- ==================== ADMIN ACCESS PIN GATE ==================== -->
-  <div id="admin-gate-overlay" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center">
-      <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 mx-auto flex items-center justify-center mb-4">
-        <i data-lucide="shield-alert" class="w-7 h-7"></i>
+  <div id="admin-gate-overlay" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center">
+      <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 mx-auto flex items-center justify-center mb-4 border border-sky-100">
+        <i data-lucide="shield-check" class="w-7 h-7"></i>
       </div>
-      <h2 class="text-xl font-extrabold text-white">Admin Authentication</h2>
-      <p class="text-xs text-slate-400 mt-1">Enter Master Admin Key to access Mendorbit Control Center</p>
+      <h2 class="text-xl font-black text-slate-900">Mendorbit Admin Console</h2>
+      <p class="text-xs text-slate-500 mt-1">Enter Master Admin Key to access management workspace</p>
 
       <form id="form-admin-auth" class="mt-6 space-y-4">
-        <input type="password" id="admin-pin-input" placeholder="Enter Master Admin Passkey" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 text-sm text-center text-white focus:border-indigo-500 outline-none">
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-2xl text-sm transition shadow-lg shadow-indigo-600/25">
+        <input type="password" id="admin-pin-input" placeholder="Enter Master Admin Passkey" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-center text-slate-900 focus:border-sky-500 focus:bg-white outline-none transition" />
+        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl text-sm transition shadow-md">
           Authenticate Access
         </button>
       </form>
-      <div class="mt-4 text-[11px] text-slate-500">
+      <div class="mt-4 text-[11px] text-slate-400 font-medium">
         Authorized administrative personnel only.
       </div>
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="logo.png" alt="Mendorbit Logo" class="h-9 w-auto">
-        <div>
-          <span class="text-lg font-black text-white tracking-tight">Mendorbit</span>
-          <span class="text-[10px] block text-indigo-400 font-bold uppercase tracking-wider">EdTech & Security Control Studio</span>
-        </div>
-      </div>
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="admin-sidebar-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden lg:hidden"></div>
 
-      <div class="flex items-center gap-3">
-        <a href="batches.html" target="_blank" class="px-3 py-1.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-xs font-semibold text-slate-300 transition flex items-center gap-1.5">
-          <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-400"></i>
-          <span>View Live Batches</span>
-        </a>
-        <a href="login.html" class="px-3 py-1.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-xs font-semibold text-slate-300 transition flex items-center gap-1.5">
-          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          <span>Auth Portal</span>
-        </a>
-      </div>
-    </div>
-  </header>
+  <!-- ==================== LEFT SIDEBAR (EXACT ADMIN CONSOLE STYLE) ==================== -->
+  <aside id="admin-sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between py-4 px-3 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 flex-shrink-0">
 
-  <!-- Navigation Tab Bar -->
-  <div class="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6">
-    <div class="max-w-7xl mx-auto flex items-center gap-2.5 overflow-x-auto py-3">
-      <button type="button" data-admin-tab="admin-tab-batches" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition flex-shrink-0">
-        <i data-lucide="layers" class="w-4 h-4"></i>
-        <span>Batches Studio</span>
-      </button>
-      <button type="button" data-admin-tab="admin-tab-coupons" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
-        <i data-lucide="ticket-percent" class="w-4 h-4"></i>
-        <span>Coupons & Discounts</span>
-      </button>
-      <button type="button" data-admin-tab="admin-tab-users" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
-        <i data-lucide="users" class="w-4 h-4"></i>
-        <span>Students & Decryption</span>
-      </button>
-      <button type="button" data-admin-tab="admin-tab-otp" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
-        <i data-lucide="mail-check" class="w-4 h-4"></i>
-        <span>Daily OTP Auditor</span>
-      </button>
-      <button type="button" data-admin-tab="admin-tab-cipher" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
-        <i data-lucide="binary" class="w-4 h-4"></i>
-        <span>2-Digit Cipher Lab</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-8">
-
-    <!-- ======================================================== -->
-    <!-- TAB 1: BATCHES STUDIO                                    -->
-    <!-- ======================================================== -->
-    <div id="admin-tab-batches" class="admin-tab-pane space-y-6">
-
-      <!-- KPI Overview Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Published Batches</span>
-            <div id="kpi-total-batches" class="text-2xl font-black text-white mt-1">0</div>
-          </div>
-          <div class="w-11 h-11 rounded-2xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
-            <i data-lucide="layers" class="w-5 h-5"></i>
-          </div>
-        </div>
-        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Enrollments</span>
-            <div id="kpi-total-enrollments" class="text-2xl font-black text-emerald-400 mt-1">0</div>
-          </div>
-          <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
-          </div>
-        </div>
-        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Active Coupons</span>
-            <div id="kpi-total-coupons" class="text-2xl font-black text-amber-400 mt-1">0</div>
-          </div>
-          <div class="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
-            <i data-lucide="ticket-percent" class="w-5 h-5"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- Batches Header Banner -->
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-700/80 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-          <div class="p-3 bg-indigo-500/20 text-indigo-400 rounded-2xl">
-            <i data-lucide="sparkles" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <h3 class="font-extrabold text-xl text-white">Batches Management Studio</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Publish batches across Class 9, Class 10, Banking, Law, SSC CGL & SSC CHSL with live card preview</p>
-          </div>
-        </div>
-
+    <div class="space-y-5 overflow-y-auto">
+      <!-- Brand Header -->
+      <div class="flex items-center justify-between px-2 pb-2">
         <div class="flex items-center gap-2.5">
-          <button type="button" id="btn-refresh-batches" class="px-3.5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span>Refresh</span>
-          </button>
-          <button type="button" id="btn-open-create-batch" class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center gap-2">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Create New Batch</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Batches List Table -->
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4">
-        <div class="flex items-center justify-between">
-          <h4 class="font-bold text-sm text-white">Published Batches</h4>
-          <span id="admin-batch-count" class="text-xs font-bold text-slate-400">Loading batches...</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th class="py-3 px-4">Batch Info</th>
-                <th class="py-3 px-4">Target Audience</th>
-                <th class="py-3 px-4">Schedule / Validity</th>
-                <th class="py-3 px-4">Enrolled</th>
-                <th class="py-3 px-4">Pricing</th>
-                <th class="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="admin-batches-tbody" class="divide-y divide-slate-800 font-medium">
-              <tr>
-                <td colspan="6" class="text-center py-8 text-slate-500">Loading batches...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- TAB 1B: COUPONS & DISCOUNTS STUDIO                       -->
-    <!-- ======================================================== -->
-    <div id="admin-tab-coupons" class="admin-tab-pane hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- Left: Create Coupon Form -->
-        <div class="lg:col-span-5 bg-slate-800/80 rounded-3xl p-6 border border-slate-700/80 shadow-xl space-y-4">
-          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/70">
-            <div class="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
-              <i data-lucide="ticket-percent" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-base text-white">Create Coupon Code</h3>
-              <p class="text-[11px] text-slate-400">Students can apply 100% discount codes to enroll at ₹0</p>
-            </div>
-          </div>
-
-          <form id="form-create-coupon" class="space-y-3.5">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Coupon Code *</label>
-              <input type="text" id="coupon-input-code" required placeholder="e.g. MENDORBIT100" class="w-full uppercase bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-white outline-none focus:border-indigo-500" />
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Discount Type</label>
-                <select id="coupon-input-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                  <option value="PERCENT">Percentage (%)</option>
-                  <option value="FLAT">Flat Amount (₹)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Discount Value *</label>
-                <input type="number" min="1" id="coupon-input-value" required placeholder="e.g. 100 or 2999" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Applicable Batch</label>
-              <select id="coupon-input-batch" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                <option value="ALL">All Batches</option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Max Uses (0 = Unlimited)</label>
-                <input type="number" min="0" id="coupon-input-maxuses" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Expiry Date (Optional)</label>
-                <input type="date" id="coupon-input-expiry" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Note / Description (Optional)</label>
-              <input type="text" id="coupon-input-desc" placeholder="e.g. Launch 100% Free Access Coupon" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs shadow-lg transition">
-              Save & Activate Coupon
-            </button>
-          </form>
-        </div>
-
-        <!-- Right: Active Coupons List -->
-        <div class="lg:col-span-7 bg-slate-800/80 rounded-3xl p-6 border border-slate-700/80 shadow-xl space-y-4">
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-sm text-white">Active & Saved Coupons</h4>
-            <button type="button" id="btn-refresh-coupons" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-              <span>Refresh</span>
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="py-2.5 px-3">Code</th>
-                  <th class="py-2.5 px-3">Discount</th>
-                  <th class="py-2.5 px-3">Applies To</th>
-                  <th class="py-2.5 px-3">Redemptions</th>
-                  <th class="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="admin-coupons-tbody" class="divide-y divide-slate-800 font-medium">
-                <tr>
-                  <td colspan="5" class="text-center py-6 text-slate-500">Loading coupons...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- TAB 2: REGISTERED STUDENTS & DECRYPTION                 -->
-    <!-- ======================================================== -->
-    <div id="admin-tab-users" class="admin-tab-pane hidden space-y-6">
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2.5">
-            <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl">
-              <i data-lucide="users" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-lg text-white">Registered Users & Decryption Inspector</h3>
-              <p class="text-xs text-slate-400">View stored encrypted passwords from Firebase / local records with 1-click de-encryption</p>
-            </div>
-          </div>
-
-          <button id="btn-refresh-users" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span>Refresh Records</span>
-          </button>
-        </div>
-
-        <!-- Users Table -->
-        <div class="overflow-x-auto mt-4">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th class="py-3 px-4">Student Name</th>
-                <th class="py-3 px-4">Email</th>
-                <th class="py-3 px-4">Class</th>
-                <th class="py-3 px-4">Activity Status</th>
-                <th class="py-3 px-4">Location / IP</th>
-                <th class="py-3 px-4">Encrypted Password</th>
-                <th class="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="admin-users-tbody" class="divide-y divide-slate-800">
-              <tr>
-                <td colspan="7" class="text-center py-6 text-slate-500">Loading student records...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- TAB 3: DAILY OTP AUDITOR                                -->
-    <!-- ======================================================== -->
-    <div id="admin-tab-otp" class="admin-tab-pane hidden space-y-6">
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-          <div class="flex items-center gap-2.5">
-            <div class="p-2 bg-blue-500/20 text-blue-400 rounded-xl">
-              <i data-lucide="mail-check" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-lg text-white">Daily OTP Stats & Verification Auditor</h3>
-              <p class="text-xs text-slate-400">Live atomic daily counter synced with Google Sheet <code class="text-blue-400">Mendorbit_Daily_OTP_Stats</code></p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <a id="btn-open-otp-sheet" href="https://docs.google.com/spreadsheets/d/1IobraWz_mMtPcCDvTzA92DhYn2tA0i5gEBK_mLC5xJc/edit" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow">
-              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-              <span>Open Google Sheet</span>
-            </a>
-            <button id="btn-refresh-otp-stats" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-              <span>Refresh</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Today's Date</span>
-            <strong id="stat-otp-date" class="text-sm text-slate-200 mt-1 block font-mono">--</strong>
-          </div>
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">Total OTPs Sent</span>
-            <strong id="stat-otp-sent" class="text-2xl text-blue-400 mt-0.5 block font-extrabold font-mono">0</strong>
-          </div>
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">Total Verified</span>
-            <strong id="stat-otp-verified" class="text-2xl text-emerald-400 mt-0.5 block font-extrabold font-mono">0</strong>
-          </div>
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Signup OTPs</span>
-            <strong id="stat-otp-signup" class="text-2xl text-amber-400 mt-0.5 block font-extrabold font-mono">0</strong>
-          </div>
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-purple-400 font-bold uppercase tracking-wider block">Login OTPs</span>
-            <strong id="stat-otp-login" class="text-2xl text-purple-400 mt-0.5 block font-extrabold font-mono">0</strong>
-          </div>
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center">
-            <span class="text-[10px] text-rose-400 font-bold uppercase tracking-wider block">Reset OTPs</span>
-            <strong id="stat-otp-reset" class="text-2xl text-rose-400 mt-0.5 block font-extrabold font-mono">0</strong>
-          </div>
-        </div>
-
-        <div class="mt-3 text-[11px] text-slate-500 flex items-center justify-between">
-          <span>Last Activity: <strong id="stat-otp-last-activity" class="text-slate-400 font-mono">Loading...</strong></span>
-          <span class="text-[10px] text-slate-500">Auto-increments 1 row per date</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- TAB 4: CIPHER LABORATORY                                -->
-    <!-- ======================================================== -->
-    <div id="admin-tab-cipher" class="admin-tab-pane hidden space-y-6">
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2.5">
-            <div class="p-2 bg-indigo-500/20 text-indigo-400 rounded-xl">
-              <i data-lucide="binary" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-lg text-white">Mendorbit 2-Digit Password Cipher Laboratory</h3>
-              <p class="text-xs text-slate-400">Lowercase: a-z → 01-26 | Uppercase: A-Z → U01-U26 | Digits: 0-9 → n0-n9 | Symbols: As-Is</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Plaintext to Encrypt</span>
-              <span class="text-[10px] text-slate-500">Live Converter</span>
-            </div>
-            <input type="text" id="lab-plain-input" value="Password@123" placeholder="Enter plaintext password..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono focus:border-indigo-500 outline-none">
-            <button id="btn-lab-encrypt" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition">
-              Convert to 2-Digit Ciphertext →
-            </button>
-          </div>
-
-          <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Ciphertext to De-Encrypt</span>
-              <span class="text-[10px] text-indigo-400 font-mono">Reversible Output</span>
-            </div>
-            <input type="text" id="lab-cipher-input" value="U1601191923151804@n1n2n3" placeholder="Paste Mendorbit ciphertext..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-indigo-300 font-mono focus:border-indigo-500 outline-none">
-            <button id="btn-lab-decrypt" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition">
-              ← De-Encrypt Back to Plaintext
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-4 font-mono text-xs">
-          <div class="flex-1 overflow-x-auto">
-            <span class="text-slate-500">Result Output: </span>
-            <strong id="lab-result-display" class="text-indigo-400 break-all">U1601191923151804@n1n2n3</strong>
-          </div>
-          <button id="btn-copy-result" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition flex items-center gap-1.5 flex-shrink-0">
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            <span>Copy</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ======================================================== -->
-  <!-- MODAL: SPLIT-SCREEN CREATE / EDIT BATCH + LIVE PREVIEW   -->
-  <!-- ======================================================== -->
-  <div id="modal-create-batch" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-6xl rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 flex-shrink-0">
-        <div>
-          <h3 id="modal-batch-form-title" class="font-extrabold text-lg text-white">Create New Batch</h3>
-          <p class="text-[11px] text-slate-400">Configure batch details on the left and preview the exact student batch card live on the right</p>
-        </div>
-        <button type="button" id="btn-close-create-batch" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- LEFT: STREAMLINED FORM INPUTS (EXACT CARD FIELDS ONLY) -->
-        <form id="form-create-batch" class="lg:col-span-7 space-y-4">
-          <input type="hidden" id="batch-edit-id" value="" />
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
-              <input type="text" id="batch-input-title" required placeholder="e.g. Arjuna JEE 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Display Class / Tag Label (Orange Text) *</label>
-              <input type="text" id="batch-input-displaytag" required placeholder="e.g. Class 10 Boards / SSC CGL" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-          </div>
-
-          <!-- Separate Audience Selector (For Filtering on Batches Page) -->
+          <img src="logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1.5">Target Audience Filter (Select 1 or More Classes for Batches Page) *</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="admin-audience-checkboxes">
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="Class 9" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>Class 9</span>
-              </label>
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="Class 10" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>Class 10</span>
-              </label>
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="Banking" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>Banking</span>
-              </label>
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="Law" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>Law</span>
-              </label>
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="SSC CGL" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>SSC CGL</span>
-              </label>
-              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
-                <input type="checkbox" name="targetClasses" value="SSC CHSL" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
-                <span>SSC CHSL</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Target Line (Book Icon)</label>
-              <input type="text" id="batch-input-stream" placeholder="e.g. CBSE 2027 / IBPS PO 2026" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Language Pill *</label>
-              <select id="batch-input-language" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                <option value="HINGLISH">HINGLISH</option>
-                <option value="ENGLISH">ENGLISH</option>
-                <option value="HINDI">HINDI</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Status Prefix (Red Dot)</label>
-              <input type="text" id="batch-input-statuslabel" placeholder="e.g. Ongoing / Upcoming" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
-              <input type="date" id="batch-input-startdate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Visibility</label>
-              <select id="batch-input-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-                <option value="ACTIVE">ACTIVE (Visible)</option>
-                <option value="ARCHIVED">ARCHIVED (Hidden)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹, 0 = Free)</label>
-              <input type="number" min="0" id="batch-input-price" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹, For % OFF)</label>
-              <input type="number" min="0" id="batch-input-original-price" placeholder="Optional, e.g. 6000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner Image URL</label>
-            <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">View More Page URL (Custom Batch Info Link)</label>
-            <input type="url" id="batch-input-viewmore" placeholder="https://mendorbit.in/your-batch-page" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            <p class="text-[10px] text-slate-400 mt-1">Clicking &gt; (View More), Banner, or Title opens this URL directly.</p>
-          </div>
-
-          <div class="pt-2 flex items-center justify-end gap-3">
-            <button type="button" id="btn-cancel-create-batch" class="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800 transition">
-              Cancel
-            </button>
-            <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-extrabold text-white shadow-lg transition">
-              Publish Batch &amp; Generate Payment Link
-            </button>
-          </div>
-        </form>
-
-        <!-- RIGHT: EXACT STUDENT CARD LIVE PREVIEW + GENERATED PAYMENT LINK -->
-        <div class="lg:col-span-5 lg:sticky lg:top-0 space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-              <span>Exact Batch Card Preview</span>
-            </span>
-            <span class="text-[10px] text-slate-400">Live match to Batches page</span>
-          </div>
-
-          <div id="admin-live-card-preview" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl text-slate-900">
-            <!-- Rendered live on every input -->
-          </div>
-
-          <!-- Direct Payment / Enroll Link Box (shown when editing/created) -->
-          <div id="admin-modal-enroll-link-box" class="hidden p-4 rounded-2xl bg-emerald-950/40 border border-emerald-700/60 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-extrabold text-emerald-400 uppercase tracking-wider">Direct Payment / Enroll Button Link</span>
-              <button type="button" id="btn-copy-modal-enroll-link" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold">Copy Link</button>
-            </div>
-            <input type="text" id="admin-modal-enroll-link-input" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-emerald-300 outline-none" />
-            <p class="text-[10px] text-slate-400">Paste this URL into your View More page's Enroll / Buy Now button.</p>
+            <div class="text-base font-black tracking-tight text-slate-900 leading-none">Mendorbit</div>
+            <div class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 mt-0.5">ADMIN CONSOLE</div>
           </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- MODAL: MANAGE CURRICULUM (LECTURES, NOTES, DPPS)         -->
-  <!-- ======================================================== -->
-  <div id="modal-manage-curriculum" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto">
-      
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <div>
-          <h3 class="font-extrabold text-lg text-white" id="curriculum-modal-title">Curriculum Studio</h3>
-          <p class="text-xs text-slate-400">Add lectures, handwritten notes, and daily practice problem sheets</p>
-        </div>
-        <button type="button" id="btn-close-curriculum" class="text-slate-400 hover:text-white p-1">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Subject Selector -->
-      <div class="flex items-center gap-2">
-        <label class="text-xs font-bold text-slate-400">Subject:</label>
-        <select id="curriculum-subject-select" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-brand-500">
-          <!-- Dynamically populated -->
-        </select>
-        <button type="button" id="btn-add-chapter-trigger" class="ml-auto px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white flex items-center gap-1.5 shadow">
-          <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
-          <span>Add Chapter</span>
-        </button>
-      </div>
-
-      <!-- Chapter Add Box (Hidden by default) -->
-      <div id="chapter-add-box" class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700 space-y-3 hidden">
-        <h4 class="text-xs font-bold text-white uppercase tracking-wider">New Chapter</h4>
-        <input type="text" id="new-chapter-title" placeholder="Chapter Title (e.g. Chapter 1: Chemical Reactions)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-brand-500" />
-        <div class="flex justify-end gap-2">
-          <button type="button" id="btn-cancel-add-chapter" class="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">Cancel</button>
-          <button type="button" id="btn-confirm-add-chapter" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white">Save Chapter</button>
-        </div>
-      </div>
-
-      <!-- Chapters Accordion View -->
-      <div id="admin-chapters-container" class="space-y-4">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Save Curriculum Action -->
-      <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
-        <span class="text-xs text-slate-400">All lectures, notes & DPPs are guarded by zero-bypass edge security.</span>
-        <button type="button" id="btn-save-curriculum-cloud" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg transition">
-          Save All Changes to Cloud
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- MODAL: ADD LECTURE / NOTE / DPP FORM                     -->
-  <!-- ======================================================== -->
-  <div id="modal-add-item" class="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h4 id="add-item-modal-title" class="font-bold text-sm text-white">Add Item</h4>
-        <button type="button" id="btn-close-add-item" class="text-slate-400 hover:text-white p-1">
+        <button id="btn-close-admin-sidebar" type="button" class="lg:hidden p-1.5 text-slate-400 hover:text-slate-700">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div id="add-item-form-body" class="space-y-3">
-        <!-- Injected dynamically based on type (lecture / note / dpp) -->
-      </div>
+      <!-- Primary Navigation -->
+      <nav class="space-y-1 text-xs font-semibold">
+        <button type="button" data-admin-tab="admin-tab-overview" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full bg-sky-100/80 text-sky-700 font-bold transition text-left">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </button>
 
-      <div class="pt-2 flex justify-end gap-2">
-        <button type="button" id="btn-cancel-item" class="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">Cancel</button>
-        <button type="button" id="btn-confirm-item" class="px-5 py-2 rounded-xl bg-brand-600 text-xs font-bold text-white shadow">Add Item</button>
-      </div>
+        <button type="button" data-admin-tab="admin-tab-batches" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-batch-editor" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="plus-square" class="w-4 h-4"></i>
+          <span>Create / Edit Batch</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-enrollments" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+          <span>Student Enrollments</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-coupons" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="ticket-percent" class="w-4 h-4"></i>
+          <span>Coupons &amp; Offers</span>
+        </button>
+
+        <div class="pt-4 pb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Administration</div>
+
+        <button type="button" data-admin-tab="admin-tab-users" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Students &amp; Security</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-otp" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="mail-check" class="w-4 h-4"></i>
+          <span>Daily OTP Auditor</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-cipher" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="binary" class="w-4 h-4"></i>
+          <span>2-Digit Cipher Lab</span>
+        </button>
+
+        <div class="pt-4 pb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Portals</div>
+
+        <a href="batches.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition">
+          <span class="flex items-center gap-3">
+            <i data-lucide="globe" class="w-4 h-4"></i>
+            <span>Live Website</span>
+          </span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400"></i>
+        </a>
+      </nav>
     </div>
-  </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: ENROLLMENTS INSPECTOR                             -->
-  <!-- ======================================================== -->
-  <div id="modal-enrollments" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <div>
-          <h3 class="font-extrabold text-base text-white">Enrolled Students</h3>
-          <p id="enrollments-batch-name" class="text-xs text-slate-400 mt-0.5">Batch Students List</p>
+    <!-- Bottom Admin Profile Card -->
+    <div class="pt-3 border-t border-slate-100 px-2 flex items-center justify-between">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-xs flex-shrink-0">M</div>
+        <div class="min-w-0">
+          <div class="text-xs font-extrabold text-slate-900 truncate">Mendorbit Admin</div>
+          <div class="text-[10px] text-slate-400 font-medium">Super Admin</div>
         </div>
-        <button type="button" id="btn-close-enrollments" class="text-slate-400 hover:text-white p-1">
-          <i data-lucide="x" class="w-5 h-5"></i>
+      </div>
+      <a href="index.html" title="Student Portal" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN WORKSPACE CANVAS ==================== -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Top Mobile/Compact Bar -->
+    <header class="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button id="btn-open-admin-sidebar" type="button" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <h1 id="admin-page-heading" class="text-sm sm:text-base font-extrabold text-slate-900">Overview</h1>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="button" id="btn-quick-new-batch" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>New Batch</span>
         </button>
       </div>
+    </header>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-800/80 text-slate-400 uppercase tracking-wider text-[10px]">
-            <tr>
-              <th class="py-2.5 px-3">Student Name</th>
-              <th class="py-2.5 px-3">Email</th>
-              <th class="py-2.5 px-3">Class</th>
-              <th class="py-2.5 px-3">Enrolled At</th>
-            </tr>
-          </thead>
-          <tbody id="enrollments-tbody" class="divide-y divide-slate-800 font-medium">
-            <tr>
-              <td colspan="4" class="text-center py-6 text-slate-500">Loading students...</td>
-            </tr>
-          </tbody>
-        </table>
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ======================================================== -->
+      <!-- TAB 1: OVERVIEW                                          -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-overview" class="admin-tab-pane space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Published Batches</div>
+              <div id="kpi-total-batches" class="text-2xl font-black text-slate-900 mt-1">0</div>
+            </div>
+            <div class="w-11 h-11 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center">
+              <i data-lucide="layers" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Enrollments</div>
+              <div id="kpi-total-enrollments" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+            </div>
+            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Active Coupons</div>
+              <div id="kpi-total-coupons" class="text-2xl font-black text-amber-600 mt-1">0</div>
+            </div>
+            <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <i data-lucide="ticket-percent" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Registered Students</div>
+              <div id="kpi-total-users" class="text-2xl font-black text-indigo-600 mt-1">0</div>
+            </div>
+            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Console Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+              <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-extrabold text-slate-900 text-sm">Publish New Batch</h3>
+            <p class="text-xs text-slate-500">Create a batch across Class 9, Class 10, Banking, Law, SSC CGL or SSC CHSL with instant payment link.</p>
+            <button type="button" onclick="openCreateBatchTab()" class="text-xs font-extrabold text-sky-600 hover:underline flex items-center gap-1">
+              <span>Open Batch Editor</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <i data-lucide="ticket-percent" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-extrabold text-slate-900 text-sm">Manage Coupons</h3>
+            <p class="text-xs text-slate-500">Create 100% or flat discount codes so students can unlock batches at ₹0 checkout.</p>
+            <button type="button" onclick="switchAdminTab('admin-tab-coupons', 'Coupons & Offers')" class="text-xs font-extrabold text-amber-600 hover:underline flex items-center gap-1">
+              <span>Manage Coupons</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-extrabold text-slate-900 text-sm">Student Enrollments</h3>
+            <p class="text-xs text-slate-500">View live enrollments and coupon redemptions across all published batches.</p>
+            <button type="button" onclick="openEnrollmentsTab('', 'All Batches')" class="text-xs font-extrabold text-emerald-600 hover:underline flex items-center gap-1">
+              <span>View Enrollments</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-    Mendorbit Educational Platform • Unified EdTech Management System
-  </footer>
+      <!-- ======================================================== -->
+      <!-- TAB 2: BATCHES MANAGER                                   -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-batches" class="admin-tab-pane hidden space-y-5">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-black text-slate-900">Batches Manager</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Manage all published batches, copy direct payment links, and preview View More pages</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btn-refresh-batches" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Refresh</span>
+            </button>
+            <button type="button" id="btn-open-create-batch" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Create New Batch</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <span class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">All Batches</span>
+            <span id="admin-batch-count" class="text-xs font-bold text-slate-400">Loading...</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Batch Card Info</th>
+                  <th class="py-3 px-4">Target Audience</th>
+                  <th class="py-3 px-4">Exam / Date</th>
+                  <th class="py-3 px-4">Enrolled</th>
+                  <th class="py-3 px-4">Price</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-batches-tbody" class="divide-y divide-slate-100 font-medium">
+                <tr><td colspan="6" class="text-center py-8 text-slate-400">Loading batches...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 3: CREATE / EDIT BATCH (INLINE TAB — ZERO POPUP!)    -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-batch-editor" class="admin-tab-pane hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <button type="button" onclick="switchAdminTab('admin-tab-batches', 'Batches Manager')" class="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1 mb-1">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>Back to Batches Manager</span>
+            </button>
+            <h2 id="editor-form-title" class="text-xl font-black text-slate-900">Create New Batch</h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- LEFT: STREAMLINED CARD FIELDS ONLY -->
+          <form id="form-create-batch" class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+            <input type="hidden" id="batch-edit-id" value="" />
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Batch Title *</label>
+                <input type="text" id="batch-input-title" required placeholder="e.g. Arjuna JEE 2027" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Display Class / Tag Label (Orange Text) *</label>
+                <input type="text" id="batch-input-displaytag" required placeholder="e.g. Class 10 Boards / SSC CGL" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+            </div>
+
+            <!-- Separate Target Audience Selector (6 Classes Only) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Audience (Select 1 or More Classes for Batches Filter) *</label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="Class 9" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>Class 9</span>
+                </label>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="Class 10" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>Class 10</span>
+                </label>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="Banking" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>Banking</span>
+                </label>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="Law" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>Law</span>
+                </label>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="SSC CGL" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>SSC CGL</span>
+                </label>
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-sky-500 text-xs font-bold text-slate-700">
+                  <input type="checkbox" name="targetClasses" value="SSC CHSL" class="audience-cb accent-sky-600 w-3.5 h-3.5" />
+                  <span>SSC CHSL</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Exam / Target Line (Book Icon)</label>
+                <input type="text" id="batch-input-stream" placeholder="e.g. CBSE 2027 / IBPS PO" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Language Pill *</label>
+                <select id="batch-input-language" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white">
+                  <option value="HINGLISH">HINGLISH</option>
+                  <option value="ENGLISH">ENGLISH</option>
+                  <option value="HINDI">HINDI</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Status Prefix (Red Dot)</label>
+                <input type="text" id="batch-input-statuslabel" placeholder="e.g. Ongoing / Upcoming" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Start Date</label>
+                <input type="date" id="batch-input-startdate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Visibility</label>
+                <select id="batch-input-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white">
+                  <option value="ACTIVE">ACTIVE (Visible)</option>
+                  <option value="ARCHIVED">ARCHIVED (Hidden)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Selling Price (₹, 0 = Free)</label>
+                <input type="number" min="0" id="batch-input-price" placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Original MRP (₹, For % OFF)</label>
+                <input type="number" min="0" id="batch-input-original-price" placeholder="Optional, e.g. 6000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Thumbnail Banner Image URL</label>
+              <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">View More Page URL (Custom Batch Page Link)</label>
+              <input type="url" id="batch-input-viewmore" placeholder="https://mendorbit.in/your-batch-page" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              <p class="text-[10px] text-slate-400 mt-1">Clicking &gt; (View More), Banner, or Title navigates directly to this URL.</p>
+            </div>
+
+            <div class="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+              <button type="button" id="btn-reset-editor" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition">
+                Clear Form
+              </button>
+              <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-extrabold text-white shadow-md transition">
+                Publish Batch &amp; Generate Payment Link
+              </button>
+            </div>
+          </form>
+
+          <!-- RIGHT: EXACT CARD LIVE PREVIEW + GENERATED PAYMENT LINK -->
+          <div class="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-sky-600 flex items-center gap-1.5">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span>Live Batch Card Preview</span>
+              </span>
+              <span class="text-[11px] text-slate-400">Exact Batches page look</span>
+            </div>
+
+            <div id="admin-live-card-preview" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-md"></div>
+
+            <!-- Direct Payment / Enroll Link Output Box -->
+            <div id="admin-modal-enroll-link-box" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-extrabold text-emerald-800 uppercase tracking-wider">Direct Payment / Enroll Button Link</span>
+                <button type="button" id="btn-copy-modal-enroll-link" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold">Copy Link</button>
+              </div>
+              <input type="text" id="admin-modal-enroll-link-input" readonly class="w-full bg-white border border-emerald-200 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-emerald-700 outline-none" />
+              <p class="text-[10px] text-emerald-700">Paste this link into the Enroll button on your custom View More page.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 4: STUDENT ENROLLMENTS (INLINE TAB — ZERO POPUP!)    -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-enrollments" class="admin-tab-pane hidden space-y-5">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-black text-slate-900">Student Enrollments</h2>
+            <p id="enrollments-filter-subtitle" class="text-xs text-slate-500 mt-0.5">Live enrollments and coupon redemptions</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="enrollments-batch-filter" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-sky-500">
+              <option value="">All Batches</option>
+            </select>
+            <button type="button" id="btn-refresh-enrollments" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700">Refresh</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Student Name</th>
+                  <th class="py-3 px-4">Email</th>
+                  <th class="py-3 px-4">Batch</th>
+                  <th class="py-3 px-4">Coupon Used</th>
+                  <th class="py-3 px-4">Enrolled At</th>
+                </tr>
+              </thead>
+              <tbody id="enrollments-tbody" class="divide-y divide-slate-100 font-medium">
+                <tr><td colspan="5" class="text-center py-8 text-slate-400">Select a batch or refresh to load enrollments.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 5: COUPONS & OFFERS                                  -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-coupons" class="admin-tab-pane hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+            <div class="pb-3 border-b border-slate-100">
+              <h3 class="font-extrabold text-base text-slate-900">Create Coupon Code</h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">Students can apply 100% discount codes to enroll at ₹0</p>
+            </div>
+
+            <form id="form-create-coupon" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Coupon Code *</label>
+                <input type="text" id="coupon-input-code" required placeholder="e.g. MENDORBIT100" class="w-full uppercase bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Discount Type</label>
+                  <select id="coupon-input-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500">
+                    <option value="PERCENT">Percentage (%)</option>
+                    <option value="FLAT">Flat Amount (₹)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Discount Value *</label>
+                  <input type="number" min="1" id="coupon-input-value" required placeholder="e.g. 100 or 2999" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Applicable Batch</label>
+                <select id="coupon-input-batch" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500">
+                  <option value="ALL">All Batches</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Max Uses (0 = Unlimited)</label>
+                  <input type="number" min="0" id="coupon-input-maxuses" placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Expiry Date (Optional)</label>
+                  <input type="date" id="coupon-input-expiry" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Description (Optional)</label>
+                <input type="text" id="coupon-input-desc" placeholder="e.g. 100% Free Launch Coupon" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-sm transition">
+                Save &amp; Activate Coupon
+              </button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <h4 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Saved Coupons</h4>
+              <button type="button" id="btn-refresh-coupons" class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700">Refresh</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-slate-200">
+                  <tr>
+                    <th class="py-3 px-4">Code</th>
+                    <th class="py-3 px-4">Discount</th>
+                    <th class="py-3 px-4">Scope</th>
+                    <th class="py-3 px-4">Usage</th>
+                    <th class="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-coupons-tbody" class="divide-y divide-slate-100 font-medium">
+                  <tr><td colspan="5" class="text-center py-6 text-slate-400">Loading coupons...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 6: STUDENTS & DECRYPTION                             -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-users" class="admin-tab-pane hidden space-y-5">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900">Registered Students &amp; Security Inspector</h3>
+            <p class="text-xs text-slate-500">View registered students and decrypt stored passwords securely</p>
+          </div>
+          <button id="btn-refresh-users" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Student Name</th>
+                  <th class="py-3 px-4">Email</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Activity</th>
+                  <th class="py-3 px-4">Location / IP</th>
+                  <th class="py-3 px-4">Encrypted Password</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-tbody" class="divide-y divide-slate-100">
+                <tr><td colspan="7" class="text-center py-8 text-slate-400">Loading student records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 7: DAILY OTP AUDITOR                                 -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-otp" class="admin-tab-pane hidden space-y-5">
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-extrabold text-lg text-slate-900">Daily OTP Stats &amp; Auditor</h3>
+              <p class="text-xs text-slate-500">Live atomic daily counter synced with Google Sheet <code class="text-sky-600">Mendorbit_Daily_OTP_Stats</code></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <a id="btn-open-otp-sheet" href="https://docs.google.com/spreadsheets/d/1IobraWz_mMtPcCDvTzA92DhYn2tA0i5gEBK_mLC5xJc/edit" target="_blank" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                <span>Open Google Sheet</span>
+              </a>
+              <button id="btn-refresh-otp-stats" class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl">Refresh</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-slate-400 font-bold uppercase block">Today's Date</span>
+              <strong id="stat-otp-date" class="text-sm text-slate-800 mt-1 block font-mono">--</strong>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-sky-600 font-bold uppercase block">Total Sent</span>
+              <strong id="stat-otp-sent" class="text-2xl text-sky-600 mt-0.5 block font-black font-mono">0</strong>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-emerald-600 font-bold uppercase block">Verified</span>
+              <strong id="stat-otp-verified" class="text-2xl text-emerald-600 mt-0.5 block font-black font-mono">0</strong>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-amber-600 font-bold uppercase block">Signup OTPs</span>
+              <strong id="stat-otp-signup" class="text-2xl text-amber-600 mt-0.5 block font-black font-mono">0</strong>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-indigo-600 font-bold uppercase block">Login OTPs</span>
+              <strong id="stat-otp-login" class="text-2xl text-indigo-600 mt-0.5 block font-black font-mono">0</strong>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+              <span class="text-[10px] text-rose-600 font-bold uppercase block">Reset OTPs</span>
+              <strong id="stat-otp-reset" class="text-2xl text-rose-600 mt-0.5 block font-black font-mono">0</strong>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400">
+            Last Activity: <strong id="stat-otp-last-activity" class="text-slate-600 font-mono">Loading...</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 8: CIPHER LAB                                        -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-cipher" class="admin-tab-pane hidden space-y-5">
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900">Mendorbit 2-Digit Password Cipher Lab</h3>
+            <p class="text-xs text-slate-500">Lowercase: a-z → 01-26 | Uppercase: A-Z → U01-U26 | Digits: 0-9 → n0-n9</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+              <span class="text-xs font-bold text-slate-600 uppercase">Plaintext to Encrypt</span>
+              <input type="text" id="lab-plain-input" placeholder="Enter plaintext..." class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-900 font-mono outline-none focus:border-sky-500" />
+              <button id="btn-lab-encrypt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition">Convert to 2-Digit Ciphertext →</button>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+              <span class="text-xs font-bold text-slate-600 uppercase">Ciphertext to De-Encrypt</span>
+              <input type="text" id="lab-cipher-input" placeholder="Paste ciphertext..." class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-sky-700 font-mono outline-none focus:border-sky-500" />
+              <button id="btn-lab-decrypt" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition">← De-Encrypt Back to Plaintext</button>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4 font-mono text-xs">
+            <div class="truncate"><span class="text-slate-400">Result: </span><strong id="lab-result-display" class="text-sky-700">--</strong></div>
+            <button id="btn-copy-result" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg">Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
 
   <!-- Scripts -->
   <script src="assets/js/mendorbit-cipher.js"></script>
@@ -730,16 +708,52 @@
     document.addEventListener("DOMContentLoaded", () => {
       if (window.lucide) lucide.createIcons();
 
-      // State
       let activeAdminKey = null;
       let loadedBatches = [];
       let loadedCoupons = [];
-      let activeEditingBatchId = null;
-      let activeCurriculum = {};
-      let activeEditingChapterId = null;
-      let activeItemModalType = null; // 'lecture', 'note', 'dpp'
+      let loadedUsers = [];
 
-      // Admin Auth PIN Gate
+      // Mobile Sidebar
+      const adminSidebar = document.getElementById('admin-sidebar');
+      const adminBackdrop = document.getElementById('admin-sidebar-backdrop');
+      document.getElementById('btn-open-admin-sidebar').addEventListener('click', () => {
+        adminSidebar.classList.remove('-translate-x-full');
+        adminBackdrop.classList.remove('hidden');
+      });
+      function closeAdminSidebar() {
+        adminSidebar.classList.add('-translate-x-full');
+        adminBackdrop.classList.add('hidden');
+      }
+      document.getElementById('btn-close-admin-sidebar').addEventListener('click', closeAdminSidebar);
+      adminBackdrop.addEventListener('click', closeAdminSidebar);
+
+      // Tab Switching (Global so overview cards & action buttons can navigate cleanly)
+      window.switchAdminTab = function (tabId, titleLabel) {
+        document.querySelectorAll('.admin-nav-btn').forEach(b => {
+          const isMatch = b.getAttribute('data-admin-tab') === tabId;
+          b.className = isMatch
+            ? "admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full bg-sky-100/80 text-sky-700 font-bold transition text-left"
+            : "admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left";
+        });
+        document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.add('hidden'));
+        const pane = document.getElementById(tabId);
+        if (pane) pane.classList.remove('hidden');
+        const heading = document.getElementById('admin-page-heading');
+        if (heading && titleLabel) heading.textContent = titleLabel;
+        closeAdminSidebar();
+        if (window.lucide) lucide.createIcons();
+      };
+
+      document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-admin-tab');
+          const label = btn.innerText.trim();
+          switchAdminTab(targetId, label);
+          if (targetId === 'admin-tab-enrollments') loadAdminEnrollments();
+        });
+      });
+
+      // PIN Gate Authentication
       const gateOverlay = document.getElementById("admin-gate-overlay");
       const pinForm = document.getElementById("form-admin-auth");
       const pinInput = document.getElementById("admin-pin-input");
@@ -750,7 +764,7 @@
         if (!enteredPin) return;
 
         const btn = pinForm.querySelector("button[type='submit']");
-        const originalText = btn.textContent;
+        const orig = btn.textContent;
         btn.disabled = true;
         btn.textContent = "Verifying Key...";
 
@@ -759,89 +773,38 @@
           if (res && res.status === "success") {
             activeAdminKey = enteredPin;
             gateOverlay.classList.add("hidden");
-            renderUsersTable(res.users || []);
+            loadedUsers = res.users || [];
+            renderUsersTable(loadedUsers);
+            updateAdminKPIs();
             loadOtpStats();
             loadAdminBatches();
             loadAdminCoupons();
+            loadAdminEnrollments();
             return;
           } else {
-            alert(res.message || "Incorrect Admin Key. Access denied.");
+            alert((res && res.message) || "Incorrect Admin Key. Access denied.");
           }
         } catch (err) {
           alert("Server connection error. Please verify Edge Worker status.");
         } finally {
           btn.disabled = false;
-          btn.textContent = originalText;
+          btn.textContent = orig;
         }
-      });
-
-      // Navigation Tabs
-      document.querySelectorAll('.admin-nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetId = btn.getAttribute('data-admin-tab');
-
-          document.querySelectorAll('.admin-nav-btn').forEach(b => {
-            b.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0";
-          });
-          btn.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition flex-shrink-0";
-
-          document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.add('hidden'));
-          const targetPane = document.getElementById(targetId);
-          if (targetPane) targetPane.classList.remove('hidden');
-        });
       });
 
       function updateAdminKPIs() {
-        const kpiB = document.getElementById('kpi-total-batches');
-        const kpiE = document.getElementById('kpi-total-enrollments');
-        const kpiC = document.getElementById('kpi-total-coupons');
-        if (kpiB) kpiB.textContent = loadedBatches.length;
-        if (kpiE) {
-          const sum = loadedBatches.reduce((acc, b) => acc + (Number(b.totalEnrolled) || 0), 0);
-          kpiE.textContent = sum;
-        }
-        if (kpiC) {
-          const act = loadedCoupons.filter(c => c.isActive !== false).length;
-          kpiC.textContent = act;
-        }
+        document.getElementById('kpi-total-batches').textContent = loadedBatches.length;
+        document.getElementById('kpi-total-enrollments').textContent = loadedBatches.reduce((acc, b) => acc + (Number(b.totalEnrolled) || 0), 0);
+        document.getElementById('kpi-total-coupons').textContent = loadedCoupons.filter(c => c.isActive !== false).length;
+        document.getElementById('kpi-total-users').textContent = loadedUsers.length;
       }
 
-      // ========================================================
-      // BATCHES STUDIO LOGIC
-      // ========================================================
-      async function loadAdminBatches() {
-        if (!activeAdminKey) return;
-        const tbody = document.getElementById('admin-batches-tbody');
-        const countEl = document.getElementById('admin-batch-count');
-        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">Loading batches...</td></tr>`;
-
-        try {
-          const res = await MendorbitAPI.adminGetBatches(activeAdminKey);
-          if (res && res.status === "success" && Array.isArray(res.batches)) {
-            loadedBatches = res.batches;
-            if (countEl) countEl.textContent = `${loadedBatches.length} Batches`;
-            renderAdminBatches();
-            populateCouponBatchSelect();
-            updateAdminKPIs();
-          }
-        } catch (e) {
-          console.warn("[Admin Batches] Fetch note:", e);
-        }
-      }
-
-      function populateCouponBatchSelect() {
-        const sel = document.getElementById('coupon-input-batch');
-        if (!sel) return;
-        sel.innerHTML = `<option value="ALL">All Batches</option>` + loadedBatches.map(b =>
-          `<option value="${b.id}">${b.title}</option>`
-        ).join('');
-      }
-
+      // --------------------------------------------------------
+      // BATCHES MANAGER & INLINE EDITOR (NO POPUP MODAL)
+      // --------------------------------------------------------
       function getBatchPaymentLink(b) {
         const base = window.location.origin;
-        if (b && b.enrollToken) {
-          return `${base}/payment.html?info=${encodeURIComponent(b.enrollToken)}`;
-        }
+        if (b && b.enrollToken) return `${base}/payment.html?info=${encodeURIComponent(b.enrollToken)}`;
         return `${base}/payment.html?id=${encodeURIComponent(b.id)}`;
       }
 
@@ -853,82 +816,105 @@
         alert("Direct Payment / Enroll Link copied!\n\n" + link);
       };
 
+      async function loadAdminBatches() {
+        if (!activeAdminKey) return;
+        const tbody = document.getElementById('admin-batches-tbody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading batches...</td></tr>`;
+        try {
+          const res = await MendorbitAPI.adminGetBatches(activeAdminKey);
+          if (res && res.status === "success" && Array.isArray(res.batches)) {
+            loadedBatches = res.batches;
+            document.getElementById('admin-batch-count').textContent = `${loadedBatches.length} Batches`;
+            renderAdminBatches();
+            populateBatchSelectors();
+            updateAdminKPIs();
+          }
+        } catch (e) { console.warn("[Admin Batches] Error:", e); }
+      }
+
+      function populateBatchSelectors() {
+        const couponSel = document.getElementById('coupon-input-batch');
+        if (couponSel) {
+          couponSel.innerHTML = `<option value="ALL">All Batches</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
+        }
+        const enrSel = document.getElementById('enrollments-batch-filter');
+        if (enrSel) {
+          const cur = enrSel.value;
+          enrSel.innerHTML = `<option value="">All Batches</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
+          enrSel.value = cur;
+        }
+      }
+
       function renderAdminBatches() {
         const tbody = document.getElementById('admin-batches-tbody');
         if (!tbody) return;
-
         if (loadedBatches.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No batches created yet. Click "Create New Batch" to add one.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">No batches published yet. Click "Create New Batch" to add one.</td></tr>`;
           return;
         }
-
         tbody.innerHTML = loadedBatches.map(b => {
           const thumbHtml = b.thumbnail
-            ? `<img src="${b.thumbnail}" alt="Thumbnail" class="w-12 h-9 rounded-xl object-cover border border-slate-700 flex-shrink-0" />`
-            : `<div class="w-12 h-9 rounded-xl bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-300 font-black text-xs flex-shrink-0">${(b.title || 'B').charAt(0).toUpperCase()}</div>`;
+            ? `<img src="${b.thumbnail}" alt="Thumbnail" class="w-12 h-8 rounded-lg object-cover border border-slate-200 flex-shrink-0" />`
+            : `<div class="w-12 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-700 font-black text-xs flex-shrink-0">${(b.title || 'B').charAt(0).toUpperCase()}</div>`;
           const priceLabel = Number(b.price) > 0
-            ? `₹${Number(b.price).toLocaleString('en-IN')}${Number(b.originalPrice) > Number(b.price) ? ` <span class="text-[10px] text-slate-500 line-through">₹${b.originalPrice}</span>` : ''}`
-            : 'FREE';
+            ? `₹${Number(b.price).toLocaleString('en-IN')}${Number(b.originalPrice) > Number(b.price) ? ` <span class="text-[10px] text-slate-400 line-through">₹${b.originalPrice}</span>` : ''}`
+            : '<span class="text-emerald-600 font-extrabold">FREE</span>';
           const classesList = Array.isArray(b.targetClasses) && b.targetClasses.length
             ? b.targetClasses
             : (b.targetClass ? b.targetClass.split(',').map(s => s.trim()).filter(Boolean) : []);
           const audienceBadges = classesList.map(c =>
-            `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">${c}</span>`
+            `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">${c}</span>`
           ).join(' ');
           const viewMoreHref = b.viewMoreUrl || `batch-detail.html?id=${encodeURIComponent(b.id)}`;
 
           return `
-            <tr class="hover:bg-slate-800/40 transition">
-              <td class="py-3 px-4">
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-3.5 px-4">
                 <div class="flex items-center gap-3">
                   ${thumbHtml}
                   <div class="min-w-0">
-                    <div class="font-extrabold text-white text-xs truncate max-w-[200px]">${b.title}</div>
-                    <div class="text-[10px] text-orange-400 font-bold">${b.displayTag || b.targetClass || ''} • <span class="text-slate-400">${b.language || 'HINGLISH'}</span></div>
+                    <div class="font-extrabold text-slate-900 text-xs truncate max-w-[200px]">${b.title}</div>
+                    <div class="text-[10px] text-orange-600 font-bold">${b.displayTag || ''} <span class="text-slate-400 font-normal">• ${b.language || 'HINGLISH'}</span></div>
                   </div>
                 </div>
               </td>
-              <td class="py-3 px-4">
-                <div class="flex flex-wrap gap-1 max-w-[180px]">${audienceBadges || '<span class="text-slate-500">-</span>'}</div>
-              </td>
-              <td class="py-3 px-4 text-slate-400 text-[11px]">
+              <td class="py-3.5 px-4"><div class="flex flex-wrap gap-1 max-w-[180px]">${audienceBadges || '-'}</div></td>
+              <td class="py-3.5 px-4 text-slate-600 text-[11px]">
                 <div>${b.stream || '-'}</div>
-                ${b.startDate ? `<div class="text-[10px] text-rose-400">${b.statusLabel || 'Ongoing'} • ${b.startDate}</div>` : ''}
+                ${b.startDate ? `<div class="text-[10px] text-rose-500">${b.statusLabel || 'Ongoing'} • ${b.startDate}</div>` : ''}
               </td>
-              <td class="py-3 px-4 font-bold text-emerald-400">${b.totalEnrolled || 0} Students</td>
-              <td class="py-3 px-4 font-bold text-white">${priceLabel}</td>
-              <td class="py-3 px-4 text-right">
+              <td class="py-3.5 px-4 font-bold text-emerald-600">${b.totalEnrolled || 0}</td>
+              <td class="py-3.5 px-4 font-bold text-slate-900">${priceLabel}</td>
+              <td class="py-3.5 px-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
-                  <button type="button" onclick="copyBatchPaymentLink('${b.id}')" title="Copy Direct Payment Link for View More Enroll Button" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                  <button type="button" onclick="copyBatchPaymentLink('${b.id}')" title="Copy Payment Link" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 rounded-lg transition font-bold text-[11px] flex items-center gap-1">
                     <i data-lucide="link" class="w-3 h-3"></i>
                     <span>Enroll Link</span>
                   </button>
-                  <a href="${viewMoreHref}" target="_blank" title="Open View More Page" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
-                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                  <a href="${viewMoreHref}" target="_blank" title="Open View More Page" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                   </a>
-                  <button type="button" onclick="openEditBatchModal('${b.id}')" class="px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                  <button type="button" onclick="openEditBatchTab('${b.id}')" class="px-2.5 py-1.5 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 rounded-lg transition font-bold text-[11px] flex items-center gap-1">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                     <span>Edit</span>
                   </button>
-                  <button type="button" onclick="openEnrollmentsViewer('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
-                    <i data-lucide="users" class="w-3 h-3"></i>
+                  <button type="button" onclick="openEnrollmentsTab('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" title="View Enrolled Students" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition">
+                    <i data-lucide="users" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button type="button" onclick="deleteBatch('${b.id}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  <button type="button" onclick="deleteBatch('${b.id}')" title="Delete Batch" class="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               </td>
             </tr>
           `;
         }).join('');
-
         if (window.lucide) lucide.createIcons();
       }
 
-      // Refresh Button
       document.getElementById('btn-refresh-batches').addEventListener('click', loadAdminBatches);
 
-      // Live WYSIWYG Preview Renderer inside Create/Edit Modal
+      // Live Card Preview Helpers
       function getSelectedAudienceClasses() {
         return Array.from(document.querySelectorAll('.audience-cb:checked')).map(cb => cb.value);
       }
@@ -941,8 +927,7 @@
         const suffix = (day % 10 === 1 && day !== 11) ? "st" : (day % 10 === 2 && day !== 12) ? "nd" : (day % 10 === 3 && day !== 13) ? "rd" : "th";
         const month = d.toLocaleString("en-US", { month: "short" });
         const yr = String(d.getFullYear()).slice(-2);
-        const isPast = d.getTime() <= Date.now();
-        const prefix = isPast ? "Started on" : "Starts on";
+        const prefix = d.getTime() <= Date.now() ? "Started on" : "Starts on";
         return `${statusLabel ? statusLabel + ' | ' : ''}${prefix} ${day}${suffix} ${month}'${yr}`;
       }
 
@@ -1024,11 +1009,10 @@
         if (window.lucide) lucide.createIcons();
       }
 
-      document.getElementById('form-create-batch').addEventListener('input', updateBatchLivePreview);
-      document.getElementById('form-create-batch').addEventListener('change', updateBatchLivePreview);
-
-      const modalCreate = document.getElementById('modal-create-batch');
       const batchForm = document.getElementById('form-create-batch');
+      batchForm.addEventListener('input', updateBatchLivePreview);
+      batchForm.addEventListener('change', updateBatchLivePreview);
+
       const modalEnrollBox = document.getElementById('admin-modal-enroll-link-box');
       const modalEnrollInput = document.getElementById('admin-modal-enroll-link-input');
 
@@ -1042,29 +1026,27 @@
         batchForm.reset();
         document.getElementById('batch-edit-id').value = "";
         document.querySelectorAll('.audience-cb').forEach(cb => cb.checked = false);
-        document.getElementById('modal-batch-form-title').textContent = "Create New Batch";
+        document.getElementById('editor-form-title').textContent = "Create New Batch";
         document.getElementById('btn-submit-batch-form').textContent = "Publish Batch & Generate Payment Link";
         if (modalEnrollBox) modalEnrollBox.classList.add('hidden');
         updateBatchLivePreview();
       }
 
-      document.getElementById('btn-open-create-batch').addEventListener('click', () => {
+      window.openCreateBatchTab = function () {
         resetBatchForm();
-        modalCreate.classList.remove('hidden');
-      });
-      document.getElementById('btn-close-create-batch').addEventListener('click', () => {
-        modalCreate.classList.add('hidden');
-      });
-      document.getElementById('btn-cancel-create-batch').addEventListener('click', () => {
-        modalCreate.classList.add('hidden');
-      });
+        switchAdminTab('admin-tab-batch-editor', 'Create New Batch');
+      };
 
-      window.openEditBatchModal = function (batchId) {
+      document.getElementById('btn-open-create-batch').addEventListener('click', openCreateBatchTab);
+      document.getElementById('btn-quick-new-batch').addEventListener('click', openCreateBatchTab);
+      document.getElementById('btn-reset-editor').addEventListener('click', resetBatchForm);
+
+      window.openEditBatchTab = function (batchId) {
         const b = loadedBatches.find(x => x.id === batchId);
         if (!b) return;
         resetBatchForm();
         document.getElementById('batch-edit-id').value = b.id;
-        document.getElementById('modal-batch-form-title').textContent = "Edit Batch";
+        document.getElementById('editor-form-title').textContent = `Edit Batch: ${b.title}`;
         document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
 
         document.getElementById('batch-input-title').value = b.title || "";
@@ -1092,7 +1074,7 @@
         }
 
         updateBatchLivePreview();
-        modalCreate.classList.remove('hidden');
+        switchAdminTab('admin-tab-batch-editor', 'Edit Batch');
       };
 
       batchForm.addEventListener('submit', async (e) => {
@@ -1157,10 +1139,10 @@
             }
             if (!editId) {
               document.getElementById('batch-edit-id').value = savedId;
-              document.getElementById('modal-batch-form-title').textContent = "Batch Published! Copy Enroll Link Below";
+              document.getElementById('editor-form-title').textContent = `Published: ${title}`;
               document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
             }
-            alert((editId ? "Batch updated!" : "Batch published!") + "\n\nDirect Enroll / Payment Link:\n" + genLink);
+            alert((editId ? "Batch updated!" : "Batch published!") + "\n\nDirect Payment / Enroll Link:\n" + genLink);
             loadAdminBatches();
           } else {
             alert((res && res.message) || "Failed to save batch.");
@@ -1170,13 +1152,65 @@
         }
       });
 
-      // ========================================================
-      // COUPONS STUDIO LOGIC
-      // ========================================================
+      window.deleteBatch = async function (batchId) {
+        if (!confirm(`Are you sure you want to delete batch ${batchId}?`)) return;
+        try {
+          const res = await MendorbitAPI.adminDeleteBatch(batchId, activeAdminKey);
+          if (res && res.status === "success") {
+            loadAdminBatches();
+          }
+        } catch(e) { alert("Delete error."); }
+      };
+
+      // --------------------------------------------------------
+      // ENROLLMENTS TAB (INLINE — NO MODAL)
+      // --------------------------------------------------------
+      window.openEnrollmentsTab = function (batchId, title) {
+        const sel = document.getElementById('enrollments-batch-filter');
+        if (sel) sel.value = batchId || "";
+        document.getElementById('enrollments-filter-subtitle').textContent = batchId ? `Showing enrollments for: ${title || batchId}` : "Live enrollments across all batches";
+        switchAdminTab('admin-tab-enrollments', 'Student Enrollments');
+        loadAdminEnrollments(batchId);
+      };
+
+      async function loadAdminEnrollments(forcedBatchId) {
+        if (!activeAdminKey) return;
+        const batchId = forcedBatchId !== undefined ? forcedBatchId : (document.getElementById('enrollments-batch-filter')?.value || "");
+        const tbody = document.getElementById('enrollments-tbody');
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Loading enrollments...</td></tr>`;
+        try {
+          const res = await MendorbitAPI.adminGetEnrollments(batchId, activeAdminKey);
+          if (res && res.status === "success") {
+            const list = res.enrollments || [];
+            if (list.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">No enrollments found.</td></tr>`;
+              return;
+            }
+            tbody.innerHTML = list.map(enr => `
+              <tr class="hover:bg-slate-50 transition">
+                <td class="py-3 px-4 font-bold text-slate-900">${enr.userName || 'Student'}</td>
+                <td class="py-3 px-4 font-mono text-slate-600">${enr.userEmail}</td>
+                <td class="py-3 px-4 font-bold text-sky-700">${enr.batchTitle || enr.batchId}</td>
+                <td class="py-3 px-4 font-mono text-amber-600 font-bold">${enr.couponUsed || '-'}</td>
+                <td class="py-3 px-4 text-slate-400 text-[11px]">${enr.enrolledAt ? new Date(enr.enrolledAt).toLocaleString() : 'Active'}</td>
+              </tr>
+            `).join('');
+          }
+        } catch (e) {
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-rose-500">Failed to load enrollments.</td></tr>`;
+        }
+      }
+
+      document.getElementById('enrollments-batch-filter').addEventListener('change', () => loadAdminEnrollments());
+      document.getElementById('btn-refresh-enrollments').addEventListener('click', () => loadAdminEnrollments());
+
+      // --------------------------------------------------------
+      // COUPONS MANAGER
+      // --------------------------------------------------------
       async function loadAdminCoupons() {
         if (!activeAdminKey) return;
         const tbody = document.getElementById('admin-coupons-tbody');
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Loading coupons...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Loading coupons...</td></tr>`;
         try {
           const res = await MendorbitAPI.adminGetCoupons(activeAdminKey);
           if (res && res.status === "success" && Array.isArray(res.coupons)) {
@@ -1184,38 +1218,33 @@
             renderAdminCoupons();
             updateAdminKPIs();
           }
-        } catch (e) {
-          console.warn("[Admin Coupons] Fetch note:", e);
-        }
+        } catch (e) { console.warn("[Coupons] Error:", e); }
       }
 
       function renderAdminCoupons() {
         const tbody = document.getElementById('admin-coupons-tbody');
-        if (!tbody) return;
         if (loadedCoupons.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500">No coupons created yet. Create a 100% coupon to test ₹0 checkout!</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">No coupons created yet.</td></tr>`;
           return;
         }
         tbody.innerHTML = loadedCoupons.map(c => {
           const discLabel = c.discountType === "FLAT" ? `₹${c.discountValue} OFF` : `${c.discountValue}% OFF`;
-          const scopeLabel = (Array.isArray(c.applicableBatches) && c.applicableBatches[0] !== "ALL")
-            ? c.applicableBatches.join(", ")
-            : "All Batches";
+          const scopeLabel = (Array.isArray(c.applicableBatches) && c.applicableBatches[0] !== "ALL") ? c.applicableBatches.join(", ") : "All Batches";
           const usageLabel = `${c.usedCount || 0} / ${c.maxUses > 0 ? c.maxUses : '∞'}`;
           return `
-            <tr class="hover:bg-slate-800/40 transition">
-              <td class="py-3 px-3">
-                <div class="font-mono font-black text-amber-400 text-xs">${c.code}</div>
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4">
+                <div class="font-mono font-black text-slate-900 text-xs">${c.code}</div>
                 ${c.description ? `<div class="text-[10px] text-slate-400">${c.description}</div>` : ''}
               </td>
-              <td class="py-3 px-3 font-bold text-emerald-400">${discLabel}</td>
-              <td class="py-3 px-3 text-slate-300 text-[11px] truncate max-w-[140px]">${scopeLabel}</td>
-              <td class="py-3 px-3 text-slate-300 font-mono text-[11px]">${usageLabel}</td>
-              <td class="py-3 px-3 text-right">
+              <td class="py-3 px-4 font-bold text-emerald-600">${discLabel}</td>
+              <td class="py-3 px-4 text-slate-600 text-[11px] truncate max-w-[140px]">${scopeLabel}</td>
+              <td class="py-3 px-4 font-mono text-slate-600 text-[11px]">${usageLabel}</td>
+              <td class="py-3 px-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
-                  <button type="button" onclick="navigator.clipboard.writeText('${c.code}'); alert('Copied ${c.code}')" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[10px] font-bold">Copy</button>
-                  <button type="button" onclick="deleteAdminCoupon('${c.code}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  <button type="button" onclick="navigator.clipboard.writeText('${c.code}'); alert('Copied ${c.code}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold">Copy</button>
+                  <button type="button" onclick="deleteAdminCoupon('${c.code}')" class="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               </td>
@@ -1226,7 +1255,6 @@
       }
 
       document.getElementById('btn-refresh-coupons').addEventListener('click', loadAdminCoupons);
-
       document.getElementById('form-create-coupon').addEventListener('submit', async (e) => {
         e.preventDefault();
         const code = document.getElementById('coupon-input-code').value.trim().toUpperCase();
@@ -1239,14 +1267,7 @@
 
         try {
           const res = await MendorbitAPI.adminCreateCoupon({
-            code,
-            discountType,
-            discountValue,
-            applicableBatches: [batchScope || "ALL"],
-            maxUses,
-            expiresAt,
-            description,
-            isActive: true
+            code, discountType, discountValue, applicableBatches: [batchScope || "ALL"], maxUses, expiresAt, description, isActive: true
           }, activeAdminKey);
           if (res && res.status === "success") {
             alert(`Coupon ${code} activated!`);
@@ -1255,515 +1276,116 @@
           } else {
             alert((res && res.message) || "Failed to save coupon.");
           }
-        } catch (err) {
-          alert("Server connection error.");
-        }
+        } catch (err) { alert("Server connection error."); }
       });
 
       window.deleteAdminCoupon = async function (code) {
         if (!confirm(`Delete coupon ${code}?`)) return;
         try {
           const res = await MendorbitAPI.adminDeleteCoupon(code, activeAdminKey);
-          if (res && res.status === "success") {
-            loadAdminCoupons();
-          }
-        } catch (err) {
-          alert("Failed to delete coupon.");
-        }
+          if (res && res.status === "success") loadAdminCoupons();
+        } catch (err) { alert("Failed to delete coupon."); }
       };
 
-      window.deleteBatch = async function (batchId) {
-        if (!confirm(`Are you sure you want to delete batch ${batchId}?`)) return;
-        try {
-          const res = await MendorbitAPI.adminDeleteBatch(batchId, activeAdminKey);
-          if (res && res.status === "success") {
-            alert("Batch deleted.");
-            loadAdminBatches();
-          }
-        } catch(e) {
-          alert("Delete error.");
-        }
-      };
-
-      // ========================================================
-      // CURRICULUM STUDIO LOGIC
-      // ========================================================
-      const modalCurriculum = document.getElementById('modal-manage-curriculum');
-      document.getElementById('btn-close-curriculum').addEventListener('click', () => {
-        modalCurriculum.classList.add('hidden');
-      });
-
-      window.openCurriculumEditor = async function (batchId) {
-        activeEditingBatchId = batchId;
-        const batch = loadedBatches.find(b => b.id === batchId);
-        if (!batch) return;
-
-        document.getElementById('curriculum-modal-title').textContent = `${batch.title} • Curriculum Studio`;
-        modalCurriculum.classList.remove('hidden');
-
-        // Fetch curriculum content
-        try {
-          const res = await MendorbitAPI.getBatchContent(batchId, "");
-          if (res && res.status === "success") {
-            activeCurriculum = res.curriculum || {};
-          } else {
-            activeCurriculum = {};
-          }
-        } catch(e) {
-          activeCurriculum = {};
-        }
-
-        // Populate Subjects Select
-        const subSelect = document.getElementById('curriculum-subject-select');
-        const subjects = batch.subjects || ["Physics", "Chemistry", "Mathematics"];
-        subSelect.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
-
-        // Ensure subject keys exist in activeCurriculum
-        subjects.forEach(s => {
-          if (!activeCurriculum[s]) activeCurriculum[s] = { chapters: [] };
-        });
-
-        renderAdminChapters();
-      };
-
-      const subSelect = document.getElementById('curriculum-subject-select');
-      subSelect.addEventListener('change', renderAdminChapters);
-
-      function renderAdminChapters() {
-        const sub = subSelect.value;
-        const container = document.getElementById('admin-chapters-container');
-        const chapters = (activeCurriculum[sub] && activeCurriculum[sub].chapters) || [];
-
-        if (chapters.length === 0) {
-          container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 bg-slate-800/40 rounded-2xl">No chapters added yet for ${sub}. Click "Add Chapter" above.</div>`;
-          return;
-        }
-
-        container.innerHTML = chapters.map((ch, idx) => `
-          <div class="rounded-2xl border border-slate-700 bg-slate-800/70 p-4 space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-slate-700">
-              <div>
-                <span class="text-[10px] font-bold uppercase text-brand-400">Chapter ${ch.chapterNumber || (idx + 1)}</span>
-                <h5 class="font-extrabold text-sm text-white">${ch.title}</h5>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="openAddItemModal('lecture', '${ch.chapterId}')" class="px-2.5 py-1 bg-brand-600/30 hover:bg-brand-600 text-brand-300 hover:text-white rounded-lg text-[11px] font-bold flex items-center gap-1">
-                  <i data-lucide="video" class="w-3 h-3"></i>
-                  <span>+ Lecture</span>
-                </button>
-                <button type="button" onclick="openAddItemModal('note', '${ch.chapterId}')" class="px-2.5 py-1 bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-[11px] font-bold flex items-center gap-1">
-                  <i data-lucide="file-text" class="w-3 h-3"></i>
-                  <span>+ Note PDF</span>
-                </button>
-                <button type="button" onclick="openAddItemModal('dpp', '${ch.chapterId}')" class="px-2.5 py-1 bg-amber-600/30 hover:bg-amber-600 text-amber-300 hover:text-white rounded-lg text-[11px] font-bold flex items-center gap-1">
-                  <i data-lucide="clipboard-list" class="w-3 h-3"></i>
-                  <span>+ DPP</span>
-                </button>
-                <button type="button" onclick="deleteChapter('${sub}', '${ch.chapterId}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg">
-                  <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Lectures, Notes & DPPs in this Chapter -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Lectures (${(ch.lectures || []).length})</div>
-                <div class="space-y-1">
-                  ${(ch.lectures || []).map(l => `<div class="truncate text-slate-300 text-[11px]">• ${l.title}</div>`).join('')}
-                </div>
-              </div>
-              <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Notes (${(ch.notes || []).length})</div>
-                <div class="space-y-1">
-                  ${(ch.notes || []).map(n => `<div class="truncate text-slate-300 text-[11px]">• ${n.title}</div>`).join('')}
-                </div>
-              </div>
-              <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">DPPs (${(ch.dpps || []).length})</div>
-                <div class="space-y-1">
-                  ${(ch.dpps || []).map(d => `<div class="truncate text-slate-300 text-[11px]">• ${d.title}</div>`).join('')}
-                </div>
-              </div>
-            </div>
-          </div>
-        `).join('');
-
-        if (window.lucide) lucide.createIcons();
-      }
-
-      // Add Chapter logic
-      const chapterAddBox = document.getElementById('chapter-add-box');
-      document.getElementById('btn-add-chapter-trigger').addEventListener('click', () => {
-        chapterAddBox.classList.remove('hidden');
-      });
-      document.getElementById('btn-cancel-add-chapter').addEventListener('click', () => {
-        chapterAddBox.classList.add('hidden');
-      });
-      document.getElementById('btn-confirm-add-chapter').addEventListener('click', () => {
-        const title = document.getElementById('new-chapter-title').value.trim();
-        if (!title) return;
-        const sub = subSelect.value;
-        if (!activeCurriculum[sub]) activeCurriculum[sub] = { chapters: [] };
-
-        const newChId = `ch_${Date.now()}`;
-        activeCurriculum[sub].chapters.push({
-          chapterId: newChId,
-          chapterNumber: activeCurriculum[sub].chapters.length + 1,
-          title,
-          lectures: [],
-          notes: [],
-          dpps: []
-        });
-
-        document.getElementById('new-chapter-title').value = "";
-        chapterAddBox.classList.add('hidden');
-        renderAdminChapters();
-      });
-
-      window.deleteChapter = function (sub, chId) {
-        if (!confirm("Delete this chapter?")) return;
-        activeCurriculum[sub].chapters = activeCurriculum[sub].chapters.filter(c => c.chapterId !== chId);
-        renderAdminChapters();
-      };
-
-      // Add Item Modal (Lecture / Note / DPP)
-      const modalItem = document.getElementById('modal-add-item');
-      const itemTitleEl = document.getElementById('add-item-modal-title');
-      const itemBodyEl = document.getElementById('add-item-form-body');
-
-      window.openAddItemModal = function (type, chapterId) {
-        activeItemModalType = type;
-        activeEditingChapterId = chapterId;
-
-        if (type === 'lecture') {
-          itemTitleEl.textContent = "Add Video Lecture";
-          itemBodyEl.innerHTML = `
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Lecture Title *</label>
-              <input type="text" id="item-lec-title" placeholder="e.g. Lecture 01: Ray Diagrams" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Video Stream / Embed URL *</label>
-              <input type="url" id="item-lec-url" placeholder="https://www.youtube.com/embed/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Teacher</label>
-                <input type="text" id="item-lec-teacher" placeholder="Teacher name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Duration</label>
-                <input type="text" id="item-lec-dur" placeholder="e.g. 1 hr 15 mins" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-              </div>
-            </div>
-          `;
-        } else if (type === 'note') {
-          itemTitleEl.textContent = "Add Lecture Notes PDF";
-          itemBodyEl.innerHTML = `
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Notes Title *</label>
-              <input type="text" id="item-note-title" placeholder="e.g. Handwritten Master Notes - Chapter 1" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">PDF Download URL *</label>
-              <input type="url" id="item-note-url" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">File Size</label>
-                <input type="text" id="item-note-size" placeholder="e.g. 4.2 MB" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">Page Count</label>
-                <input type="number" id="item-note-pages" placeholder="e.g. 18" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-              </div>
-            </div>
-          `;
-        } else if (type === 'dpp') {
-          itemTitleEl.textContent = "Add Daily Practice Problem (DPP)";
-          itemBodyEl.innerHTML = `
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">DPP Title *</label>
-              <input type="text" id="item-dpp-title" placeholder="e.g. DPP 01: Ray Diagrams & Lenses" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Questions Sheet PDF URL *</label>
-              <input type="url" id="item-dpp-url" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Total Questions</label>
-              <input type="number" id="item-dpp-count" placeholder="e.g. 15" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>
-          `;
-        }
-
-        modalItem.classList.remove('hidden');
-      };
-
-      document.getElementById('btn-close-add-item').addEventListener('click', () => modalItem.classList.add('hidden'));
-      document.getElementById('btn-cancel-item').addEventListener('click', () => modalItem.classList.add('hidden'));
-
-      document.getElementById('btn-confirm-item').addEventListener('click', () => {
-        const sub = subSelect.value;
-        const chapters = (activeCurriculum[sub] && activeCurriculum[sub].chapters) || [];
-        const ch = chapters.find(c => c.chapterId === activeEditingChapterId);
-        if (!ch) return;
-
-        if (activeItemModalType === 'lecture') {
-          const title = document.getElementById('item-lec-title').value.trim();
-          const videoUrl = document.getElementById('item-lec-url').value.trim();
-          const teacher = document.getElementById('item-lec-teacher').value.trim();
-          const duration = document.getElementById('item-lec-dur').value.trim();
-          if (!title || !videoUrl) return;
-
-          ch.lectures = ch.lectures || [];
-          ch.lectures.push({
-            lectureId: `lec_${Date.now()}`,
-            lectureNumber: ch.lectures.length + 1,
-            title,
-            videoUrl,
-            teacher,
-            duration,
-            date: new Date().toISOString().split('T')[0]
-          });
-        } else if (activeItemModalType === 'note') {
-          const title = document.getElementById('item-note-title').value.trim();
-          const pdfUrl = document.getElementById('item-note-url').value.trim();
-          const fileSize = document.getElementById('item-note-size').value.trim();
-          const pages = Number(document.getElementById('item-note-pages').value) || 10;
-          if (!title || !pdfUrl) return;
-
-          ch.notes = ch.notes || [];
-          ch.notes.push({
-            noteId: `note_${Date.now()}`,
-            title,
-            pdfUrl,
-            fileSize,
-            pages,
-            uploadedAt: new Date().toISOString().split('T')[0]
-          });
-        } else if (activeItemModalType === 'dpp') {
-          const title = document.getElementById('item-dpp-title').value.trim();
-          const pdfUrl = document.getElementById('item-dpp-url').value.trim();
-          const count = Number(document.getElementById('item-dpp-count').value) || 15;
-          if (!title || !pdfUrl) return;
-
-          ch.dpps = ch.dpps || [];
-          ch.dpps.push({
-            dppId: `dpp_${Date.now()}`,
-            dppNumber: ch.dpps.length + 1,
-            title,
-            pdfUrl,
-            totalQuestions: count,
-            uploadedAt: new Date().toISOString().split('T')[0]
-          });
-        }
-
-        modalItem.classList.add('hidden');
-        renderAdminChapters();
-      });
-
-      // Save Curriculum to Cloud
-      document.getElementById('btn-save-curriculum-cloud').addEventListener('click', async () => {
-        if (!activeEditingBatchId || !activeAdminKey) return;
-        const btn = document.getElementById('btn-save-curriculum-cloud');
-        btn.disabled = true;
-        btn.textContent = "Saving to Edge Cloud...";
-
-        try {
-          const res = await MendorbitAPI.adminUpdateCurriculum(activeEditingBatchId, activeCurriculum, activeAdminKey);
-          if (res && res.status === "success") {
-            alert("Curriculum content synced & secured across cloud edge!");
-            modalCurriculum.classList.add('hidden');
-          } else {
-            alert(res.message || "Failed to update curriculum.");
-          }
-        } catch(e) {
-          alert("Error saving curriculum.");
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Save All Changes to Cloud";
-        }
-      });
-
-      // Enrollments Viewer
-      const modalEnrollments = document.getElementById('modal-enrollments');
-      document.getElementById('btn-close-enrollments').addEventListener('click', () => modalEnrollments.classList.add('hidden'));
-
-      window.openEnrollmentsViewer = async function (batchId, batchTitle) {
-        document.getElementById('enrollments-batch-name').textContent = batchTitle || batchId;
-        const tbody = document.getElementById('enrollments-tbody');
-        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Loading student records...</td></tr>`;
-        modalEnrollments.classList.remove('hidden');
-
-        try {
-          const res = await MendorbitAPI.adminGetEnrollments(batchId, activeAdminKey);
-          if (res && res.status === "success") {
-            const list = res.enrollments || [];
-            if (list.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">No students enrolled in this batch yet.</td></tr>`;
-              return;
-            }
-            tbody.innerHTML = list.map(enr => `
-              <tr class="hover:bg-slate-800/40 transition">
-                <td class="py-2.5 px-3 font-bold text-white">${enr.userName || 'Student'}</td>
-                <td class="py-2.5 px-3 text-slate-300 font-mono">${enr.userEmail}</td>
-                <td class="py-2.5 px-3 text-brand-400">${enr.userClass || 'Class 10'}</td>
-                <td class="py-2.5 px-3 text-slate-400 text-[11px]">${enr.enrolledAt ? new Date(enr.enrolledAt).toLocaleDateString() : 'Active'}</td>
-              </tr>
-            `).join('');
-          }
-        } catch(e) {
-          tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-rose-400">Failed to load enrollments.</td></tr>`;
-        }
-      };
-
-      // ========================================================
-      // REGISTERED USERS & CIPHER INSPECTOR
-      // ========================================================
-      const plainInput = document.getElementById("lab-plain-input");
-      const cipherInput = document.getElementById("lab-cipher-input");
-      const resultDisplay = document.getElementById("lab-result-display");
-
-      document.getElementById("btn-lab-encrypt").addEventListener("click", () => {
-        const plain = plainInput.value;
-        const encrypted = MendorbitCipher.encrypt(plain);
-        cipherInput.value = encrypted;
-        resultDisplay.textContent = encrypted;
-      });
-
-      document.getElementById("btn-lab-decrypt").addEventListener("click", async () => {
-        const cipher = cipherInput.value;
-        if (!cipher) return;
-
-        try {
-          const res = await MendorbitAPI.adminDecrypt(cipher, activeAdminKey);
-          if (res && res.status === "success") {
-            plainInput.value = res.decrypted;
-            resultDisplay.textContent = res.decrypted + " (Verified via Cloudflare Edge)";
-            return;
-          }
-        } catch (e) {}
-
-        const decrypted = MendorbitCipher.decrypt(cipher);
-        plainInput.value = decrypted;
-        resultDisplay.textContent = decrypted;
-      });
-
-      document.getElementById("btn-copy-result").addEventListener("click", () => {
-        navigator.clipboard.writeText(resultDisplay.textContent);
-        alert("Copied to clipboard: " + resultDisplay.textContent);
-      });
-
+      // --------------------------------------------------------
+      // STUDENTS, DECRYPTION, CIPHER LAB & OTP AUDITOR
+      // --------------------------------------------------------
       function renderUsersTable(users) {
         const tbody = document.getElementById("admin-users-tbody");
         if (!users || !users.length) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">No student registrations recorded yet.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">No student registrations recorded yet.</td></tr>`;
           return;
         }
-
         tbody.innerHTML = users.map((user, idx) => {
           const lastSeenStr = user.lastSeen ? new Date(user.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently';
           const locStr = user.lastLocation || (user.lastIp ? user.lastIp : 'Direct');
-
           return `
-            <tr class="hover:bg-slate-800/40 transition">
-              <td class="py-3 px-4 font-bold text-white">${user.displayName || 'Student'}</td>
-              <td class="py-3 px-4 text-slate-300 font-mono">${user.email}</td>
-              <td class="py-3 px-4 text-slate-400">${user.class || 'Class 10'}</td>
-              <td class="py-3 px-4 text-slate-300">
-                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  ${lastSeenStr}
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 font-bold text-slate-900">${user.displayName || 'Student'}</td>
+              <td class="py-3 px-4 text-slate-600 font-mono">${user.email}</td>
+              <td class="py-3 px-4 text-slate-500">${user.class || '-'}</td>
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${lastSeenStr}
                 </span>
-                <span class="block text-[10px] text-slate-500 truncate max-w-[140px] mt-0.5" title="${user.currentActivePage || ''}">${user.currentActivePage || ''}</span>
               </td>
-              <td class="py-3 px-4 text-slate-400 text-[11px]">${locStr}</td>
-              <td class="py-3 px-4 font-mono text-indigo-400 break-all max-w-xs" id="enc-field-${idx}">
-                ${user.encryptedPassword || 'OAuth / Direct'}
-              </td>
+              <td class="py-3 px-4 text-slate-500 text-[11px]">${locStr}</td>
+              <td class="py-3 px-4 font-mono text-sky-700 break-all max-w-xs" id="enc-field-${idx}">${user.encryptedPassword || 'OAuth / Direct'}</td>
               <td class="py-3 px-4 text-right">
-                <button onclick="revealUserPassword('${idx}', '${user.encryptedPassword || ''}')" class="px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg transition font-semibold text-[11px]">
-                  De-Encrypt
-                </button>
+                <button onclick="revealUserPassword('${idx}', '${user.encryptedPassword || ''}')" class="px-2.5 py-1 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 rounded-lg transition font-bold text-[11px]">De-Encrypt</button>
               </td>
             </tr>
           `;
         }).join('');
       }
 
-      async function loadUsersList() {
-        const tbody = document.getElementById("admin-users-tbody");
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Loading student records...</td></tr>`;
-
-        let users = [];
-        try {
-          const res = await MendorbitAPI.adminGetUsers(activeAdminKey);
-          if (res && res.status === "success" && res.users) {
-            users = res.users;
-          }
-        } catch (e) {}
-
-        if (!users.length && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getAllUsers) {
-          users = await MendorbitBackend.getAllUsers();
+      document.getElementById("btn-refresh-users").addEventListener("click", async () => {
+        if (!activeAdminKey) return;
+        const res = await MendorbitAPI.adminGetUsers(activeAdminKey);
+        if (res && res.status === "success") {
+          loadedUsers = res.users || [];
+          renderUsersTable(loadedUsers);
+          updateAdminKPIs();
         }
-
-        renderUsersTable(users);
-      }
+      });
 
       window.revealUserPassword = async function(idx, cipher) {
-        if (!cipher) {
-          alert("No encrypted password stored (authenticated via Google or OTP).");
-          return;
-        }
-
+        if (!cipher) { alert("No encrypted password stored."); return; }
         let plain = "";
         try {
           const res = await MendorbitAPI.adminDecrypt(cipher, activeAdminKey);
           if (res && res.status === "success") plain = res.decrypted;
         } catch (e) {}
-
-        if (!plain) plain = MendorbitCipher.decrypt(cipher);
-
-        const field = document.getElementById(`enc-field-${idx}`);
-        field.innerHTML = `<span class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">${plain}</span> <span class="text-[10px] text-slate-500">(${cipher})</span>`;
+        if (!plain && typeof MendorbitCipher !== 'undefined') plain = MendorbitCipher.decrypt(cipher);
+        document.getElementById(`enc-field-${idx}`).innerHTML = `<span class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${plain}</span>`;
       };
 
-      // OTP Stats
+      const plainInput = document.getElementById("lab-plain-input");
+      const cipherInput = document.getElementById("lab-cipher-input");
+      const resultDisplay = document.getElementById("lab-result-display");
+      document.getElementById("btn-lab-encrypt").addEventListener("click", () => {
+        const encrypted = MendorbitCipher.encrypt(plainInput.value);
+        cipherInput.value = encrypted;
+        resultDisplay.textContent = encrypted;
+      });
+      document.getElementById("btn-lab-decrypt").addEventListener("click", async () => {
+        const cipher = cipherInput.value;
+        if (!cipher) return;
+        try {
+          const res = await MendorbitAPI.adminDecrypt(cipher, activeAdminKey);
+          if (res && res.status === "success") {
+            plainInput.value = res.decrypted;
+            resultDisplay.textContent = res.decrypted;
+            return;
+          }
+        } catch (e) {}
+        const dec = MendorbitCipher.decrypt(cipher);
+        plainInput.value = dec;
+        resultDisplay.textContent = dec;
+      });
+      document.getElementById("btn-copy-result").addEventListener("click", () => {
+        navigator.clipboard.writeText(resultDisplay.textContent);
+        alert("Copied: " + resultDisplay.textContent);
+      });
+
       async function loadOtpStats() {
         try {
           const res = await MendorbitAPI.adminGetOtpStats(activeAdminKey);
           if (res && res.status === "success" && res.stats) {
             const s = res.stats;
-            const dateEl = document.getElementById("stat-otp-date");
-            const sentEl = document.getElementById("stat-otp-sent");
-            const verifiedEl = document.getElementById("stat-otp-verified");
-            const signupEl = document.getElementById("stat-otp-signup");
-            const loginEl = document.getElementById("stat-otp-login");
-            const resetEl = document.getElementById("stat-otp-reset");
-            const actEl = document.getElementById("stat-otp-last-activity");
-
-            if (dateEl) dateEl.textContent = s.date || "--";
-            if (sentEl) sentEl.textContent = s.totalSent || 0;
-            if (verifiedEl) verifiedEl.textContent = s.totalVerified || 0;
-            if (signupEl) signupEl.textContent = s.signupOtps || 0;
-            if (loginEl) loginEl.textContent = s.loginOtps || 0;
-            if (resetEl) resetEl.textContent = s.resetOtps || 0;
-            if (actEl) actEl.textContent = s.lastActivity || "None yet today";
-            if (s.sheetUrl) {
-              const link = document.getElementById("btn-open-otp-sheet");
-              if (link) link.href = s.sheetUrl;
-            }
+            document.getElementById("stat-otp-date").textContent = s.date || "--";
+            document.getElementById("stat-otp-sent").textContent = s.totalSent || 0;
+            document.getElementById("stat-otp-verified").textContent = s.totalVerified || 0;
+            document.getElementById("stat-otp-signup").textContent = s.signupOtps || 0;
+            document.getElementById("stat-otp-login").textContent = s.loginOtps || 0;
+            document.getElementById("stat-otp-reset").textContent = s.resetOtps || 0;
+            document.getElementById("stat-otp-last-activity").textContent = s.lastActivity || "None yet today";
           }
-        } catch (e) {
-          console.warn("Failed to load OTP stats:", e);
-        }
+        } catch (e) {}
       }
+      document.getElementById("btn-refresh-otp-stats").addEventListener("click", loadOtpStats);
 
-      document.getElementById("btn-refresh-users").addEventListener("click", loadUsersList);
-      const btnRefreshOtp = document.getElementById("btn-refresh-otp-stats");
-      if (btnRefreshOtp) btnRefreshOtp.addEventListener("click", loadOtpStats);
+      updateBatchLivePreview();
     });
   </script>
 </body>

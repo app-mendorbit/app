@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Summary & Secure Checkout | Mendorbit</title>
+  <title>Order Summary | Mendorbit</title>
   <link rel="icon" type="image/png" href="logo.png">
 
   <script>
@@ -42,209 +42,304 @@
     }
   </script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .nav-glass {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .dark .nav-glass {
+      background: rgba(15, 23, 42, 0.92);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .apple-theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 50px;
+      height: 26px;
+      border-radius: 9999px;
+      padding: 2px;
+      cursor: pointer;
+      background-color: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .dark .apple-theme-toggle {
+      background-color: #1e293b;
+      border-color: #334155;
+    }
+    .apple-theme-thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 9999px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transform: translateX(0);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .dark .apple-theme-thumb {
+      transform: translateX(24px);
+      background-color: #0f172a;
+    }
+  </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans overflow-x-hidden transition-colors duration-200">
 
-  <!-- TOP CHECKOUT HEADER -->
-  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur h-16 px-4 sm:px-8 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-      <a href="batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
-        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-      </a>
-      <a href="index.html" class="flex items-center gap-2.5">
-        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
-        <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
-      </a>
-    </div>
+  <!-- TOP HEADER BAR (IDENTICAL TO BATCHES & DASHBOARD) -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/90 dark:border-slate-800 nav-glass h-16 flex items-center px-4 sm:px-6 justify-between gap-3">
+    <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+      <button id="btn-mobile-sidebar" type="button" class="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
 
-    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
+        <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
+      </a>
+
       <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
         <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
         <span>Secure Checkout</span>
       </span>
+    </div>
+
+    <div class="flex items-center gap-2.5 sm:gap-3.5">
+      <button id="theme-toggle" type="button" class="apple-theme-toggle flex-shrink-0" aria-label="Toggle Dark Mode">
+        <span class="apple-theme-thumb">
+          <i id="theme-icon" data-lucide="sun" class="w-3 h-3 text-amber-500"></i>
+        </span>
+      </button>
+
+      <a id="btn-nav-login" href="login.html" class="hidden px-4 py-2 bg-slate-900 dark:bg-brand-600 text-white font-bold text-xs rounded-xl">
+        Login
+      </a>
+
       <div id="checkout-user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold">
         <i data-lucide="user" class="w-3.5 h-3.5 text-brand-600"></i>
-        <span id="checkout-user-email" class="truncate max-w-[160px]">student@email.com</span>
+        <span id="checkout-user-email" class="truncate max-w-[150px]">student@email.com</span>
       </div>
     </div>
   </header>
 
-  <!-- MAIN CHECKOUT BODY -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex-1 w-full">
+  <!-- APP BODY: LEFT SIDEBAR + CHECKOUT WORKSPACE -->
+  <div class="flex-1 flex relative">
 
-    <!-- Loading State -->
-    <div id="checkout-loader" class="py-20 text-center space-y-3">
-      <div class="inline-block w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-xs font-bold text-slate-400">Verifying secure checkout session...</p>
-    </div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
-    <!-- Error / Invalid Session State -->
-    <div id="checkout-error" class="hidden max-w-md mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center shadow-lg">
-      <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-500 flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="alert-circle" class="w-7 h-7"></i>
-      </div>
-      <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Checkout Session Unavailable</h2>
-      <p id="checkout-error-msg" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">This checkout link is invalid or has expired.</p>
-      <a href="batches.html" class="inline-flex items-center gap-2 mt-5 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-700 transition">
-        <span>Back to Batches</span>
-      </a>
-    </div>
-
-    <!-- Order Confirmed State -->
-    <div id="checkout-success" class="hidden max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-emerald-200 dark:border-emerald-800/70 p-8 sm:p-10 text-center shadow-xl">
-      <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="check-circle-2" class="w-9 h-9"></i>
-      </div>
-      <h2 class="text-2xl font-black text-slate-900 dark:text-white">Enrollment Confirmed!</h2>
-      <p id="checkout-success-sub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-        You are now enrolled in this batch. Your access is active immediately.
-      </p>
-      <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a id="btn-success-go-batch" href="batches.html" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
-          <span>Go to Batch</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-        <a href="batches.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-slate-700 dark:text-slate-200 transition">
-          Explore More Batches
-        </a>
-      </div>
-    </div>
-
-    <!-- ORDER SUMMARY VIEW (MATCHING REFERENCE SCREENSHOT) -->
-    <div id="checkout-main" class="hidden space-y-6">
-      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Order Summary</h1>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- LEFT COLUMN: ITEMS IN CART & INCLUDED FEATURES -->
-        <div class="lg:col-span-7 space-y-5">
-
-          <!-- Items in Cart Card -->
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
-              <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Items in Cart</h2>
-              <span id="cart-item-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">
-                Regular Batch
-              </span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <!-- Thumbnail -->
-              <div id="cart-thumb-box" class="w-full sm:w-36 aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                <!-- Populated dynamically -->
-              </div>
-
-              <!-- Info -->
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                  <span id="cart-class-label" class="text-[11px] font-extrabold text-orange-600 dark:text-orange-400">Class</span>
-                  <span id="cart-lang-label" class="px-1.5 py-0.5 rounded text-[9px] font-extrabold border border-slate-200 dark:border-slate-700 uppercase">HINGLISH</span>
-                </div>
-                <h3 id="cart-batch-title" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">Batch Title</h3>
-                <div id="cart-batch-price-row" class="flex items-baseline gap-2 mt-2">
-                  <!-- Price populated dynamically -->
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Real Batch Benefits / What's Included Card -->
-          <div id="cart-benefits-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
-            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-4 h-4 text-brand-600"></i>
-              <span>What's Included With This Batch</span>
-            </h3>
-            <div id="cart-benefits-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-              <!-- Populated dynamically from batch data -->
-            </div>
-          </div>
-
+    <!-- LEFT SIDEBAR (IDENTICAL TO BATCHES & DASHBOARD) -->
+    <aside id="left-sidebar" class="fixed lg:sticky top-0 lg:top-16 left-0 z-50 lg:z-30 h-screen lg:h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-900 border-r border-slate-200/90 dark:border-slate-800 flex flex-col justify-between py-5 px-3 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 flex-shrink-0">
+      <div class="space-y-6 overflow-y-auto">
+        <div class="flex items-center justify-between px-3 lg:hidden pb-3 border-b border-slate-100 dark:border-slate-800">
+          <span class="font-black text-base text-slate-900 dark:text-white">Mendorbit</span>
+          <button id="btn-close-sidebar" type="button" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
         </div>
 
-        <!-- RIGHT COLUMN: COUPON + PAYMENT SUMMARY -->
-        <div class="lg:col-span-5 space-y-5 lg:sticky lg:top-24">
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Learn Online</div>
+          <nav class="space-y-1">
+            <a href="index.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="home" class="w-4 h-4 text-slate-400"></i>
+              <span>Study Dashboard</span>
+            </a>
+            <a href="batches.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 transition">
+              <i data-lucide="layers" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+              <span>Batches</span>
+            </a>
+          </nav>
+        </div>
 
-          <!-- Apply Code / Coupon Card -->
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-sm space-y-3">
-            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-900 dark:text-white">
-              <div class="w-6 h-6 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
-                <i data-lucide="percent" class="w-3.5 h-3.5"></i>
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Academics & Account</div>
+          <nav class="space-y-1">
+            <a href="https://mendorbit.in/notes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+              <span>Notes Library</span>
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="user-circle" class="w-4 h-4 text-slate-400"></i>
+              <span>My Profile</span>
+            </a>
+            <a href="https://mendorbit.in/contact" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="help-circle" class="w-4 h-4 text-slate-400"></i>
+              <span>Help & Support</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs">
+        <div class="font-extrabold text-slate-900 dark:text-white">Need Batch Help?</div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">Reach out to our team for guidance on enrollment.</p>
+        <a href="https://mendorbit.in/contact" class="inline-flex items-center gap-1 mt-2 text-[11px] font-extrabold text-brand-600 dark:text-brand-400 hover:underline">
+          <span>Contact Support</span>
+          <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CHECKOUT BODY -->
+    <main class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-6xl mx-auto w-full">
+
+      <!-- Loading State -->
+      <div id="checkout-loader" class="py-20 text-center space-y-3">
+        <div class="inline-block w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-xs font-bold text-slate-400">Verifying secure checkout session...</p>
+      </div>
+
+      <!-- Error / Invalid Session State -->
+      <div id="checkout-error" class="hidden max-w-md mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center shadow-lg my-10">
+        <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="alert-circle" class="w-7 h-7"></i>
+        </div>
+        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Checkout Session Unavailable</h2>
+        <p id="checkout-error-msg" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">This checkout link is invalid or has expired.</p>
+        <a href="batches.html" class="inline-flex items-center gap-2 mt-5 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-700 transition">
+          <span>Back to Batches</span>
+        </a>
+      </div>
+
+      <!-- Order Confirmed State -->
+      <div id="checkout-success" class="hidden max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-emerald-200 dark:border-emerald-800/70 p-8 sm:p-10 text-center shadow-xl my-10">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="check-circle-2" class="w-9 h-9"></i>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 dark:text-white">Enrollment Confirmed!</h2>
+        <p id="checkout-success-sub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+          You are now enrolled in this batch.
+        </p>
+        <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a id="btn-success-go-batch" href="batches.html" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
+            <span>Go to Batch</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+          <a href="batches.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-slate-700 dark:text-slate-200 transition">
+            Explore More Batches
+          </a>
+        </div>
+      </div>
+
+      <!-- ORDER SUMMARY VIEW (ONLY BATCH ITEM + COUPON + SUMMARY) -->
+      <div id="checkout-main" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Order Summary</h1>
+          <a href="batches.html" class="text-xs font-bold text-slate-500 hover:text-brand-600 flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back to Batches</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- LEFT COLUMN: ONLY ITEMS IN CART (BATCH CARD) -->
+          <div class="lg:col-span-7 space-y-5">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
+                <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Items in Cart</h2>
+                <span id="cart-item-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">
+                  Batch
+                </span>
               </div>
-              <span>Apply Code / Coupon</span>
+
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div id="cart-thumb-box" class="w-full sm:w-40 aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700"></div>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span id="cart-class-label" class="text-[11px] font-extrabold text-orange-600 dark:text-orange-400">Class</span>
+                    <span id="cart-lang-label" class="px-1.5 py-0.5 rounded text-[9px] font-extrabold border border-slate-200 dark:border-slate-700 uppercase">HINGLISH</span>
+                  </div>
+                  <h3 id="cart-batch-title" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">Batch Title</h3>
+                  <div id="cart-batch-meta" class="text-xs text-slate-500 dark:text-slate-400 mt-1"></div>
+                  <div id="cart-batch-price-row" class="flex items-baseline gap-2 mt-2.5"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: COUPON + PAYMENT SUMMARY -->
+          <div class="lg:col-span-5 space-y-5 lg:sticky lg:top-24">
+
+            <!-- Apply Code / Coupon -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-sm space-y-3">
+              <div class="flex items-center gap-2 text-xs font-extrabold text-slate-900 dark:text-white">
+                <div class="w-6 h-6 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+                  <i data-lucide="percent" class="w-3.5 h-3.5"></i>
+                </div>
+                <span>Apply Code / Coupon</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <input type="text" id="coupon-code-input" placeholder="Enter coupon code" class="flex-1 uppercase bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-brand-600" />
+                <button type="button" id="btn-apply-coupon" class="px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-brand-600 hover:opacity-90 text-white text-xs font-extrabold transition flex-shrink-0">
+                  APPLY
+                </button>
+              </div>
+
+              <div id="coupon-feedback" class="hidden text-xs font-bold flex items-center justify-between p-2.5 rounded-xl">
+                <span id="coupon-feedback-text"></span>
+                <button type="button" id="btn-remove-coupon" class="hidden text-[11px] underline text-slate-500 hover:text-rose-600">Remove</button>
+              </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <input type="text" id="coupon-code-input" placeholder="Enter coupon code (e.g. MENDORBIT100)" class="flex-1 uppercase bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-brand-600" />
-              <button type="button" id="btn-apply-coupon" class="px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-brand-600 hover:opacity-90 text-white text-xs font-extrabold transition flex-shrink-0">
-                APPLY
+            <!-- Payment Summary -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+              <h2 class="text-base font-black text-slate-900 dark:text-white">Payment Summary</h2>
+
+              <div class="space-y-2.5 text-xs sm:text-sm font-medium">
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span>Price (1 Item)</span>
+                  <span id="summary-original-price" class="font-bold text-slate-900 dark:text-white">₹0</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span>Batch Discount</span>
+                  <span id="summary-batch-discount" class="font-bold text-emerald-600">- ₹0</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span>Coupon Discount</span>
+                  <span id="summary-coupon-discount" class="font-bold text-emerald-600">- ₹0</span>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-base font-black text-slate-900 dark:text-white">
+                  <span>Total Amount</span>
+                  <span id="summary-total-amount">₹0</span>
+                </div>
+              </div>
+
+              <div id="gateway-notice-box" class="hidden p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-1">
+                <div class="font-extrabold flex items-center gap-1.5">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
+                  <span>System Not Updated Yet</span>
+                </div>
+                <p class="leading-relaxed">
+                  Online payment gateway is currently disabled. Apply a valid 100% discount coupon code above to make the total <strong>₹0</strong> and enroll, or contact <a href="https://mendorbit.in/contact" class="underline font-bold">support@mendorbit.in</a>.
+                </p>
+              </div>
+
+              <button type="button" id="btn-proceed-buy" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-sm tracking-wide shadow-lg shadow-brand-600/25 transition">
+                PROCEED TO BUY
               </button>
             </div>
 
-            <!-- Coupon Feedback -->
-            <div id="coupon-feedback" class="hidden text-xs font-bold flex items-center justify-between p-2.5 rounded-xl">
-              <span id="coupon-feedback-text"></span>
-              <button type="button" id="btn-remove-coupon" class="hidden text-[11px] underline text-slate-500 hover:text-rose-600">Remove</button>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-sm">
+              <div class="text-xs font-extrabold text-slate-800 dark:text-slate-200 mb-2">You are enrolling in (1) item</div>
+              <div class="inline-flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                <span id="mini-item-title" class="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[200px]">Batch</span>
+                <span id="mini-item-price" class="text-xs font-black text-brand-600">₹0</span>
+              </div>
             </div>
+
           </div>
-
-          <!-- Payment Summary Card -->
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
-            <h2 class="text-base font-black text-slate-900 dark:text-white">Payment Summary</h2>
-
-            <div class="space-y-2.5 text-xs sm:text-sm font-medium">
-              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                <span>Price (1 Item)</span>
-                <span id="summary-original-price" class="font-bold text-slate-900 dark:text-white">₹0</span>
-              </div>
-              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                <span>Batch Discount</span>
-                <span id="summary-batch-discount" class="font-bold text-emerald-600">- ₹0</span>
-              </div>
-              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                <span>Coupon Discount</span>
-                <span id="summary-coupon-discount" class="font-bold text-emerald-600">- ₹0</span>
-              </div>
-
-              <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-base font-black text-slate-900 dark:text-white">
-                <span>Total Amount</span>
-                <span id="summary-total-amount">₹0</span>
-              </div>
-            </div>
-
-            <!-- Gateway Status Notice (shown when PROCEED TO BUY clicked with amount > 0) -->
-            <div id="gateway-notice-box" class="hidden p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-1">
-              <div class="font-extrabold flex items-center gap-1.5">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
-                <span>System Not Updated Yet</span>
-              </div>
-              <p class="leading-relaxed">
-                Online payment gateway integration is currently under update. Paid purchases cannot be processed right now. Apply a valid 100% discount coupon code above to make the total <strong>₹0</strong> and enroll, or contact <a href="https://mendorbit.in/contact" class="underline font-bold">support@mendorbit.in</a>.
-              </p>
-            </div>
-
-            <button type="button" id="btn-proceed-buy" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-sm tracking-wide shadow-lg shadow-brand-600/25 transition">
-              PROCEED TO BUY
-            </button>
-
-            <p class="text-[10px] text-center text-slate-400 font-medium">
-              100% Verified Pricing • Zero-Bypass Server Enrollment Protection
-            </p>
-          </div>
-
-          <!-- Compact Bottom Summary Strip (Matching Screenshot) -->
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-sm">
-            <div class="text-xs font-extrabold text-slate-800 dark:text-slate-200 mb-2">You are enrolling in (1) item</div>
-            <div class="inline-flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-              <span id="mini-item-title" class="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[200px]">Batch</span>
-              <span id="mini-item-price" class="text-xs font-black text-brand-600">₹0</span>
-            </div>
-          </div>
-
         </div>
       </div>
-    </div>
 
-  </main>
+    </main>
+  </div>
 
   <script src="assets/js/secure-storage.js"></script>
   <script src="assets/js/sso-manager.js"></script>
@@ -254,12 +349,42 @@
     document.addEventListener("DOMContentLoaded", async function () {
       if (window.lucide) lucide.createIcons();
 
+      // Theme Toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+      function syncThemeIcon() {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+        if (window.lucide) lucide.createIcons();
+      }
+      syncThemeIcon();
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const isDark = document.documentElement.classList.toggle('dark');
+          localStorage.theme = isDark ? 'dark' : 'light';
+          syncThemeIcon();
+        });
+      }
+
+      // Mobile Sidebar
+      const sidebar = document.getElementById('left-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const btnOpenSidebar = document.getElementById('btn-mobile-sidebar');
+      const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+      if (btnOpenSidebar) btnOpenSidebar.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); });
+      if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
+      if (backdrop) backdrop.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
+
       const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
       const userPill = document.getElementById('checkout-user-pill');
       const userEmailEl = document.getElementById('checkout-user-email');
+      const loginBtn = document.getElementById('btn-nav-login');
       if (session && session.email) {
         if (userPill) userPill.classList.remove('hidden');
         if (userEmailEl) userEmailEl.textContent = session.email;
+      } else if (loginBtn) {
+        loginBtn.classList.remove('hidden');
+        loginBtn.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
       }
 
       const loader = document.getElementById('checkout-loader');
@@ -291,7 +416,6 @@
           .replace(/"/g, "&quot;");
       }
 
-      // Initialize checkout session
       try {
         if (!infoToken && fallbackBatchId) {
           const initRes = await MendorbitAPI.initCheckout(fallbackBatchId, session ? session.email : "");
@@ -334,7 +458,6 @@
         if (loader) loader.classList.add('hidden');
         if (mainView) mainView.classList.remove('hidden');
 
-        // Left Cart Item
         const thumbBox = document.getElementById('cart-thumb-box');
         if (thumbBox) {
           thumbBox.innerHTML = activeBatch.thumbnail
@@ -349,6 +472,12 @@
         document.getElementById('cart-batch-title').textContent = activeBatch.title;
         document.getElementById('mini-item-title').textContent = activeBatch.title;
 
+        const metaEl = document.getElementById('cart-batch-meta');
+        if (metaEl) {
+          const metaParts = [activeBatch.stream, activeBatch.startDate].filter(Boolean);
+          metaEl.textContent = metaParts.join(" • ");
+        }
+
         const priceRow = document.getElementById('cart-batch-price-row');
         const sp = pricingState.sellingPrice;
         const op = pricingState.originalPrice;
@@ -360,25 +489,6 @@
              ${pct > 0 ? `<span class="text-xs font-extrabold text-emerald-600">(${pct}% OFF)</span>` : ''}`
           : `<span class="text-lg font-black text-emerald-600">FREE</span>
              ${op > 0 ? `<span class="text-xs text-slate-400 line-through">₹${op.toLocaleString('en-IN')}</span>` : ''}`;
-
-        // Benefits list from real batch card fields
-        const benList = document.getElementById('cart-benefits-list');
-        const items = [];
-        if (tagLabel) items.push(`Program: ${tagLabel}`);
-        if (activeBatch.stream) items.push(`Target: ${activeBatch.stream}`);
-        if (activeBatch.language) items.push(`Language: ${activeBatch.language}`);
-        if (activeBatch.startDate) items.push(`Start Date: ${activeBatch.startDate}`);
-
-        if (items.length > 0 && benList) {
-          benList.innerHTML = items.map(it => `
-            <div class="flex items-start gap-2">
-              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-              <span>${escapeHtml(it)}</span>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('cart-benefits-card').classList.add('hidden');
-        }
 
         updatePricingSummary();
         if (window.lucide) lucide.createIcons();
@@ -461,7 +571,6 @@
         updatePricingSummary();
       });
 
-      // PROCEED TO BUY / ENROLL HANDLER
       const btnProceed = document.getElementById('btn-proceed-buy');
       btnProceed.addEventListener('click', async () => {
         if (!session || !session.email) {
@@ -469,7 +578,6 @@
           return;
         }
 
-        // Strict Payment Gateway Check when amount > 0
         if (pricingState.finalAmount > 0) {
           const notice = document.getElementById('gateway-notice-box');
           if (notice) notice.classList.remove('hidden');
@@ -477,7 +585,6 @@
           return;
         }
 
-        // Proceed with ₹0 Enrollment (Free batch or 100% coupon)
         const origLabel = btnProceed.textContent;
         btnProceed.disabled = true;
         btnProceed.textContent = "CONFIRMING ENROLLMENT...";

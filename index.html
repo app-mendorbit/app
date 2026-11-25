@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard | Mendorbit</title>
+  <title>Study Dashboard | Mendorbit</title>
   <link rel="icon" type="image/png" href="logo.png">
 
   <!-- Immediate Theme Preference Check -->
@@ -32,19 +32,14 @@
           },
           colors: {
             brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              200: '#bfdbfe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-            },
-            accent: {
-              orange: '#ff6600',
-              coral: '#ff3838',
-              emerald: '#10b981',
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
             }
           }
         }
@@ -56,77 +51,28 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Gradient Orange Text matching mendorbit.in */
-    .gradient-orange {
-      background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Glassmorphism Navigation */
     .nav-glass {
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
     .dark .nav-glass {
-      background: rgba(11, 15, 25, 0.88);
+      background: rgba(15, 23, 42, 0.92);
       border-color: rgba(255, 255, 255, 0.08);
     }
 
-    /* Ultra-Premium Explore Batches Button matching mendorbit.in */
-    .btn-premium-batches {
-      height: 38px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      position: relative;
-      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
-      color: #ffffff !important;
-      border-radius: 9999px;
-      overflow: hidden;
-      padding: 0 16px;
-      box-shadow: 0 4px 14px 0 rgba(30, 58, 138, 0.35);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      font-weight: 800;
-      font-size: 11.5px;
-      line-height: 1;
-    }
-    .btn-premium-batches::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: all 0.5s ease;
-    }
-    .btn-premium-batches:hover {
-      transform: translateY(-1.5px);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-      color: #ffffff !important;
-    }
-    .btn-premium-batches:hover::before {
-      left: 100%;
-    }
-    .dark .btn-premium-batches {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
-      box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);
-    }
-
-    /* Apple-Style Theme Switcher Pill matching mendorbit.in */
     .apple-theme-toggle {
       position: relative;
       display: inline-flex;
       align-items: center;
-      width: 52px;
-      height: 28px;
+      width: 50px;
+      height: 26px;
       border-radius: 9999px;
       padding: 2px;
       cursor: pointer;
       background-color: #e2e8f0;
       border: 1px solid #cbd5e1;
-      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     .dark .apple-theme-toggle {
       background-color: #1e293b;
@@ -136,458 +82,277 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 9999px;
       background-color: #ffffff;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       transform: translateX(0);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.3s ease;
     }
     .dark .apple-theme-thumb {
       transform: translateX(24px);
       background-color: #0f172a;
     }
 
-    /* Top-Class Student Login Button */
-    .btn-topclass-login {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 38px;
-      gap: 7px;
-      padding: 0 16px;
-      border-radius: 9999px;
-      background: linear-gradient(135deg, #ff6600 0%, #ff7a1a 50%, #f59e0b 100%);
-      color: #ffffff !important;
-      font-weight: 800;
-      font-size: 11.5px;
-      line-height: 1;
-      box-shadow: 0 4px 14px rgba(255, 102, 0, 0.32);
-      transition: all 0.25s ease;
+    .batch-card {
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
-    .btn-topclass-login:hover {
-      transform: translateY(-1.5px);
-      box-shadow: 0 6px 20px rgba(255, 102, 0, 0.45);
-    }
-
-    /* Clean Card Hover */
-    .study-card {
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .study-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
-    }
-    .dark .study-card:hover {
-      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+    .batch-card:hover {
+      transform: translateY(-3px);
     }
   </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans overflow-x-hidden transition-colors duration-200">
 
   <!-- ======================================================== -->
-  <!-- NAVBAR: MATCHING EXACT DESIGN OF mendorbit.in            -->
+  <!-- TOP HEADER BAR (IDENTICAL TO BATCHES PAGE)               -->
   <!-- ======================================================== -->
-  <header class="sticky top-0 z-50 nav-glass border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20 gap-3">
-        
-        <!-- Logo -->
-        <a href="https://mendorbit.in" class="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0">
-          <img src="logo.png" alt="Mendorbit Logo" class="w-9 sm:w-11 xl:w-12 h-9 sm:h-11 xl:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105 flex-shrink-0">
-          <div class="flex-shrink-0">
-            <span class="text-lg sm:text-xl xl:text-2xl font-black tracking-tight gradient-orange font-sans block leading-tight">Mendorbit</span>
-            <p class="text-[8px] sm:text-[9px] xl:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-0.5 sm:-mt-1 block">Orbit of Knowledge</p>
-          </div>
-        </a>
+  <header class="sticky top-0 z-40 border-b border-slate-200/90 dark:border-slate-800 nav-glass h-16 flex items-center px-4 sm:px-6 justify-between gap-3">
+    
+    <!-- Left: Mobile Sidebar Toggle + Logo + Class Selector Pill -->
+    <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+      <button id="btn-mobile-sidebar" type="button" class="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-4 xl:gap-7 font-semibold text-xs xl:text-sm text-slate-700 dark:text-slate-200 flex-shrink-0">
-          <a href="https://mendorbit.in" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
-          <a href="batches.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Batches</a>
-          <a href="https://mendorbit.in/notes.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Notes</a>
-          <a href="https://mendorbit.in/blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Blogs</a>
-          <a href="https://mendorbit.in/about.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Mission</a>
-          <a href="https://mendorbit.in/contact.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
-        </nav>
+      <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
+        <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white hidden sm:inline">Mendorbit</span>
+      </a>
 
-        <!-- Desktop Right Controls -->
-        <div class="flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0">
+      <!-- Target Class Selector Pill -->
+      <div class="relative">
+        <button id="btn-header-class-picker" type="button" class="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-500 shadow-sm text-xs font-bold text-slate-800 dark:text-slate-100 transition">
+          <span class="w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-3 h-3"></i>
+          </span>
+          <span id="header-active-class-label" class="truncate max-w-[120px] sm:max-w-[160px]">All Classes</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
 
-          <!-- Explore Batches Button -->
-          <a href="batches.html" class="btn-premium-batches hidden md:inline-flex" title="Explore Batches">
-            <span>Explore Batches</span>
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
-          </a>
-
-          <!-- Elegant Vertical Divider -->
-          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 hidden sm:block"></div>
-
-          <!-- Apple-Style Sliding Theme Toggle -->
-          <button id="theme-toggle" class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
-            <span class="apple-theme-thumb flex items-center justify-center">
-              <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
-            </span>
-          </button>
-
-          <!-- ==================================================== -->
-          <!-- PROFILE OPTION (HOVER & CLICK WITH LOGO, NAME, MY ACCOUNT) -->
-          <!-- ==================================================== -->
-          <div class="relative group/profile py-2" id="profile-dropdown-container">
-            
-            <!-- Profile Trigger Pill -->
-            <button id="profile-trigger-btn" type="button" class="flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-500 dark:hover:border-brand-500 shadow-sm transition-all duration-200 focus:outline-none">
-              <!-- Avatar Circle -->
-              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-900 via-indigo-800 to-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-inner overflow-hidden relative flex-shrink-0">
-                <span id="nav-avatar-initial">M</span>
-                <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
-              </div>
-              
-              <!-- Student First Name -->
-              <div class="hidden sm:flex flex-col text-left leading-tight pr-0.5">
-                <div class="flex items-center gap-1">
-                  <span id="nav-user-firstname" class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[110px] truncate">Student</span>
-                  <span id="nav-verified-badge" class="inline-flex items-center hidden" title="Verified Profile">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0 drop-shadow-[0_1px_1px_rgba(29,155,240,0.35)]" viewBox="0 0 24 24" fill="none"><path d="M10.021 2.227a1.6 1.6 0 0 1 1.958 0l1.24 1.008a1.6 1.6 0 0 0 1.25.334l1.583-.243a1.6 1.6 0 0 1 1.83 1.057l.555 1.504a1.6 1.6 0 0 0 .89 1.01l1.458.665a1.6 1.6 0 0 1 .917 1.898l-.427 1.547a1.6 1.6 0 0 0 .334 1.25l1.008 1.24a1.6 1.6 0 0 1 0 1.958l-1.008 1.24a1.6 1.6 0 0 0-.334 1.25l.427 1.547a1.6 1.6 0 0 1-.917 1.898l-1.458.665a1.6 1.6 0 0 0-.89 1.01l-.555 1.504a1.6 1.6 0 0 1-1.83 1.057l-1.583-.243a1.6 1.6 0 0 0-1.25.334l-1.24 1.008a1.6 1.6 0 0 1-1.958 0l-1.24-1.008a1.6 1.6 0 0 0-1.25-.334l-1.583.243a1.6 1.6 0 0 1-1.83-1.057l-.555-1.504a1.6 1.6 0 0 0-.89-1.01l-1.458-.665a1.6 1.6 0 0 1-.917-1.898l.427-1.547a1.6 1.6 0 0 0-.334-1.25l-1.008-1.24a1.6 1.6 0 0 1 0-1.958l1.008-1.24a1.6 1.6 0 0 0 .334-1.25l-.427-1.547a1.6 1.6 0 0 1 .917-1.898l1.458-.665a1.6 1.6 0 0 0 .89-1.01l.555-1.504a1.6 1.6 0 0 1 1.83-1.057l1.583.243a1.6 1.6 0 0 0 1.25-.334l1.24-1.008Z" fill="#1D9BF0"/><path d="m9.75 14.85-3.1-3.1 1.4-1.4 1.7 1.7 4.5-4.5 1.4 1.4-5.9 5.9Z" fill="#FFFFFF"/></svg>
-                  </span>
-                </div>
-                <span id="nav-user-target" class="text-[9.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Aspirant</span>
-              </div>
-
-              <!-- Dropdown Chevron -->
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover/profile:text-brand-600 group-hover/profile:rotate-180 transition-transform duration-200"></i>
-            </button>
-
-            <!-- Dropdown Menu (Opens on Hover or Click) -->
-            <div id="profile-dropdown-menu" class="invisible group-hover/profile:visible opacity-0 group-hover/profile:opacity-100 transition-all duration-200 transform translate-y-2 group-hover/profile:translate-y-0 absolute right-0 top-full w-72 pt-1.5 z-50">
-              <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 p-2.5 overflow-hidden backdrop-blur-xl">
-                
-                <!-- Header Card: Logo, Full Name, Email, Exam -->
-                <div class="p-3.5 bg-gradient-to-br from-slate-50 to-slate-100/80 dark:from-slate-800/70 dark:to-slate-800/30 rounded-xl border border-slate-200/70 dark:border-slate-700/60 mb-2">
-                  <div class="flex items-center gap-3">
-                    <!-- Brand Avatar -->
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-900 to-brand-600 text-white flex items-center justify-center font-black text-base shadow-md overflow-hidden relative flex-shrink-0">
-                      <span id="menu-avatar-initial">M</span>
-                      <img id="menu-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Student Profile" />
-                    </div>
-                    
-                    <!-- Full Name & Details -->
-                    <div class="flex-1 min-w-0">
-                      <h4 id="menu-user-fullname" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">Student Name</h4>
-                      <p id="menu-user-email" class="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate">student@gmail.com</p>
-                      <div class="mt-1.5 flex items-center gap-1.5">
-                        <span id="menu-user-exam-badge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300">
-                          Class 10
-                        </span>
-                        <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                          SSO Active
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Dropdown Actions -->
-                <div class="space-y-1 text-xs font-semibold">
-                  <!-- Batches Shortcut -->
-                  <a href="batches.html" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="layers" class="w-4 h-4"></i>
-                    </div>
-                    <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">Batches & Classroom</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Video lectures, notes & DPPs</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- 1. My Account -->
-                  <a href="profile.html?tab=personal" id="btn-open-my-account" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-                    <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">My Account</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Personal details & KYC</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- 2. Link Device -->
-                  <a href="profile.html?tab=link-device" id="btn-open-link-device" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="qr-code" class="w-4 h-4"></i>
-                    </div>
-                    <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">Link Device</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Scan QR to connect new device</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- 3. Security -->
-                  <a href="profile.html?tab=security" id="btn-open-security" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left group">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    </div>
-                    <div class="flex-1">
-                      <span class="block text-slate-900 dark:text-white font-bold">Security</span>
-                      <span class="text-[10px] text-slate-400 font-normal">Password, email & logins</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-                </div>
-
-                <!-- Divider -->
-                <div class="my-1.5 border-t border-slate-100 dark:border-slate-800"></div>
-
-                <!-- Logout Button -->
-                <button type="button" id="nav-btn-logout" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-bold transition text-left group">
-                  <div class="w-7 h-7 rounded-lg bg-red-100/70 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                  </div>
-                  <span class="flex-1 font-bold">Logout</span>
-                </button>
-
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Login Button Fallback (Shown only if logged out) -->
-          <a id="nav-guest-login-btn" href="login.html" class="btn-topclass-login hidden">
-            <i data-lucide="log-in" class="w-4 h-4"></i>
-            <span>Login</span>
-          </a>
-
+        <div id="header-class-dropdown" class="hidden absolute left-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50">
+          <div class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Select Your Class / Goal</div>
+          <div id="header-class-options" class="space-y-0.5 max-h-64 overflow-y-auto"></div>
         </div>
+      </div>
+    </div>
 
+    <!-- Right: Search + Theme Toggle + User Profile -->
+    <div class="flex items-center gap-2.5 sm:gap-3.5">
+      <div class="relative hidden md:block w-64 lg:w-72">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input type="text" id="dash-search-input" placeholder="Search for batches..." class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:border-brand-500 outline-none transition" />
+      </div>
+
+      <button id="theme-toggle" type="button" class="apple-theme-toggle flex-shrink-0" aria-label="Toggle Dark Mode">
+        <span class="apple-theme-thumb">
+          <i id="theme-icon" data-lucide="sun" class="w-3 h-3 text-amber-500"></i>
+        </span>
+      </button>
+
+      <!-- Guest Login Button -->
+      <a id="nav-guest-login-btn" href="login.html" class="hidden px-4 py-2 bg-slate-900 dark:bg-brand-600 hover:bg-slate-800 dark:hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
+        Login
+      </a>
+
+      <!-- Authenticated User Pill -->
+      <div id="profile-dropdown-container" class="relative hidden">
+        <button id="nav-user-btn" type="button" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/80 transition">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">Hi, <span id="nav-user-firstname">Student</span></span>
+          <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative border border-slate-200 dark:border-slate-700">
+            <span id="nav-avatar-initial">S</span>
+            <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+
+        <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 hidden z-50">
+          <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1 flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative flex-shrink-0">
+              <span id="menu-avatar-initial">S</span>
+              <img id="menu-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-slate-900 dark:text-white truncate flex items-center gap-1">
+                <span id="menu-user-fullname">Student</span>
+                <i id="nav-verified-badge" data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-500 hidden"></i>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate font-mono" id="menu-user-email">student@email.com</div>
+            </div>
+          </div>
+          <a href="batches.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <i data-lucide="layers" class="w-4 h-4 text-brand-600"></i>
+            <span>Batches</span>
+          </a>
+          <a href="profile.html?tab=personal" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <i data-lucide="user" class="w-4 h-4 text-emerald-500"></i>
+            <span>My Profile & KYC</span>
+          </a>
+          <a href="profile.html?tab=security" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <i data-lucide="shield-check" class="w-4 h-4 text-amber-500"></i>
+            <span>Security</span>
+          </a>
+          <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+          <button id="nav-btn-logout" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition text-left">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- ======================================================== -->
-  <!-- MAIN DASHBOARD CONTENT AREA                              -->
+  <!-- MAIN APP BODY: LEFT SIDEBAR + BATCHES DASHBOARD          -->
   <!-- ======================================================== -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1 w-full flex flex-col">
+  <div class="flex-1 flex relative">
 
-    <!-- 1. UNAUTHENTICATED STATE -->
-    <div id="unauth-view" class="hidden max-w-xl mx-auto text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl p-8 sm:p-12">
-      <div class="w-20 h-20 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-        <i data-lucide="shield-alert" class="w-10 h-10"></i>
-      </div>
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Authentication Required</h2>
-      <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-3 max-w-md mx-auto leading-relaxed">
-        Please log in through the Mendorbit portal to access your account.
-      </p>
-      <div class="mt-8">
-        <a href="login.html" class="inline-flex items-center gap-2.5 px-8 py-3.5 bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 hover:to-brand-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-700/25 transition">
-          <span>Go to Login Panel</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-      </div>
-    </div>
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
-    <!-- 2. AUTHENTICATED DASHBOARD -->
-    <div id="auth-view" class="w-full flex flex-col gap-10">
-      
-      <!-- 2.1 STUDENT WELCOME HERO BANNER -->
-      <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 text-white p-6 sm:p-8 md:p-10 shadow-xl border border-white/10">
-        <!-- Glow circles -->
-        <div class="absolute -right-16 -top-16 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute right-1/3 -bottom-16 w-56 h-56 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- LEFT SIDEBAR (IDENTICAL TO BATCHES.HTML) -->
+    <aside id="left-sidebar" class="fixed lg:sticky top-0 lg:top-16 left-0 z-50 lg:z-30 h-screen lg:h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-900 border-r border-slate-200/90 dark:border-slate-800 flex flex-col justify-between py-5 px-3 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 flex-shrink-0">
+      <div class="space-y-6 overflow-y-auto">
+        <div class="flex items-center justify-between px-3 lg:hidden pb-3 border-b border-slate-100 dark:border-slate-800">
+          <span class="font-black text-base text-slate-900 dark:text-white">Mendorbit</span>
+          <button id="btn-close-sidebar" type="button" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
 
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="space-y-2.5 max-w-2xl">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-amber-300">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              <span>Academic Session 2026-27</span>
-              <span class="w-1 h-1 rounded-full bg-white/50"></span>
-              <span id="dash-badge-class">Class 10</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-              Welcome back, <span id="dash-greeting-name" class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-white">Student</span>! 👋
-            </h1>
-            <p class="text-xs sm:text-sm md:text-base text-slate-200/90 leading-relaxed font-medium">
-              Continue your board and competitive exam preparation. Access live classroom lectures, download handwritten class notes, and solve Daily Practice Problems.
-            </p>
-          </div>
-
-          <div class="flex items-center flex-wrap gap-3">
-            <a href="batches.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white text-slate-900 hover:bg-slate-100 font-extrabold text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-              <i data-lucide="compass" class="w-4 h-4 text-brand-600"></i>
-              <span>Explore All Batches</span>
+        <!-- LEARN ONLINE -->
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Learn Online</div>
+          <nav class="space-y-1">
+            <a href="index.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 transition">
+              <i data-lucide="home" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+              <span>Study Dashboard</span>
             </a>
-            <a href="profile.html?tab=personal" class="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs sm:text-sm backdrop-blur-md transition">
-              <i data-lucide="user" class="w-4 h-4"></i>
+            <a href="batches.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="layers" class="w-4 h-4 text-slate-400"></i>
+              <span>Batches</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- ACADEMICS & ACCOUNT -->
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Academics & Account</div>
+          <nav class="space-y-1">
+            <a href="https://mendorbit.in/notes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+              <span>Notes Library</span>
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="user-circle" class="w-4 h-4 text-slate-400"></i>
               <span>My Profile</span>
             </a>
-          </div>
+            <a href="https://mendorbit.in/contact" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition">
+              <i data-lucide="help-circle" class="w-4 h-4 text-slate-400"></i>
+              <span>Help & Support</span>
+            </a>
+          </nav>
         </div>
+      </div>
 
-        <!-- Quick Stats Row inside Hero -->
-        <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/10 text-xs">
-          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-            <div class="text-slate-300 text-[11px] font-medium">Enrolled Batches</div>
-            <div id="dash-stat-enrolled" class="text-xl font-black text-white mt-0.5">0</div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-            <div class="text-slate-300 text-[11px] font-medium">Target Exam</div>
-            <div id="dash-stat-target" class="text-xl font-black text-amber-300 mt-0.5 truncate">Class 10</div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-            <div class="text-slate-300 text-[11px] font-medium">Classroom Mode</div>
-            <div class="text-xl font-black text-emerald-300 mt-0.5">Live + DPPs</div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-            <div class="text-slate-300 text-[11px] font-medium">Student Status</div>
-            <div class="text-xl font-black text-white mt-0.5 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Active</span>
-            </div>
-          </div>
+      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs">
+        <div class="font-extrabold text-slate-900 dark:text-white">Need Batch Help?</div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">Reach out to our team for guidance on selecting the right batch.</p>
+        <a href="https://mendorbit.in/contact" class="inline-flex items-center gap-1 mt-2 text-[11px] font-extrabold text-brand-600 dark:text-brand-400 hover:underline">
+          <span>Contact Support</span>
+          <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN DASHBOARD WORKSPACE -->
+    <main class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl mx-auto w-full">
+
+      <!-- 1. UNAUTHENTICATED STATE -->
+      <div id="unauth-view" class="hidden max-w-lg mx-auto my-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl p-8 sm:p-10">
+        <div class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center mx-auto mb-5">
+          <i data-lucide="shield-alert" class="w-8 h-8"></i>
         </div>
-      </section>
-
-      <!-- 2.2 MY ENROLLED BATCHES SECTION -->
-      <section class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="play-circle" class="w-6 h-6 text-brand-600"></i>
-              <span>My Enrolled Batches</span>
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Instant access to your video classroom, verified handwritten PDFs and DPP sheets
-            </p>
-          </div>
-          <a href="batches.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition">
-            <span>Browse Catalog</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Authentication Required</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-2 leading-relaxed">
+          Please log in through the Mendorbit portal to view your enrolled batches and recommended courses.
+        </p>
+        <div class="mt-6">
+          <a href="login.html" class="inline-flex items-center gap-2 px-7 py-3 bg-slate-900 dark:bg-brand-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow transition">
+            <span>Go to Login Panel</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
+      </div>
 
-        <!-- Enrolled Batches Dynamic Container -->
-        <div id="dash-enrolled-loader" class="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-          <div class="inline-block w-8 h-8 border-3 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-xs text-slate-400 mt-2 font-medium">Loading your enrolled batches...</p>
+      <!-- 2. AUTHENTICATED DASHBOARD (CLEAN BATCHES ONLY) -->
+      <div id="auth-view" class="hidden space-y-8">
+
+        <!-- Mobile Search -->
+        <div class="md:hidden relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="dash-search-input-mobile" placeholder="Search for batches..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white outline-none focus:border-brand-500 shadow-sm" />
         </div>
 
-        <div id="dash-enrolled-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-        <!-- Empty State (When no enrolled batches) -->
-        <div id="dash-enrolled-empty" class="hidden text-center py-12 px-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4">
-            <i data-lucide="graduation-cap" class="w-8 h-8"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">You haven't enrolled in any batch yet</h3>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mt-1 leading-relaxed">
-            Choose your class batch to unlock high-definition video lectures, chapter notes, and daily practice problem sets.
-          </p>
-          <div class="mt-5">
-            <a href="batches.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-brand-700 to-brand-600 hover:from-brand-800 hover:to-brand-700 text-white text-xs font-bold rounded-xl shadow-md transition">
-              <i data-lucide="compass" class="w-4 h-4"></i>
-              <span>Explore Batches for <span id="dash-empty-class-name">Class 10</span></span>
+        <!-- SECTION 1: MY ENROLLED BATCHES -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">My Enrolled Batches</h1>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Active batches you have enrolled in</p>
+            </div>
+            <a href="batches.html" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+              <span>All Batches</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </a>
           </div>
-        </div>
-      </section>
 
-      <!-- 2.3 RECOMMENDED BATCHES FOR YOUR CLASS -->
-      <section class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800/80">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
-              <span>Recommended Batches for <span id="dash-rec-class-title" class="text-brand-600 dark:text-brand-400">Class 10</span></span>
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Carefully curated by master teachers to guarantee peak academic performance
-            </p>
+          <div id="dash-enrolled-loader" class="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div class="inline-block w-7 h-7 border-3 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Loading enrolled batches...</p>
           </div>
-          <a href="batches.html" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition flex items-center gap-1">
-            <span>View All</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
 
-        <div id="dash-rec-loader" class="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-          <div class="inline-block w-8 h-8 border-3 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-xs text-slate-400 mt-2 font-medium">Finding top recommendations...</p>
-        </div>
+          <div id="dash-enrolled-grid" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"></div>
 
-        <div id="dash-rec-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+          <div id="dash-enrolled-empty" class="hidden text-center py-10 px-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <p class="text-sm font-bold text-slate-900 dark:text-white">No Enrolled Batches Yet</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Select a batch below or browse the Batches catalog to enroll.</p>
+          </div>
+        </section>
 
-        <div id="dash-rec-empty" class="hidden text-center py-10 px-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <p class="text-sm font-bold text-slate-800 dark:text-white">No Batches Published Yet</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">New batches for your class will appear here once published.</p>
-          <a href="batches.html" class="inline-flex items-center gap-1.5 mt-4 px-5 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 text-white text-xs font-bold hover:opacity-90 transition">
-            <span>Browse All Batches</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
-      </section>
-
-      <!-- 2.4 MENDORBIT STUDY TOOLKIT -->
-      <section class="pt-4 border-t border-slate-200 dark:border-slate-800/80">
-        <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-          <i data-lucide="layers" class="w-5 h-5 text-blue-600"></i>
-          <span>Academic Resources & Quick Tools</span>
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <!-- Handwritten Notes -->
-          <a href="https://mendorbit.in/notes.html" class="group p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-md transition">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950 text-brand-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <i data-lucide="file-text" class="w-5 h-5"></i>
+        <!-- SECTION 2: BATCHES FOR YOUR CLASS -->
+        <section class="space-y-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Batches for <span id="dash-rec-class-title">Your Class</span>
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Curated batches matching your selected class</p>
             </div>
-            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Handwritten Notes</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Topper handwritten PDF notes, formulas, and revision cheatsheets.</p>
-          </a>
+            <a href="batches.html" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+              <span>View More</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
 
-          <!-- DPP Practice -->
-          <a href="batches.html" class="group p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-md transition">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <i data-lucide="check-square" class="w-5 h-5"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Daily Practice Problems (DPP)</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Daily topic-wise question worksheets with video answers in your batch.</p>
-          </a>
+          <div id="dash-rec-loader" class="text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div class="inline-block w-7 h-7 border-3 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-slate-400 mt-2 font-medium">Loading batches...</p>
+          </div>
 
-          <!-- 24/7 Academic Support -->
-          <a href="https://mendorbit.in/contact.html" class="group p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-md transition">
-            <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <i data-lucide="headset" class="w-5 h-5"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Academic Helpdesk</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Direct support for batch access, technical help & subject doubts.</p>
-          </a>
-        </div>
-      </section>
+          <div id="dash-rec-grid" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"></div>
 
-    </div>
+          <div id="dash-rec-empty" class="hidden text-center py-10 px-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <p class="text-sm font-bold text-slate-800 dark:text-white">No Batches Published Yet</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Switch class from the top bar or check back shortly.</p>
+          </div>
+        </section>
 
-  </main>
-
-  <!-- ======================================================== -->
-  <!-- FOOTER (MATCHING mendorbit.in)                           -->
-  <!-- ======================================================== -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 py-8 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <img src="logo.png" alt="Mendorbit" class="w-5 h-5 object-contain">
-        <span class="font-extrabold text-slate-700 dark:text-slate-300">Mendorbit</span>
-        <span>• Orbit of Knowledge</span>
       </div>
-      <p>© 2026 Mendorbit. All rights reserved.</p>
-      <div class="flex items-center gap-4 text-xs font-semibold">
-        <a href="https://mendorbit.in" class="hover:text-brand-600 transition">Home</a>
-        <a href="batches.html" class="hover:text-brand-600 transition">Batches</a>
-        <a href="https://mendorbit.in/notes.html" class="hover:text-brand-600 transition">Notes</a>
-      </div>
-    </div>
-  </footer>
+
+    </main>
+  </div>
 
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -602,59 +367,46 @@
     document.addEventListener("DOMContentLoaded", function () {
       if (window.lucide) lucide.createIcons();
 
-      // Listen for instant remote logout from other devices
       if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.listenToRemoteSessionStatus) {
         MendorbitSSO.listenToRemoteSessionStatus();
       }
 
-      // Strip query parameters from URL address bar for clean display
-      if (window.location.search) {
-        try {
-          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-        } catch (e) {}
-      }
+      const FIXED_CLASSES = ["Class 9", "Class 10", "Banking", "Law", "SSC CGL", "SSC CHSL"];
 
-      // ========================================================
-      // 1. APPLE-STYLE THEME SWITCHER
-      // ========================================================
+      // Theme Toggle
       const themeToggle = document.getElementById('theme-toggle');
       const themeIcon = document.getElementById('theme-icon');
-
       function updateThemeIcons() {
         const isDark = document.documentElement.classList.contains('dark');
-        if (themeIcon) {
-          themeIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
-          themeIcon.className = isDark ? 'w-3.5 h-3.5 text-blue-400' : 'w-3.5 h-3.5 text-amber-500';
-          if (window.lucide) lucide.createIcons();
-        }
+        if (themeIcon) themeIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+        if (window.lucide) lucide.createIcons();
       }
-
       updateThemeIcons();
-
       if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-          if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            localStorage.theme = 'light';
-          } else {
-            document.documentElement.classList.add('dark');
-            localStorage.theme = 'dark';
-          }
+          const isDark = document.documentElement.classList.toggle('dark');
+          localStorage.theme = isDark ? 'dark' : 'light';
           updateThemeIcons();
         });
       }
 
-      // ========================================================
-      // 2. SSO AUTH CHECK & DATA POPULATION
-      // ========================================================
-      const session = MendorbitSSO.getSession();
+      // Mobile Sidebar
+      const sidebar = document.getElementById('left-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const btnOpenSidebar = document.getElementById('btn-mobile-sidebar');
+      const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+      if (btnOpenSidebar) btnOpenSidebar.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); });
+      if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
+      if (backdrop) backdrop.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
+
+      // SSO Auth Check
+      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
       const unauthView = document.getElementById('unauth-view');
       const authView = document.getElementById('auth-view');
       const profileContainer = document.getElementById('profile-dropdown-container');
       const guestLoginBtn = document.getElementById('nav-guest-login-btn');
 
       if (!session) {
-        // Not Logged In
         unauthView.classList.remove('hidden');
         authView.classList.add('hidden');
         if (profileContainer) profileContainer.classList.add('hidden');
@@ -662,7 +414,6 @@
         return;
       }
 
-      // Logged In
       authView.classList.remove('hidden');
       unauthView.classList.add('hidden');
       if (profileContainer) profileContainer.classList.remove('hidden');
@@ -671,37 +422,47 @@
       const fullName = session.displayName || session.name || "Student";
       const firstName = fullName.split(" ")[0];
       const email = session.email || "";
-      const targetExam = session.targetExam || session.class || "Class 10";
+      const rawClass = session.targetExam || session.class || "Class 10";
       const initialChar = fullName.charAt(0).toUpperCase();
 
-      // Navbar Profile Elements
-      const navFirstname = document.getElementById('nav-user-firstname');
-      if (navFirstname) navFirstname.textContent = firstName;
-      const navVerifiedBadge = document.getElementById('nav-verified-badge');
-      if (navVerifiedBadge) {
-        if (session.isVerified || session.kycCompleted) {
-          navVerifiedBadge.classList.remove('hidden');
-        } else {
-          navVerifiedBadge.classList.add('hidden');
-        }
+      function normalizeTargetClass(raw) {
+        const s = String(raw || "").trim().toLowerCase();
+        if (s === "class 9" || s === "9") return "Class 9";
+        if (s === "class 10" || s === "10") return "Class 10";
+        if (s.includes("bank")) return "Banking";
+        if (s.includes("law") || s.includes("clat") || s.includes("ailet")) return "Law";
+        if (s.includes("chsl")) return "SSC CHSL";
+        if (s.includes("cgl") || s.includes("ssc")) return "SSC CGL";
+        return "all";
       }
-      const navTarget = document.getElementById('nav-user-target');
-      if (navTarget) navTarget.textContent = targetExam;
+
+      let activeClassFilter = normalizeTargetClass(rawClass);
+      let allBatchesCache = [];
+
+      // Header User Info
+      const navFirst = document.getElementById('nav-user-firstname');
+      if (navFirst) navFirst.textContent = firstName;
       const navAvatarInit = document.getElementById('nav-avatar-initial');
       if (navAvatarInit) navAvatarInit.textContent = initialChar;
-
-      // Dropdown Menu Elements
-      const menuFullname = document.getElementById('menu-user-fullname');
-      if (menuFullname) menuFullname.textContent = fullName;
+      const menuFull = document.getElementById('menu-user-fullname');
+      if (menuFull) menuFull.textContent = fullName;
       const menuEmail = document.getElementById('menu-user-email');
       if (menuEmail) menuEmail.textContent = email;
-      const menuExamBadge = document.getElementById('menu-user-exam-badge');
-      if (menuExamBadge) menuExamBadge.textContent = targetExam;
       const menuAvatarInit = document.getElementById('menu-avatar-initial');
       if (menuAvatarInit) menuAvatarInit.textContent = initialChar;
+      const verifiedBadge = document.getElementById('nav-verified-badge');
+      if (verifiedBadge && (session.isVerified || session.kycCompleted)) verifiedBadge.classList.remove('hidden');
 
-      // Photo & Avatar handling (session or local cache)
-      const normEmail = (email || '').toLowerCase().trim();
+      // Dropdown toggle
+      const userBtn = document.getElementById('nav-user-btn');
+      const userDropdown = document.getElementById('nav-user-dropdown');
+      if (userBtn && userDropdown) {
+        userBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('hidden'); });
+        document.addEventListener('click', () => userDropdown.classList.add('hidden'));
+      }
+
+      // Avatar Sync
+      const normEmail = email.toLowerCase().trim();
       let photoURL = session.photoURL || '';
       if (!photoURL) {
         try {
@@ -709,76 +470,75 @@
           if (cached && cached.photoURL) photoURL = cached.photoURL;
         } catch(e) {}
       }
-
       function updateAvatarImages(url) {
         if (!url) return;
         ['nav-avatar-img', 'menu-avatar-img'].forEach(id => {
           const img = document.getElementById(id);
-          if (img) {
-            img.src = url;
-            img.classList.remove('hidden');
-          }
+          if (img) { img.src = url; img.classList.remove('hidden'); }
         });
         ['nav-avatar-initial', 'menu-avatar-initial'].forEach(id => {
           const init = document.getElementById(id);
           if (init) init.classList.add('hidden');
         });
       }
+      if (photoURL) updateAvatarImages(photoURL);
 
-      if (photoURL) {
-        updateAvatarImages(photoURL);
-      }
-
-      // Non-blocking real-time remote fetch on index.html
       if (normEmail && typeof MendorbitBackend !== 'undefined' && MendorbitBackend.getUserByEmail) {
         MendorbitBackend.getUserByEmail(normEmail).then(remoteDoc => {
           if (remoteDoc && remoteDoc.photoURL && remoteDoc.photoURL !== photoURL) {
             updateAvatarImages(remoteDoc.photoURL);
             session.photoURL = remoteDoc.photoURL;
             session.hasCustomAvatar = true;
-            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) {
-              MendorbitSSO.setSession(session);
-            }
+            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) MendorbitSSO.setSession(session);
           }
           if (remoteDoc && (remoteDoc.isVerified || remoteDoc.kycCompleted)) {
-            const badge = document.getElementById('nav-verified-badge');
-            if (badge) badge.classList.remove('hidden');
+            if (verifiedBadge) verifiedBadge.classList.remove('hidden');
           }
           if (remoteDoc && Array.isArray(remoteDoc.enrolledBatches)) {
             session.enrolledBatches = remoteDoc.enrolledBatches;
-            if (typeof loadDashboardBatches === 'function') loadDashboardBatches();
+            renderDashboardSections();
           }
         }).catch(() => {});
       }
 
-      // ========================================================
-      // 3. DASHBOARD BATCHES POPULATION (ENROLLED & RECOMMENDED)
-      // ========================================================
-      const dashGreeting = document.getElementById('dash-greeting-name');
-      if (dashGreeting) dashGreeting.textContent = firstName;
-
-      const dashBadgeClass = document.getElementById('dash-badge-class');
-      if (dashBadgeClass) dashBadgeClass.textContent = targetExam;
-
-      const dashStatTarget = document.getElementById('dash-stat-target');
-      if (dashStatTarget) dashStatTarget.textContent = targetExam;
-
-      const dashRecClassTitle = document.getElementById('dash-rec-class-title');
-      if (dashRecClassTitle) dashRecClassTitle.textContent = targetExam;
-
-      const dashEmptyClassName = document.getElementById('dash-empty-class-name');
-      if (dashEmptyClassName) dashEmptyClassName.textContent = targetExam;
-
-      function formatStartDate(dateStr) {
-        if (!dateStr) return "";
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
-        const day = d.getDate();
-        const suffix = (day % 10 === 1 && day !== 11) ? "st" : (day % 10 === 2 && day !== 12) ? "nd" : (day % 10 === 3 && day !== 13) ? "rd" : "th";
-        const month = d.toLocaleString("en-US", { month: "short" });
-        const yr = String(d.getFullYear()).slice(-2);
-        return `Starts on ${day}${suffix} ${month} '${yr}`;
+      // Header Class Picker
+      const pickerBtn = document.getElementById('btn-header-class-picker');
+      const pickerMenu = document.getElementById('header-class-dropdown');
+      if (pickerBtn && pickerMenu) {
+        pickerBtn.addEventListener('click', (e) => { e.stopPropagation(); pickerMenu.classList.toggle('hidden'); });
+        document.addEventListener('click', () => pickerMenu.classList.add('hidden'));
       }
+
+      function renderHeaderClassPicker() {
+        const label = document.getElementById('header-active-class-label');
+        const optionsEl = document.getElementById('header-class-options');
+        const recTitle = document.getElementById('dash-rec-class-title');
+        if (label) label.textContent = activeClassFilter === "all" ? "All Classes" : activeClassFilter;
+        if (recTitle) recTitle.textContent = activeClassFilter === "all" ? "All Classes" : activeClassFilter;
+
+        if (optionsEl) {
+          const items = [{ value: "all", label: "All Classes" }, ...FIXED_CLASSES.map(c => ({ value: c, label: c }))];
+          optionsEl.innerHTML = items.map(item => {
+            const isSel = item.value.toLowerCase() === activeClassFilter.toLowerCase();
+            return `
+              <button type="button" onclick="selectDashClass('${item.value.replace(/'/g, "\\'")}')" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between ${isSel ? 'bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'} transition">
+                <span>${item.label}</span>
+                ${isSel ? '<i data-lucide="check" class="w-3.5 h-3.5 text-brand-600"></i>' : ''}
+              </button>
+            `;
+          }).join('');
+        }
+        if (window.lucide) lucide.createIcons();
+      }
+
+      window.selectDashClass = function (cls) {
+        activeClassFilter = cls;
+        if (pickerMenu) pickerMenu.classList.add('hidden');
+        renderHeaderClassPicker();
+        renderDashboardSections();
+      };
+
+      renderHeaderClassPicker();
 
       function escapeHtml(str) {
         return String(str || "")
@@ -811,8 +571,6 @@
           } else {
             dateDisplay = `${statusLabel} | ${b.startDate}`;
           }
-        } else if (b.schedule) {
-          dateDisplay = `${statusLabel} | ${b.schedule}`;
         }
 
         const bannerHtml = b.thumbnail
@@ -851,7 +609,7 @@
           : `<button type="button" onclick="startDashCheckout('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">${price > 0 ? 'Buy Now' : 'Enroll Now'}</button>`;
 
         return `
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-500/40 transition-all flex flex-col justify-between group">
+          <div class="batch-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-500/40 flex flex-col justify-between group">
             <div>
               <div class="p-3 pb-0">
                 <a href="${escapeHtml(viewMoreUrl)}" class="block relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -888,10 +646,7 @@
 
       window.startDashCheckout = async function (batchId, triggerBtn) {
         const orig = triggerBtn ? triggerBtn.innerHTML : "";
-        if (triggerBtn) {
-          triggerBtn.disabled = true;
-          triggerBtn.innerHTML = "Opening...";
-        }
+        if (triggerBtn) { triggerBtn.disabled = true; triggerBtn.innerHTML = "Opening..."; }
         try {
           const res = await MendorbitAPI.initCheckout(batchId, email);
           if (res && res.status === "success" && res.checkoutUrl) {
@@ -902,54 +657,25 @@
         } catch (e) {
           window.location.href = `payment.html?id=${encodeURIComponent(batchId)}`;
         } finally {
-          if (triggerBtn) {
-            triggerBtn.disabled = false;
-            triggerBtn.innerHTML = orig;
-          }
+          if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerHTML = orig; }
         }
       };
 
-      function normalizeTargetClass(raw) {
-        const s = String(raw || "").trim().toLowerCase();
-        if (s === "class 9" || s === "9") return "class 9";
-        if (s === "class 10" || s === "10") return "class 10";
-        if (s.includes("bank")) return "banking";
-        if (s.includes("law") || s.includes("clat") || s.includes("ailet")) return "law";
-        if (s.includes("chsl")) return "ssc chsl";
-        if (s.includes("cgl") || s.includes("ssc")) return "ssc cgl";
-        return s;
-      }
+      function renderDashboardSections() {
+        const searchVal = (document.getElementById('dash-search-input')?.value || document.getElementById('dash-search-input-mobile')?.value || "").toLowerCase().trim();
+        const userEnrolledList = Array.isArray(session.enrolledBatches) ? session.enrolledBatches : [];
 
-      async function loadDashboardBatches() {
+        const enrolledBatches = allBatchesCache.filter(b => {
+          const isEnr = b.isEnrolled === true || userEnrolledList.includes(b.id);
+          if (!isEnr) return false;
+          if (searchVal && !`${b.title} ${b.displayTag || ''} ${b.stream || ''}`.toLowerCase().includes(searchVal)) return false;
+          return true;
+        });
+
         const enrolledLoader = document.getElementById('dash-enrolled-loader');
         const enrolledGrid = document.getElementById('dash-enrolled-grid');
         const enrolledEmpty = document.getElementById('dash-enrolled-empty');
-        const enrolledStat = document.getElementById('dash-stat-enrolled');
-
-        const recLoader = document.getElementById('dash-rec-loader');
-        const recGrid = document.getElementById('dash-rec-grid');
-        const recEmpty = document.getElementById('dash-rec-empty');
-
-        let allBatches = [];
-        try {
-          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getBatches) {
-            const res = await MendorbitAPI.getBatches("all", email);
-            if (res && res.status === "success" && Array.isArray(res.batches)) {
-              allBatches = res.batches;
-            }
-          }
-        } catch (err) {
-          console.warn("[Dashboard] Batches fetch note:", err);
-        }
-
-        // Determine Enrolled Batches from live backend response or session
-        const userEnrolledList = Array.isArray(session.enrolledBatches) ? session.enrolledBatches : [];
-        const enrolledBatches = allBatches.filter(b => b.isEnrolled === true || userEnrolledList.includes(b.id));
-
-        // 1. Render Enrolled Batches
-        if (enrolledStat) enrolledStat.textContent = enrolledBatches.length;
         if (enrolledLoader) enrolledLoader.classList.add('hidden');
-
         if (enrolledBatches.length > 0) {
           if (enrolledEmpty) enrolledEmpty.classList.add('hidden');
           if (enrolledGrid) {
@@ -961,19 +687,22 @@
           if (enrolledEmpty) enrolledEmpty.classList.remove('hidden');
         }
 
-        // 2. Render Recommended Batches (strictly real data — multi-class match)
-        if (recLoader) recLoader.classList.add('hidden');
-        const normUserExam = normalizeTargetClass(targetExam);
-        let recommended = allBatches.filter(b => {
-          if (Array.isArray(b.targetClasses) && b.targetClasses.length > 0) {
-            return b.targetClasses.some(c => String(c).toLowerCase() === normUserExam);
+        // Recommended for selected class
+        const fc = activeClassFilter.toLowerCase();
+        const recommended = allBatchesCache.filter(b => {
+          if (fc !== "all") {
+            const matchArr = Array.isArray(b.targetClasses) && b.targetClasses.some(c => String(c).toLowerCase() === fc);
+            const matchStr = (b.targetClass || "").toLowerCase().split(",").map(s => s.trim()).includes(fc);
+            if (!matchArr && !matchStr) return false;
           }
-          const bClass = (b.targetClass || "").toLowerCase();
-          return bClass.split(",").map(s => s.trim()).includes(normUserExam);
+          if (searchVal && !`${b.title} ${b.displayTag || ''} ${b.stream || ''}`.toLowerCase().includes(searchVal)) return false;
+          return true;
         });
-        if (recommended.length === 0) recommended = allBatches.slice(0, 3);
-        else recommended = recommended.slice(0, 3);
 
+        const recLoader = document.getElementById('dash-rec-loader');
+        const recGrid = document.getElementById('dash-rec-grid');
+        const recEmpty = document.getElementById('dash-rec-empty');
+        if (recLoader) recLoader.classList.add('hidden');
         if (recommended.length > 0) {
           if (recEmpty) recEmpty.classList.add('hidden');
           if (recGrid) {
@@ -991,17 +720,38 @@
         if (window.lucide) lucide.createIcons();
       }
 
-      // Trigger batches loading
+      async function loadDashboardBatches() {
+        try {
+          if (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getBatches) {
+            const res = await MendorbitAPI.getBatches("all", email);
+            if (res && res.status === "success" && Array.isArray(res.batches)) {
+              allBatchesCache = res.batches;
+            }
+          }
+        } catch (err) {
+          console.warn("[Dashboard] Fetch error:", err);
+        }
+        renderDashboardSections();
+      }
+
+      ['dash-search-input', 'dash-search-input-mobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', (e) => {
+            const other = document.getElementById(id === 'dash-search-input' ? 'dash-search-input-mobile' : 'dash-search-input');
+            if (other) other.value = e.target.value;
+            renderDashboardSections();
+          });
+        }
+      });
+
       loadDashboardBatches();
 
-      // ========================================================
-      // 4. LOGOUT HANDLER
-      // ========================================================
+      // Logout
       const logoutBtn = document.getElementById('nav-btn-logout');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
           logoutBtn.disabled = true;
-          logoutBtn.classList.add('opacity-60', 'pointer-events-none');
           if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.logout) {
             await MendorbitSSO.logout("login.html?force_login=true");
           } else {

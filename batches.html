@@ -107,7 +107,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans overflow-x-hidden transition-colors duration-200">
 
   <!-- ======================================================== -->
   <!-- TOP HEADER BAR (PW-INSPIRED PREMIUM EDTECH SHELL)        -->
@@ -296,11 +296,6 @@
           <div id="batch-count-pill" class="hidden self-start sm:self-auto px-3 py-1 rounded-full bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
             0 Batches
           </div>
-        </div>
-
-        <!-- Horizontal Class Filter Pills -->
-        <div id="class-filter-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-          <!-- Dynamically populated based on standard classes + live Firestore batches -->
         </div>
       </div>
 
@@ -533,7 +528,6 @@
         const classes = getAvailableClasses();
         const headerLabel = document.getElementById('header-active-class-label');
         const headerOptions = document.getElementById('header-class-options');
-        const pillsContainer = document.getElementById('class-filter-container');
 
         if (headerLabel) {
           headerLabel.textContent = activeClassFilter === "all" ? "All Classes" : activeClassFilter;
@@ -547,18 +541,6 @@
               <button type="button" onclick="selectClassFilter('${item.value.replace(/'/g, "\\'")}')" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between ${isSel ? 'bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'} transition">
                 <span>${item.label}</span>
                 ${isSel ? '<i data-lucide="check" class="w-3.5 h-3.5 text-brand-600"></i>' : ''}
-              </button>
-            `;
-          }).join('');
-        }
-
-        if (pillsContainer) {
-          const pillItems = [{ value: "all", label: "All Batches" }, ...classes.map(c => ({ value: c, label: c }))];
-          pillsContainer.innerHTML = pillItems.map(item => {
-            const isSel = item.value.toLowerCase() === activeClassFilter.toLowerCase();
-            return `
-              <button type="button" onclick="selectClassFilter('${item.value.replace(/'/g, "\\'")}')" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition ${isSel ? 'bg-slate-900 dark:bg-brand-600 text-white shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600'}">
-                ${item.label}
               </button>
             `;
           }).join('');
