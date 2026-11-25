@@ -368,28 +368,6 @@
     </main>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: BATCH VIEW MORE DETAILS & ENROLL                  -->
-  <!-- ======================================================== -->
-  <div id="modal-batch-details" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
-    <div id="modal-batch-panel" class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-200">
-      
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
-        <span class="text-xs font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">Batch Overview</span>
-        <button type="button" id="btn-close-details-modal" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Scrollable Modal Body -->
-      <div id="modal-details-content" class="p-5 sm:p-7 overflow-y-auto flex-1 space-y-6">
-        <!-- Rendered dynamically -->
-      </div>
-
-    </div>
-  </div>
-
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
@@ -402,7 +380,9 @@
     document.addEventListener("DOMContentLoaded", async function () {
       if (window.lucide) lucide.createIcons();
 
-      // State (100% real data from backend — zero hardcoded samples)
+      // Strictly 6 Classes as specified
+      const FIXED_CLASSES = ["Class 9", "Class 10", "Banking", "Law", "SSC CGL", "SSC CHSL"];
+
       let allBatches = [];
       let activeClassFilter = "all";
       let viewMode = "all"; // 'all' | 'enrolled'
@@ -410,6 +390,25 @@
 
       if (typeof MendorbitSSO !== 'undefined') {
         userSession = MendorbitSSO.getSession();
+      }
+
+      function normalizeClassToFixed(raw) {
+        if (!raw) return "all";
+        const s = String(raw).trim().toLowerCase();
+        if (s === "class 9" || s === "9" || s === "9th") return "Class 9";
+        if (s === "class 10" || s === "10" || s === "10th") return "Class 10";
+        if (s.includes("bank")) return "Banking";
+        if (s.includes("law") || s.includes("clat") || s.includes("ailet")) return "Law";
+        if (s.includes("chsl")) return "SSC CHSL";
+        if (s.includes("cgl") || s.includes("ssc")) return "SSC CGL";
+        return "all";
+      }
+
+      // If URL passes ?id=... redirect directly to dedicated batch-detail.html
+      const initParams = new URLSearchParams(window.location.search);
+      if (initParams.get("id")) {
+        window.location.replace(`batch-detail.html?id=${encodeURIComponent(initParams.get("id"))}`);
+        return;
       }
 
       // --------------------------------------------------------
@@ -477,19 +476,17 @@
           if (navAvatarInit) navAvatarInit.classList.add('hidden');
         }
 
-        // Default filter to user's registered class unless URL overrides
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramClass = urlParams.get("class");
+        // Default filter to student's normalized registered class (if matching one of 6 classes)
+        const paramClass = initParams.get("class");
         if (paramClass) {
-          activeClassFilter = paramClass;
+          activeClassFilter = normalizeClassToFixed(paramClass);
         } else if (userSession.class && userSession.class !== "General") {
-          activeClassFilter = userSession.class;
+          activeClassFilter = normalizeClassToFixed(userSession.class);
         }
       } else {
         if (navLogin) navLogin.classList.remove('hidden');
         if (navWidget) navWidget.classList.add('hidden');
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("class")) activeClassFilter = urlParams.get("class");
+        if (initParams.get("class")) activeClassFilter = normalizeClassToFixed(initParams.get("class"));
       }
 
       // User dropdown toggle
@@ -529,18 +526,7 @@
       }
 
       function getAvailableClasses() {
-        const defaults = ["Class 9", "Class 10", "Class 11", "Class 12", "Foundation", "JEE", "NEET"];
-        const set = new Set();
-        allBatches.forEach(b => {
-          if (b.targetClass && b.targetClass.trim()) set.add(b.targetClass.trim());
-        });
-        if (userSession && userSession.class && userSession.class !== "General") {
-          set.add(userSession.class);
-        }
-        if (set.size === 0) {
-          defaults.forEach(c => set.add(c));
-        }
-        return Array.from(set);
+        return FIXED_CLASSES;
       }
 
       function renderClassFilters() {
@@ -642,18 +628,19 @@
           showToast("Unable to connect to server. Please try again.", "error");
         } finally {
           if (loader) loader.classList.add('hidden');
-          // If student's class filter has 0 matches only because classes differ, keep filter selectable
           renderClassFilters();
           updateEnrolledBadge();
           renderBatches();
-
-          // Check URL ?id= param to auto-open Details modal
-          const urlParams = new URLSearchParams(window.location.search);
-          const openId = urlParams.get("id");
-          if (openId && allBatches.some(b => b.id === openId)) {
-            openBatchDetails(openId);
-          }
         }
+      }
+
+      function batchMatchesClass(batch, filterClass) {
+        if (!filterClass || filterClass.toLowerCase() === "all") return true;
+        const fc = filterClass.toLowerCase();
+        if (Array.isArray(batch.targetClasses) && batch.targetClasses.length > 0) {
+          return batch.targetClasses.some(c => String(c).toLowerCase() === fc);
+        }
+        return (batch.targetClass || "").toLowerCase().split(",").map(s => s.trim()).includes(fc);
       }
 
       function updateEnrolledBadge() {
@@ -728,16 +715,15 @@
           if (viewMode === "enrolled" && !isUserEnrolled(b)) {
             return false;
           }
-          if (viewMode === "all" && activeClassFilter !== "all") {
-            if ((b.targetClass || "").toLowerCase() !== activeClassFilter.toLowerCase()) {
-              return false;
-            }
+          if (viewMode === "all" && !batchMatchesClass(b, activeClassFilter)) {
+            return false;
           }
           if (searchVal) {
             const hay = [
               b.title,
               b.subtitle,
               b.targetClass,
+              ...(Array.isArray(b.targetClasses) ? b.targetClasses : []),
               b.stream,
               b.language,
               ...(Array.isArray(b.subjects) ? b.subjects : [])
@@ -760,7 +746,7 @@
             const emptyDesc = document.getElementById('empty-state-desc');
             if (allBatches.length === 0) {
               if (emptyTitle) emptyTitle.textContent = "No Batches Published Yet";
-              if (emptyDesc) emptyDesc.textContent = "Batches added from the Admin Panel will appear here automatically.";
+              if (emptyDesc) emptyDesc.textContent = "Batches published by Mendorbit will appear here automatically.";
             } else if (viewMode === "enrolled") {
               if (emptyTitle) emptyTitle.textContent = "No Enrolled Batches Yet";
               if (emptyDesc) emptyDesc.textContent = "Browse available batches and enroll to see your active batches here.";
@@ -783,12 +769,15 @@
           const discountPct = (originalPrice > price && originalPrice > 0)
             ? Math.round(((originalPrice - price) / originalPrice) * 100)
             : 0;
+          const detailUrl = `batch-detail.html?id=${encodeURIComponent(b.id)}`;
+          const audienceText = Array.isArray(b.targetClasses) && b.targetClasses.length
+            ? b.targetClasses.join(" • ")
+            : (b.targetClass || "All Classes");
 
-          // Thumbnail or clean typography banner (never fake stock images)
           const bannerHtml = b.thumbnail
             ? `<img src="${escapeHtml(b.thumbnail)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />`
             : `<div class="w-full h-full bg-gradient-to-br from-slate-900 via-brand-900 to-indigo-900 flex flex-col items-center justify-center p-5 text-center">
-                 <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">${escapeHtml(b.targetClass || 'Mendorbit')}</span>
+                 <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">${escapeHtml(audienceText)}</span>
                  <div class="text-white font-black text-lg leading-snug line-clamp-2">${escapeHtml(b.title)}</div>
                </div>`;
 
@@ -821,11 +810,11 @@
                    </div>`);
 
           const primaryBtnHtml = enrolled
-            ? `<button type="button" onclick="openBatchDetails('${b.id}')" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">
-                 View Batch
-               </button>`
-            : `<button type="button" onclick="enrollInBatch('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">
-                 Enroll Now
+            ? `<a href="${detailUrl}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition inline-flex items-center gap-1.5">
+                 <span>Go to Batch</span>
+               </a>`
+            : `<button type="button" onclick="goToSecureCheckout('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">
+                 ${price > 0 ? 'Buy Now' : 'Enroll Now'}
                </button>`;
 
           const metaLine1 = b.stream || b.subtitle || (Array.isArray(b.subjects) && b.subjects.length ? b.subjects.slice(0, 3).join(", ") : "");
@@ -834,26 +823,24 @@
           return `
             <div class="batch-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-500/40 flex flex-col justify-between">
               <div>
-                <!-- Banner Image -->
-                <div onclick="openBatchDetails('${b.id}')" class="cursor-pointer relative aspect-[16/9] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                <a href="${detailUrl}" class="block relative aspect-[16/9] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                   ${bannerHtml}
                   ${topBadgeHtml ? `<div class="absolute top-3 left-3">${topBadgeHtml}</div>` : ''}
-                </div>
+                </a>
 
-                <!-- Body Content -->
                 <div class="p-4 sm:p-5">
                   <div class="flex items-center justify-between gap-2 mb-1.5">
                     <span class="text-xs font-extrabold text-orange-600 dark:text-orange-400 truncate">
-                      ${escapeHtml(b.targetClass || 'All Classes')}
+                      ${escapeHtml(audienceText)}
                     </span>
                     <span class="px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[10px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex-shrink-0">
                       ${escapeHtml(b.language || 'HINGLISH')}
                     </span>
                   </div>
 
-                  <h3 onclick="openBatchDetails('${b.id}')" class="cursor-pointer text-base sm:text-[17px] font-extrabold text-slate-900 dark:text-white line-clamp-1 group-hover:text-brand-600 transition-colors">
+                  <a href="${detailUrl}" class="block text-base sm:text-[17px] font-extrabold text-slate-900 dark:text-white line-clamp-1 group-hover:text-brand-600 transition-colors">
                     ${escapeHtml(b.title)}
-                  </h3>
+                  </a>
 
                   <div class="mt-2.5 space-y-1.5 text-xs text-slate-500 dark:text-slate-400 min-h-[2.5rem]">
                     ${metaLine1 ? `
@@ -872,15 +859,14 @@
                 </div>
               </div>
 
-              <!-- Footer: Price & Action Pair -->
               <div class="px-4 sm:px-5 pb-4 sm:pb-5">
                 <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
                   ${priceHtml}
                   <div class="flex items-center gap-2 flex-shrink-0">
                     ${primaryBtnHtml}
-                    <button type="button" onclick="openBatchDetails('${b.id}')" title="View More Details" aria-label="View More Details" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition">
+                    <a href="${detailUrl}" title="View More Details" aria-label="View More Details" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition">
                       <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -920,220 +906,29 @@
       });
 
       // --------------------------------------------------------
-      // 7. BATCH VIEW MORE DETAILS MODAL
+      // 7. SECURE CHECKOUT REDIRECT (SIGNED TOKEN URL)
       // --------------------------------------------------------
-      window.openBatchDetails = function (batchId) {
-        const batch = allBatches.find(b => b.id === batchId);
-        if (!batch) return;
-
-        const enrolled = isUserEnrolled(batch);
-        const price = Number(batch.price) || 0;
-        const originalPrice = Number(batch.originalPrice) || 0;
-        const discountPct = (originalPrice > price && originalPrice > 0)
-          ? Math.round(((originalPrice - price) / originalPrice) * 100)
-          : 0;
-
-        const modal = document.getElementById('modal-batch-details');
-        const panel = document.getElementById('modal-batch-panel');
-        const container = document.getElementById('modal-details-content');
-        if (!modal || !container) return;
-
-        const bannerSection = batch.thumbnail
-          ? `<div class="rounded-2xl overflow-hidden aspect-[16/9] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800">
-               <img src="${escapeHtml(batch.thumbnail)}" alt="${escapeHtml(batch.title)}" class="w-full h-full object-cover" />
-             </div>`
-          : '';
-
-        const featuresSection = (Array.isArray(batch.features) && batch.features.length > 0)
-          ? `<div class="bg-slate-50 dark:bg-slate-800/60 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
-               <h4 class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Batch Highlights</h4>
-               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
-                 ${batch.features.map(feat => `
-                   <div class="flex items-start gap-2">
-                     <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-                     <span>${escapeHtml(feat)}</span>
-                   </div>
-                 `).join('')}
-               </div>
-             </div>`
-          : '';
-
-        const subjectsSection = (Array.isArray(batch.subjects) && batch.subjects.length > 0)
-          ? `<div>
-               <h4 class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-2.5">Subjects Covered</h4>
-               <div class="flex flex-wrap gap-2">
-                 ${batch.subjects.map(sub => `
-                   <span class="px-3 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200/60 dark:border-brand-800/60">${escapeHtml(sub)}</span>
-                 `).join('')}
-               </div>
-             </div>`
-          : '';
-
-        const facultySection = (Array.isArray(batch.faculty) && batch.faculty.length > 0)
-          ? `<div>
-               <h4 class="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-2.5">Faculty</h4>
-               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                 ${batch.faculty.map(f => {
-                   const name = typeof f === 'string' ? f : (f.name || 'Mentor');
-                   const sub = typeof f === 'string' ? '' : (f.subject || '');
-                   const exp = typeof f === 'string' ? '' : (f.exp || '');
-                   return `
-                     <div class="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                       <div class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-                         ${escapeHtml(name.charAt(0).toUpperCase())}
-                       </div>
-                       <div class="min-w-0">
-                         <div class="text-xs font-bold text-slate-900 dark:text-white truncate">${escapeHtml(name)}</div>
-                         ${sub ? `<div class="text-[11px] text-brand-600 dark:text-brand-400 font-semibold truncate">${escapeHtml(sub)}</div>` : ''}
-                         ${exp ? `<div class="text-[10px] text-slate-400 truncate">${escapeHtml(exp)}</div>` : ''}
-                       </div>
-                     </div>
-                   `;
-                 }).join('')}
-               </div>
-             </div>`
-          : '';
-
-        const footerCta = enrolled
-          ? `<div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-               <div class="flex items-center gap-2.5">
-                 <div class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
-                   <i data-lucide="check" class="w-5 h-5"></i>
-                 </div>
-                 <div>
-                   <div class="text-sm font-extrabold text-emerald-900 dark:text-emerald-200">You are enrolled in this batch</div>
-                   <div class="text-xs text-emerald-700 dark:text-emerald-400">Your seat is confirmed and active.</div>
-                 </div>
-               </div>
-               <button type="button" onclick="closeDetailsModal()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
-                 Done
-               </button>
-             </div>`
-          : `<div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
-               <div>
-                 ${price > 0
-                   ? `<div class="flex items-baseline gap-2">
-                        <span class="text-2xl font-black text-slate-900 dark:text-white">₹${price.toLocaleString('en-IN')}</span>
-                        ${originalPrice > price ? `<span class="text-xs text-slate-400 line-through">₹${originalPrice.toLocaleString('en-IN')}</span>` : ''}
-                      </div>
-                      ${discountPct > 0 ? `<span class="text-xs font-extrabold text-emerald-600">${discountPct}% OFF</span>` : ''}`
-                   : `<div class="flex items-baseline gap-2">
-                        <span class="text-2xl font-black text-emerald-600">FREE</span>
-                        ${originalPrice > 0 ? `<span class="text-xs text-slate-400 line-through">₹${originalPrice.toLocaleString('en-IN')}</span>` : ''}
-                      </div>`}
-               </div>
-               <button type="button" onclick="enrollInBatch('${batch.id}', this)" class="px-7 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-lg transition">
-                 Enroll Now
-               </button>
-             </div>`;
-
-        container.innerHTML = `
-          ${bannerSection}
-          <div class="space-y-3">
-            <div class="flex items-center flex-wrap gap-2">
-              <span class="px-2.5 py-1 rounded-md bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-extrabold">
-                ${escapeHtml(batch.targetClass || 'General')}
-              </span>
-              <span class="px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 text-[11px] font-extrabold uppercase text-slate-600 dark:text-slate-300">
-                ${escapeHtml(batch.language || 'HINGLISH')}
-              </span>
-              ${batch.stream ? `<span class="text-xs font-bold text-slate-400">• ${escapeHtml(batch.stream)}</span>` : ''}
-            </div>
-
-            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
-              ${escapeHtml(batch.title)}
-            </h2>
-
-            ${batch.description ? `<p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${escapeHtml(batch.description)}</p>` : ''}
-
-            <div class="flex flex-wrap gap-4 pt-1 text-xs text-slate-500 dark:text-slate-400 font-semibold">
-              ${batch.startDate ? `<span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-brand-600"></i> ${escapeHtml(formatStartDate(batch.startDate))}</span>` : ''}
-              ${batch.schedule ? `<span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-brand-600"></i> ${escapeHtml(batch.schedule)}</span>` : ''}
-            </div>
-          </div>
-          ${subjectsSection}
-          ${featuresSection}
-          ${facultySection}
-          ${footerCta}
-        `;
-
-        if (window.lucide) lucide.createIcons();
-
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-          modal.classList.remove('opacity-0');
-          if (panel) panel.classList.remove('scale-95');
-        }, 10);
-      };
-
-      window.closeDetailsModal = function () {
-        const modal = document.getElementById('modal-batch-details');
-        const panel = document.getElementById('modal-batch-panel');
-        if (!modal) return;
-        modal.classList.add('opacity-0');
-        if (panel) panel.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-      };
-
-      const btnCloseModal = document.getElementById('btn-close-details-modal');
-      if (btnCloseModal) btnCloseModal.addEventListener('click', closeDetailsModal);
-      const modalOverlay = document.getElementById('modal-batch-details');
-      if (modalOverlay) {
-        modalOverlay.addEventListener('click', (e) => {
-          if (e.target === modalOverlay) closeDetailsModal();
-        });
-      }
-
-      // --------------------------------------------------------
-      // 8. ENROLLMENT HANDLER (STRICT SERVER CHECK)
-      // --------------------------------------------------------
-      window.enrollInBatch = async function (batchId, triggerBtn) {
-        if (!userSession || !userSession.email) {
-          showToast("Please sign in to enroll in this batch.", "error");
-          setTimeout(() => {
-            window.location.href = `login.html?redirect=${encodeURIComponent('batches.html?id=' + batchId)}`;
-          }, 900);
-          return;
-        }
-
-        const originalLabel = triggerBtn ? triggerBtn.innerHTML : "";
+      window.goToSecureCheckout = async function (batchId, triggerBtn) {
+        const origText = triggerBtn ? triggerBtn.innerHTML : "";
         if (triggerBtn) {
           triggerBtn.disabled = true;
-          triggerBtn.innerHTML = "Enrolling...";
+          triggerBtn.innerHTML = "Opening...";
         }
 
         try {
-          const res = await MendorbitAPI.enrollBatch(batchId, userSession.email);
-          if (res && res.status === "success") {
-            showToast(res.message || "Enrolled successfully!", "success");
-
-            // Update local batch state & session immediately
-            allBatches = allBatches.map(b => b.id === batchId ? { ...b, isEnrolled: true } : b);
-            userSession.enrolledBatches = res.enrolledBatches || [ ...(userSession.enrolledBatches || []), batchId ];
-            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) {
-              MendorbitSSO.setSession(userSession);
-            }
-
-            updateEnrolledBadge();
-            renderBatches();
-
-            // Refresh modal if currently open
-            const modal = document.getElementById('modal-batch-details');
-            if (modal && !modal.classList.contains('hidden')) {
-              openBatchDetails(batchId);
-            }
-          } else {
-            showToast((res && res.message) || "Failed to enroll. Please try again.", "error");
-            if (triggerBtn) {
-              triggerBtn.disabled = false;
-              triggerBtn.innerHTML = originalLabel;
-            }
+          const email = (userSession && userSession.email) ? userSession.email : "";
+          const res = await MendorbitAPI.initCheckout(batchId, email);
+          if (res && res.status === "success" && res.checkoutUrl) {
+            window.location.href = res.checkoutUrl;
+            return;
           }
+          window.location.href = `payment.html?id=${encodeURIComponent(batchId)}`;
         } catch (e) {
-          showToast("Enrollment failed. Please check your connection.", "error");
+          window.location.href = `payment.html?id=${encodeURIComponent(batchId)}`;
+        } finally {
           if (triggerBtn) {
             triggerBtn.disabled = false;
-            triggerBtn.innerHTML = originalLabel;
+            triggerBtn.innerHTML = origText;
           }
         }
       };

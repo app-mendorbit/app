@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Details | Mendorbit</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur h-16 px-4 sm:px-8 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <a href="batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+      </a>
+      <a href="index.html" class="flex items-center gap-2.5">
+        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
+        <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="batches.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand-600 transition">
+        <span>All Batches</span>
+      </a>
+      <a id="btn-nav-login" href="login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 text-white text-xs font-bold">
+        Login
+      </a>
+      <div id="nav-user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold">
+        <span id="nav-user-name">Student</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOADING -->
+  <div id="detail-loader" class="max-w-6xl mx-auto px-4 py-24 text-center flex-1">
+    <div class="inline-block w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-xs font-bold text-slate-400 mt-3">Loading batch details...</p>
+  </div>
+
+  <!-- NOT FOUND -->
+  <div id="detail-error" class="hidden max-w-md mx-auto my-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center shadow-lg">
+    <i data-lucide="alert-circle" class="w-10 h-10 text-rose-500 mx-auto mb-3"></i>
+    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Batch Not Found</h2>
+    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">This batch may have been removed or is unavailable.</p>
+    <a href="batches.html" class="inline-block mt-5 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold">Browse All Batches</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main id="detail-main" class="hidden flex-1">
+
+    <!-- DARK HERO HEADER BANNER -->
+    <section class="bg-gradient-to-br from-slate-950 via-brand-950 to-slate-900 text-white border-b border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div class="max-w-3xl space-y-4">
+          <div class="flex items-center flex-wrap gap-2" id="hero-badges"></div>
+          <h1 id="hero-title" class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">Batch Title</h1>
+          <p id="hero-subtitle" class="text-sm sm:text-base text-slate-300 leading-relaxed"></p>
+
+          <div class="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-300 font-semibold" id="hero-meta-row"></div>
+
+          <div class="flex flex-wrap gap-3 pt-2" id="hero-extra-links"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TWO-COLUMN BODY -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- LEFT: OVERVIEW, SUBJECTS, HIGHLIGHTS, FACULTY, FAQS -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- Description -->
+          <section id="sec-description" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="info" class="w-5 h-5 text-brand-600"></i>
+              <span>About This Batch</span>
+            </h2>
+            <p id="detail-description" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line"></p>
+          </section>
+
+          <!-- Subjects Covered -->
+          <section id="sec-subjects" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="book-open" class="w-5 h-5 text-brand-600"></i>
+              <span>Subjects Covered</span>
+            </h2>
+            <div id="detail-subjects-list" class="flex flex-wrap gap-2"></div>
+          </section>
+
+          <!-- Batch Highlights -->
+          <section id="sec-features" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+              <span>Batch Highlights</span>
+            </h2>
+            <div id="detail-features-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200"></div>
+          </section>
+
+          <!-- Faculty -->
+          <section id="sec-faculty" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5 text-brand-600"></i>
+              <span>Know Your Teachers</span>
+            </h2>
+            <div id="detail-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+          </section>
+
+          <!-- Demo / Orientation Video Embed (if configured by Admin) -->
+          <section id="sec-demo-video" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-5 h-5 text-rose-500"></i>
+              <span>Batch Orientation Video</span>
+            </h2>
+            <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-950">
+              <iframe id="detail-demo-iframe" class="w-full h-full" allowfullscreen frameborder="0"></iframe>
+            </div>
+          </section>
+
+          <!-- FAQs -->
+          <section id="sec-faqs" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-5 h-5 text-brand-600"></i>
+              <span>Frequently Asked Questions</span>
+            </h2>
+            <div id="detail-faqs-list" class="space-y-3"></div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT STICKY PRICING & ACTION CARD -->
+        <div class="lg:col-span-4 lg:sticky lg:top-24">
+          <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+            <div id="sidebar-thumb" class="aspect-[16/9] w-full bg-slate-100 dark:bg-slate-800 overflow-hidden"></div>
+
+            <div class="p-6 space-y-5">
+              <div id="sidebar-price-block"></div>
+
+              <div id="sidebar-meta-list" class="space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-b border-slate-100 dark:border-slate-800 py-4"></div>
+
+              <div id="sidebar-cta-container"></div>
+
+              <div id="go-to-batch-notice" class="hidden p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-200">
+                <strong>Enrollment Active!</strong> Batch classroom lectures, notes & DPP hub is launching soon. Stay tuned!
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script src="assets/js/secure-storage.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+  <script src="assets/js/api-client.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      if (window.lucide) lucide.createIcons();
+
+      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
+      const loginBtn = document.getElementById('btn-nav-login');
+      const userPill = document.getElementById('nav-user-pill');
+      const userNameEl = document.getElementById('nav-user-name');
+
+      if (session && session.email) {
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (userPill) userPill.classList.remove('hidden');
+        if (userNameEl) userNameEl.textContent = session.displayName || "Student";
+      } else {
+        if (loginBtn) loginBtn.classList.remove('hidden');
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const batchId = (params.get("id") || "").trim();
+
+      const loader = document.getElementById('detail-loader');
+      const errBox = document.getElementById('detail-error');
+      const mainBox = document.getElementById('detail-main');
+
+      if (!batchId) {
+        loader.classList.add('hidden');
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function formatBatchDate(dateStr) {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+      }
+
+      try {
+        const res = await MendorbitAPI.getBatchDetail(batchId, session ? session.email : "");
+        if (!res || res.status !== "success" || !res.batch) {
+          loader.classList.add('hidden');
+          errBox.classList.remove('hidden');
+          return;
+        }
+
+        const b = res.batch;
+        const enrolled = !!b.isEnrolled || (session && Array.isArray(session.enrolledBatches) && session.enrolledBatches.includes(b.id));
+        document.title = `${b.title} | Mendorbit`;
+
+        // Hero badges
+        const classes = Array.isArray(b.targetClasses) && b.targetClasses.length
+          ? b.targetClasses
+          : (b.targetClass ? b.targetClass.split(",").map(s => s.trim()).filter(Boolean) : []);
+
+        const heroBadges = document.getElementById('hero-badges');
+        heroBadges.innerHTML = [
+          ...classes.map(c => `<span class="px-3 py-1 rounded-full bg-orange-500/20 border border-orange-400/40 text-orange-300 text-xs font-extrabold">${escapeHtml(c)}</span>`),
+          `<span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-extrabold uppercase">${escapeHtml(b.language || 'HINGLISH')}</span>`,
+          b.mode ? `<span class="px-3 py-1 rounded-full bg-brand-500/30 border border-brand-400/40 text-brand-200 text-xs font-bold">${escapeHtml(b.mode)}</span>` : '',
+          b.badgeText ? `<span class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black uppercase">${escapeHtml(b.badgeText)}</span>` : ''
+        ].filter(Boolean).join('');
+
+        document.getElementById('hero-title').textContent = b.title;
+        const subEl = document.getElementById('hero-subtitle');
+        if (b.subtitle || b.stream) {
+          subEl.textContent = b.subtitle || b.stream;
+        } else {
+          subEl.classList.add('hidden');
+        }
+
+        const heroMeta = document.getElementById('hero-meta-row');
+        const metaParts = [];
+        if (b.startDate) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i> Starts: ${escapeHtml(formatBatchDate(b.startDate))}</span>`);
+        if (b.endDate) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Validity: ${escapeHtml(formatBatchDate(b.endDate))}</span>`);
+        if (b.schedule) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-brand-300"></i> ${escapeHtml(b.schedule)}</span>`);
+        heroMeta.innerHTML = metaParts.join('');
+
+        // Syllabus PDF link
+        const extraLinks = document.getElementById('hero-extra-links');
+        if (b.syllabusPdfUrl) {
+          extraLinks.innerHTML = `<a href="${escapeHtml(b.syllabusPdfUrl)}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition"><i data-lucide="file-down" class="w-4 h-4 text-amber-300"></i> Download Syllabus Brochure</a>`;
+        }
+
+        // Description
+        if (b.description) {
+          document.getElementById('detail-description').textContent = b.description;
+        } else {
+          document.getElementById('sec-description').classList.add('hidden');
+        }
+
+        // Subjects
+        if (Array.isArray(b.subjects) && b.subjects.length > 0) {
+          document.getElementById('sec-subjects').classList.remove('hidden');
+          document.getElementById('detail-subjects-list').innerHTML = b.subjects.map(s => `
+            <span class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200/70 dark:border-brand-800 text-xs font-extrabold">${escapeHtml(s)}</span>
+          `).join('');
+        }
+
+        // Features
+        if (Array.isArray(b.features) && b.features.length > 0) {
+          document.getElementById('sec-features').classList.remove('hidden');
+          document.getElementById('detail-features-list').innerHTML = b.features.map(f => `
+            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>${escapeHtml(f)}</span>
+            </div>
+          `).join('');
+        }
+
+        // Faculty
+        if (Array.isArray(b.faculty) && b.faculty.length > 0) {
+          document.getElementById('sec-faculty').classList.remove('hidden');
+          document.getElementById('detail-faculty-list').innerHTML = b.faculty.map(f => {
+            const name = typeof f === 'string' ? f : (f.name || '');
+            const sub = typeof f === 'string' ? '' : (f.subject || '');
+            return `
+              <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+                <div class="w-11 h-11 rounded-full bg-brand-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">
+                  ${escapeHtml(name.charAt(0).toUpperCase())}
+                </div>
+                <div class="min-w-0">
+                  <div class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHtml(name)}</div>
+                  ${sub ? `<div class="text-xs font-semibold text-brand-600 dark:text-brand-400 truncate">${escapeHtml(sub)}</div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Demo video
+        if (b.demoVideoUrl) {
+          document.getElementById('sec-demo-video').classList.remove('hidden');
+          document.getElementById('detail-demo-iframe').src = b.demoVideoUrl;
+        }
+
+        // FAQs
+        if (Array.isArray(b.faqs) && b.faqs.length > 0) {
+          document.getElementById('sec-faqs').classList.remove('hidden');
+          document.getElementById('detail-faqs-list').innerHTML = b.faqs.map(faq => `
+            <details class="group rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50/70 dark:bg-slate-800/40">
+              <summary class="flex items-center justify-between cursor-pointer font-bold text-xs sm:text-sm text-slate-900 dark:text-white list-none">
+                <span>${escapeHtml(faq.q)}</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(faq.a)}</p>
+            </details>
+          `).join('');
+        }
+
+        // Right Sticky Card
+        const sideThumb = document.getElementById('sidebar-thumb');
+        sideThumb.innerHTML = b.thumbnail
+          ? `<img src="${escapeHtml(b.thumbnail)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover" />`
+          : `<div class="w-full h-full bg-gradient-to-br from-slate-900 via-brand-900 to-indigo-900 flex flex-col items-center justify-center p-5 text-center">
+               <span class="text-amber-300 text-xs font-extrabold uppercase mb-1">${escapeHtml(classes.join(' • ') || 'Mendorbit')}</span>
+               <div class="text-white font-black text-lg leading-snug">${escapeHtml(b.title)}</div>
+             </div>`;
+
+        const price = Number(b.price) || 0;
+        const orig = Number(b.originalPrice) || 0;
+        const pct = (orig > price && orig > 0) ? Math.round(((orig - price) / orig) * 100) : 0;
+
+        document.getElementById('sidebar-price-block').innerHTML = enrolled
+          ? `<div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-black text-base">
+               <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+               <span>Enrolled Batch</span>
+             </div>`
+          : (price > 0
+              ? `<div class="flex items-baseline gap-2.5">
+                   <span class="text-3xl font-black text-slate-900 dark:text-white">₹${price.toLocaleString('en-IN')}</span>
+                   ${orig > price ? `<span class="text-sm text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
+                   ${pct > 0 ? `<span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-xs font-black">${pct}% OFF</span>` : ''}
+                 </div>`
+              : `<div class="flex items-baseline gap-2.5">
+                   <span class="text-3xl font-black text-emerald-600">FREE</span>
+                   ${orig > 0 ? `<span class="text-sm text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
+                 </div>`);
+
+        const metaLines = [];
+        if (classes.length) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Target Audience</span><span class="font-bold text-slate-800 dark:text-white text-right">${escapeHtml(classes.join(', '))}</span></div>`);
+        metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Language</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(b.language || 'HINGLISH')}</span></div>`);
+        if (b.startDate) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Starts On</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(formatBatchDate(b.startDate))}</span></div>`);
+        if (b.endDate) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Valid Till</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(formatBatchDate(b.endDate))}</span></div>`);
+        document.getElementById('sidebar-meta-list').innerHTML = metaLines.join('');
+
+        const ctaBox = document.getElementById('sidebar-cta-container');
+        if (enrolled) {
+          ctaBox.innerHTML = `
+            <button type="button" id="btn-go-to-batch" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
+              <i data-lucide="play-circle" class="w-5 h-5"></i>
+              <span>Go to Batch</span>
+            </button>
+          `;
+          document.getElementById('btn-go-to-batch').addEventListener('click', () => {
+            document.getElementById('go-to-batch-notice').classList.remove('hidden');
+          });
+        } else {
+          ctaBox.innerHTML = `
+            <button type="button" id="btn-detail-buy-now" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2">
+              <span>${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          `;
+          document.getElementById('btn-detail-buy-now').addEventListener('click', async function () {
+            this.disabled = true;
+            this.innerHTML = "Preparing Checkout...";
+            try {
+              const cRes = await MendorbitAPI.initCheckout(b.id, session ? session.email : "");
+              if (cRes && cRes.status === "success" && cRes.checkoutUrl) {
+                window.location.href = cRes.checkoutUrl;
+              } else {
+                window.location.href = `payment.html?id=${encodeURIComponent(b.id)}`;
+              }
+            } catch (err) {
+              window.location.href = `payment.html?id=${encodeURIComponent(b.id)}`;
+            }
+          });
+        }
+
+        loader.classList.add('hidden');
+        mainBox.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      } catch (e) {
+        console.error("[Batch Detail] Error:", e);
+        loader.classList.add('hidden');
+        errBox.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

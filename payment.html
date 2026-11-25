@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Summary & Secure Checkout | Mendorbit</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- TOP CHECKOUT HEADER -->
+  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur h-16 px-4 sm:px-8 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <a href="batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+      </a>
+      <a href="index.html" class="flex items-center gap-2.5">
+        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
+        <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+        <span>Secure Checkout</span>
+      </span>
+      <div id="checkout-user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold">
+        <i data-lucide="user" class="w-3.5 h-3.5 text-brand-600"></i>
+        <span id="checkout-user-email" class="truncate max-w-[160px]">student@email.com</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CHECKOUT BODY -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex-1 w-full">
+
+    <!-- Loading State -->
+    <div id="checkout-loader" class="py-20 text-center space-y-3">
+      <div class="inline-block w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs font-bold text-slate-400">Verifying secure checkout session...</p>
+    </div>
+
+    <!-- Error / Invalid Session State -->
+    <div id="checkout-error" class="hidden max-w-md mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center shadow-lg">
+      <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="alert-circle" class="w-7 h-7"></i>
+      </div>
+      <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Checkout Session Unavailable</h2>
+      <p id="checkout-error-msg" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">This checkout link is invalid or has expired.</p>
+      <a href="batches.html" class="inline-flex items-center gap-2 mt-5 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-700 transition">
+        <span>Back to Batches</span>
+      </a>
+    </div>
+
+    <!-- Order Confirmed State -->
+    <div id="checkout-success" class="hidden max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-emerald-200 dark:border-emerald-800/70 p-8 sm:p-10 text-center shadow-xl">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="check-circle-2" class="w-9 h-9"></i>
+      </div>
+      <h2 class="text-2xl font-black text-slate-900 dark:text-white">Enrollment Confirmed!</h2>
+      <p id="checkout-success-sub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+        You are now enrolled in this batch. Your access is active immediately.
+      </p>
+      <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a id="btn-success-go-batch" href="batches.html" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
+          <span>Go to Batch</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+        <a href="batches.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-slate-700 dark:text-slate-200 transition">
+          Explore More Batches
+        </a>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY VIEW (MATCHING REFERENCE SCREENSHOT) -->
+    <div id="checkout-main" class="hidden space-y-6">
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Order Summary</h1>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- LEFT COLUMN: ITEMS IN CART & INCLUDED FEATURES -->
+        <div class="lg:col-span-7 space-y-5">
+
+          <!-- Items in Cart Card -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
+              <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Items in Cart</h2>
+              <span id="cart-item-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">
+                Regular Batch
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <!-- Thumbnail -->
+              <div id="cart-thumb-box" class="w-full sm:w-36 aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700">
+                <!-- Populated dynamically -->
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span id="cart-class-label" class="text-[11px] font-extrabold text-orange-600 dark:text-orange-400">Class</span>
+                  <span id="cart-lang-label" class="px-1.5 py-0.5 rounded text-[9px] font-extrabold border border-slate-200 dark:border-slate-700 uppercase">HINGLISH</span>
+                </div>
+                <h3 id="cart-batch-title" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">Batch Title</h3>
+                <div id="cart-batch-price-row" class="flex items-baseline gap-2 mt-2">
+                  <!-- Price populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real Batch Benefits / What's Included Card -->
+          <div id="cart-benefits-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-brand-600"></i>
+              <span>What's Included With This Batch</span>
+            </h3>
+            <div id="cart-benefits-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
+              <!-- Populated dynamically from batch data -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: COUPON + PAYMENT SUMMARY -->
+        <div class="lg:col-span-5 space-y-5 lg:sticky lg:top-24">
+
+          <!-- Apply Code / Coupon Card -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-sm space-y-3">
+            <div class="flex items-center gap-2 text-xs font-extrabold text-slate-900 dark:text-white">
+              <div class="w-6 h-6 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+                <i data-lucide="percent" class="w-3.5 h-3.5"></i>
+              </div>
+              <span>Apply Code / Coupon</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input type="text" id="coupon-code-input" placeholder="Enter coupon code (e.g. MENDORBIT100)" class="flex-1 uppercase bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-brand-600" />
+              <button type="button" id="btn-apply-coupon" class="px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-brand-600 hover:opacity-90 text-white text-xs font-extrabold transition flex-shrink-0">
+                APPLY
+              </button>
+            </div>
+
+            <!-- Coupon Feedback -->
+            <div id="coupon-feedback" class="hidden text-xs font-bold flex items-center justify-between p-2.5 rounded-xl">
+              <span id="coupon-feedback-text"></span>
+              <button type="button" id="btn-remove-coupon" class="hidden text-[11px] underline text-slate-500 hover:text-rose-600">Remove</button>
+            </div>
+          </div>
+
+          <!-- Payment Summary Card -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+            <h2 class="text-base font-black text-slate-900 dark:text-white">Payment Summary</h2>
+
+            <div class="space-y-2.5 text-xs sm:text-sm font-medium">
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span>Price (1 Item)</span>
+                <span id="summary-original-price" class="font-bold text-slate-900 dark:text-white">₹0</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span>Batch Discount</span>
+                <span id="summary-batch-discount" class="font-bold text-emerald-600">- ₹0</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                <span>Coupon Discount</span>
+                <span id="summary-coupon-discount" class="font-bold text-emerald-600">- ₹0</span>
+              </div>
+
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-base font-black text-slate-900 dark:text-white">
+                <span>Total Amount</span>
+                <span id="summary-total-amount">₹0</span>
+              </div>
+            </div>
+
+            <!-- Gateway Status Notice (shown when PROCEED TO BUY clicked with amount > 0) -->
+            <div id="gateway-notice-box" class="hidden p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-1">
+              <div class="font-extrabold flex items-center gap-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
+                <span>System Not Updated Yet</span>
+              </div>
+              <p class="leading-relaxed">
+                Online payment gateway integration is currently under update. Paid purchases cannot be processed right now. Apply a valid 100% discount coupon code above to make the total <strong>₹0</strong> and enroll, or contact <a href="https://mendorbit.in/contact" class="underline font-bold">support@mendorbit.in</a>.
+              </p>
+            </div>
+
+            <button type="button" id="btn-proceed-buy" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-sm tracking-wide shadow-lg shadow-brand-600/25 transition">
+              PROCEED TO BUY
+            </button>
+
+            <p class="text-[10px] text-center text-slate-400 font-medium">
+              100% Verified Pricing • Zero-Bypass Server Enrollment Protection
+            </p>
+          </div>
+
+          <!-- Compact Bottom Summary Strip (Matching Screenshot) -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-sm">
+            <div class="text-xs font-extrabold text-slate-800 dark:text-slate-200 mb-2">You are enrolling in (1) item</div>
+            <div class="inline-flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+              <span id="mini-item-title" class="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[200px]">Batch</span>
+              <span id="mini-item-price" class="text-xs font-black text-brand-600">₹0</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="assets/js/secure-storage.js"></script>
+  <script src="assets/js/sso-manager.js"></script>
+  <script src="assets/js/api-client.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      if (window.lucide) lucide.createIcons();
+
+      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
+      const userPill = document.getElementById('checkout-user-pill');
+      const userEmailEl = document.getElementById('checkout-user-email');
+      if (session && session.email) {
+        if (userPill) userPill.classList.remove('hidden');
+        if (userEmailEl) userEmailEl.textContent = session.email;
+      }
+
+      const loader = document.getElementById('checkout-loader');
+      const errBox = document.getElementById('checkout-error');
+      const errMsg = document.getElementById('checkout-error-msg');
+      const mainView = document.getElementById('checkout-main');
+      const successBox = document.getElementById('checkout-success');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let infoToken = urlParams.get("info") || "";
+      const fallbackBatchId = urlParams.get("id") || "";
+
+      let activeBatch = null;
+      let pricingState = { originalPrice: 0, sellingPrice: 0, baseDiscount: 0, couponDiscount: 0, finalAmount: 0 };
+      let appliedCouponCode = "";
+
+      function showCheckoutError(msg) {
+        if (loader) loader.classList.add('hidden');
+        if (mainView) mainView.classList.add('hidden');
+        if (errMsg) errMsg.textContent = msg;
+        if (errBox) errBox.classList.remove('hidden');
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      // Initialize checkout session
+      try {
+        if (!infoToken && fallbackBatchId) {
+          const initRes = await MendorbitAPI.initCheckout(fallbackBatchId, session ? session.email : "");
+          if (initRes && initRes.status === "success" && initRes.info) {
+            infoToken = initRes.info;
+            window.history.replaceState({}, document.title, `payment.html?info=${encodeURIComponent(infoToken)}`);
+          }
+        }
+
+        if (!infoToken) {
+          showCheckoutError("Missing checkout session token. Please select a batch again.");
+          return;
+        }
+
+        const res = await MendorbitAPI.getCheckoutInfo(infoToken, session ? session.email : "");
+        if (!res || res.status !== "success" || !res.batch) {
+          showCheckoutError((res && res.message) || "Invalid or expired checkout link.");
+          return;
+        }
+
+        activeBatch = res.batch;
+        pricingState = res.pricing;
+
+        if (res.isEnrolled) {
+          if (loader) loader.classList.add('hidden');
+          document.getElementById('checkout-success-sub').textContent = `You are already enrolled in ${activeBatch.title}.`;
+          document.getElementById('btn-success-go-batch').href = `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
+          successBox.classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+          return;
+        }
+
+        renderCheckoutUI();
+      } catch (e) {
+        console.error("[Checkout] Init error:", e);
+        showCheckoutError("Unable to reach checkout server. Please try again.");
+      }
+
+      function renderCheckoutUI() {
+        if (loader) loader.classList.add('hidden');
+        if (mainView) mainView.classList.remove('hidden');
+
+        // Left Cart Item
+        const thumbBox = document.getElementById('cart-thumb-box');
+        if (thumbBox) {
+          thumbBox.innerHTML = activeBatch.thumbnail
+            ? `<img src="${escapeHtml(activeBatch.thumbnail)}" alt="${escapeHtml(activeBatch.title)}" class="w-full h-full object-cover" />`
+            : `<div class="w-full h-full bg-gradient-to-br from-slate-900 to-brand-900 flex items-center justify-center p-2 text-center text-white font-black text-xs">${escapeHtml(activeBatch.title)}</div>`;
+        }
+
+        document.getElementById('cart-item-badge').textContent = activeBatch.badgeText || (activeBatch.targetClass || "Batch");
+        document.getElementById('cart-class-label').textContent = activeBatch.targetClass || "Mendorbit";
+        document.getElementById('cart-lang-label').textContent = activeBatch.language || "HINGLISH";
+        document.getElementById('cart-batch-title').textContent = activeBatch.title;
+        document.getElementById('mini-item-title').textContent = activeBatch.title;
+
+        const priceRow = document.getElementById('cart-batch-price-row');
+        const sp = pricingState.sellingPrice;
+        const op = pricingState.originalPrice;
+        const pct = (op > sp && op > 0) ? Math.round(((op - sp) / op) * 100) : 0;
+
+        priceRow.innerHTML = sp > 0
+          ? `<span class="text-lg font-black text-slate-900 dark:text-white">₹${sp.toLocaleString('en-IN')}</span>
+             ${op > sp ? `<span class="text-xs text-slate-400 line-through">₹${op.toLocaleString('en-IN')}</span>` : ''}
+             ${pct > 0 ? `<span class="text-xs font-extrabold text-emerald-600">(${pct}% OFF)</span>` : ''}`
+          : `<span class="text-lg font-black text-emerald-600">FREE</span>
+             ${op > 0 ? `<span class="text-xs text-slate-400 line-through">₹${op.toLocaleString('en-IN')}</span>` : ''}`;
+
+        // Benefits list from real batch properties
+        const benList = document.getElementById('cart-benefits-list');
+        const items = [];
+        if (activeBatch.stream) items.push(activeBatch.stream);
+        if (activeBatch.schedule) items.push(activeBatch.schedule);
+        if (activeBatch.startDate) items.push(`Starts ${activeBatch.startDate}`);
+        if (activeBatch.endDate) items.push(`Valid till ${activeBatch.endDate}`);
+        if (Array.isArray(activeBatch.subjects) && activeBatch.subjects.length) {
+          items.push(`Subjects: ${activeBatch.subjects.join(", ")}`);
+        }
+        if (Array.isArray(activeBatch.features)) {
+          activeBatch.features.forEach(f => items.push(f));
+        }
+
+        if (items.length > 0 && benList) {
+          benList.innerHTML = items.map(it => `
+            <div class="flex items-start gap-2">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>${escapeHtml(it)}</span>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('cart-benefits-card').classList.add('hidden');
+        }
+
+        updatePricingSummary();
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function updatePricingSummary() {
+        document.getElementById('summary-original-price').textContent = `₹${pricingState.originalPrice.toLocaleString('en-IN')}`;
+        document.getElementById('summary-batch-discount').textContent = `- ₹${pricingState.baseDiscount.toLocaleString('en-IN')}`;
+        document.getElementById('summary-coupon-discount').textContent = `- ₹${pricingState.couponDiscount.toLocaleString('en-IN')}`;
+
+        const totalEl = document.getElementById('summary-total-amount');
+        totalEl.textContent = `₹${pricingState.finalAmount.toLocaleString('en-IN')}`;
+        totalEl.className = pricingState.finalAmount === 0
+          ? "text-emerald-600 dark:text-emerald-400 font-black"
+          : "text-slate-900 dark:text-white font-black";
+
+        document.getElementById('mini-item-price').textContent = `₹${pricingState.finalAmount.toLocaleString('en-IN')}`;
+
+        const proceedBtn = document.getElementById('btn-proceed-buy');
+        if (proceedBtn) {
+          proceedBtn.textContent = pricingState.finalAmount === 0 ? "COMPLETE ENROLLMENT (₹0)" : "PROCEED TO BUY";
+        }
+      }
+
+      // Coupon Apply Handler
+      const btnApplyCoupon = document.getElementById('btn-apply-coupon');
+      const couponInput = document.getElementById('coupon-code-input');
+      const feedbackBox = document.getElementById('coupon-feedback');
+      const feedbackText = document.getElementById('coupon-feedback-text');
+      const btnRemoveCoupon = document.getElementById('btn-remove-coupon');
+
+      btnApplyCoupon.addEventListener('click', async () => {
+        const code = (couponInput.value || "").trim().toUpperCase();
+        if (!code || !activeBatch) return;
+
+        btnApplyCoupon.disabled = true;
+        btnApplyCoupon.textContent = "...";
+        document.getElementById('gateway-notice-box').classList.add('hidden');
+
+        try {
+          const res = await MendorbitAPI.validateCoupon(code, activeBatch.id);
+          if (res && res.status === "success" && res.pricing) {
+            appliedCouponCode = code;
+            pricingState = res.pricing;
+            feedbackBox.className = "text-xs font-bold flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800";
+            feedbackText.textContent = res.message || `Coupon ${code} applied!`;
+            btnRemoveCoupon.classList.remove('hidden');
+            feedbackBox.classList.remove('hidden');
+            updatePricingSummary();
+          } else {
+            appliedCouponCode = "";
+            feedbackBox.className = "text-xs font-bold flex items-center justify-between p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800";
+            feedbackText.textContent = (res && res.message) || "Invalid coupon code.";
+            btnRemoveCoupon.classList.add('hidden');
+            feedbackBox.classList.remove('hidden');
+          }
+        } catch (err) {
+          feedbackBox.className = "text-xs font-bold flex items-center justify-between p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300";
+          feedbackText.textContent = "Failed to validate coupon. Please try again.";
+          feedbackBox.classList.remove('hidden');
+        } finally {
+          btnApplyCoupon.disabled = false;
+          btnApplyCoupon.textContent = "APPLY";
+        }
+      });
+
+      btnRemoveCoupon.addEventListener('click', async () => {
+        appliedCouponCode = "";
+        couponInput.value = "";
+        feedbackBox.classList.add('hidden');
+        const sp = Math.max(0, Number(activeBatch.price) || 0);
+        const op = Math.max(sp, Number(activeBatch.originalPrice) || sp);
+        pricingState = {
+          originalPrice: op,
+          sellingPrice: sp,
+          baseDiscount: Math.max(0, op - sp),
+          couponDiscount: 0,
+          finalAmount: sp
+        };
+        updatePricingSummary();
+      });
+
+      // PROCEED TO BUY / ENROLL HANDLER
+      const btnProceed = document.getElementById('btn-proceed-buy');
+      btnProceed.addEventListener('click', async () => {
+        if (!session || !session.email) {
+          window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+          return;
+        }
+
+        // Strict Payment Gateway Check when amount > 0
+        if (pricingState.finalAmount > 0) {
+          const notice = document.getElementById('gateway-notice-box');
+          if (notice) notice.classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+          return;
+        }
+
+        // Proceed with ₹0 Enrollment (Free batch or 100% coupon)
+        const origLabel = btnProceed.textContent;
+        btnProceed.disabled = true;
+        btnProceed.textContent = "CONFIRMING ENROLLMENT...";
+
+        try {
+          const res = await MendorbitAPI.enrollBatch(activeBatch.id, session.email, appliedCouponCode, infoToken);
+          if (res && res.status === "success") {
+            session.enrolledBatches = res.enrolledBatches || [ ...(session.enrolledBatches || []), activeBatch.id ];
+            if (typeof MendorbitSSO !== 'undefined' && MendorbitSSO.setSession) {
+              MendorbitSSO.setSession(session);
+            }
+            mainView.classList.add('hidden');
+            document.getElementById('checkout-success-sub').textContent = `You have successfully enrolled in ${activeBatch.title}.`;
+            document.getElementById('btn-success-go-batch').href = `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
+            successBox.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+          } else if (res && res.code === "PAYMENT_GATEWAY_PENDING") {
+            document.getElementById('gateway-notice-box').classList.remove('hidden');
+          } else {
+            alert((res && res.message) || "Enrollment failed. Please try again.");
+          }
+        } catch (err) {
+          alert("Server connection error while confirming enrollment.");
+        } finally {
+          btnProceed.disabled = false;
+          btnProceed.textContent = origLabel;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

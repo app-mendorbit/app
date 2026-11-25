@@ -833,11 +833,13 @@
                    ${originalPrice > 0 ? `<div class="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400">100% OFF</div>` : '<div class="text-[11px] font-semibold text-slate-400">Free Enrollment</div>'}
                  </div>`);
 
-        const detailUrl = `batches.html?id=${encodeURIComponent(b.id)}`;
-        const ctaText = enrolled ? 'View Batch' : 'Enroll Now';
-        const ctaClass = enrolled
-          ? 'px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition'
-          : 'px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition';
+        const detailUrl = `batch-detail.html?id=${encodeURIComponent(b.id)}`;
+        const audienceText = Array.isArray(b.targetClasses) && b.targetClasses.length
+          ? b.targetClasses.join(" • ")
+          : (b.targetClass || "All Classes");
+        const primaryActionHtml = enrolled
+          ? `<a href="${detailUrl}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">Go to Batch</a>`
+          : `<button type="button" onclick="startDashCheckout('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">${price > 0 ? 'Buy Now' : 'Enroll Now'}</button>`;
 
         return `
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-500/40 transition-all flex flex-col justify-between group">
@@ -848,7 +850,7 @@
               </a>
               <div class="p-4 sm:p-5">
                 <div class="flex items-center justify-between gap-2 mb-1.5">
-                  <span class="text-xs font-extrabold text-orange-600 dark:text-orange-400 truncate">${escapeHtml(b.targetClass || 'All Classes')}</span>
+                  <span class="text-xs font-extrabold text-orange-600 dark:text-orange-400 truncate">${escapeHtml(audienceText)}</span>
                   <span class="px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[10px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex-shrink-0">${escapeHtml(b.language || 'HINGLISH')}</span>
                 </div>
                 <a href="${detailUrl}" class="block text-base sm:text-[17px] font-extrabold text-slate-900 dark:text-white line-clamp-1 group-hover:text-brand-600 transition-colors">${escapeHtml(b.title)}</a>
@@ -862,7 +864,7 @@
               <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
                 ${priceHtml}
                 <div class="flex items-center gap-2 flex-shrink-0">
-                  <a href="${detailUrl}" class="${ctaClass}">${ctaText}</a>
+                  ${primaryActionHtml}
                   <a href="${detailUrl}" title="View More Details" aria-label="View More Details" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                   </a>
@@ -871,6 +873,40 @@
             </div>
           </div>
         `;
+      }
+
+      window.startDashCheckout = async function (batchId, triggerBtn) {
+        const orig = triggerBtn ? triggerBtn.innerHTML : "";
+        if (triggerBtn) {
+          triggerBtn.disabled = true;
+          triggerBtn.innerHTML = "Opening...";
+        }
+        try {
+          const res = await MendorbitAPI.initCheckout(batchId, email);
+          if (res && res.status === "success" && res.checkoutUrl) {
+            window.location.href = res.checkoutUrl;
+            return;
+          }
+          window.location.href = `payment.html?id=${encodeURIComponent(batchId)}`;
+        } catch (e) {
+          window.location.href = `payment.html?id=${encodeURIComponent(batchId)}`;
+        } finally {
+          if (triggerBtn) {
+            triggerBtn.disabled = false;
+            triggerBtn.innerHTML = orig;
+          }
+        }
+      };
+
+      function normalizeTargetClass(raw) {
+        const s = String(raw || "").trim().toLowerCase();
+        if (s === "class 9" || s === "9") return "class 9";
+        if (s === "class 10" || s === "10") return "class 10";
+        if (s.includes("bank")) return "banking";
+        if (s.includes("law") || s.includes("clat") || s.includes("ailet")) return "law";
+        if (s.includes("chsl")) return "ssc chsl";
+        if (s.includes("cgl") || s.includes("ssc")) return "ssc cgl";
+        return s;
       }
 
       async function loadDashboardBatches() {
@@ -914,12 +950,15 @@
           if (enrolledEmpty) enrolledEmpty.classList.remove('hidden');
         }
 
-        // 2. Render Recommended Batches (strictly real data — no fake fallbacks)
+        // 2. Render Recommended Batches (strictly real data — multi-class match)
         if (recLoader) recLoader.classList.add('hidden');
+        const normUserExam = normalizeTargetClass(targetExam);
         let recommended = allBatches.filter(b => {
+          if (Array.isArray(b.targetClasses) && b.targetClasses.length > 0) {
+            return b.targetClasses.some(c => String(c).toLowerCase() === normUserExam);
+          }
           const bClass = (b.targetClass || "").toLowerCase();
-          const tExam = targetExam.toLowerCase();
-          return bClass === tExam || bClass.includes(tExam) || tExam.includes(bClass);
+          return bClass.split(",").map(s => s.trim()).includes(normUserExam);
         });
         if (recommended.length === 0) recommended = allBatches.slice(0, 3);
         else recommended = recommended.slice(0, 3);

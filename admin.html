@@ -62,21 +62,25 @@
   </header>
 
   <!-- Navigation Tab Bar -->
-  <div class="border-b border-slate-800 bg-slate-900/40 px-6">
-    <div class="max-w-6xl mx-auto flex items-center gap-3 overflow-x-auto py-3">
-      <button type="button" data-admin-tab="admin-tab-batches" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition">
+  <div class="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6">
+    <div class="max-w-7xl mx-auto flex items-center gap-2.5 overflow-x-auto py-3">
+      <button type="button" data-admin-tab="admin-tab-batches" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition flex-shrink-0">
         <i data-lucide="layers" class="w-4 h-4"></i>
-        <span>Batches & Curriculum Studio</span>
+        <span>Batches Studio</span>
       </button>
-      <button type="button" data-admin-tab="admin-tab-users" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition">
+      <button type="button" data-admin-tab="admin-tab-coupons" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
+        <i data-lucide="ticket-percent" class="w-4 h-4"></i>
+        <span>Coupons & Discounts</span>
+      </button>
+      <button type="button" data-admin-tab="admin-tab-users" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
         <i data-lucide="users" class="w-4 h-4"></i>
         <span>Students & Decryption</span>
       </button>
-      <button type="button" data-admin-tab="admin-tab-otp" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition">
+      <button type="button" data-admin-tab="admin-tab-otp" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
         <i data-lucide="mail-check" class="w-4 h-4"></i>
         <span>Daily OTP Auditor</span>
       </button>
-      <button type="button" data-admin-tab="admin-tab-cipher" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition">
+      <button type="button" data-admin-tab="admin-tab-cipher" class="admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0">
         <i data-lucide="binary" class="w-4 h-4"></i>
         <span>2-Digit Cipher Lab</span>
       </button>
@@ -84,31 +88,62 @@
   </div>
 
   <!-- Main Content -->
-  <main class="max-w-6xl mx-auto px-6 py-8 flex-1 w-full space-y-8">
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-8">
 
     <!-- ======================================================== -->
-    <!-- TAB 1: BATCHES & CURRICULUM STUDIO                       -->
+    <!-- TAB 1: BATCHES STUDIO                                    -->
     <!-- ======================================================== -->
     <div id="admin-tab-batches" class="admin-tab-pane space-y-6">
-      
+
+      <!-- KPI Overview Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Published Batches</span>
+            <div id="kpi-total-batches" class="text-2xl font-black text-white mt-1">0</div>
+          </div>
+          <div class="w-11 h-11 rounded-2xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Enrollments</span>
+            <div id="kpi-total-enrollments" class="text-2xl font-black text-emerald-400 mt-1">0</div>
+          </div>
+          <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-slate-800/90 to-slate-900 rounded-2xl p-5 border border-slate-700/70 shadow-lg flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Active Coupons</span>
+            <div id="kpi-total-coupons" class="text-2xl font-black text-amber-400 mt-1">0</div>
+          </div>
+          <div class="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
+            <i data-lucide="ticket-percent" class="w-5 h-5"></i>
+          </div>
+        </div>
+      </div>
+
       <!-- Batches Header Banner -->
-      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="p-3 bg-brand-500/20 text-brand-400 rounded-2xl">
+      <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-700/80 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="p-3 bg-indigo-500/20 text-indigo-400 rounded-2xl">
             <i data-lucide="sparkles" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-xl text-white">Batches & Curriculum Studio</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Manage live batches, upload lecture streams, chapter-wise notes, and DPPs with zero-bypass protection</p>
+            <h3 class="font-extrabold text-xl text-white">Batches Management Studio</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Publish batches across Class 9, Class 10, Banking, Law, SSC CGL & SSC CHSL with live card preview</p>
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button type="button" id="btn-refresh-batches" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+        <div class="flex items-center gap-2.5">
+          <button type="button" id="btn-refresh-batches" class="px-3.5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             <span>Refresh</span>
           </button>
-          <button type="button" id="btn-open-create-batch" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 text-white text-xs font-bold rounded-xl shadow-lg shadow-brand-600/25 transition flex items-center gap-2">
+          <button type="button" id="btn-open-create-batch" class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center gap-2">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             <span>Create New Batch</span>
           </button>
@@ -118,7 +153,7 @@
       <!-- Batches List Table -->
       <div class="bg-slate-800/80 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4">
         <div class="flex items-center justify-between">
-          <h4 class="font-bold text-sm text-white">Active Academic Batches</h4>
+          <h4 class="font-bold text-sm text-white">Published Batches</h4>
           <span id="admin-batch-count" class="text-xs font-bold text-slate-400">Loading batches...</span>
         </div>
 
@@ -127,9 +162,9 @@
             <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
               <tr>
                 <th class="py-3 px-4">Batch Info</th>
-                <th class="py-3 px-4">Target Class</th>
-                <th class="py-3 px-4">Schedule</th>
-                <th class="py-3 px-4">Enrolled Students</th>
+                <th class="py-3 px-4">Target Audience</th>
+                <th class="py-3 px-4">Schedule / Validity</th>
+                <th class="py-3 px-4">Enrolled</th>
                 <th class="py-3 px-4">Pricing</th>
                 <th class="py-3 px-4 text-right">Actions</th>
               </tr>
@@ -143,6 +178,106 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 1B: COUPONS & DISCOUNTS STUDIO                       -->
+    <!-- ======================================================== -->
+    <div id="admin-tab-coupons" class="admin-tab-pane hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left: Create Coupon Form -->
+        <div class="lg:col-span-5 bg-slate-800/80 rounded-3xl p-6 border border-slate-700/80 shadow-xl space-y-4">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-700/70">
+            <div class="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
+              <i data-lucide="ticket-percent" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-base text-white">Create Coupon Code</h3>
+              <p class="text-[11px] text-slate-400">Students can apply 100% discount codes to enroll at ₹0</p>
+            </div>
+          </div>
+
+          <form id="form-create-coupon" class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Coupon Code *</label>
+              <input type="text" id="coupon-input-code" required placeholder="e.g. MENDORBIT100" class="w-full uppercase bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-white outline-none focus:border-indigo-500" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Discount Type</label>
+                <select id="coupon-input-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                  <option value="PERCENT">Percentage (%)</option>
+                  <option value="FLAT">Flat Amount (₹)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Discount Value *</label>
+                <input type="number" min="1" id="coupon-input-value" required placeholder="e.g. 100 or 2999" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Applicable Batch</label>
+              <select id="coupon-input-batch" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                <option value="ALL">All Batches</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Max Uses (0 = Unlimited)</label>
+                <input type="number" min="0" id="coupon-input-maxuses" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Expiry Date (Optional)</label>
+                <input type="date" id="coupon-input-expiry" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Note / Description (Optional)</label>
+              <input type="text" id="coupon-input-desc" placeholder="e.g. Launch 100% Free Access Coupon" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs shadow-lg transition">
+              Save & Activate Coupon
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Active Coupons List -->
+        <div class="lg:col-span-7 bg-slate-800/80 rounded-3xl p-6 border border-slate-700/80 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-white">Active & Saved Coupons</h4>
+            <button type="button" id="btn-refresh-coupons" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="py-2.5 px-3">Code</th>
+                  <th class="py-2.5 px-3">Discount</th>
+                  <th class="py-2.5 px-3">Applies To</th>
+                  <th class="py-2.5 px-3">Redemptions</th>
+                  <th class="py-2.5 px-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-coupons-tbody" class="divide-y divide-slate-800 font-medium">
+                <tr>
+                  <td colspan="5" class="text-center py-6 text-slate-500">Loading coupons...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- ======================================================== -->
@@ -311,114 +446,192 @@
   </main>
 
   <!-- ======================================================== -->
-  <!-- MODAL: CREATE / EDIT BATCH (NO PREFILLED FAKE DATA)      -->
+  <!-- MODAL: SPLIT-SCREEN CREATE / EDIT BATCH + LIVE PREVIEW   -->
   <!-- ======================================================== -->
-  <div id="modal-create-batch" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 id="modal-batch-form-title" class="font-extrabold text-lg text-white">Create New Batch</h3>
-        <button type="button" id="btn-close-create-batch" class="text-slate-400 hover:text-white p-1">
+  <div id="modal-create-batch" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 hidden">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-6xl rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 flex-shrink-0">
+        <div>
+          <h3 id="modal-batch-form-title" class="font-extrabold text-lg text-white">Create New Batch</h3>
+          <p class="text-[11px] text-slate-400">Configure batch details on the left and preview the exact student batch card live on the right</p>
+        </div>
+        <button type="button" id="btn-close-create-batch" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="form-create-batch" class="space-y-4">
-        <input type="hidden" id="batch-edit-id" value="" />
+      <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
-          <input type="text" id="batch-input-title" required placeholder="e.g. Fighter Class 11 JEE 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+        <!-- LEFT: FORM INPUTS -->
+        <form id="form-create-batch" class="lg:col-span-7 space-y-4">
+          <input type="hidden" id="batch-edit-id" value="" />
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Batch Title *</label>
+            <input type="text" id="batch-input-title" required placeholder="e.g. Sankalp Class 10 Boards 2027" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+
+          <!-- Multi-select Target Audience (6 Classes Only) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Target Audience (Select One or Multiple Classes) *</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="admin-audience-checkboxes">
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="Class 9" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>Class 9</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="Class 10" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>Class 10</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="Banking" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>Banking</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="Law" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>Law</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="SSC CGL" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>SSC CGL</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 cursor-pointer hover:border-indigo-500 text-xs font-bold text-slate-200">
+                <input type="checkbox" name="targetClasses" value="SSC CHSL" class="audience-cb accent-indigo-500 w-3.5 h-3.5" />
+                <span>SSC CHSL</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Board Subtitle</label>
+              <input type="text" id="batch-input-stream" placeholder="e.g. CBSE Board / IBPS PO" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Language *</label>
+              <select id="batch-input-language" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                <option value="HINGLISH">HINGLISH</option>
+                <option value="ENGLISH">ENGLISH</option>
+                <option value="HINDI">HINDI</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Learning Mode</label>
+              <select id="batch-input-mode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                <option value="Online Live">Online Live</option>
+                <option value="Recorded + Live">Recorded + Live</option>
+                <option value="Recorded">Recorded</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
+              <input type="date" id="batch-input-startdate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Validity Till</label>
+              <input type="date" id="batch-input-enddate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹)</label>
+              <input type="number" min="0" id="batch-input-price" placeholder="0 = Free" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹)</label>
+              <input type="number" min="0" id="batch-input-original-price" placeholder="Optional" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Schedule / Timings</label>
+              <input type="text" id="batch-input-schedule" placeholder="e.g. Mon-Sat • 6:00 PM" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Top Badge Tag</label>
+              <input type="text" id="batch-input-badge" placeholder="e.g. NEW, POPULAR" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Status</label>
+              <select id="batch-input-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="UPCOMING">UPCOMING</option>
+                <option value="ARCHIVED">ARCHIVED (Hidden)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner URL (Optional)</label>
+              <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Orientation Video URL (Optional)</label>
+              <input type="url" id="batch-input-demovideo" placeholder="https://www.youtube.com/embed/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Subjects (Comma-Separated)</label>
+              <input type="text" id="batch-input-subjects" placeholder="e.g. Maths, Reasoning, English" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Faculty Names (Comma-Separated)</label>
+              <input type="text" id="batch-input-faculty" placeholder="e.g. Er. Aman Verma, Dr. Neha" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Syllabus Brochure PDF URL (Optional)</label>
+            <input type="url" id="batch-input-syllabuspdf" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Batch Highlights (One per line)</label>
+              <textarea id="batch-input-features" rows="3" placeholder="Live Interactive Classes&#10;Handwritten PDF Notes&#10;Mock Test Series" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">FAQs (Question | Answer per line)</label>
+              <textarea id="batch-input-faqs" rows="3" placeholder="Who can join? | Students preparing for exams&#10;Are notes included? | Yes, full PDF notes provided" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Batch Description</label>
+            <textarea id="batch-input-desc" rows="3" placeholder="Full batch overview and preparation roadmap..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+          </div>
+
+          <div class="pt-2 flex items-center justify-end gap-3">
+            <button type="button" id="btn-cancel-create-batch" class="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800 transition">
+              Cancel
+            </button>
+            <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-extrabold text-white shadow-lg transition">
+              Publish Batch
+            </button>
+          </div>
+        </form>
+
+        <!-- RIGHT: LIVE STUDENT VIEW CARD PREVIEW (EXACT BATCHES.HTML LOOK) -->
+        <div class="lg:col-span-5 lg:sticky lg:top-0 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>Live Student Card Preview</span>
+            </span>
+            <span class="text-[10px] text-slate-400">Exact match to Batches page</span>
+          </div>
+
+          <div id="admin-live-card-preview" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl text-slate-900">
+            <!-- Rendered live on every input -->
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Target Class *</label>
-            <input type="text" id="batch-input-class" list="admin-class-suggestions" required placeholder="e.g. Class 10, Class 11" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-            <datalist id="admin-class-suggestions">
-              <option value="Class 9">
-              <option value="Class 10">
-              <option value="Class 11">
-              <option value="Class 12">
-              <option value="Foundation">
-              <option value="JEE">
-              <option value="NEET">
-            </datalist>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Exam / Board Tag</label>
-            <input type="text" id="batch-input-stream" placeholder="e.g. CBSE Board / JEE 2028" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Language *</label>
-            <select id="batch-input-language" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
-              <option value="HINGLISH">HINGLISH</option>
-              <option value="ENGLISH">ENGLISH</option>
-              <option value="HINDI">HINDI</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
-            <input type="date" id="batch-input-startdate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Selling Price (₹, 0 = Free)</label>
-            <input type="number" min="0" id="batch-input-price" placeholder="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Original MRP (₹, Optional)</label>
-            <input type="number" min="0" id="batch-input-original-price" placeholder="For discount % badge" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Schedule / Timings</label>
-            <input type="text" id="batch-input-schedule" placeholder="e.g. Mon to Sat • 6:00 PM" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Top Badge Tag (Optional)</label>
-            <input type="text" id="batch-input-badge" placeholder="e.g. NEW, POPULAR, CRASH COURSE" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Thumbnail Banner URL (Optional)</label>
-          <input type="url" id="batch-input-thumb" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Subjects (Comma-Separated)</label>
-            <input type="text" id="batch-input-subjects" placeholder="e.g. Physics, Chemistry, Mathematics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Faculty Names (Comma-Separated)</label>
-            <input type="text" id="batch-input-faculty" placeholder="e.g. Er. Aman Verma, Dr. Neha Sharma" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Batch Highlights (One per line, shown in View More)</label>
-          <textarea id="batch-input-features" rows="2" placeholder="Live Interactive Classes&#10;Handwritten PDF Notes&#10;Daily Practice Problems" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Description</label>
-          <textarea id="batch-input-desc" rows="3" placeholder="Enter batch syllabus, goals, and key details..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
-        </div>
-
-        <div class="pt-2 flex items-center justify-end gap-3">
-          <button type="button" id="btn-cancel-create-batch" class="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800 transition">
-            Cancel
-          </button>
-          <button type="submit" id="btn-submit-batch-form" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white shadow-lg transition">
-            Publish Batch
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -553,6 +766,7 @@
       // State
       let activeAdminKey = null;
       let loadedBatches = [];
+      let loadedCoupons = [];
       let activeEditingBatchId = null;
       let activeCurriculum = {};
       let activeEditingChapterId = null;
@@ -581,6 +795,7 @@
             renderUsersTable(res.users || []);
             loadOtpStats();
             loadAdminBatches();
+            loadAdminCoupons();
             return;
           } else {
             alert(res.message || "Incorrect Admin Key. Access denied.");
@@ -599,15 +814,30 @@
           const targetId = btn.getAttribute('data-admin-tab');
 
           document.querySelectorAll('.admin-nav-btn').forEach(b => {
-            b.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition";
+            b.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition flex-shrink-0";
           });
-          btn.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition";
+          btn.className = "admin-nav-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-2 shadow transition flex-shrink-0";
 
           document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.add('hidden'));
           const targetPane = document.getElementById(targetId);
           if (targetPane) targetPane.classList.remove('hidden');
         });
       });
+
+      function updateAdminKPIs() {
+        const kpiB = document.getElementById('kpi-total-batches');
+        const kpiE = document.getElementById('kpi-total-enrollments');
+        const kpiC = document.getElementById('kpi-total-coupons');
+        if (kpiB) kpiB.textContent = loadedBatches.length;
+        if (kpiE) {
+          const sum = loadedBatches.reduce((acc, b) => acc + (Number(b.totalEnrolled) || 0), 0);
+          kpiE.textContent = sum;
+        }
+        if (kpiC) {
+          const act = loadedCoupons.filter(c => c.isActive !== false).length;
+          kpiC.textContent = act;
+        }
+      }
 
       // ========================================================
       // BATCHES STUDIO LOGIC
@@ -622,12 +852,22 @@
           const res = await MendorbitAPI.adminGetBatches(activeAdminKey);
           if (res && res.status === "success" && Array.isArray(res.batches)) {
             loadedBatches = res.batches;
-            if (countEl) countEl.textContent = `${loadedBatches.length} Batches Live`;
+            if (countEl) countEl.textContent = `${loadedBatches.length} Batches`;
             renderAdminBatches();
+            populateCouponBatchSelect();
+            updateAdminKPIs();
           }
         } catch (e) {
           console.warn("[Admin Batches] Fetch note:", e);
         }
+      }
+
+      function populateCouponBatchSelect() {
+        const sel = document.getElementById('coupon-input-batch');
+        if (!sel) return;
+        sel.innerHTML = `<option value="ALL">All Batches</option>` + loadedBatches.map(b =>
+          `<option value="${b.id}">${b.title}</option>`
+        ).join('');
       }
 
       function renderAdminBatches() {
@@ -646,6 +886,13 @@
           const priceLabel = Number(b.price) > 0
             ? `₹${Number(b.price).toLocaleString('en-IN')}${Number(b.originalPrice) > Number(b.price) ? ` <span class="text-[10px] text-slate-500 line-through">₹${b.originalPrice}</span>` : ''}`
             : 'FREE';
+          const classesList = Array.isArray(b.targetClasses) && b.targetClasses.length
+            ? b.targetClasses
+            : (b.targetClass ? b.targetClass.split(',').map(s => s.trim()).filter(Boolean) : []);
+          const audienceBadges = classesList.map(c =>
+            `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">${c}</span>`
+          ).join(' ');
+
           return `
             <tr class="hover:bg-slate-800/40 transition">
               <td class="py-3 px-4">
@@ -656,27 +903,29 @@
                     <div class="text-[10px] text-slate-400 flex items-center gap-1.5">
                       <span>${b.language || 'HINGLISH'}</span>
                       ${b.startDate ? `<span>• ${b.startDate}</span>` : ''}
+                      ${b.status && b.status !== 'ACTIVE' ? `<span class="text-amber-400 font-bold">• ${b.status}</span>` : ''}
                     </div>
                   </div>
                 </div>
               </td>
               <td class="py-3 px-4">
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">
-                  ${b.targetClass || 'All'}
-                </span>
+                <div class="flex flex-wrap gap-1 max-w-[180px]">${audienceBadges || '<span class="text-slate-500">-</span>'}</div>
               </td>
-              <td class="py-3 px-4 text-slate-400 text-[11px]">${b.schedule || b.stream || '-'}</td>
+              <td class="py-3 px-4 text-slate-400 text-[11px]">
+                <div>${b.schedule || b.stream || '-'}</div>
+                ${b.endDate ? `<div class="text-[10px] text-slate-500">Valid till ${b.endDate}</div>` : ''}
+              </td>
               <td class="py-3 px-4 font-bold text-emerald-400">${b.totalEnrolled || 0} Students</td>
               <td class="py-3 px-4 font-bold text-white">${priceLabel}</td>
               <td class="py-3 px-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
+                  <a href="batch-detail.html?id=${encodeURIComponent(b.id)}" target="_blank" title="Preview Live Batch Page" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                    <span>Preview</span>
+                  </a>
                   <button type="button" onclick="openEditBatchModal('${b.id}')" class="px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                     <span>Edit</span>
-                  </button>
-                  <button type="button" onclick="openCurriculumEditor('${b.id}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
-                    <i data-lucide="book-open" class="w-3 h-3"></i>
-                    <span>Content</span>
                   </button>
                   <button type="button" onclick="openEnrollmentsViewer('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition font-semibold text-[11px] flex items-center gap-1">
                     <i data-lucide="users" class="w-3 h-3"></i>
@@ -697,6 +946,110 @@
       // Refresh Button
       document.getElementById('btn-refresh-batches').addEventListener('click', loadAdminBatches);
 
+      // Live WYSIWYG Preview Renderer inside Create/Edit Modal
+      function getSelectedAudienceClasses() {
+        return Array.from(document.querySelectorAll('.audience-cb:checked')).map(cb => cb.value);
+      }
+
+      function formatPreviewDate(dateStr) {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const day = d.getDate();
+        const suffix = (day % 10 === 1 && day !== 11) ? "st" : (day % 10 === 2 && day !== 12) ? "nd" : (day % 10 === 3 && day !== 13) ? "rd" : "th";
+        const month = d.toLocaleString("en-US", { month: "short" });
+        const yr = String(d.getFullYear()).slice(-2);
+        return `Starts on ${day}${suffix} ${month} '${yr}`;
+      }
+
+      function escapeHtmlAdmin(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function updateBatchLivePreview() {
+        const container = document.getElementById('admin-live-card-preview');
+        if (!container) return;
+
+        const title = document.getElementById('batch-input-title').value.trim() || "Batch Title Preview";
+        const classes = getSelectedAudienceClasses();
+        const audienceText = classes.length ? classes.join(" • ") : "Select Audience";
+        const stream = document.getElementById('batch-input-stream').value.trim();
+        const lang = document.getElementById('batch-input-language').value || "HINGLISH";
+        const startDate = document.getElementById('batch-input-startdate').value.trim();
+        const schedule = document.getElementById('batch-input-schedule').value.trim();
+        const badgeText = document.getElementById('batch-input-badge').value.trim();
+        const thumb = document.getElementById('batch-input-thumb').value.trim();
+        const priceVal = document.getElementById('batch-input-price').value;
+        const price = priceVal === "" ? 0 : (Number(priceVal) || 0);
+        const origVal = document.getElementById('batch-input-original-price').value;
+        const orig = origVal === "" ? 0 : (Number(origVal) || 0);
+        const pct = (orig > price && orig > 0) ? Math.round(((orig - price) / orig) * 100) : 0;
+
+        const bannerHtml = thumb
+          ? `<img src="${escapeHtmlAdmin(thumb)}" alt="Banner" class="w-full h-full object-cover" />`
+          : `<div class="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900 flex flex-col items-center justify-center p-5 text-center">
+               <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">${escapeHtmlAdmin(audienceText)}</span>
+               <div class="text-white font-black text-base leading-snug line-clamp-2">${escapeHtmlAdmin(title)}</div>
+             </div>`;
+
+        const priceHtml = price > 0
+          ? `<div>
+               <div class="flex items-baseline gap-1.5">
+                 <span class="text-lg font-black text-slate-900">₹${price.toLocaleString('en-IN')}</span>
+                 ${orig > price ? `<span class="text-xs text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
+               </div>
+               ${pct > 0 ? `<div class="text-[11px] font-extrabold text-emerald-600">${pct}% OFF</div>` : '<div class="text-[11px] font-semibold text-slate-400">Full Batch Access</div>'}
+             </div>`
+          : `<div>
+               <div class="flex items-baseline gap-1.5">
+                 <span class="text-lg font-black text-emerald-600">FREE</span>
+                 ${orig > 0 ? `<span class="text-xs text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
+               </div>
+               ${orig > 0 ? `<div class="text-[11px] font-extrabold text-emerald-600">100% OFF</div>` : '<div class="text-[11px] font-semibold text-slate-400">Free Enrollment</div>'}
+             </div>`;
+
+        const metaLine1 = stream || "Exam / Board Info";
+        const metaLine2 = startDate ? formatPreviewDate(startDate) : (schedule || "Schedule / Start Date");
+
+        container.innerHTML = `
+          <div>
+            <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+              ${bannerHtml}
+              ${badgeText ? `<div class="absolute top-3 left-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 shadow uppercase">${escapeHtmlAdmin(badgeText)}</span></div>` : ''}
+            </div>
+            <div class="p-4 sm:p-5">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-extrabold text-orange-600 truncate">${escapeHtmlAdmin(audienceText)}</span>
+                <span class="px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[10px] font-extrabold uppercase text-slate-600 flex-shrink-0">${escapeHtmlAdmin(lang)}</span>
+              </div>
+              <h3 class="text-base font-extrabold text-slate-900 line-clamp-1">${escapeHtmlAdmin(title)}</h3>
+              <div class="mt-2.5 space-y-1.5 text-xs text-slate-500">
+                <div class="flex items-center gap-2"><i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-400"></i><span class="truncate font-medium">${escapeHtmlAdmin(metaLine1)}</span></div>
+                <div class="flex items-center gap-2"><i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i><span class="truncate font-medium">${escapeHtmlAdmin(metaLine2)}</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 sm:px-5 pb-4 sm:pb-5">
+            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+              ${priceHtml}
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs">${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
+                <span class="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-700"><i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+              </div>
+            </div>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Attach live listeners to all batch form inputs
+      document.getElementById('form-create-batch').addEventListener('input', updateBatchLivePreview);
+      document.getElementById('form-create-batch').addEventListener('change', updateBatchLivePreview);
+
       // Create / Edit Batch Modal Helpers
       const modalCreate = document.getElementById('modal-create-batch');
       const batchForm = document.getElementById('form-create-batch');
@@ -704,8 +1057,10 @@
       function resetBatchForm() {
         batchForm.reset();
         document.getElementById('batch-edit-id').value = "";
+        document.querySelectorAll('.audience-cb').forEach(cb => cb.checked = false);
         document.getElementById('modal-batch-form-title').textContent = "Create New Batch";
         document.getElementById('btn-submit-batch-form').textContent = "Publish Batch";
+        updateBatchLivePreview();
       }
 
       document.getElementById('btn-open-create-batch').addEventListener('click', () => {
@@ -728,22 +1083,37 @@
         document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
 
         document.getElementById('batch-input-title').value = b.title || "";
-        document.getElementById('batch-input-class').value = b.targetClass || "";
+        const targetArr = Array.isArray(b.targetClasses) && b.targetClasses.length
+          ? b.targetClasses
+          : (b.targetClass ? b.targetClass.split(',').map(s => s.trim()) : []);
+        document.querySelectorAll('.audience-cb').forEach(cb => {
+          cb.checked = targetArr.some(t => t.toLowerCase() === cb.value.toLowerCase());
+        });
+
         document.getElementById('batch-input-stream').value = b.stream || "";
         document.getElementById('batch-input-language').value = (b.language || "HINGLISH").toUpperCase();
+        document.getElementById('batch-input-mode').value = b.mode || "Online Live";
         document.getElementById('batch-input-startdate').value = b.startDate || "";
+        document.getElementById('batch-input-enddate').value = b.endDate || "";
         document.getElementById('batch-input-price').value = b.price !== undefined ? b.price : "";
         document.getElementById('batch-input-original-price').value = b.originalPrice || "";
         document.getElementById('batch-input-schedule').value = b.schedule || "";
         document.getElementById('batch-input-badge').value = b.badgeText || "";
+        document.getElementById('batch-input-status').value = b.status || "ACTIVE";
         document.getElementById('batch-input-thumb').value = b.thumbnail || "";
+        document.getElementById('batch-input-demovideo').value = b.demoVideoUrl || "";
+        document.getElementById('batch-input-syllabuspdf').value = b.syllabusPdfUrl || "";
         document.getElementById('batch-input-subjects').value = Array.isArray(b.subjects) ? b.subjects.join(", ") : "";
         document.getElementById('batch-input-faculty').value = Array.isArray(b.faculty)
           ? b.faculty.map(f => typeof f === 'string' ? f : f.name).filter(Boolean).join(", ")
           : "";
         document.getElementById('batch-input-features').value = Array.isArray(b.features) ? b.features.join("\n") : "";
+        document.getElementById('batch-input-faqs').value = Array.isArray(b.faqs)
+          ? b.faqs.map(x => `${x.q} | ${x.a}`).join("\n")
+          : "";
         document.getElementById('batch-input-desc').value = b.description || "";
 
+        updateBatchLivePreview();
         modalCreate.classList.remove('hidden');
       };
 
@@ -751,41 +1121,64 @@
         e.preventDefault();
         const editId = document.getElementById('batch-edit-id').value.trim();
         const title = document.getElementById('batch-input-title').value.trim();
-        const targetClass = document.getElementById('batch-input-class').value.trim();
+        const targetClasses = getSelectedAudienceClasses();
+        if (targetClasses.length === 0) {
+          alert("Please select at least 1 Target Audience class (Class 9, Class 10, Banking, Law, SSC CGL, or SSC CHSL).");
+          return;
+        }
+
         const stream = document.getElementById('batch-input-stream').value.trim();
         const language = document.getElementById('batch-input-language').value;
+        const mode = document.getElementById('batch-input-mode').value;
         const startDate = document.getElementById('batch-input-startdate').value.trim();
+        const endDate = document.getElementById('batch-input-enddate').value.trim();
         const priceVal = document.getElementById('batch-input-price').value;
         const price = priceVal === "" ? 0 : (Number(priceVal) || 0);
         const origVal = document.getElementById('batch-input-original-price').value;
         const originalPrice = origVal === "" ? 0 : (Number(origVal) || 0);
         const schedule = document.getElementById('batch-input-schedule').value.trim();
         const badgeText = document.getElementById('batch-input-badge').value.trim();
+        const status = document.getElementById('batch-input-status').value;
         const thumbnail = document.getElementById('batch-input-thumb').value.trim();
+        const demoVideoUrl = document.getElementById('batch-input-demovideo').value.trim();
+        const syllabusPdfUrl = document.getElementById('batch-input-syllabuspdf').value.trim();
         const subjectsStr = document.getElementById('batch-input-subjects').value.trim();
         const facultyStr = document.getElementById('batch-input-faculty').value.trim();
         const featuresStr = document.getElementById('batch-input-features').value.trim();
+        const faqsStr = document.getElementById('batch-input-faqs').value.trim();
         const desc = document.getElementById('batch-input-desc').value.trim();
 
         const subjects = subjectsStr ? subjectsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
         const faculty = facultyStr ? facultyStr.split(',').map(f => ({ name: f.trim() })).filter(f => f.name) : [];
         const features = featuresStr ? featuresStr.split('\n').map(f => f.trim()).filter(Boolean) : [];
+        const faqs = faqsStr ? faqsStr.split('\n').map(line => {
+          const [q, ...rest] = line.split('|');
+          const a = rest.join('|').trim();
+          return (q && q.trim() && a) ? { q: q.trim(), a } : null;
+        }).filter(Boolean) : [];
 
         const batchPayload = {
           title,
-          targetClass,
+          targetClasses,
+          targetClass: targetClasses.join(", "),
           stream,
           language,
+          mode,
           startDate,
+          endDate,
           schedule,
           badgeText,
+          status,
           price,
           originalPrice,
           isFree: price === 0,
           thumbnail,
+          demoVideoUrl,
+          syllabusPdfUrl,
           subjects,
           faculty,
           features,
+          faqs,
           description: desc
         };
 
@@ -810,6 +1203,108 @@
           alert("Error saving batch. Check server connection.");
         }
       });
+
+      // ========================================================
+      // COUPONS STUDIO LOGIC
+      // ========================================================
+      async function loadAdminCoupons() {
+        if (!activeAdminKey) return;
+        const tbody = document.getElementById('admin-coupons-tbody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Loading coupons...</td></tr>`;
+        try {
+          const res = await MendorbitAPI.adminGetCoupons(activeAdminKey);
+          if (res && res.status === "success" && Array.isArray(res.coupons)) {
+            loadedCoupons = res.coupons;
+            renderAdminCoupons();
+            updateAdminKPIs();
+          }
+        } catch (e) {
+          console.warn("[Admin Coupons] Fetch note:", e);
+        }
+      }
+
+      function renderAdminCoupons() {
+        const tbody = document.getElementById('admin-coupons-tbody');
+        if (!tbody) return;
+        if (loadedCoupons.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500">No coupons created yet. Create a 100% coupon to test ₹0 checkout!</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = loadedCoupons.map(c => {
+          const discLabel = c.discountType === "FLAT" ? `₹${c.discountValue} OFF` : `${c.discountValue}% OFF`;
+          const scopeLabel = (Array.isArray(c.applicableBatches) && c.applicableBatches[0] !== "ALL")
+            ? c.applicableBatches.join(", ")
+            : "All Batches";
+          const usageLabel = `${c.usedCount || 0} / ${c.maxUses > 0 ? c.maxUses : '∞'}`;
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-3">
+                <div class="font-mono font-black text-amber-400 text-xs">${c.code}</div>
+                ${c.description ? `<div class="text-[10px] text-slate-400">${c.description}</div>` : ''}
+              </td>
+              <td class="py-3 px-3 font-bold text-emerald-400">${discLabel}</td>
+              <td class="py-3 px-3 text-slate-300 text-[11px] truncate max-w-[140px]">${scopeLabel}</td>
+              <td class="py-3 px-3 text-slate-300 font-mono text-[11px]">${usageLabel}</td>
+              <td class="py-3 px-3 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button type="button" onclick="navigator.clipboard.writeText('${c.code}'); alert('Copied ${c.code}')" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[10px] font-bold">Copy</button>
+                  <button type="button" onclick="deleteAdminCoupon('${c.code}')" class="p-1 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-lg transition">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      document.getElementById('btn-refresh-coupons').addEventListener('click', loadAdminCoupons);
+
+      document.getElementById('form-create-coupon').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const code = document.getElementById('coupon-input-code').value.trim().toUpperCase();
+        const discountType = document.getElementById('coupon-input-type').value;
+        const discountValue = Number(document.getElementById('coupon-input-value').value) || 0;
+        const batchScope = document.getElementById('coupon-input-batch').value;
+        const maxUses = Number(document.getElementById('coupon-input-maxuses').value) || 0;
+        const expiresAt = document.getElementById('coupon-input-expiry').value.trim();
+        const description = document.getElementById('coupon-input-desc').value.trim();
+
+        try {
+          const res = await MendorbitAPI.adminCreateCoupon({
+            code,
+            discountType,
+            discountValue,
+            applicableBatches: [batchScope || "ALL"],
+            maxUses,
+            expiresAt,
+            description,
+            isActive: true
+          }, activeAdminKey);
+          if (res && res.status === "success") {
+            alert(`Coupon ${code} activated!`);
+            document.getElementById('form-create-coupon').reset();
+            loadAdminCoupons();
+          } else {
+            alert((res && res.message) || "Failed to save coupon.");
+          }
+        } catch (err) {
+          alert("Server connection error.");
+        }
+      });
+
+      window.deleteAdminCoupon = async function (code) {
+        if (!confirm(`Delete coupon ${code}?`)) return;
+        try {
+          const res = await MendorbitAPI.adminDeleteCoupon(code, activeAdminKey);
+          if (res && res.status === "success") {
+            loadAdminCoupons();
+          }
+        } catch (err) {
+          alert("Failed to delete coupon.");
+        }
+      };
 
       window.deleteBatch = async function (batchId) {
         if (!confirm(`Are you sure you want to delete batch ${batchId}?`)) return;
