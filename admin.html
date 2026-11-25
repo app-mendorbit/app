@@ -99,6 +99,11 @@
           <span>Coupons &amp; Offers</span>
         </button>
 
+        <button type="button" data-admin-tab="admin-tab-page-builder" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="file-code-2" class="w-4 h-4"></i>
+          <span>Batch Page Creator</span>
+        </button>
+
         <div class="pt-4 pb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Administration</div>
 
         <button type="button" data-admin-tab="admin-tab-users" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
@@ -571,6 +576,219 @@
             </div>
           </div>
 
+          <!-- TAB 5.5: BATCH DETAILS PAGE CREATOR -->
+          <div id="admin-tab-page-builder" class="admin-tab-pane hidden space-y-6">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="file-code-2" class="w-5 h-5 text-indigo-600"></i>
+                  <span>Batch Details Page Creator</span>
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">Fill in batch overview sections to preview live and export a ready-to-host standalone <code>.html</code> page.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <select id="pgb-import-batch" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-indigo-500">
+                  <option value="">Import from Saved Batch...</option>
+                </select>
+                <button type="button" id="pgb-btn-reset" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">Reset</button>
+                <button type="button" id="pgb-btn-copy" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-extrabold rounded-xl transition flex items-center gap-1.5">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>Copy HTML</span>
+                </button>
+                <button type="button" id="pgb-btn-open-tab" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold rounded-xl transition flex items-center gap-1.5">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span>Open Preview</span>
+                </button>
+                <button type="button" id="pgb-btn-download" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download HTML</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+              <!-- LEFT: BUILDER FORM -->
+              <div class="xl:col-span-5 space-y-5">
+                <!-- 1. Basic & Hero Info -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 flex items-center gap-1.5">
+                    <span>1. Hero Header &amp; Branding</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Batch Title *</label>
+                      <input type="text" id="pgb-title" placeholder="e.g. Sankalp Class 10 Board Booster" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Download File Slug</label>
+                      <input type="text" id="pgb-slug" placeholder="e.g. sankalp-class-10" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Class / Exam Pill (Top Bar)</label>
+                      <input type="text" id="pgb-header-pill" placeholder="e.g. Class 10 Board" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Platform Base URL (Navigation &amp; Assets)</label>
+                      <input type="url" id="pgb-base-url" placeholder="https://app.mendorbit.in (defaults to current origin)" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Announcement Notice (Optional)</label>
+                      <input type="text" id="pgb-announcement" placeholder="e.g. Orientation session starts Monday at 5:00 PM IST." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Sticky Purchase Card -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">2. Sticky Purchase Card &amp; Enroll Link</div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Banner Thumbnail Image URL</label>
+                      <input type="url" id="pgb-thumbnail" placeholder="https://..." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Target Aspirant Label</label>
+                      <input type="text" id="pgb-aspirant" placeholder="e.g. For Class 10 Aspirants" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Language Badge</label>
+                      <input type="text" id="pgb-language" placeholder="e.g. Hinglish" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Selling Price (INR, 0 = Free)</label>
+                      <input type="number" id="pgb-price" min="0" placeholder="e.g. 2999" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Original MRP (INR)</label>
+                      <input type="number" id="pgb-mrp" min="0" placeholder="e.g. 5999" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Direct Payment / Enroll URL *</label>
+                      <input type="url" id="pgb-buy-url" placeholder="https://app.mendorbit.in/payment.html?info=..." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">CTA Button Text</label>
+                      <input type="text" id="pgb-cta-text" placeholder="BUY NOW" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 1 Label (Optional Switcher)</label>
+                      <input type="text" id="pgb-plan1-name" placeholder="Batch" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                  </div>
+
+                  <!-- Optional Second Plan (Infinity / Pro) -->
+                  <div class="pt-2 border-t border-slate-100">
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                      <input type="checkbox" id="pgb-enable-plan2" class="pgb-field rounded border-slate-300 text-indigo-600" />
+                      <span>Enable Second Plan Switcher (e.g. Pro / Infinity)</span>
+                    </label>
+                    <div id="pgb-plan2-fields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-100">
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 2 Name</label>
+                        <input type="text" id="pgb-plan2-name" placeholder="e.g. Infinity Pro" class="pgb-field w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 2 Selling Price</label>
+                        <input type="number" id="pgb-plan2-price" min="0" placeholder="e.g. 4499" class="pgb-field w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 2 MRP</label>
+                        <input type="number" id="pgb-plan2-mrp" min="0" placeholder="e.g. 8999" class="pgb-field w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 2 Direct Enroll URL</label>
+                        <input type="url" id="pgb-plan2-url" placeholder="https://.../payment.html?info=..." class="pgb-field w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono outline-none focus:border-indigo-500" />
+                      </div>
+                      <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Plan 2 Includes Star List (1 per line)</label>
+                        <textarea id="pgb-plan2-features" rows="3" placeholder="Everything in Standard Batch&#10;1-on-1 Personal Mentorship&#10;Hardcopy Practice Books" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Batch Includes (Star Checklist Grid) -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">3. Batch Includes (Star Checklist Grid)</div>
+                  <p class="text-[11px] text-slate-400">Enter one feature per line to display in the blue-star 3-column grid.</p>
+                  <textarea id="pgb-star-features" rows="5" placeholder="Live & Recorded Lectures by Top Faculties&#10;DPPs with Video Solutions&#10;Regular Tests & All India Test Series&#10;Doubt Support by Mentors" class="pgb-field w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                </div>
+
+                <!-- 4. This Batch Includes (Detailed Specs) -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">4. This Batch Includes (Schedule &amp; Specs)</div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Course Duration</label>
+                      <input type="text" id="pgb-duration" placeholder="e.g. 01 Dec 2026 - 30 Mar 2027" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Validity</label>
+                      <input type="text" id="pgb-validity" placeholder="e.g. Till Exam 2027" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Mode of Lectures</label>
+                      <input type="text" id="pgb-mode" placeholder="e.g. Live + Recorded Lectures" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Class Schedule</label>
+                      <input type="text" id="pgb-schedule" placeholder="e.g. 2 Classes/Day, 6 Days/Week" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Subjects</label>
+                      <input type="text" id="pgb-subjects" placeholder="e.g. Mathematics, Science, English, Social Science" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-600 mb-1">Additional Bullet Highlights (1 per line)</label>
+                      <textarea id="pgb-extra-highlights" rows="3" placeholder="Class Notes PDF for every lecture&#10;Weekly Revision & Doubt Clinics" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. Demo Videos -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">5. Demo Videos (Optional)</div>
+                  <p class="text-[11px] text-slate-400">One per line formatted as <code>Video Title | YouTube URL</code>.</p>
+                  <textarea id="pgb-demos" rows="3" placeholder="Orientation Lecture | https://www.youtube.com/watch?v=...&#10;Maths Intro Class | https://youtu.be/..." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                </div>
+
+                <!-- 6. Other Details -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">6. Other Details (Numbered List)</div>
+                  <p class="text-[11px] text-slate-400">One per line formatted as <code>Bold Heading | Detailed explanation or https://link</code>.</p>
+                  <textarea id="pgb-other-details" rows="5" placeholder="Live + Recorded Lectures | Class notes of each lecture will be uploaded after class.&#10;Study Material Portal | Access PDF notes anytime at https://app.mendorbit.in" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                </div>
+
+                <!-- 7. FAQ's -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2.5">
+                  <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">7. FAQ&apos;s (Accordion)</div>
+                  <p class="text-[11px] text-slate-400">One per line formatted as <code>Question | Answer</code>.</p>
+                  <textarea id="pgb-faqs" rows="4" placeholder="How will classes be conducted? | Classes are live with instant recordings available.&#10;Will I get PDF notes? | Yes, structured notes and DPPs are included." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                </div>
+              </div>
+
+              <!-- RIGHT: LIVE SAMPLE PREVIEW -->
+              <div class="xl:col-span-7 xl:sticky xl:top-20 space-y-3">
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                  <div class="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                      <span class="text-xs font-extrabold text-slate-800">Live Page Preview</span>
+                      <span id="pgb-preview-filename" class="text-[11px] font-mono text-slate-400">batch-details.html</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                      <button type="button" id="pgb-view-desktop" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 shadow-sm text-[11px] font-bold">Desktop</button>
+                      <button type="button" id="pgb-view-mobile" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-900 text-[11px] font-bold">Mobile</button>
+                    </div>
+                  </div>
+                  <div class="flex justify-center bg-slate-100 rounded-xl p-2 overflow-hidden">
+                    <iframe id="pgb-live-iframe" title="Live Batch Page Preview" class="w-full h-[740px] rounded-lg border border-slate-200 bg-white transition-all duration-200"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -842,6 +1060,12 @@
           const cur = enrSel.value;
           enrSel.innerHTML = `<option value="">All Batches</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
           enrSel.value = cur;
+        }
+        const pgbSel = document.getElementById('pgb-import-batch');
+        if (pgbSel) {
+          const cur = pgbSel.value;
+          pgbSel.innerHTML = `<option value="">Import from Saved Batch...</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
+          pgbSel.value = cur;
         }
       }
 
@@ -1385,6 +1609,629 @@
       }
       document.getElementById("btn-refresh-otp-stats").addEventListener("click", loadOtpStats);
 
+      // ====== BATCH DETAILS PAGE CREATOR ======
+      function pgbEsc(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function pgbLinkify(str) {
+        const escaped = pgbEsc(str);
+        return escaped.replace(/(https?:\/\/[^\s<)]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[#5a4bda] hover:underline font-medium break-all">$1</a>');
+      }
+
+      function pgbEmbedUrl(url) {
+        const raw = String(url || '').trim();
+        if (!raw) return '';
+        let match = raw.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/);
+        if (match && match[1]) return `https://www.youtube.com/embed/${match[1]}`;
+        return raw;
+      }
+
+      function pgbSlugify(str) {
+        const s = String(str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        return s || 'batch-details';
+      }
+
+      function readPageBuilderConfig() {
+        const val = (id) => (document.getElementById(id)?.value || '').trim();
+        const lines = (id) => val(id).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const title = val('pgb-title');
+        const slug = val('pgb-slug') || pgbSlugify(title);
+        const baseRaw = val('pgb-base-url') || window.location.origin;
+        const baseUrl = baseRaw.replace(/\/+$/, '');
+        const priceNum = val('pgb-price') === '' ? null : Math.max(0, Number(val('pgb-price')) || 0);
+        const mrpNum = val('pgb-mrp') === '' ? 0 : Math.max(0, Number(val('pgb-mrp')) || 0);
+        const p2PriceNum = val('pgb-plan2-price') === '' ? null : Math.max(0, Number(val('pgb-plan2-price')) || 0);
+        const p2MrpNum = val('pgb-plan2-mrp') === '' ? 0 : Math.max(0, Number(val('pgb-plan2-mrp')) || 0);
+
+        return {
+          title,
+          slug,
+          headerPill: val('pgb-header-pill'),
+          baseUrl,
+          announcement: val('pgb-announcement'),
+          thumbnail: val('pgb-thumbnail'),
+          aspirant: val('pgb-aspirant'),
+          language: val('pgb-language'),
+          price: priceNum,
+          mrp: mrpNum,
+          buyUrl: val('pgb-buy-url'),
+          ctaText: val('pgb-cta-text'),
+          plan1Name: val('pgb-plan1-name') || 'Batch',
+          enablePlan2: Boolean(document.getElementById('pgb-enable-plan2')?.checked),
+          plan2Name: val('pgb-plan2-name'),
+          plan2Price: p2PriceNum,
+          plan2Mrp: p2MrpNum,
+          plan2Url: val('pgb-plan2-url'),
+          plan2Features: lines('pgb-plan2-features'),
+          starFeatures: lines('pgb-star-features'),
+          duration: val('pgb-duration'),
+          validity: val('pgb-validity'),
+          mode: val('pgb-mode'),
+          schedule: val('pgb-schedule'),
+          subjects: val('pgb-subjects'),
+          extraHighlights: lines('pgb-extra-highlights'),
+          demos: lines('pgb-demos').map(l => {
+            const idx = l.indexOf('|');
+            if (idx === -1) return { title: 'Demo Lecture', url: l };
+            return { title: l.slice(0, idx).trim(), url: l.slice(idx + 1).trim() };
+          }).filter(d => d.url),
+          otherDetails: lines('pgb-other-details').map(l => {
+            const idx = l.indexOf('|');
+            if (idx === -1) return { heading: '', body: l };
+            return { heading: l.slice(0, idx).trim(), body: l.slice(idx + 1).trim() };
+          }),
+          faqs: lines('pgb-faqs').map(l => {
+            const idx = l.indexOf('|');
+            if (idx === -1) return { q: l, a: '' };
+            return { q: l.slice(0, idx).trim(), a: l.slice(idx + 1).trim() };
+          })
+        };
+      }
+
+      function calcDiscountPct(price, mrp) {
+        if (price !== null && price > 0 && mrp > price) {
+          return Math.round(((mrp - price) / mrp) * 10000) / 100;
+        }
+        return 0;
+      }
+
+      function generateStandaloneBatchHtml(cfg) {
+        const displayTitle = cfg.title || 'Batch Overview';
+        const base = cfg.baseUrl || 'https://app.mendorbit.in';
+        const starSvg = '<svg class="w-4 h-4 text-[#2563eb]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.04l-5.7 3 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z"/></svg>';
+        const goldStarSvg = '<svg class="w-4 h-4 text-[#eab308]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.04l-5.7 3 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z"/></svg>';
+
+        const renderStarItems = (items) => {
+          if (!items.length) {
+            return '<div class="col-span-full text-xs text-slate-400 italic py-2">Add batch highlights in the Page Creator to populate this checklist.</div>';
+          }
+          return items.map(item => `
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-lg bg-[#eff6ff] border border-[#dbeafe] flex items-center justify-center flex-shrink-0 mt-0.5">${starSvg}</span>
+              <span class="text-[13px] font-medium text-slate-700 leading-snug">${pgbEsc(item)}</span>
+            </div>
+          `).join('');
+        };
+
+        const specRows = [];
+        if (cfg.duration) {
+          specRows.push({
+            iconBg: 'bg-slate-100 text-slate-600',
+            icon: '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+            label: 'Course Duration:',
+            value: cfg.duration
+          });
+        }
+        if (cfg.validity) specRows.push({ iconBg: 'bg-amber-50', icon: goldStarSvg, label: 'Validity:', value: cfg.validity });
+        if (cfg.mode) specRows.push({ iconBg: 'bg-amber-50', icon: goldStarSvg, label: 'Mode of Lectures:', value: cfg.mode });
+        if (cfg.schedule) specRows.push({ iconBg: 'bg-amber-50', icon: goldStarSvg, label: 'Class Schedule:', value: cfg.schedule });
+        cfg.extraHighlights.forEach(line => {
+          specRows.push({ iconBg: 'bg-amber-50', icon: goldStarSvg, label: '', value: line });
+        });
+        if (cfg.subjects) {
+          specRows.push({
+            iconBg: 'bg-indigo-50 text-indigo-600',
+            icon: '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+            label: 'Subjects:',
+            value: cfg.subjects
+          });
+        }
+
+        const specHtml = specRows.length ? specRows.map(r => `
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-full ${r.iconBg} flex items-center justify-center flex-shrink-0 mt-0.5">${r.icon}</span>
+            <div class="text-[13px] text-slate-700 leading-relaxed">
+              ${r.label ? `<div class="font-bold text-slate-900">${pgbEsc(r.label)}</div><div>${pgbEsc(r.value)}</div>` : `<div class="font-medium text-slate-800 pt-0.5">${pgbEsc(r.value)}</div>`}
+            </div>
+          </div>
+        `).join('') : '<div class="text-xs text-slate-400 italic">Fill Course Duration, Validity, Schedule, or Subjects to display batch specifications.</div>';
+
+        const demosHtml = cfg.demos.length ? `
+          <section class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <h2 class="text-lg font-extrabold text-slate-900 mb-4">Demo Videos</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              ${cfg.demos.map(d => {
+                const embed = pgbEmbedUrl(d.url);
+                const isDirectVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(embed);
+                return `
+                  <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                    <div class="aspect-video bg-slate-900">
+                      ${isDirectVideo
+                        ? `<video src="${pgbEsc(embed)}" controls class="w-full h-full object-cover"></video>`
+                        : `<iframe src="${pgbEsc(embed)}" title="${pgbEsc(d.title)}" class="w-full h-full border-0" allowfullscreen loading="lazy"></iframe>`}
+                    </div>
+                    <div class="px-3.5 py-2.5 text-xs font-bold text-slate-800">${pgbEsc(d.title)}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        ` : '';
+
+        const otherHtml = cfg.otherDetails.length ? `
+          <section id="section-other">
+            <details open class="group bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+              <summary class="list-none cursor-pointer flex items-center justify-between text-lg font-extrabold text-slate-900">
+                <span>Other Details</span>
+                <svg class="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div class="mt-4 divide-y divide-slate-100">
+                ${cfg.otherDetails.map((item, idx) => {
+                  const num = String(idx + 1).padStart(2, '0') + '.';
+                  return `
+                    <div class="py-3 flex items-start gap-3 text-[13px] leading-relaxed text-slate-700">
+                      <span class="font-bold text-slate-900 flex-shrink-0 w-7">${num}</span>
+                      <div>
+                        ${item.heading ? `<span class="font-bold text-slate-900">${pgbEsc(item.heading)}: </span>` : ''}
+                        <span>${pgbLinkify(item.body)}</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </details>
+          </section>
+        ` : '';
+
+        const faqsHtml = cfg.faqs.length ? `
+          <section id="section-faqs" class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <h2 class="text-lg font-extrabold text-slate-900 mb-4">FAQ&apos;s</h2>
+            <div class="space-y-3" id="faq-list">
+              ${cfg.faqs.map((f, idx) => `
+                <details class="faq-item group rounded-xl border border-slate-200 bg-[#f8fafc]/70 px-4 py-3 ${idx >= 5 ? 'hidden' : ''}">
+                  <summary class="list-none cursor-pointer flex items-center justify-between gap-3 text-[13px] font-bold text-slate-800">
+                    <span>${pgbEsc(f.q)}</span>
+                    <svg class="w-4 h-4 text-slate-500 flex-shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </summary>
+                  <div class="pt-2.5 mt-2.5 border-t border-slate-200/70 text-[13px] text-slate-600 leading-relaxed">${pgbLinkify(f.a)}</div>
+                </details>
+              `).join('')}
+            </div>
+            ${cfg.faqs.length > 5 ? `<div class="mt-3 text-right"><button type="button" id="btn-load-more-faqs" class="text-xs font-extrabold text-[#5a4bda] hover:underline">Load More</button></div>` : ''}
+          </section>
+        ` : '';
+
+        const p1Price = cfg.price;
+        const p1Mrp = cfg.mrp;
+        const p1Pct = calcDiscountPct(p1Price, p1Mrp);
+        const p1PriceLabel = p1Price === null ? '₹—' : (p1Price === 0 ? 'FREE' : `₹${p1Price.toLocaleString('en-IN')}`);
+        const p1CtaLabel = cfg.ctaText || (p1Price === 0 ? 'ENROLL FREE' : 'BUY NOW');
+        const p1BuyHref = cfg.buyUrl || `${base}/batches.html`;
+
+        const p2Enabled = cfg.enablePlan2 && cfg.plan2Name;
+        const p2Price = cfg.plan2Price !== null ? cfg.plan2Price : p1Price;
+        const p2Mrp = cfg.plan2Mrp || p1Mrp;
+        const p2Pct = calcDiscountPct(p2Price, p2Mrp);
+        const p2BuyHref = cfg.plan2Url || p1BuyHref;
+
+        const planSwitcherHtml = p2Enabled ? `
+          <div class="mb-5">
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 mb-3">Choose a Plan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button type="button" data-plan-btn="1" class="plan-card relative rounded-xl border-2 border-[#5a4bda] bg-gradient-to-b from-sky-50 to-white px-4 py-4 text-center transition">
+                <span class="font-extrabold text-sm text-[#0284c7]">${pgbEsc(cfg.plan1Name)}</span>
+                <span data-plan-check="1" class="w-5 h-5 rounded-full bg-[#5a4bda] text-white flex items-center justify-center absolute -bottom-2.5 left-1/2 -translate-x-1/2 shadow">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+              </button>
+              <button type="button" data-plan-btn="2" class="plan-card relative rounded-xl border border-slate-200 bg-gradient-to-b from-emerald-50 to-white px-4 py-4 text-center transition hover:border-emerald-400">
+                <span class="font-extrabold text-sm text-emerald-700">${pgbEsc(cfg.plan2Name)}</span>
+                <span data-plan-check="2" class="hidden w-5 h-5 rounded-full bg-emerald-600 text-white items-center justify-center absolute -bottom-2.5 left-1/2 -translate-x-1/2 shadow">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        ` : '';
+
+        const planDataJson = JSON.stringify({
+          1: { price: p1Price, mrp: p1Mrp, pct: p1Pct, url: p1BuyHref, cta: p1CtaLabel },
+          2: { price: p2Price, mrp: p2Mrp, pct: p2Pct, url: p2BuyHref, cta: p1CtaLabel }
+        });
+
+        const bannerVisual = cfg.thumbnail
+          ? `<img src="${pgbEsc(cfg.thumbnail)}" alt="${pgbEsc(displayTitle)}" class="w-full aspect-video object-cover rounded-xl border border-slate-100" />`
+          : `<div class="w-full aspect-video rounded-xl bg-gradient-to-br from-[#5a4bda] to-indigo-700 flex items-center justify-center text-white font-black text-2xl">${pgbEsc(displayTitle.slice(0, 2).toUpperCase())}</div>`;
+
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${pgbEsc(displayTitle)} | Mendorbit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></scr` + `ipt>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+    details summary::-webkit-details-marker { display: none; }
+  </sty` + `le>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- TOP HEADER -->
+  <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-40 px-4 lg:px-6 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <button type="button" id="mob-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100" aria-label="Menu">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="${pgbEsc(base)}/logo.png" alt="Mendorbit" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'" />
+        <span class="font-extrabold text-lg tracking-tight text-slate-900">Mendorbit</span>
+      </a>
+      ${cfg.headerPill ? `<a href="${pgbEsc(base)}/batches.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition truncate max-w-[200px]"><span>${pgbEsc(cfg.headerPill)}</span><svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>` : ''}
+    </div>
+    <div id="hdr-auth-area" class="flex items-center gap-2.5">
+      <a href="${pgbEsc(base)}/index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">Student Portal</a>
+    </div>
+  </header>
+
+  <div class="flex flex-1">
+    <!-- LEFT SIDEBAR -->
+    <aside id="left-sidebar" class="hidden lg:flex flex-col w-60 bg-white border-r border-slate-200 flex-shrink-0 sticky top-16 h-[calc(100vh-4rem)] p-3 space-y-1">
+      <div class="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Learn Online</div>
+      <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Study Dashboard</span>
+      </a>
+      <a href="${pgbEsc(base)}/batches.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-[#eef2ff] text-[#5a4bda] transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Batches</span>
+      </a>
+      <a href="https://mendorbit.in/contact" target="_blank" rel="noopener" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Help &amp; Support</span>
+      </a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 min-w-0 pb-14">
+      <!-- BACK BAR -->
+      <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-2.5 flex items-center justify-between">
+        <a href="${pgbEsc(base)}/batches.html" class="inline-flex items-center gap-1.5 text-sm font-bold text-slate-700 hover:text-[#5a4bda] transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>All Batches</span>
+        </a>
+      </div>
+
+      <!-- PURPLE GRADIENT HERO -->
+      <div class="relative overflow-hidden px-5 sm:px-8 py-7 text-white" style="background: linear-gradient(135deg, #5a4bda 0%, #6d5ae6 60%, #7c6bf2 100%);">
+        <div class="pointer-events-none absolute -right-8 -top-8 w-56 h-56 rounded-3xl bg-white/10 rotate-12"></div>
+        <div class="pointer-events-none absolute right-24 bottom-0 w-32 h-32 rounded-2xl bg-white/5 -rotate-6"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+          <h1 class="text-xl sm:text-2xl lg:text-[26px] font-extrabold tracking-tight">${pgbEsc(displayTitle)}</h1>
+        </div>
+      </div>
+
+      <!-- SUB-NAV & ACTION BUTTONS -->
+      <div class="bg-white border-b border-slate-200 px-4 sm:px-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          <nav class="flex items-center gap-6 overflow-x-auto text-xs sm:text-[13px] font-bold text-slate-500">
+            <a href="#section-description" class="py-3.5 border-b-2 border-[#5a4bda] text-[#5a4bda] whitespace-nowrap">Description</a>
+            <a href="#section-specs" class="py-3.5 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap">Batch Specs</a>
+            ${cfg.otherDetails.length ? '<a href="#section-other" class="py-3.5 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap">Other Details</a>' : ''}
+            ${cfg.faqs.length ? '<a href="#section-faqs" class="py-3.5 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap">FAQ&apos;s</a>' : ''}
+          </nav>
+          <div class="flex items-center gap-2 py-2">
+            <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
+              <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>Share Batch</span>
+            </button>
+            ${cfg.announcement ? `
+            <button type="button" id="btn-announcement" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
+              <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span>Announcement</span>
+            </button>` : ''}
+          </div>
+        </div>
+      </div>
+
+      ${cfg.announcement ? `<div id="announcement-banner" class="hidden max-w-7xl mx-auto px-4 sm:px-8 pt-4"><div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl px-4 py-3 text-xs font-semibold flex items-center justify-between gap-3"><span>${pgbEsc(cfg.announcement)}</span><button type="button" onclick="this.parentElement.parentElement.classList.add('hidden')" class="text-amber-600 font-bold">Dismiss</button></div></div>` : ''}
+
+      <!-- CONTENT GRID -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- LEFT OVERVIEW CARDS -->
+        <div class="lg:col-span-8 space-y-6">
+          <!-- PLAN + BATCH INCLUDES -->
+          <section id="section-description" class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            ${planSwitcherHtml}
+            <details open class="group border border-slate-200 rounded-xl p-4 sm:p-5 bg-white">
+              <summary class="list-none cursor-pointer flex items-center justify-between text-sm sm:text-base font-extrabold text-slate-900">
+                <span>Batch Includes</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div id="plan-1-stars" class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-4">
+                ${renderStarItems(cfg.starFeatures)}
+              </div>
+              ${p2Enabled ? `<div id="plan-2-stars" class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-4">${renderStarItems(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures)}</div>` : ''}
+            </details>
+          </section>
+
+          <!-- THIS BATCH INCLUDES -->
+          <section id="section-specs" class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <h2 class="text-lg font-extrabold text-slate-900 mb-4">This Batch Includes</h2>
+            <div class="space-y-4">
+              ${specHtml}
+            </div>
+          </section>
+
+          ${demosHtml}
+          ${otherHtml}
+          ${faqsHtml}
+        </div>
+
+        <!-- RIGHT STICKY BUY CARD -->
+        <aside class="lg:col-span-4 lg:sticky lg:top-20">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4">
+            ${bannerVisual}
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-1.5 text-slate-600 font-semibold min-w-0 truncate">
+                <svg class="w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <span class="truncate">${pgbEsc(cfg.aspirant || 'All Aspirants')}</span>
+              </div>
+              ${cfg.language ? `<span class="px-2.5 py-0.5 rounded-md border border-slate-200 text-[11px] font-bold text-slate-700 uppercase flex-shrink-0">${pgbEsc(cfg.language)}</span>` : ''}
+            </div>
+
+            <div class="pt-1">
+              <div class="flex items-baseline gap-2.5">
+                <span id="card-price" class="text-2xl font-extrabold text-[#5a4bda]">${p1PriceLabel}</span>
+                ${p1Price > 0 && p1Mrp > p1Price ? `<span id="card-mrp" class="text-sm text-slate-400 line-through font-semibold">₹${p1Mrp.toLocaleString('en-IN')}</span>` : `<span id="card-mrp" class="hidden"></span>`}
+              </div>
+              <div id="card-discount-wrap" class="mt-2 ${p1Pct > 0 ? '' : 'hidden'}">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-extrabold">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".5" fill="currentColor"/><circle cx="14.5" cy="14.5" r=".5" fill="currentColor"/></svg>
+                  <span id="card-discount-text">${p1Pct}% OFF</span>
+                </span>
+              </div>
+            </div>
+
+            <a id="card-buy-btn" href="${pgbEsc(p1BuyHref)}" class="block w-full py-3.5 rounded-xl bg-[#5a4bda] hover:bg-[#4938c7] text-white font-extrabold text-sm text-center tracking-wide shadow-sm transition">
+              ${pgbEsc(p1CtaLabel)}
+            </a>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function() {
+      const plans = ${planDataJson};
+      document.querySelectorAll('[data-plan-btn]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = btn.getAttribute('data-plan-btn');
+          const d = plans[p];
+          if (!d) return;
+          document.querySelectorAll('.plan-card').forEach(c => {
+            const active = c.getAttribute('data-plan-btn') === p;
+            c.classList.toggle('border-2', active);
+            c.classList.toggle('border-[#5a4bda]', active && p === '1');
+            c.classList.toggle('border-emerald-500', active && p === '2');
+            c.classList.toggle('border', !active);
+            c.classList.toggle('border-slate-200', !active);
+          });
+          document.querySelectorAll('[data-plan-check]').forEach(chk => {
+            const match = chk.getAttribute('data-plan-check') === p;
+            chk.classList.toggle('hidden', !match);
+            chk.classList.toggle('flex', match);
+          });
+          const s1 = document.getElementById('plan-1-stars');
+          const s2 = document.getElementById('plan-2-stars');
+          if (s1 && s2) {
+            s1.classList.toggle('hidden', p !== '1');
+            s2.classList.toggle('hidden', p !== '2');
+          }
+          const priceEl = document.getElementById('card-price');
+          const mrpEl = document.getElementById('card-mrp');
+          const discWrap = document.getElementById('card-discount-wrap');
+          const discTxt = document.getElementById('card-discount-text');
+          const buyBtn = document.getElementById('card-buy-btn');
+          if (priceEl) priceEl.textContent = d.price === null ? '₹—' : (d.price === 0 ? 'FREE' : '₹' + d.price.toLocaleString('en-IN'));
+          if (mrpEl) {
+            if (d.price > 0 && d.mrp > d.price) {
+              mrpEl.textContent = '₹' + d.mrp.toLocaleString('en-IN');
+              mrpEl.className = 'text-sm text-slate-400 line-through font-semibold';
+            } else {
+              mrpEl.className = 'hidden';
+            }
+          }
+          if (discWrap && discTxt) {
+            discWrap.classList.toggle('hidden', !(d.pct > 0));
+            discTxt.textContent = d.pct + '% OFF';
+          }
+          if (buyBtn && d.url) buyBtn.setAttribute('href', d.url);
+        });
+      });
+
+      const shareBtn = document.getElementById('btn-share-batch');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+          const shareUrl = window.location.href;
+          if (navigator.share) {
+            try { await navigator.share({ title: document.title, url: shareUrl }); return; } catch (e) {}
+          }
+          try {
+            await navigator.clipboard.writeText(shareUrl);
+            shareBtn.querySelector('span').textContent = 'Link Copied!';
+            setTimeout(() => { shareBtn.querySelector('span').textContent = 'Share Batch'; }, 1800);
+          } catch (e) {}
+        });
+      }
+
+      const annBtn = document.getElementById('btn-announcement');
+      const annBanner = document.getElementById('announcement-banner');
+      if (annBtn && annBanner) {
+        annBtn.addEventListener('click', () => annBanner.classList.toggle('hidden'));
+      }
+
+      const loadMoreFaqs = document.getElementById('btn-load-more-faqs');
+      if (loadMoreFaqs) {
+        loadMoreFaqs.addEventListener('click', () => {
+          document.querySelectorAll('.faq-item.hidden').forEach(el => el.classList.remove('hidden'));
+          loadMoreFaqs.remove();
+        });
+      }
+
+      const mobBtn = document.getElementById('mob-menu-btn');
+      const sidebar = document.getElementById('left-sidebar');
+      if (mobBtn && sidebar) {
+        mobBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('hidden');
+          sidebar.classList.toggle('fixed');
+          sidebar.classList.toggle('inset-y-16');
+          sidebar.classList.toggle('left-0');
+          sidebar.classList.toggle('z-50');
+        });
+      }
+
+      try {
+        const rawUser = localStorage.getItem('mendorbit_sso_user');
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          const firstName = (u.displayName || u.name || u.email || 'Student').split(' ')[0];
+          const authArea = document.getElementById('hdr-auth-area');
+          if (authArea) {
+            authArea.innerHTML = '<a href="${pgbEsc(base)}/index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 transition">Hi, ' + firstName.replace(/</g, '&lt;') + '</a>';
+          }
+        }
+      } catch (e) {}
+    })();
+  </scr` + `ipt>
+</body>
+</html>`;
+      }
+
+      let pgbTimer = null;
+      let lastGeneratedHtml = '';
+
+      function renderPageBuilderPreview() {
+        const cfg = readPageBuilderConfig();
+        lastGeneratedHtml = generateStandaloneBatchHtml(cfg);
+        const iframe = document.getElementById('pgb-live-iframe');
+        const fname = document.getElementById('pgb-preview-filename');
+        if (fname) fname.textContent = `${cfg.slug}.html`;
+        if (iframe) iframe.srcdoc = lastGeneratedHtml;
+      }
+
+      function schedulePageBuilderRender() {
+        clearTimeout(pgbTimer);
+        pgbTimer = setTimeout(renderPageBuilderPreview, 120);
+      }
+
+      document.querySelectorAll('.pgb-field').forEach(el => {
+        el.addEventListener('input', schedulePageBuilderRender);
+        el.addEventListener('change', schedulePageBuilderRender);
+      });
+
+      const enablePlan2Chk = document.getElementById('pgb-enable-plan2');
+      if (enablePlan2Chk) {
+        enablePlan2Chk.addEventListener('change', () => {
+          document.getElementById('pgb-plan2-fields')?.classList.toggle('hidden', !enablePlan2Chk.checked);
+          renderPageBuilderPreview();
+        });
+      }
+
+      document.getElementById('pgb-import-batch')?.addEventListener('change', (e) => {
+        const batchId = e.target.value;
+        if (!batchId) return;
+        const b = loadedBatches.find(item => item.id === batchId);
+        if (!b) return;
+        document.getElementById('pgb-title').value = b.title || '';
+        document.getElementById('pgb-slug').value = pgbSlugify(b.title || b.id);
+        document.getElementById('pgb-header-pill').value = b.displayTag || (Array.isArray(b.targetClasses) ? b.targetClasses.join(', ') : b.targetClass) || '';
+        document.getElementById('pgb-thumbnail').value = b.thumbnail || '';
+        document.getElementById('pgb-aspirant').value = b.displayTag ? `For ${b.displayTag} Aspirants` : '';
+        document.getElementById('pgb-language').value = b.language || '';
+        document.getElementById('pgb-price').value = b.price != null ? b.price : '';
+        document.getElementById('pgb-mrp').value = b.originalPrice != null ? b.originalPrice : '';
+        document.getElementById('pgb-buy-url').value = getBatchPaymentLink(b);
+        document.getElementById('pgb-duration').value = b.startDate || '';
+        renderPageBuilderPreview();
+      });
+
+      document.getElementById('pgb-btn-reset')?.addEventListener('click', () => {
+        document.querySelectorAll('#admin-tab-page-builder .pgb-field').forEach(el => {
+          if (el.type === 'checkbox') el.checked = false;
+          else el.value = '';
+        });
+        document.getElementById('pgb-plan2-fields')?.classList.add('hidden');
+        const sel = document.getElementById('pgb-import-batch');
+        if (sel) sel.value = '';
+        renderPageBuilderPreview();
+      });
+
+      document.getElementById('pgb-btn-copy')?.addEventListener('click', async () => {
+        if (!lastGeneratedHtml) renderPageBuilderPreview();
+        try {
+          await navigator.clipboard.writeText(lastGeneratedHtml);
+          alert('Standalone HTML code copied to clipboard!');
+        } catch (err) {
+          alert('Unable to copy automatically. Please use Download HTML.');
+        }
+      });
+
+      document.getElementById('pgb-btn-open-tab')?.addEventListener('click', () => {
+        if (!lastGeneratedHtml) renderPageBuilderPreview();
+        const blob = new Blob([lastGeneratedHtml], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      });
+
+      document.getElementById('pgb-btn-download')?.addEventListener('click', () => {
+        const cfg = readPageBuilderConfig();
+        const html = generateStandaloneBatchHtml(cfg);
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${cfg.slug}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+
+      document.getElementById('pgb-view-desktop')?.addEventListener('click', () => {
+        const iframe = document.getElementById('pgb-live-iframe');
+        if (iframe) iframe.style.width = '100%';
+        document.getElementById('pgb-view-desktop')?.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        document.getElementById('pgb-view-mobile')?.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+      });
+
+      document.getElementById('pgb-view-mobile')?.addEventListener('click', () => {
+        const iframe = document.getElementById('pgb-live-iframe');
+        if (iframe) iframe.style.width = '390px';
+        document.getElementById('pgb-view-mobile')?.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        document.getElementById('pgb-view-desktop')?.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+      });
+
+      renderPageBuilderPreview();
       updateBatchLivePreview();
     });
   </script>
