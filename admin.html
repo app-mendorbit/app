@@ -2334,8 +2334,8 @@
             return '<div class="col-span-full text-xs text-slate-400 italic py-2">Add batch features in Section 3 to display them here.</div>';
           }
           return items.map(item => `
-            <div class="group flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200/75 bg-slate-50/55 hover:bg-white hover:border-indigo-200 hover:-translate-y-0.5 hover:shadow-sm transition duration-200">
-              <span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100/90 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">${starSvg}</span>
+            <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-[#f5f6f8] hover:bg-[#eef0f6] transition">
+              <span class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-2xs">${starSvg}</span>
               <span class="text-xs sm:text-[13px] font-bold text-slate-800 leading-snug">${pgbEsc(item)}</span>
             </div>
           `).join('');
@@ -2369,22 +2369,19 @@
         }
 
         const specHtml = specRows.length ? specRows.map(r => `
-          <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50/65 border border-slate-200/70 hover:bg-white hover:border-indigo-200/80 transition">
-            <span class="w-9 h-9 rounded-xl ${r.iconBg} flex items-center justify-center flex-shrink-0 shadow-2xs">${r.icon}</span>
-            <div class="text-[13px] text-slate-700 leading-snug">
-              ${r.label ? `<div class="font-extrabold text-slate-950">${pgbEsc(r.label)}</div><div ${r.valId ? `id="${r.valId}"` : ''} class="text-slate-600 font-medium mt-0.5">${pgbEsc(r.value)}</div>` : `<div class="font-bold text-slate-800">${pgbEsc(r.value)}</div>`}
+          <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-[#f5f6f8]">
+            <span class="w-8 h-8 rounded-xl ${r.iconBg} flex items-center justify-center flex-shrink-0">${r.icon}</span>
+            <div class="text-[13px] text-slate-700 leading-snug min-w-0">
+              ${r.label ? `<div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${pgbEsc(r.label.replace(/:$/, ''))}</div><div ${r.valId ? `id="${r.valId}"` : ''} class="font-bold text-[#0b0f19] mt-0.5">${pgbEsc(r.value)}</div>` : `<div class="font-bold text-slate-800">${pgbEsc(r.value)}</div>`}
             </div>
           </div>
         `).join('') : '<div class="text-xs text-slate-400 italic">Fill Course Duration, Validity, Schedule, or Subjects to display batch details.</div>';
 
         const demosHtml = cfg.demos.length ? `
-          <section id="section-demos" class="premium-card rounded-3xl p-6 sm:p-7">
+          <section id="section-demos" class="bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)]">
             <div class="flex items-center justify-between gap-3 mb-5">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 mb-0.5">Preview Lectures</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Free Demo Videos</h2>
-              </div>
-              <span class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-extrabold">${cfg.demos.length} ${cfg.demos.length === 1 ? 'Video' : 'Videos'}</span>
+              <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Free Demo Videos</h2>
+              <span class="px-2.5 py-1 rounded-full bg-[#f5f6f8] text-slate-600 text-[11px] font-bold">${cfg.demos.length} ${cfg.demos.length === 1 ? 'Video' : 'Videos'}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               ${cfg.demos.map(d => {
@@ -2393,20 +2390,20 @@
                 const ytMatch = embed.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
                 const thumbImg = ytMatch ? `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg` : '';
                 return `
-                  <div class="group rounded-2xl border border-slate-200/90 overflow-hidden bg-slate-50 hover:border-indigo-300 hover:shadow-lg transition flex flex-col justify-between">
+                  <div class="group rounded-2xl overflow-hidden bg-[#f5f6f8] transition flex flex-col justify-between">
                     <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}">
                       ${thumbImg
                         ? `<img src="${pgbEsc(thumbImg)}" alt="${pgbEsc(d.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />`
                         : `<div class="w-full h-full bg-gradient-to-br from-slate-800 to-indigo-950 flex items-center justify-center text-white/70 text-xs font-bold">Video Lecture</div>`}
-                      <div class="absolute inset-0 bg-slate-950/30 group-hover:bg-slate-950/20 flex items-center justify-center transition">
-                        <span class="w-12 h-12 rounded-full bg-white/95 text-indigo-600 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <div class="absolute inset-0 bg-black/25 group-hover:bg-black/15 flex items-center justify-center transition">
+                        <span class="w-12 h-12 rounded-full bg-white/95 text-[#0b0f19] shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                           <svg class="w-5 h-5 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                         </span>
                       </div>
                     </div>
-                    <div class="px-4 py-3.5 bg-white flex items-center justify-between gap-2.5">
-                      <span class="text-xs font-extrabold text-slate-900 truncate">${pgbEsc(d.title)}</span>
-                      <button type="button" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold transition flex-shrink-0 inline-flex items-center gap-1.5 shadow-2xs">
+                    <div class="px-4 py-3 flex items-center justify-between gap-2.5">
+                      <span class="text-xs font-extrabold text-[#0b0f19] truncate">${pgbEsc(d.title)}</span>
+                      <button type="button" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}" class="px-3 py-1.5 rounded-xl bg-[#0b0f19] hover:bg-indigo-600 text-white text-[11px] font-bold transition flex-shrink-0 inline-flex items-center gap-1.5">
                         <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                         <span>Watch Video</span>
                       </button>
@@ -2420,19 +2417,19 @@
 
         const otherHtml = cfg.otherDetails.length ? `
           <section id="section-other">
-            <details open class="group premium-card rounded-3xl p-6 sm:p-7">
-              <summary class="list-none cursor-pointer flex items-center justify-between text-lg sm:text-xl font-extrabold text-slate-950">
+            <details open class="group bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)]">
+              <summary class="list-none cursor-pointer flex items-center justify-between text-base sm:text-lg font-extrabold text-[#0b0f19]">
                 <span>Other Details</span>
-                <svg class="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg class="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
               </summary>
               <div class="mt-4 divide-y divide-slate-100">
                 ${cfg.otherDetails.map((item, idx) => {
-                  const num = String(idx + 1).padStart(2, '0') + '.';
+                  const num = String(idx + 1).padStart(2, '0');
                   return `
-                    <div class="py-3.5 flex items-start gap-3.5 text-[13px] leading-relaxed text-slate-700 hover:bg-slate-50/70 px-2.5 rounded-xl transition">
-                      <span class="font-extrabold text-indigo-600 flex-shrink-0 w-7">${num}</span>
+                    <div class="py-3.5 flex items-start gap-4 text-[13px] leading-relaxed text-slate-600">
+                      <span class="text-xs font-extrabold text-slate-400 tabular-nums flex-shrink-0 pt-0.5">${num}</span>
                       <div>
-                        ${item.heading ? `<span class="font-extrabold text-slate-950">${pgbEsc(item.heading)}: </span>` : ''}
+                        ${item.heading ? `<span class="font-bold text-[#0b0f19]">${pgbEsc(item.heading)}: </span>` : ''}
                         <span>${pgbLinkify(item.body)}</span>
                       </div>
                     </div>
@@ -2444,29 +2441,26 @@
         ` : '';
 
         const faqsHtml = cfg.faqs.length ? `
-          <section id="section-faqs" class="premium-card rounded-3xl p-6 sm:p-7">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 mb-0.5">Questions</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Frequently Asked Questions</h2>
-              </div>
+          <section id="section-faqs" class="bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)]">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Frequently Asked Questions</h2>
               <div class="relative w-full sm:w-56">
-                <input type="search" id="faq-search-input" placeholder="Search questions..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:border-indigo-500 focus:bg-white transition" />
+                <input type="search" id="faq-search-input" placeholder="Search questions..." class="w-full pl-8 pr-3 py-2 bg-[#f5f6f8] rounded-xl text-xs font-medium outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition" />
                 <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </div>
             </div>
-            <div class="space-y-2.5" id="faq-list">
+            <div class="divide-y divide-slate-100" id="faq-list">
               ${cfg.faqs.map((f, idx) => `
-                <details class="faq-item group rounded-2xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:border-indigo-200 transition px-4 py-3.5 ${idx >= 5 ? 'hidden' : ''}">
-                  <summary class="list-none cursor-pointer flex items-center justify-between gap-3 text-[13px] font-bold text-slate-900">
+                <details class="faq-item group py-3.5 ${idx >= 5 ? 'hidden' : ''}">
+                  <summary class="list-none cursor-pointer flex items-center justify-between gap-4 text-xs sm:text-[13px] font-bold text-[#0b0f19]">
                     <span>${pgbEsc(f.q)}</span>
-                    <svg class="w-4 h-4 text-slate-500 flex-shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    <span class="faq-plus w-6 h-6 rounded-full bg-[#f5f6f8] flex items-center justify-center text-slate-600 text-sm font-bold flex-shrink-0 transition-transform duration-200">+</span>
                   </summary>
-                  <div class="pt-2.5 mt-2.5 border-t border-slate-200/70 text-[13px] text-slate-600 leading-relaxed">${pgbLinkify(f.a)}</div>
+                  <div class="pt-2.5 pr-8 text-xs sm:text-[13px] text-slate-600 leading-relaxed">${pgbLinkify(f.a)}</div>
                 </details>
               `).join('')}
             </div>
-            ${cfg.faqs.length > 5 ? `<div class="mt-3 text-right"><button type="button" id="btn-load-more-faqs" class="text-xs font-extrabold text-indigo-600 hover:underline">Show All Questions (${cfg.faqs.length})</button></div>` : ''}
+            ${cfg.faqs.length > 5 ? `<div class="mt-4 text-right"><button type="button" id="btn-load-more-faqs" class="text-xs font-bold text-indigo-600 hover:underline">Show All Questions (${cfg.faqs.length})</button></div>` : ''}
           </section>
         ` : '';
 
@@ -2612,50 +2606,37 @@
   <script src="${pgbEsc(base)}/assets/js/sso-manager.js"></scr` + `ipt>
   <style>
     html { scroll-behavior: smooth; overflow-x: hidden; }
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #fbfcfe; color: #0f172a; overflow-x: hidden; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f5f6f8; color: #0b0f19; overflow-x: hidden; }
     details summary::-webkit-details-marker { display: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .hero-mesh {
-      background-color: #ffffff;
-      background-image:
-        radial-gradient(at 88% 12%, rgba(99, 102, 241, 0.12) 0px, transparent 48%),
-        radial-gradient(at 15% 85%, rgba(14, 165, 233, 0.10) 0px, transparent 52%),
-        radial-gradient(at 52% 0%, rgba(168, 85, 247, 0.07) 0px, transparent 50%),
-        radial-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
-    }
-    .premium-card {
-      background: #ffffff;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.06);
-    }
-    .subnav-link.active { color: #ffffff; background: #0f172a; box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.22); border-color: transparent; }
+    .subnav-link { position: relative; color: #64748b; transition: color 0.2s ease; }
+    .subnav-link:hover { color: #0b0f19; }
+    .subnav-link.active { color: #0b0f19; font-weight: 700; }
+    .subnav-link.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: #4f46e5; border-radius: 9999px; }
+    details[open] .faq-plus { transform: rotate(45deg); color: #4f46e5; }
   </sty` + `le>
 </head>
-<body class="min-h-screen flex flex-col bg-[#fbfcfe] text-slate-900 pb-24 lg:pb-0">
-  <!-- FROSTED GLASS LIGHT HEADER WITH PROFILE WIDGET -->
-  <header class="h-16 bg-white/85 backdrop-blur-xl border-b border-slate-200/75 sticky top-0 z-40 px-4 sm:px-8 flex items-center justify-between gap-4">
+<body class="min-h-screen flex flex-col bg-[#f5f6f8] text-[#0b0f19] pb-24 lg:pb-12">
+  <!-- SINGLE CLEAN FROSTED HEADER -->
+  <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/75 sticky top-0 z-40 px-4 sm:px-8 flex items-center justify-between gap-4">
     <div class="flex items-center gap-3 min-w-0">
-      <a href="${pgbEsc(base)}/batches.html" class="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 transition flex-shrink-0" title="All Batches">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      </a>
       <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-2.5 flex-shrink-0">
         <img src="${pgbEsc(base)}/logo.png" alt="Mendorbit" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'" />
-        <span class="font-extrabold text-lg tracking-tight text-slate-950">Mendorbit</span>
+        <span class="font-extrabold text-lg tracking-tight text-[#0b0f19]">Mendorbit</span>
       </a>
-      ${cfg.headerPill ? `<span class="text-slate-300 hidden sm:inline">/</span><a id="hdr-class-pill" href="${pgbEsc(base)}/batches.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 text-xs font-bold text-slate-700 transition truncate max-w-[220px]"><span>${pgbEsc(cfg.headerPill)}</span><svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>` : ''}
+      ${cfg.headerPill ? `<span class="text-slate-300 hidden sm:inline">/</span><a id="hdr-class-pill" href="${pgbEsc(base)}/batches.html" class="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0b0f19] transition truncate max-w-[220px]"><span>${pgbEsc(cfg.headerPill)}</span></a>` : ''}
     </div>
 
-    <div class="flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0">
-      <a id="btn-nav-login" href="${pgbEsc(base)}/login.html?redirect=batches.html" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition">
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <a id="btn-nav-login" href="${pgbEsc(base)}/login.html?redirect=batches.html" class="px-4 py-2 bg-[#0b0f19] text-white font-bold text-xs rounded-xl transition">
         Login
       </a>
 
       <div id="nav-user-widget" class="relative hidden">
         <button id="nav-user-btn" type="button" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full border border-slate-200/80 bg-white hover:bg-slate-50 transition">
-          <span class="text-xs font-bold text-slate-700 hidden sm:inline">Hi, <span id="nav-user-name">Student</span></span>
-          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
+          <span class="text-xs font-semibold text-slate-700 hidden sm:inline">Hi, <span id="nav-user-name">Student</span></span>
+          <div class="w-7 h-7 rounded-full bg-[#0b0f19] text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
             <span id="nav-avatar-initial">S</span>
             <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
           </div>
@@ -2664,96 +2645,93 @@
 
         <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 hidden z-50">
           <div class="px-3 py-2 border-b border-slate-100 mb-1">
-            <div class="text-xs font-extrabold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
-            <div class="text-[10px] text-slate-400 truncate font-mono" id="dropdown-user-email">student@email.com</div>
+            <div class="text-xs font-bold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
+            <div class="text-[11px] text-slate-400 truncate font-mono" id="dropdown-user-email">student@email.com</div>
           </div>
-          <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
-            <span>Dashboard</span>
-          </a>
-          <a href="${pgbEsc(base)}/profile.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
-            <span>My Profile</span>
-          </a>
+          <a href="${pgbEsc(base)}/index.html" class="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Dashboard</a>
+          <a href="${pgbEsc(base)}/profile.html" class="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">My Profile</a>
           <div class="my-1 border-t border-slate-100"></div>
-          <button id="nav-btn-logout" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">
-            <span>Logout</span>
-          </button>
+          <button id="nav-btn-logout" type="button" class="w-full px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">Logout</button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- FULL-WIDTH LIGHT MAIN -->
-  <main class="flex-1 w-full pb-14">
-    <!-- ARCHITECTURAL EDITORIAL HERO SECTION -->
-    <section class="hero-mesh relative overflow-hidden border-b border-slate-200/80 px-4 sm:px-8 pt-6 pb-9 sm:pt-8 sm:pb-12">
-      <div class="max-w-7xl mx-auto relative z-10 space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-rose-200/90 text-rose-600 text-[11px] font-extrabold shadow-2xs">
-              <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-              <span>${pgbEsc(statusLine)}</span>
-            </span>
-            <div id="hero-classes-wrap" class="flex flex-wrap items-center gap-1.5">${classesHtml}</div>
-            ${cfg.stream ? `<span id="hero-stream-pill" class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-[11px] font-bold">${pgbEsc(cfg.stream)}</span>` : `<span id="hero-stream-pill" class="hidden"></span>`}
+  <!-- MAIN UNIFIED EDITORIAL LAYOUT -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 pt-6 lg:pt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-start">
+
+      <!-- LEFT COLUMN (UNIFIED HERO CARD + OVERVIEW / ANNOUNCEMENTS) -->
+      <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+
+        <!-- HERO ARCHITECTURAL SHOWCASE -->
+        <section class="bg-white rounded-[26px] p-6 sm:p-8 lg:p-9 shadow-[0_8px_32px_-12px_rgba(11,15,25,0.06)] space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2.5 text-xs">
+              <a href="${pgbEsc(base)}/batches.html" class="inline-flex items-center gap-1.5 font-semibold text-slate-500 hover:text-[#0b0f19] transition">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Batches</span>
+              </a>
+              <span class="text-slate-300">•</span>
+              <span id="hero-status-pill" class="inline-flex items-center gap-1.5 font-bold text-rose-600">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>${pgbEsc(statusLine)}</span>
+              </span>
+              ${cfg.stream ? `<span class="text-slate-300">•</span><span id="hero-stream-pill" class="font-bold text-indigo-600">${pgbEsc(cfg.stream)}</span>` : `<span id="hero-stream-pill" class="hidden"></span>`}
+            </div>
+
+            <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f5f6f8] hover:bg-slate-200/80 text-xs font-semibold text-slate-700 transition">
+              <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>Share</span>
+            </button>
           </div>
-          <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 hover:bg-white border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs transition">
-            <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            <span>Share Batch</span>
-          </button>
-        </div>
 
-        <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-[-0.025em] leading-[1.15] text-slate-950 max-w-4xl">${pgbEsc(displayTitle)}</h1>
+          <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.6rem] font-extrabold tracking-[-0.03em] leading-[1.12] text-[#0b0f19]">${pgbEsc(displayTitle)}</h1>
 
-        <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-700 font-bold pt-1">
-          ${cfg.language ? `<span id="hero-lang-chip" class="inline-flex items-center gap-1.5 bg-white/95 border border-slate-200/90 px-3 py-1.5 rounded-xl shadow-2xs">Medium: <strong class="text-slate-950 uppercase">${pgbEsc(cfg.language)}</strong></span>` : '<span id="hero-lang-chip" class="hidden"></span>'}
-          ${durationText ? `<span id="hero-duration-chip" class="inline-flex items-center gap-1.5 bg-white/95 border border-slate-200/90 px-3 py-1.5 rounded-xl shadow-2xs">Duration: <strong class="text-slate-950">${pgbEsc(durationText)}</strong></span>` : ''}
-          ${cfg.validity ? `<span class="inline-flex items-center gap-1.5 bg-white/95 border border-slate-200/90 px-3 py-1.5 rounded-xl shadow-2xs">Validity: <strong class="text-slate-950">${pgbEsc(cfg.validity)}</strong></span>` : ''}
-        </div>
-      </div>
-    </section>
+          <div id="hero-classes-wrap" class="flex flex-wrap items-center gap-2">${classesHtml}</div>
 
-    <!-- GLASS PILL STICKY SUB-NAV (SCROLLBAR-FREE) -->
-    <div class="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-16 z-30 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto py-2.5 flex items-center justify-between gap-2">
-        <nav class="no-scrollbar flex items-center gap-2 overflow-x-auto text-xs font-bold text-slate-600 max-w-full">
-          <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition">Description</a>
-          <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition">Batch Specs</a>
-          ${cfg.demos.length ? '<a href="#section-demos" data-tab-view="overview" data-spy="section-demos" class="subnav-link px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition">Demo Videos</a>' : ''}
-          ${cfg.otherDetails.length ? '<a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition">Other Details</a>' : ''}
-          ${cfg.faqs.length ? '<a href="#section-faqs" data-tab-view="overview" data-spy="section-faqs" class="subnav-link px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition">FAQ&apos;s</a>' : ''}
-          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-link px-3.5 py-1.5 rounded-full hover:text-slate-950 whitespace-nowrap transition inline-flex items-center gap-1.5">
-            <span>Announcements</span>
-            <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold">0</span>
-          </button>
-        </nav>
-      </div>
-    </div>
+          <!-- APPLE-STYLE SEGMENTED SPEC STRIP -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 rounded-2xl border border-slate-200/75 bg-[#f8f9fb] overflow-hidden">
+            ${cfg.language ? `<div id="hero-lang-chip" class="px-4 py-3"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Medium</div><div class="text-xs font-extrabold text-[#0b0f19] mt-0.5 uppercase">${pgbEsc(cfg.language)}</div></div>` : '<div id="hero-lang-chip" class="hidden"></div>'}
+            ${durationText ? `<div id="hero-duration-chip" class="px-4 py-3"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</div><div class="text-xs font-extrabold text-[#0b0f19] mt-0.5">${pgbEsc(durationText)}</div></div>` : ''}
+            ${cfg.validity ? `<div class="px-4 py-3"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Validity</div><div class="text-xs font-extrabold text-[#0b0f19] mt-0.5">${pgbEsc(cfg.validity)}</div></div>` : ''}
+          </div>
 
-    <!-- MAIN 12-COLUMN WORKSPACE -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-7 grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
-      <div class="lg:col-span-8 space-y-6">
+          <!-- CLEAN UNDERLINE SUB-NAV (SCROLLBAR-FREE) -->
+          <div class="border-b border-slate-200/80 pt-1">
+            <nav class="no-scrollbar flex items-center gap-6 overflow-x-auto text-[13px] font-semibold">
+              <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active py-3 whitespace-nowrap">Description</a>
+              <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link py-3 whitespace-nowrap">Batch Specs</a>
+              ${cfg.demos.length ? '<a href="#section-demos" data-tab-view="overview" data-spy="section-demos" class="subnav-link py-3 whitespace-nowrap">Demo Videos</a>' : ''}
+              ${cfg.otherDetails.length ? '<a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link py-3 whitespace-nowrap">Other Details</a>' : ''}
+              ${cfg.faqs.length ? '<a href="#section-faqs" data-tab-view="overview" data-spy="section-faqs" class="subnav-link py-3 whitespace-nowrap">FAQ&apos;s</a>' : ''}
+              <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-link py-3 whitespace-nowrap inline-flex items-center gap-1.5">
+                <span>Announcements</span>
+                <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold">0</span>
+              </button>
+            </nav>
+          </div>
+        </section>
+
         <!-- OVERVIEW PANELS -->
         <div id="overview-view" class="space-y-6">
-          <section id="section-description" class="premium-card rounded-3xl p-6 sm:p-7">
+          <section id="section-description" class="bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)]">
             ${planSwitcherHtml}
-            <details open class="group border border-slate-200/80 rounded-2xl p-4 sm:p-5 bg-slate-50/40">
-              <summary class="list-none cursor-pointer relative flex items-center justify-center text-base sm:text-lg font-extrabold text-slate-950">
+            <details open class="group">
+              <summary class="list-none cursor-pointer relative flex items-center justify-center text-base sm:text-lg font-extrabold text-[#0b0f19] pb-1">
                 <span class="text-center">Batch Includes</span>
-                <svg class="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180 absolute right-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg class="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180 absolute right-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
               </summary>
-              <div id="plan-1-stars" class="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div id="plan-1-stars" class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 ${renderStarItems(cfg.starFeatures)}
               </div>
-              ${p2Enabled ? `<div id="plan-2-stars" class="hidden mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">${renderStarItems(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures)}</div>` : ''}
+              ${p2Enabled ? `<div id="plan-2-stars" class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">${renderStarItems(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures)}</div>` : ''}
             </details>
           </section>
 
-          <section id="section-specs" class="premium-card rounded-3xl p-6 sm:p-7">
-            <div class="mb-4">
-              <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-sky-600 mb-0.5">Program Architecture</div>
-              <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">This Batch Includes</h2>
-            </div>
-            <div class="space-y-3">
+          <section id="section-specs" class="bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">This Batch Includes</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${specHtml}
             </div>
           </section>
@@ -2764,32 +2742,28 @@
         </div>
 
         <!-- DEDICATED ANNOUNCEMENTS TAB PANEL -->
-        <section id="announcements-view" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+        <section id="announcements-view" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
           <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
             <div>
-              <h2 class="text-lg font-extrabold text-slate-950">Batch Announcements</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Official updates, notices, and schedule alerts for this batch</p>
+              <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Batch Announcements</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Official updates, notices, and alerts for this batch</p>
             </div>
-            <button type="button" id="btn-back-to-overview" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back to Overview</button>
+            <button type="button" id="btn-back-to-overview" class="px-3.5 py-1.5 rounded-xl bg-[#f5f6f8] hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back</button>
           </div>
-          <div id="live-announcements-feed" class="space-y-4">
-            <div class="text-center py-10 text-xs text-slate-400">Checking for announcements...</div>
+          <div id="live-announcements-feed" class="space-y-3">
+            <div class="text-center py-8 text-xs text-slate-400">Checking for announcements...</div>
           </div>
         </section>
       </div>
 
-      <!-- RIGHT STICKY SIGNATURE PURCHASE CARD -->
-      <aside class="lg:col-span-4 lg:sticky lg:top-32">
-        <div class="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)]">
-          <div class="h-1.5 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-sky-500"></div>
-          <div class="p-5 space-y-4">
-            <div id="card-thumb-container" class="rounded-2xl overflow-hidden border border-slate-200/75">${bannerVisual}</div>
+      <!-- RIGHT STICKY SIGNATURE CHECKOUT CARD (RIDES ALONGSIDE FROM TOP TO BOTTOM!) -->
+      <aside class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
+        <div class="bg-white rounded-[26px] border border-slate-200/80 overflow-hidden shadow-[0_24px_60px_-15px_rgba(11,15,25,0.12)]">
+          <div id="card-thumb-container" class="aspect-[16/9] w-full bg-slate-100 overflow-hidden">${bannerVisual}</div>
+          <div class="p-5 sm:p-6 space-y-4">
             <div class="flex items-center justify-between gap-2 text-xs">
-              <div class="flex items-center gap-1.5 text-slate-700 font-bold min-w-0 truncate">
-                <svg class="w-4 h-4 text-indigo-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                <span id="card-aspirant" class="truncate">${pgbEsc(cfg.aspirant || 'All Aspirants')}</span>
-              </div>
-              <span id="card-lang" class="px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-extrabold text-slate-700 uppercase flex-shrink-0 ${cfg.language ? '' : 'hidden'}">${pgbEsc(cfg.language)}</span>
+              <span id="card-aspirant" class="font-bold text-slate-600 truncate">${pgbEsc(cfg.aspirant || 'All Aspirants')}</span>
+              <span id="card-lang" class="px-2.5 py-1 rounded-lg bg-[#f5f6f8] text-[10px] font-extrabold text-slate-700 uppercase tracking-wider flex-shrink-0 ${cfg.language ? '' : 'hidden'}">${pgbEsc(cfg.language)}</span>
             </div>
 
             <!-- PRICE & CROSSED MRP + INLINE COMPACT BUY NOW BUTTON ON SAME ROW -->
@@ -2799,8 +2773,8 @@
                   <span id="card-mrp" class="text-xs text-slate-400 line-through font-bold">₹${p1Mrp.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                  <span id="card-price" class="text-2xl font-extrabold text-slate-950 leading-none">${p1PriceLabel}</span>
-                  <span id="card-discount-wrap" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-extrabold ${p1Pct > 0 ? '' : 'hidden'}">
+                  <span id="card-price" class="text-2xl font-extrabold text-[#0b0f19] leading-none">${p1PriceLabel}</span>
+                  <span id="card-discount-wrap" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-extrabold ${p1Pct > 0 ? '' : 'hidden'}">
                     <span id="card-discount-text">${p1Pct}% OFF</span>
                   </span>
                 </div>
@@ -2810,10 +2784,10 @@
                   <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                   <span>Enrolled</span>
                 </div>
-                <div class="text-[11px] font-semibold text-slate-400">Active Access</div>
+                <div class="text-[11px] font-medium text-slate-400">Active Access</div>
               </div>
 
-              <button type="button" id="card-buy-btn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-xs tracking-wide shadow-md shadow-indigo-500/20 transition flex-shrink-0 inline-flex items-center gap-1.5">
+              <button type="button" id="card-buy-btn" class="px-5 py-2.5 rounded-xl bg-[#0b0f19] hover:bg-indigo-600 text-white font-bold text-xs tracking-wide shadow-sm transition flex-shrink-0 inline-flex items-center gap-1.5">
                 <span id="card-buy-label">${pgbEsc(p1CtaLabel)}</span>
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
@@ -2842,7 +2816,7 @@
       </div>
       <div class="text-[10px] font-semibold text-slate-400">Active Access</div>
     </div>
-    <button type="button" id="mob-buy-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold tracking-wide shadow-sm transition flex-shrink-0">${pgbEsc(p1CtaLabel)}</button>
+    <button type="button" id="mob-buy-btn" class="px-5 py-2.5 rounded-xl bg-[#0b0f19] hover:bg-indigo-600 text-white text-xs font-bold tracking-wide shadow-sm transition flex-shrink-0">${pgbEsc(p1CtaLabel)}</button>
   </div>
 
   <!-- COMPARE PLANS MODAL -->
@@ -3263,7 +3237,7 @@
               const lBadge = document.getElementById('card-lang');
               if (lBadge) { lBadge.textContent = b.language; lBadge.classList.remove('hidden'); }
               const lChip = document.getElementById('hero-lang-chip');
-              if (lChip) { lChip.innerHTML = 'Medium: <strong class="text-slate-900 uppercase">' + esc(b.language) + '</strong>'; lChip.classList.remove('hidden'); }
+              if (lChip) { lChip.innerHTML = '<div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Medium</div><div class="text-xs font-extrabold text-[#0b0f19] mt-0.5 uppercase">' + esc(b.language) + '</div>'; lChip.classList.remove('hidden'); }
             }
             const thumbSafe = safeUrl(b.thumbnail);
             if (thumbSafe) {

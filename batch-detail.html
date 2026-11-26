@@ -31,57 +31,48 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     html { scroll-behavior: smooth; overflow-x: hidden; }
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #fbfcfe; color: #0f172a; overflow-x: hidden; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f5f6f8; color: #0b0f19; overflow-x: hidden; }
     details summary::-webkit-details-marker { display: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .hero-mesh {
-      background-color: #ffffff;
-      background-image:
-        radial-gradient(at 88% 12%, rgba(99, 102, 241, 0.12) 0px, transparent 48%),
-        radial-gradient(at 15% 85%, rgba(14, 165, 233, 0.10) 0px, transparent 52%),
-        radial-gradient(at 52% 0%, rgba(168, 85, 247, 0.07) 0px, transparent 50%),
-        radial-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+    .nav-tab { position: relative; color: #64748b; transition: color 0.2s ease; }
+    .nav-tab:hover { color: #0b0f19; }
+    .nav-tab.active { color: #0b0f19; font-weight: 700; }
+    .nav-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: #4f46e5;
+      border-radius: 9999px;
     }
-    .subnav-pill.active {
-      background: #0f172a;
-      color: #ffffff;
-      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.22);
-    }
-    .premium-card {
-      background: #ffffff;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.06);
-    }
+    details[open] .faq-plus { transform: rotate(45deg); color: #4f46e5; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#fbfcfe] text-slate-900 pb-24 lg:pb-0">
+<body class="min-h-screen flex flex-col bg-[#f5f6f8] text-[#0b0f19] pb-24 lg:pb-12">
 
-  <!-- FROSTED GLASS LIGHT HEADER -->
-  <header class="h-16 bg-white/85 backdrop-blur-xl border-b border-slate-200/75 sticky top-0 z-40 px-4 sm:px-8 flex items-center justify-between gap-4">
+  <!-- SINGLE CLEAN FROSTED TOPBAR -->
+  <header class="sticky top-0 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/75 px-4 sm:px-8 flex items-center justify-between gap-4">
     <div class="flex items-center gap-3 min-w-0">
-      <a href="/batches.html" class="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 transition flex-shrink-0" title="Back to All Batches">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-      </a>
       <a href="/index.html" class="flex items-center gap-2.5 flex-shrink-0">
         <img src="/logo.png" alt="Mendorbit" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'" />
-        <span class="font-extrabold text-lg tracking-tight text-slate-950">Mendorbit</span>
+        <span class="font-extrabold text-lg tracking-tight text-[#0b0f19]">Mendorbit</span>
       </a>
       <span class="text-slate-300 hidden sm:inline">/</span>
-      <a id="hdr-class-pill" href="/batches.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 text-xs font-bold text-slate-700 transition truncate max-w-[220px]">
-        <span id="hdr-class-text">Batch Overview</span>
-        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+      <a id="hdr-class-pill" href="/batches.html" class="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0b0f19] transition truncate max-w-[220px]">
+        <span id="hdr-class-text">All Batches</span>
       </a>
     </div>
 
-    <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
-      <a id="btn-nav-login" href="/login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Login</a>
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <a id="btn-nav-login" href="/login.html" class="hidden px-4 py-2 rounded-xl bg-[#0b0f19] text-white text-xs font-bold">Login</a>
 
       <div id="nav-user-widget" class="relative hidden">
         <button id="nav-user-btn" type="button" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full border border-slate-200/80 bg-white hover:bg-slate-50 transition">
-          <span class="text-xs font-bold text-slate-700 hidden sm:inline">Hi, <span id="nav-user-name">Student</span></span>
-          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
+          <span class="text-xs font-semibold text-slate-700 hidden sm:inline">Hi, <span id="nav-user-name">Student</span></span>
+          <div class="w-7 h-7 rounded-full bg-[#0b0f19] text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
             <span id="nav-avatar-initial">S</span>
             <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
           </div>
@@ -89,200 +80,189 @@
         </button>
         <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 hidden z-50">
           <div class="px-3 py-2 border-b border-slate-100 mb-1">
-            <div class="text-xs font-extrabold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
-            <div class="text-[10px] text-slate-400 truncate font-mono" id="dropdown-user-email"></div>
+            <div class="text-xs font-bold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
+            <div class="text-[11px] text-slate-400 truncate font-mono" id="dropdown-user-email"></div>
           </div>
-          <a href="/index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Dashboard</a>
-          <a href="/batches.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">All Batches</a>
-          <a href="/profile.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">My Profile</a>
+          <a href="/index.html" class="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Dashboard</a>
+          <a href="/batches.html" class="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">All Batches</a>
+          <a href="/profile.html" class="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">My Profile</a>
           <div class="my-1 border-t border-slate-100"></div>
-          <button id="nav-btn-logout" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">Logout</button>
+          <button id="nav-btn-logout" type="button" class="w-full px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">Logout</button>
         </div>
       </div>
     </div>
   </header>
 
   <!-- LOADING -->
-  <div id="detail-loader" class="max-w-6xl mx-auto px-4 py-28 text-center flex-1 flex flex-col items-center justify-center">
-    <div class="w-11 h-11 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-    <p class="text-xs font-bold text-slate-500 mt-4 tracking-wide">Loading batch experience...</p>
+  <div id="detail-loader" class="flex-1 flex flex-col items-center justify-center py-28 px-4">
+    <div class="w-10 h-10 border-[3px] border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-xs font-semibold text-slate-500 mt-4">Preparing batch view...</p>
   </div>
 
   <!-- NOT FOUND -->
-  <div id="detail-error" class="hidden max-w-md mx-auto my-20 bg-white rounded-3xl border border-slate-200 p-8 text-center shadow-lg">
+  <div id="detail-error" class="hidden max-w-md mx-auto my-20 bg-white rounded-3xl border border-slate-200 p-8 text-center shadow-sm">
     <i data-lucide="alert-circle" class="w-10 h-10 text-rose-500 mx-auto mb-3"></i>
     <h2 class="text-lg font-extrabold text-slate-900">Batch Not Found</h2>
     <p class="text-xs text-slate-500 mt-1">This batch may have been removed or is unavailable right now.</p>
-    <a href="/batches.html" class="inline-block mt-5 px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold">Browse All Batches</a>
+    <a href="/batches.html" class="inline-block mt-5 px-6 py-2.5 rounded-xl bg-[#0b0f19] text-white text-xs font-bold">Browse All Batches</a>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <main id="detail-main" class="hidden flex-1 w-full">
+  <!-- MAIN UNIFIED EDITORIAL SHOWCASE + WORKSPACE -->
+  <main id="detail-main" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 pt-6 lg:pt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-start">
 
-    <!-- EDITORIAL ARCHITECTURAL LIGHT HERO -->
-    <section class="hero-mesh border-b border-slate-200/80 px-4 sm:px-8 pt-6 pb-9 sm:pt-8 sm:pb-12">
-      <div class="max-w-7xl mx-auto space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-2" id="hero-badges"></div>
-          <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white border border-slate-200/90 shadow-2xs text-xs font-bold text-slate-700 transition">
-            <i data-lucide="share-2" class="w-3.5 h-3.5 text-indigo-600"></i>
-            <span>Share Batch</span>
-          </button>
-        </div>
+      <!-- LEFT COLUMN (HERO SHOWCASE + CONTENT FLOW) -->
+      <div class="lg:col-span-7 xl:col-span-8 space-y-6">
 
-        <div class="max-w-4xl space-y-3">
-          <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-[-0.025em] leading-[1.15] text-slate-950">Batch Title</h1>
-          <p id="hero-subtitle" class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl"></p>
-        </div>
+        <!-- HERO ARCHITECTURAL CARD -->
+        <section class="bg-white rounded-[26px] p-6 sm:p-8 lg:p-9 shadow-[0_8px_32px_-12px_rgba(11,15,25,0.06)] space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2.5 text-xs">
+              <a href="/batches.html" class="inline-flex items-center gap-1.5 font-semibold text-slate-500 hover:text-[#0b0f19] transition">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                <span>Batches</span>
+              </a>
+              <span class="text-slate-300">•</span>
+              <span id="hero-status-pill" class="inline-flex items-center gap-1.5 font-bold text-rose-600">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>Ongoing</span>
+              </span>
+              <span id="hero-stream-tag" class="hidden text-slate-300">•</span>
+              <span id="hero-stream-text" class="hidden font-bold text-indigo-600"></span>
+            </div>
 
-        <div class="flex flex-wrap items-center gap-2.5 pt-1" id="hero-meta-row"></div>
-        <div class="flex flex-wrap gap-3" id="hero-extra-links"></div>
-      </div>
-    </section>
-
-    <!-- GLASS SUB-NAVBAR -->
-    <div class="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-16 z-30 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto py-2.5 flex items-center justify-between gap-3">
-        <nav class="no-scrollbar flex items-center gap-2 overflow-x-auto max-w-full">
-          <a href="#sec-description" data-tab-view="overview" class="subnav-pill active px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Overview</a>
-          <a href="#sec-subjects" id="nav-link-subjects" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Subjects</a>
-          <a href="#sec-features" id="nav-link-features" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Batch Includes</a>
-          <a href="#sec-faculty" id="nav-link-faculty" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Faculty</a>
-          <a href="#sec-demo-video" id="nav-link-demo" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Demo Class</a>
-          <a href="#sec-faqs" id="nav-link-faqs" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">FAQ's</a>
-          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition inline-flex items-center gap-1.5">
-            <span>Announcements</span>
-            <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold">0</span>
-          </button>
-        </nav>
-      </div>
-    </div>
-
-    <!-- MAIN 12-COLUMN WORKSPACE -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-7 pb-14">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
-
-        <!-- LEFT: ARCHITECTURAL CONTENT PANELS -->
-        <div class="lg:col-span-8 space-y-6">
-          <div id="overview-view" class="space-y-6">
-
-            <!-- About Batch -->
-            <section id="sec-description" class="premium-card rounded-3xl p-6 sm:p-7 space-y-3">
-              <div class="text-center space-y-1 pb-2">
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Program Overview</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">About This Batch</h2>
-              </div>
-              <p id="detail-description" class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line"></p>
-            </section>
-
-            <!-- Batch Includes (Features Bento) -->
-            <section id="sec-features" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-5">
-              <div class="text-center space-y-1">
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Included Benefits</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Batch Includes</h2>
-              </div>
-              <div id="detail-features-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs font-semibold text-slate-800"></div>
-            </section>
-
-            <!-- Subjects Covered -->
-            <section id="sec-subjects" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
-              <div class="flex items-center justify-between gap-2">
-                <div>
-                  <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-sky-600">Curriculum Scope</div>
-                  <h2 class="text-lg font-extrabold text-slate-950">Subjects Covered</h2>
-                </div>
-              </div>
-              <div id="detail-subjects-list" class="flex flex-wrap gap-2.5"></div>
-            </section>
-
-            <!-- Faculty -->
-            <section id="sec-faculty" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-violet-600">Mentors</div>
-                <h2 class="text-lg font-extrabold text-slate-950">Know Your Teachers</h2>
-              </div>
-              <div id="detail-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
-            </section>
-
-            <!-- Demo Video Card with Lightbox -->
-            <section id="sec-demo-video" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-rose-600">Preview Session</div>
-                  <h2 class="text-lg font-extrabold text-slate-950">Orientation &amp; Demo Class</h2>
-                </div>
-                <button type="button" id="btn-demo-fullscreen" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-600 hover:text-white text-xs font-bold text-slate-700 transition inline-flex items-center gap-1.5">
-                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-                  <span>Fullscreen</span>
-                </button>
-              </div>
-              <div id="demo-video-wrap" class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-200/80 shadow-sm">
-                <iframe id="detail-demo-iframe" class="w-full h-full border-0" allowfullscreen></iframe>
-              </div>
-            </section>
-
-            <!-- FAQs -->
-            <section id="sec-faqs" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Answers</div>
-                <h2 class="text-lg font-extrabold text-slate-950">Frequently Asked Questions</h2>
-              </div>
-              <div id="detail-faqs-list" class="space-y-2.5"></div>
-            </section>
-
+            <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f5f6f8] hover:bg-slate-200/80 text-xs font-semibold text-slate-700 transition">
+              <i data-lucide="share-2" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span>Share</span>
+            </button>
           </div>
 
-          <!-- DEDICATED ANNOUNCEMENTS TAB PANEL -->
-          <section id="announcements-view" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
-            <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
-              <div>
-                <h2 class="text-lg font-extrabold text-slate-950">Batch Announcements</h2>
-                <p class="text-xs text-slate-500 mt-0.5">Official updates, schedule notices, and alerts for this batch</p>
-              </div>
-              <button type="button" id="btn-back-to-overview" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back to Overview</button>
+          <div class="space-y-3">
+            <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.6rem] font-extrabold tracking-[-0.03em] leading-[1.12] text-[#0b0f19]">Batch Title</h1>
+            <p id="hero-subtitle" class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl"></p>
+          </div>
+
+          <div id="hero-classes-wrap" class="flex flex-wrap items-center gap-2"></div>
+
+          <!-- APPLE-STYLE SEGMENTED SPEC BAR -->
+          <div id="hero-spec-strip" class="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 rounded-2xl border border-slate-200/75 bg-[#f8f9fb] overflow-hidden"></div>
+
+          <div class="flex flex-wrap gap-3" id="hero-extra-links"></div>
+
+          <!-- CLEAN UNDERLINE TAB NAVIGATION -->
+          <div class="border-b border-slate-200/80 pt-1">
+            <nav class="no-scrollbar flex items-center gap-6 overflow-x-auto text-[13px] font-semibold">
+              <a href="#sec-description" data-tab-view="overview" class="nav-tab active py-3 whitespace-nowrap">Overview</a>
+              <a href="#sec-features" id="nav-link-features" data-tab-view="overview" class="hidden nav-tab py-3 whitespace-nowrap">Includes</a>
+              <a href="#sec-subjects" id="nav-link-subjects" data-tab-view="overview" class="hidden nav-tab py-3 whitespace-nowrap">Subjects</a>
+              <a href="#sec-faculty" id="nav-link-faculty" data-tab-view="overview" class="hidden nav-tab py-3 whitespace-nowrap">Mentors</a>
+              <a href="#sec-demo-video" id="nav-link-demo" data-tab-view="overview" class="hidden nav-tab py-3 whitespace-nowrap">Demo Class</a>
+              <a href="#sec-faqs" id="nav-link-faqs" data-tab-view="overview" class="hidden nav-tab py-3 whitespace-nowrap">FAQs</a>
+              <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="nav-tab py-3 whitespace-nowrap inline-flex items-center gap-1.5">
+                <span>Announcements</span>
+                <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold">0</span>
+              </button>
+            </nav>
+          </div>
+        </section>
+
+        <div id="overview-view" class="space-y-6">
+          <!-- About Batch -->
+          <section id="sec-description" class="bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-3">
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">About This Batch</h2>
+            <p id="detail-description" class="text-[13px] sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line"></p>
+          </section>
+
+          <!-- Batch Includes -->
+          <section id="sec-features" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-5">
+            <div class="text-center">
+              <h2 class="text-lg font-extrabold text-[#0b0f19]">Batch Includes</h2>
             </div>
-            <div id="live-announcements-feed" class="space-y-3.5">
-              <div class="text-center py-8 text-xs text-slate-400">Checking for announcements...</div>
+            <div id="detail-features-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+          </section>
+
+          <!-- Subjects Covered -->
+          <section id="sec-subjects" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Subjects Covered</h2>
+            <div id="detail-subjects-list" class="flex flex-wrap gap-2"></div>
+          </section>
+
+          <!-- Faculty -->
+          <section id="sec-faculty" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Know Your Teachers</h2>
+            <div id="detail-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+          </section>
+
+          <!-- Demo Video -->
+          <section id="sec-demo-video" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Orientation &amp; Demo Class</h2>
+              <button type="button" id="btn-demo-fullscreen" class="px-3 py-1.5 rounded-xl bg-[#f5f6f8] hover:bg-[#0b0f19] hover:text-white text-xs font-bold text-slate-700 transition inline-flex items-center gap-1.5">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                <span>Fullscreen</span>
+              </button>
             </div>
+            <div id="demo-video-wrap" class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950">
+              <iframe id="detail-demo-iframe" class="w-full h-full border-0" allowfullscreen></iframe>
+            </div>
+          </section>
+
+          <!-- FAQs -->
+          <section id="sec-faqs" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-3">
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Frequently Asked Questions</h2>
+            <div id="detail-faqs-list" class="divide-y divide-slate-100"></div>
           </section>
         </div>
 
-        <!-- RIGHT STICKY SIGNATURE ENROLLMENT CARD -->
-        <aside class="lg:col-span-4 lg:sticky lg:top-32">
-          <div class="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)]">
-            <div class="h-1.5 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-sky-500"></div>
-            <div class="p-5 space-y-4">
-              <div id="sidebar-thumb" class="aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70"></div>
-
-              <div class="flex items-center justify-between gap-2 text-xs">
-                <span id="sidebar-aspirant" class="font-bold text-slate-700 truncate"></span>
-                <span id="sidebar-lang" class="px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-extrabold text-slate-700 uppercase flex-shrink-0"></span>
-              </div>
-
-              <!-- PRICE + INLINE CTA SAME ROW (NO SECURED/VERIFIED FILLER TEXT) -->
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                <div id="sidebar-price-block" class="min-w-0"></div>
-                <div id="sidebar-cta-container" class="flex-shrink-0"></div>
-              </div>
-
-              <div id="sidebar-meta-list" class="space-y-2.5 text-xs text-slate-600 border-t border-slate-100 pt-4"></div>
+        <!-- DEDICATED ANNOUNCEMENTS PANEL -->
+        <section id="announcements-view" class="hidden bg-white rounded-[24px] p-6 sm:p-7 shadow-[0_6px_24px_-8px_rgba(11,15,25,0.06)] space-y-4">
+          <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold text-[#0b0f19]">Batch Announcements</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Official updates, notices, and alerts for this batch</p>
             </div>
+            <button type="button" id="btn-back-to-overview" class="px-3.5 py-1.5 rounded-xl bg-[#f5f6f8] hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back</button>
           </div>
-        </aside>
+          <div id="live-announcements-feed" class="space-y-3">
+            <div class="text-center py-8 text-xs text-slate-400">Checking for announcements...</div>
+          </div>
+        </section>
 
       </div>
-    </div>
 
+      <!-- RIGHT STICKY SIGNATURE CHECKOUT CARD (RIDES ALONGSIDE FROM TOP TO BOTTOM!) -->
+      <aside class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
+        <div class="bg-white rounded-[26px] border border-slate-200/80 overflow-hidden shadow-[0_24px_60px_-15px_rgba(11,15,25,0.12)]">
+          <div id="sidebar-thumb" class="aspect-[16/9] w-full bg-slate-100 overflow-hidden"></div>
+
+          <div class="p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <span id="sidebar-aspirant" class="text-xs font-bold text-slate-600 truncate"></span>
+              <span id="sidebar-lang" class="px-2.5 py-1 rounded-lg bg-[#f5f6f8] text-[10px] font-extrabold text-slate-700 uppercase tracking-wider flex-shrink-0"></span>
+            </div>
+
+            <!-- PRICE + INLINE CTA ON EXACT SAME ROW -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div id="sidebar-price-block" class="min-w-0"></div>
+              <div id="sidebar-cta-container" class="flex-shrink-0"></div>
+            </div>
+
+            <div id="sidebar-meta-list" class="space-y-2.5 text-xs text-slate-600 border-t border-slate-100 pt-4"></div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
   </main>
 
   <!-- MOBILE STICKY GLASS BUY BAR -->
-  <div id="mob-sticky-bar" class="hidden lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/92 backdrop-blur-xl border-t border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-lg">
+  <div id="mob-sticky-bar" class="hidden lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-lg">
     <div id="mob-price-block" class="min-w-0"></div>
     <div id="mob-cta-container" class="flex-shrink-0"></div>
   </div>
 
   <!-- FLOATING TOAST -->
-  <div id="pg-toast" class="hidden fixed bottom-20 lg:bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-lg"></div>
+  <div id="pg-toast" class="hidden fixed bottom-20 lg:bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0b0f19] text-white text-xs font-bold shadow-lg"></div>
 
   <script src="/assets/js/secure-storage.js"></script>
   <script src="/assets/js/utm-tracker.js"></script>
@@ -303,7 +283,6 @@
         return;
       }
 
-      // Navbar Profile Widget
       const userWidget = document.getElementById('nav-user-widget');
       if (userWidget && session.email) {
         userWidget.classList.remove('hidden');
@@ -368,7 +347,6 @@
         setTimeout(() => t.classList.add('hidden'), 2400);
       }
 
-      // Share batch
       document.getElementById('btn-share-batch')?.addEventListener('click', async () => {
         try {
           if (navigator.share) await navigator.share({ title: document.title, url: window.location.href });
@@ -379,23 +357,22 @@
         } catch (e) {}
       });
 
-      // Subnav tab switcher (Overview <-> Announcements)
       const ovView = document.getElementById('overview-view');
       const annView = document.getElementById('announcements-view');
-      document.querySelectorAll('.subnav-pill').forEach(pill => {
+      document.querySelectorAll('.nav-tab').forEach(pill => {
         pill.addEventListener('click', (e) => {
           const mode = pill.getAttribute('data-tab-view') || 'overview';
           if (mode === 'announcements') e.preventDefault();
           ovView.classList.toggle('hidden', mode !== 'overview');
           annView.classList.toggle('hidden', mode !== 'announcements');
-          document.querySelectorAll('.subnav-pill').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.nav-tab').forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
         });
       });
       document.getElementById('btn-back-to-overview')?.addEventListener('click', () => {
         ovView.classList.remove('hidden');
         annView.classList.add('hidden');
-        document.querySelectorAll('.subnav-pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(p => p.classList.remove('active'));
         document.querySelector('[href="#sec-description"]')?.classList.add('active');
       });
 
@@ -420,45 +397,52 @@
           ? b.targetClasses
           : (b.targetClass ? b.targetClass.split(",").map(s => s.trim()).filter(Boolean) : []);
         const hdrTxt = document.getElementById('hdr-class-text');
-        if (hdrTxt) hdrTxt.textContent = b.displayTag || classes[0] || "Batch Overview";
+        if (hdrTxt) hdrTxt.textContent = b.displayTag || classes[0] || "All Batches";
 
         const stLabel = b.status === 'ARCHIVED' ? 'Closed' : (b.statusLabel || 'Ongoing');
-        document.getElementById('hero-badges').innerHTML = [
-          `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-rose-200/90 text-rose-600 text-[11px] font-extrabold shadow-2xs"><span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span>${escapeHtml(stLabel)}</span></span>`,
-          ...classes.map(c => `<span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-bold shadow-2xs">${escapeHtml(c)}</span>`),
-          b.stream ? `<span class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-[11px] font-bold">${escapeHtml(b.stream)}</span>` : '',
-          b.badgeText ? `<span class="px-3 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-800 text-[11px] font-extrabold uppercase">${escapeHtml(b.badgeText)}</span>` : ''
-        ].filter(Boolean).join('');
+        document.getElementById('hero-status-pill').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${b.status === 'ARCHIVED' ? 'bg-slate-400' : 'bg-rose-500 animate-pulse'}"></span><span>${escapeHtml(stLabel)}</span>`;
+        if (b.stream) {
+          document.getElementById('hero-stream-tag').classList.remove('hidden');
+          const stTxt = document.getElementById('hero-stream-text');
+          stTxt.textContent = b.stream;
+          stTxt.classList.remove('hidden');
+        }
 
         document.getElementById('hero-title').textContent = b.title;
         const subEl = document.getElementById('hero-subtitle');
         if (b.subtitle) subEl.textContent = b.subtitle;
         else subEl.classList.add('hidden');
 
-        const metaParts = [];
-        metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="languages" class="w-3.5 h-3.5 text-indigo-600"></i> ${escapeHtml((b.language || 'HINGLISH').toUpperCase())}</span>`);
-        if (b.startDate) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="calendar" class="w-3.5 h-3.5 text-rose-500"></i> Starts: ${escapeHtml(formatBatchDate(b.startDate))}</span>`);
-        if (b.endDate) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Valid Till: ${escapeHtml(formatBatchDate(b.endDate))}</span>`);
-        if (b.schedule) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-500"></i> ${escapeHtml(b.schedule)}</span>`);
-        document.getElementById('hero-meta-row').innerHTML = metaParts.join('');
+        document.getElementById('hero-classes-wrap').innerHTML = classes.map(c => `<span class="px-3 py-1 rounded-full bg-[#f5f6f8] text-slate-700 text-xs font-bold">${escapeHtml(c)}</span>`).join('');
+
+        // Segmented Spec Bar
+        const specs = [
+          { k: "MEDIUM", v: (b.language || "HINGLISH").toUpperCase() },
+          b.startDate ? { k: "STARTS", v: formatBatchDate(b.startDate) } : null,
+          b.endDate ? { k: "VALIDITY", v: formatBatchDate(b.endDate) } : null,
+          b.schedule ? { k: "SCHEDULE", v: b.schedule } : null
+        ].filter(Boolean);
+        document.getElementById('hero-spec-strip').innerHTML = specs.map(sp => `
+          <div class="px-4 py-3">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${escapeHtml(sp.k)}</div>
+            <div class="text-xs font-extrabold text-[#0b0f19] mt-0.5 truncate">${escapeHtml(sp.v)}</div>
+          </div>
+        `).join('');
 
         if (b.syllabusPdfUrl && safeUrl(b.syllabusPdfUrl)) {
-          document.getElementById('hero-extra-links').innerHTML = `<a href="${escapeHtml(safeUrl(b.syllabusPdfUrl))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition"><i data-lucide="file-down" class="w-4 h-4 text-amber-300"></i> Download Syllabus Brochure</a>`;
+          document.getElementById('hero-extra-links').innerHTML = `<a href="${escapeHtml(safeUrl(b.syllabusPdfUrl))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b0f19] hover:bg-indigo-600 text-white text-xs font-bold transition"><i data-lucide="file-down" class="w-4 h-4"></i> Download Syllabus</a>`;
         }
 
-        if (b.description) {
-          document.getElementById('detail-description').textContent = b.description;
-        } else {
-          document.getElementById('sec-description').classList.add('hidden');
-        }
+        if (b.description) document.getElementById('detail-description').textContent = b.description;
+        else document.getElementById('sec-description').classList.add('hidden');
 
         if (Array.isArray(b.features) && b.features.length > 0) {
           document.getElementById('sec-features').classList.remove('hidden');
           document.getElementById('nav-link-features').classList.remove('hidden');
           document.getElementById('detail-features-list').innerHTML = b.features.map(f => `
-            <div class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200/70 bg-slate-50/60 hover:bg-white hover:border-indigo-200 hover:-translate-y-0.5 hover:shadow-sm transition">
-              <span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="star" class="w-4 h-4"></i>
+            <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-[#f5f6f8] hover:bg-[#eef0f6] transition">
+              <span class="w-7 h-7 rounded-lg bg-white text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-2xs">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
               </span>
               <span class="text-xs font-bold text-slate-800 leading-snug">${escapeHtml(f)}</span>
             </div>
@@ -469,7 +453,7 @@
           document.getElementById('sec-subjects').classList.remove('hidden');
           document.getElementById('nav-link-subjects').classList.remove('hidden');
           document.getElementById('detail-subjects-list').innerHTML = b.subjects.map(s => `
-            <span class="px-4 py-2 rounded-2xl bg-indigo-50/70 text-indigo-700 border border-indigo-200/70 text-xs font-extrabold">${escapeHtml(s)}</span>
+            <span class="px-3.5 py-2 rounded-xl bg-[#f5f6f8] text-slate-800 text-xs font-bold">${escapeHtml(s)}</span>
           `).join('');
         }
 
@@ -480,13 +464,13 @@
             const name = typeof f === 'string' ? f : (f.name || '');
             const sub = typeof f === 'string' ? '' : (f.subject || '');
             return `
-              <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-sm transition">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-extrabold text-sm flex-shrink-0 shadow-xs">
+              <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f5f6f8]">
+                <div class="w-11 h-11 rounded-xl bg-[#0b0f19] text-white flex items-center justify-center font-extrabold text-sm flex-shrink-0">
                   ${escapeHtml(name.charAt(0).toUpperCase())}
                 </div>
                 <div class="min-w-0">
-                  <div class="text-sm font-extrabold text-slate-900 truncate">${escapeHtml(name)}</div>
-                  ${sub ? `<div class="text-xs font-bold text-indigo-600 truncate">${escapeHtml(sub)}</div>` : ''}
+                  <div class="text-sm font-extrabold text-[#0b0f19] truncate">${escapeHtml(name)}</div>
+                  ${sub ? `<div class="text-xs font-semibold text-indigo-600 truncate">${escapeHtml(sub)}</div>` : ''}
                 </div>
               </div>
             `;
@@ -503,24 +487,22 @@
           document.getElementById('sec-faqs').classList.remove('hidden');
           document.getElementById('nav-link-faqs').classList.remove('hidden');
           document.getElementById('detail-faqs-list').innerHTML = b.faqs.map(faq => `
-            <details class="group rounded-2xl border border-slate-200/90 p-4 bg-slate-50/50 hover:bg-white hover:border-indigo-200 transition">
-              <summary class="flex items-center justify-between cursor-pointer font-bold text-xs sm:text-sm text-slate-900 list-none gap-3">
+            <details class="py-3.5 group">
+              <summary class="flex items-center justify-between cursor-pointer font-bold text-xs sm:text-sm text-[#0b0f19] list-none gap-4">
                 <span>${escapeHtml(faq.q)}</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
+                <span class="faq-plus w-6 h-6 rounded-full bg-[#f5f6f8] flex items-center justify-center text-slate-600 text-sm font-bold flex-shrink-0 transition-transform duration-200">+</span>
               </summary>
-              <p class="mt-2.5 pt-2.5 border-t border-slate-100 text-xs text-slate-600 leading-relaxed">${escapeHtml(faq.a)}</p>
+              <p class="mt-2.5 pr-8 text-xs sm:text-[13px] text-slate-600 leading-relaxed">${escapeHtml(faq.a)}</p>
             </details>
           `).join('');
         }
 
-        // Right Sticky Card + Mobile Bar
         const sideThumb = document.getElementById('sidebar-thumb');
         const safeThumb = safeUrl(b.thumbnail);
         sideThumb.innerHTML = safeThumb
           ? `<img src="${escapeHtml(safeThumb)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover" />`
-          : `<div class="w-full h-full bg-gradient-to-br from-indigo-50 via-sky-50 to-violet-50 flex flex-col items-center justify-center p-5 text-center">
-               <span class="text-indigo-600 text-xs font-extrabold uppercase mb-1">${escapeHtml(b.displayTag || classes.join(' • ') || 'Mendorbit')}</span>
-               <div class="text-slate-900 font-black text-lg leading-snug">${escapeHtml(b.title)}</div>
+          : `<div class="w-full h-full bg-gradient-to-br from-slate-100 to-indigo-50 flex flex-col items-center justify-center p-5 text-center">
+               <div class="text-[#0b0f19] font-extrabold text-base leading-snug">${escapeHtml(b.title)}</div>
              </div>`;
 
         document.getElementById('sidebar-aspirant').textContent = 'For ' + (b.displayTag || classes.join(' • ') || 'All Aspirants');
@@ -536,13 +518,13 @@
                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                  <span>Enrolled</span>
                </div>
-               <div class="text-[11px] font-semibold text-slate-400">Active Access</div>
+               <div class="text-[11px] font-medium text-slate-400">Active Access</div>
              </div>`
           : `<div>
                ${orig > price ? `<div class="text-xs text-slate-400 line-through font-bold leading-none mb-1">₹${orig.toLocaleString('en-IN')}</div>` : ''}
                <div class="flex items-center gap-2 flex-wrap">
-                 <span class="text-2xl font-extrabold text-slate-950 leading-none">${price === 0 ? 'FREE' : '₹' + price.toLocaleString('en-IN')}</span>
-                 ${pct > 0 ? `<span class="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-extrabold">${pct}% OFF</span>` : ''}
+                 <span class="text-2xl font-extrabold text-[#0b0f19] leading-none">${price === 0 ? 'FREE' : '₹' + price.toLocaleString('en-IN')}</span>
+                 ${pct > 0 ? `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-extrabold">${pct}% OFF</span>` : ''}
                </div>
              </div>`;
 
@@ -550,11 +532,11 @@
         document.getElementById('mob-price-block').innerHTML = priceMarkup;
 
         const ctaMarkup = enrolled
-          ? `<a href="/study/${encodeURIComponent(b.id)}" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs tracking-wide shadow-sm transition inline-flex items-center gap-1.5">
+          ? `<a href="/study/${encodeURIComponent(b.id)}" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition inline-flex items-center gap-1.5">
                <i data-lucide="play-circle" class="w-4 h-4"></i>
                <span>Go to Batch</span>
              </a>`
-          : `<button type="button" data-checkout-btn="1" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-xs tracking-wide shadow-md shadow-indigo-500/20 transition inline-flex items-center gap-1.5">
+          : `<button type="button" data-checkout-btn="1" class="px-5 py-2.5 rounded-xl bg-[#0b0f19] hover:bg-indigo-600 text-white font-bold text-xs transition inline-flex items-center gap-1.5 shadow-sm">
                <span>${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
              </button>`;
@@ -569,11 +551,8 @@
               btn.innerHTML = "Opening...";
               try {
                 const cRes = await MendorbitAPI.initCheckout(b.id, session ? session.email : "");
-                if (cRes && cRes.status === "success" && cRes.checkoutUrl) {
-                  window.location.href = cRes.checkoutUrl;
-                } else {
-                  window.location.href = `/payment.html?id=${encodeURIComponent(b.id)}`;
-                }
+                if (cRes && cRes.status === "success" && cRes.checkoutUrl) window.location.href = cRes.checkoutUrl;
+                else window.location.href = `/payment.html?id=${encodeURIComponent(b.id)}`;
               } catch (err) {
                 window.location.href = `/payment.html?id=${encodeURIComponent(b.id)}`;
               }
@@ -582,10 +561,9 @@
         }
 
         const metaLines = [];
-        if (classes.length) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Target Audience</span><span class="font-bold text-slate-900 text-right">${escapeHtml(classes.join(', '))}</span></div>`);
-        metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Medium</span><span class="font-bold text-slate-900">${escapeHtml(b.language || 'HINGLISH')}</span></div>`);
-        if (b.startDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Starts On</span><span class="font-bold text-slate-900">${escapeHtml(formatBatchDate(b.startDate))}</span></div>`);
-        if (b.endDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Valid Till</span><span class="font-bold text-slate-900">${escapeHtml(formatBatchDate(b.endDate))}</span></div>`);
+        if (classes.length) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Audience</span><span class="font-bold text-[#0b0f19] text-right">${escapeHtml(classes.join(', '))}</span></div>`);
+        if (b.startDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Starts On</span><span class="font-bold text-[#0b0f19]">${escapeHtml(formatBatchDate(b.startDate))}</span></div>`);
+        if (b.endDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Valid Till</span><span class="font-bold text-[#0b0f19]">${escapeHtml(formatBatchDate(b.endDate))}</span></div>`);
         document.getElementById('sidebar-meta-list').innerHTML = metaLines.join('');
 
         loader.classList.add('hidden');
@@ -593,7 +571,6 @@
         document.getElementById('mob-sticky-bar')?.classList.remove('hidden');
         if (window.lucide) lucide.createIcons();
 
-        // Live Announcements fetch
         try {
           const aRes = await MendorbitAPI.getBatchAnnouncements(b.id);
           const list = (aRes && Array.isArray(aRes.announcements)) ? aRes.announcements : [];
@@ -603,18 +580,18 @@
             cnt.textContent = list.length;
             cnt.classList.remove('hidden');
             feed.innerHTML = list.map(a => `
-              <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 space-y-2">
+              <div class="p-4 rounded-2xl bg-[#f5f6f8] space-y-2">
                 <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-slate-900">${escapeHtml(a.authorName || 'Mendorbit Team')}</span>
+                  <span class="text-xs font-extrabold text-[#0b0f19]">${escapeHtml(a.authorName || 'Mendorbit Team')}</span>
                   <span class="text-[10px] font-semibold text-slate-400">${a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-IN') : ''}</span>
                 </div>
-                ${a.title ? `<div class="text-xs font-bold text-indigo-700">${escapeHtml(a.title)}</div>` : ''}
+                ${a.title ? `<div class="text-xs font-bold text-indigo-600">${escapeHtml(a.title)}</div>` : ''}
                 ${a.message ? `<p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(a.message)}</p>` : ''}
-                ${safeUrl(a.imageUrl) ? `<img src="${escapeHtml(safeUrl(a.imageUrl))}" alt="Announcement" class="rounded-xl max-h-64 object-contain border border-slate-200 bg-white" loading="lazy" />` : ''}
+                ${safeUrl(a.imageUrl) ? `<img src="${escapeHtml(safeUrl(a.imageUrl))}" alt="Announcement" class="rounded-xl max-h-64 object-contain bg-white" loading="lazy" />` : ''}
               </div>
             `).join('');
           } else {
-            feed.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">No announcements posted for this batch yet.</div>`;
+            feed.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">No announcements posted yet.</div>`;
           }
         } catch (e) {}
       } catch (e) {
