@@ -131,7 +131,13 @@
     adminDeleteCoupon: async (code, adminKey) => post("/api/admin/coupons/delete", { code }, { "X-Admin-Key": adminKey }),
     adminGetBatchContent: async (batchId, adminKey) => get("/api/batches/content?id=" + encodeURIComponent(batchId), { "X-Admin-Key": adminKey }),
     adminUpdateCurriculum: async (batchId, subjects, adminKey, dppScriptUrl) => post("/api/admin/batches/content/update", { batchId, subjects, dppScriptUrl: dppScriptUrl || "" }, { "X-Admin-Key": adminKey }),
-    adminUpdateSchedule: async (batchId, weeklySchedule, adminKey) => post("/api/admin/batches/schedule/update", { batchId, weeklySchedule }, { "X-Admin-Key": adminKey }),
+    adminUpdateSchedule: async (batchId, weeklySchedule, adminKey) => {
+      try {
+        const res = await post("/api/admin/batches/schedule/update", { batchId, weeklySchedule }, { "X-Admin-Key": adminKey });
+        if (res && res.status === "success") return res;
+      } catch (e) {}
+      return post("/api/admin/batches/update", { id: batchId, weeklySchedule }, { "X-Admin-Key": adminKey });
+    },
     adminGetEnrollments: async (batchId, adminKey) => get("/api/admin/batches/enrollments" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : ""), { "X-Admin-Key": adminKey }),
     getBatchAnnouncements: async (batchId) => get("/api/batches/announcements" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : "")),
     adminGetAnnouncements: async (adminKey) => get("/api/admin/announcements/all", { "X-Admin-Key": adminKey }),
