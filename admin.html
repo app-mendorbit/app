@@ -1827,7 +1827,7 @@
         const s = String(url || '').trim();
         if (!s) return '';
         if (/^https?:\/\//i.test(s)) return s;
-        if (s.startsWith('/') || s.startsWith('#') || /^[a-z0-9_.-]+\.html/i.test(s)) return s;
+        if (s.startsWith('/') || s.startsWith('./') || s.startsWith('assets/') || s.startsWith('#') || /^[a-z0-9_.-]+\.html/i.test(s)) return s;
         return '';
       }
 
@@ -2129,7 +2129,33 @@
         if (clsEl) clsEl.textContent = `${b.displayTag ? b.displayTag + ' • ' : ''}${clsList}`;
         if (priceEl) priceEl.textContent = price === 0 ? 'FREE' : `₹${price.toLocaleString('en-IN')}`;
         if (offerEl) offerEl.textContent = pct > 0 ? `${pct}% OFF (₹${mrp.toLocaleString('en-IN')})` : (mrp > 0 ? `MRP ₹${mrp.toLocaleString('en-IN')}` : 'No Offer Set');
-        if (statusEl) statusEl.textContent = `${b.statusLabel || b.status || 'Ongoing'}${b.startDate ? ' • ' + b.startDate : ''}`;
+        if (statusEl) statusEl.textContent = pgbFormatStatusBadge(b.statusLabel || b.status || 'Ongoing', b.startDate);
+      }
+
+      function pgbFormatDateHuman(dateStr, shortYear) {
+        if (!dateStr) return '';
+        const m = String(dateStr).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const d = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(dateStr);
+        if (isNaN(d.getTime())) return String(dateStr);
+        const day = d.getDate();
+        const suffix = (day % 10 === 1 && day !== 11) ? 'st' : (day % 10 === 2 && day !== 12) ? 'nd' : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+        const mon = d.toLocaleString('en-US', { month: 'short' });
+        const yr = d.getFullYear();
+        return shortYear ? `${day}${suffix} ${mon}'${String(yr).slice(-2)}` : `${day}${suffix} ${mon} ${yr}`;
+      }
+
+      function pgbFormatStatusBadge(statusLabel, startDate) {
+        const lbl = statusLabel || 'Ongoing';
+        if (!startDate) return lbl;
+        const m = String(startDate).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const d = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(startDate);
+        const formatted = pgbFormatDateHuman(startDate, true);
+        if (lbl.toLowerCase() === 'completed') return `Completed • ${formatted}`;
+        if (!isNaN(d.getTime())) {
+          const verb = (lbl.toLowerCase() === 'upcoming' || d.getTime() > Date.now()) ? 'Starts on' : 'Started on';
+          return `${lbl} • ${verb} ${formatted}`;
+        }
+        return `${lbl} • ${formatted}`;
       }
 
       function generateStandaloneBatchHtml(cfg) {
@@ -2151,14 +2177,16 @@
           `).join('');
         };
 
+        const formattedStart = cfg.startDate ? pgbFormatDateHuman(cfg.startDate, false) : '';
+        const durationText = (cfg.duration && /^\d{4}-\d{2}-\d{2}$/.test(cfg.duration)) ? pgbFormatDateHuman(cfg.duration, false) : (cfg.duration || formattedStart);
         const specRows = [];
-        if (cfg.duration || cfg.startDate) {
+        if (durationText) {
           specRows.push({
             valId: 'spec-duration-val',
             iconBg: 'bg-sky-50 text-sky-600 border border-sky-100',
             icon: '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
             label: 'Course Duration / Schedule:',
-            value: cfg.duration || cfg.startDate
+            value: durationText
           });
         }
         if (cfg.validity) specRows.push({ iconBg: 'bg-amber-50 border border-amber-100', icon: goldStarSvg, label: 'Validity:', value: cfg.validity });
@@ -2320,7 +2348,7 @@
           ? `<img id="card-thumb-img" src="${pgbEsc(pgbSafeUrl(cfg.thumbnail))}" alt="${pgbEsc(displayTitle)}" class="w-full aspect-video object-cover rounded-xl border border-slate-200/70" />`
           : `<div id="card-thumb-fallback" class="w-full aspect-video rounded-xl bg-gradient-to-br from-indigo-50 via-sky-50 to-purple-50 border border-indigo-100 flex flex-col items-center justify-center text-indigo-700 font-black text-2xl">${pgbEsc(displayTitle.slice(0, 2).toUpperCase())}</div>`;
 
-        const statusLine = `${cfg.statusLabel || 'Ongoing'}${cfg.startDate ? ' • ' + cfg.startDate : ''}`;
+        const statusLine = pgbFormatStatusBadge(cfg.statusLabel || 'Ongoing', cfg.startDate);
         const classesHtml = (cfg.classesList.length ? cfg.classesList : (cfg.headerPill ? [cfg.headerPill] : []))
           .map(c => `<span class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-700 shadow-2xs">${pgbEsc(c)}</span>`)
           .join('');
@@ -2359,8 +2387,6 @@
     </div>
 
     <div class="flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0">
-      <a href="https://mendorbit.in/contact" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Support</a>
-
       <a id="btn-nav-login" href="${pgbEsc(base)}/login.html?redirect=batches.html" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition">
         Login
       </a>
@@ -2423,7 +2449,7 @@
         <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight max-w-4xl">${pgbEsc(displayTitle)}</h1>
         <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-600 font-semibold pt-1">
           ${cfg.language ? `<span id="hero-lang-chip" class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Medium: <strong class="text-slate-900 uppercase">${pgbEsc(cfg.language)}</strong></span>` : '<span id="hero-lang-chip" class="hidden"></span>'}
-          ${cfg.duration ? `<span class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Duration: <strong class="text-slate-900">${pgbEsc(cfg.duration)}</strong></span>` : ''}
+          ${durationText ? `<span id="hero-duration-chip" class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Duration: <strong class="text-slate-900">${pgbEsc(durationText)}</strong></span>` : ''}
           ${cfg.validity ? `<span class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Validity: <strong class="text-slate-900">${pgbEsc(cfg.validity)}</strong></span>` : ''}
         </div>
       </div>
@@ -2606,7 +2632,7 @@
       }
       function safeUrl(u) {
         const s = String(u || '').trim();
-        return /^https?:\\/\\//i.test(s) ? s : '';
+        return (/^https?:\\/\\//i.test(s) || s.startsWith('/') || s.startsWith('./') || s.startsWith('assets/')) ? s : '';
       }
       function toast(msg) {
         const el = document.getElementById('pg-toast');
@@ -2860,7 +2886,26 @@
             if (asp && (b.displayTag || classes.length)) asp.textContent = 'For ' + (b.displayTag || classes.join(' • ')) + ' Aspirants';
             const statusEl = document.getElementById('hero-status-pill');
             if (statusEl) {
-              const stTxt = isArchived ? 'Closed' : ((b.statusLabel || 'Ongoing') + (b.startDate ? ' • ' + b.startDate : ''));
+              function fmtOrdDate(ds, shortY) {
+                const m = String(ds || '').trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                const dt = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(ds);
+                if (isNaN(dt.getTime())) return String(ds || '');
+                const day = dt.getDate();
+                const sfx = (day % 10 === 1 && day !== 11) ? 'st' : (day % 10 === 2 && day !== 12) ? 'nd' : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+                const mon = dt.toLocaleString('en-US', { month: 'short' });
+                const yr = dt.getFullYear();
+                return shortY ? (day + sfx + ' ' + mon + "'" + String(yr).slice(-2)) : (day + sfx + ' ' + mon + ' ' + yr);
+              }
+              const lbl = b.statusLabel || 'Ongoing';
+              let stTxt = isArchived ? 'Closed' : lbl;
+              if (!isArchived && b.startDate) {
+                const f = fmtOrdDate(b.startDate, true);
+                const m = String(b.startDate).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                const dt = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(b.startDate);
+                if (lbl.toLowerCase() === 'completed') stTxt = 'Completed • ' + f;
+                else if (!isNaN(dt.getTime())) stTxt = lbl + ' • ' + ((lbl.toLowerCase() === 'upcoming' || dt.getTime() > Date.now()) ? 'Starts on ' : 'Started on ') + f;
+                else stTxt = lbl + ' • ' + f;
+              }
               statusEl.innerHTML = '<span class="w-2 h-2 rounded-full ' + (isArchived ? 'bg-slate-400' : 'bg-rose-500 animate-pulse') + '"></span><span>' + esc(stTxt) + '</span>';
             }
             if (b.stream) {
