@@ -51,9 +51,30 @@
     "_mnd_telemetry_beacon"
   ];
 
+  // Skip tamper watchdog in admin console, nested preview iframes, or about:srcdoc
+  function isWatchdogExemptContext() {
+    if (typeof window === 'undefined') return true;
+    try {
+      if (window.location.protocol === 'about:') return true;
+      if (window.self !== window.top) return true;
+      if (/\/admin(\.html)?$/i.test(window.location.pathname || '')) return true;
+    } catch (e) {
+      return true;
+    }
+    return false;
+  }
+
   // Domain & Browser-bound secret key (prevents cross-device copying)
   function getVaultKey() {
-    const host = (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : "mendorbit";
+    let host = (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : "";
+    if (!host && typeof window !== 'undefined') {
+      try {
+        if (window.parent && window.parent.location && window.parent.location.hostname) {
+          host = window.parent.location.hostname;
+        }
+      } catch (e) {}
+    }
+    if (!host) host = "mendorbit";
     const ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : "mnd_client";
     return BASE_SALT + "::" + host + "::" + ua.substring(0, 32);
   }
@@ -277,7 +298,7 @@
    * Tamper Incident Alarm & Silent Dispatcher
    */
   function triggerTamperAlarm(key, attemptedValue, reason) {
-    if (isTamperAlarmActive) return;
+    if (isTamperAlarmActive || isWatchdogExemptContext()) return;
     isTamperAlarmActive = true;
 
     const email = lastKnownUserEmail || "unidentified_student";
@@ -375,7 +396,7 @@
    * Triggers ONLY when someone actually fakes data, edits decoys, or injects forged signatures.
    */
   function auditProtectedKeys() {
-    if (isTamperAlarmActive) return;
+    if (isTamperAlarmActive || isWatchdogExemptContext()) return;
 
     // 1. Audit Honey-Pot Decoys (Legitimate users/scripts NEVER touch decoys)
     for (const key of DECOY_KEYS) {
@@ -453,7 +474,7 @@
    * Start Active Watchdog Timers & Listeners (Zero False-Alarm Architecture)
    */
   function startWatchdog() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isWatchdogExemptContext()) return;
 
     populateDecoyTripwires();
 
