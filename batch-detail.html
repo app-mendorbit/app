@@ -1,195 +1,288 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <title>Batch Details | Mendorbit</title>
-  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="icon" type="image/png" href="/logo.png" />
 
   <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.remove("dark");
+    try { document.documentElement.style.colorScheme = "light"; } catch (e) {}
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              900: '#312e81',
-            }
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif']
           }
         }
       }
-    }
+    };
   </script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #fbfcfe; color: #0f172a; overflow-x: hidden; }
+    details summary::-webkit-details-marker { display: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .hero-mesh {
+      background-color: #ffffff;
+      background-image:
+        radial-gradient(at 88% 12%, rgba(99, 102, 241, 0.12) 0px, transparent 48%),
+        radial-gradient(at 15% 85%, rgba(14, 165, 233, 0.10) 0px, transparent 52%),
+        radial-gradient(at 52% 0%, rgba(168, 85, 247, 0.07) 0px, transparent 50%),
+        radial-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+    }
+    .subnav-pill.active {
+      background: #0f172a;
+      color: #ffffff;
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.22);
+    }
+    .premium-card {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.06);
+    }
+  </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+<body class="min-h-screen flex flex-col bg-[#fbfcfe] text-slate-900 pb-24 lg:pb-0">
 
-  <!-- TOP NAVBAR -->
-  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur h-16 px-4 sm:px-8 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-      <a href="/batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
-        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+  <!-- FROSTED GLASS LIGHT HEADER -->
+  <header class="h-16 bg-white/85 backdrop-blur-xl border-b border-slate-200/75 sticky top-0 z-40 px-4 sm:px-8 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <a href="/batches.html" class="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 transition flex-shrink-0" title="Back to All Batches">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
       </a>
-      <a href="/index.html" class="flex items-center gap-2.5">
-        <img src="/logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
-        <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
+      <a href="/index.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="/logo.png" alt="Mendorbit" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'" />
+        <span class="font-extrabold text-lg tracking-tight text-slate-950">Mendorbit</span>
+      </a>
+      <span class="text-slate-300 hidden sm:inline">/</span>
+      <a id="hdr-class-pill" href="/batches.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 text-xs font-bold text-slate-700 transition truncate max-w-[220px]">
+        <span id="hdr-class-text">Batch Overview</span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
       </a>
     </div>
 
-    <div class="flex items-center gap-3">
-      <a href="/batches.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand-600 transition">
-        <span>All Batches</span>
-      </a>
-      <a id="btn-nav-login" href="/login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 text-white text-xs font-bold">
-        Login
-      </a>
-      <div id="nav-user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold">
-        <span id="nav-user-name">Student</span>
+    <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+      <a id="btn-nav-login" href="/login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Login</a>
+
+      <div id="nav-user-widget" class="relative hidden">
+        <button id="nav-user-btn" type="button" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full border border-slate-200/80 bg-white hover:bg-slate-50 transition">
+          <span class="text-xs font-bold text-slate-700 hidden sm:inline">Hi, <span id="nav-user-name">Student</span></span>
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative">
+            <span id="nav-avatar-initial">S</span>
+            <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+        <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 hidden z-50">
+          <div class="px-3 py-2 border-b border-slate-100 mb-1">
+            <div class="text-xs font-extrabold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
+            <div class="text-[10px] text-slate-400 truncate font-mono" id="dropdown-user-email"></div>
+          </div>
+          <a href="/index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Dashboard</a>
+          <a href="/batches.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">All Batches</a>
+          <a href="/profile.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">My Profile</a>
+          <div class="my-1 border-t border-slate-100"></div>
+          <button id="nav-btn-logout" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">Logout</button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- LOADING -->
-  <div id="detail-loader" class="max-w-6xl mx-auto px-4 py-24 text-center flex-1">
-    <div class="inline-block w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-    <p class="text-xs font-bold text-slate-400 mt-3">Loading batch details...</p>
+  <div id="detail-loader" class="max-w-6xl mx-auto px-4 py-28 text-center flex-1 flex flex-col items-center justify-center">
+    <div class="w-11 h-11 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-xs font-bold text-slate-500 mt-4 tracking-wide">Loading batch experience...</p>
   </div>
 
   <!-- NOT FOUND -->
-  <div id="detail-error" class="hidden max-w-md mx-auto my-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center shadow-lg">
+  <div id="detail-error" class="hidden max-w-md mx-auto my-20 bg-white rounded-3xl border border-slate-200 p-8 text-center shadow-lg">
     <i data-lucide="alert-circle" class="w-10 h-10 text-rose-500 mx-auto mb-3"></i>
-    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Batch Not Found</h2>
-    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">This batch may have been removed or is unavailable.</p>
-    <a href="batches.html" class="inline-block mt-5 px-6 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold">Browse All Batches</a>
+    <h2 class="text-lg font-extrabold text-slate-900">Batch Not Found</h2>
+    <p class="text-xs text-slate-500 mt-1">This batch may have been removed or is unavailable right now.</p>
+    <a href="/batches.html" class="inline-block mt-5 px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold">Browse All Batches</a>
   </div>
 
   <!-- MAIN CONTENT -->
-  <main id="detail-main" class="hidden flex-1">
+  <main id="detail-main" class="hidden flex-1 w-full">
 
-    <!-- DARK HERO HEADER BANNER -->
-    <section class="bg-gradient-to-br from-slate-950 via-brand-950 to-slate-900 text-white border-b border-slate-800">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div class="max-w-3xl space-y-4">
-          <div class="flex items-center flex-wrap gap-2" id="hero-badges"></div>
-          <h1 id="hero-title" class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">Batch Title</h1>
-          <p id="hero-subtitle" class="text-sm sm:text-base text-slate-300 leading-relaxed"></p>
-
-          <div class="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-300 font-semibold" id="hero-meta-row"></div>
-
-          <div class="flex flex-wrap gap-3 pt-2" id="hero-extra-links"></div>
+    <!-- EDITORIAL ARCHITECTURAL LIGHT HERO -->
+    <section class="hero-mesh border-b border-slate-200/80 px-4 sm:px-8 pt-6 pb-9 sm:pt-8 sm:pb-12">
+      <div class="max-w-7xl mx-auto space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2" id="hero-badges"></div>
+          <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white border border-slate-200/90 shadow-2xs text-xs font-bold text-slate-700 transition">
+            <i data-lucide="share-2" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Share Batch</span>
+          </button>
         </div>
+
+        <div class="max-w-4xl space-y-3">
+          <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-[-0.025em] leading-[1.15] text-slate-950">Batch Title</h1>
+          <p id="hero-subtitle" class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl"></p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 pt-1" id="hero-meta-row"></div>
+        <div class="flex flex-wrap gap-3" id="hero-extra-links"></div>
       </div>
     </section>
 
-    <!-- TWO-COLUMN BODY -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- GLASS SUB-NAVBAR -->
+    <div class="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 sticky top-16 z-30 px-4 sm:px-8">
+      <div class="max-w-7xl mx-auto py-2.5 flex items-center justify-between gap-3">
+        <nav class="no-scrollbar flex items-center gap-2 overflow-x-auto max-w-full">
+          <a href="#sec-description" data-tab-view="overview" class="subnav-pill active px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Overview</a>
+          <a href="#sec-subjects" id="nav-link-subjects" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Subjects</a>
+          <a href="#sec-features" id="nav-link-features" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Batch Includes</a>
+          <a href="#sec-faculty" id="nav-link-faculty" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Faculty</a>
+          <a href="#sec-demo-video" id="nav-link-demo" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">Demo Class</a>
+          <a href="#sec-faqs" id="nav-link-faqs" data-tab-view="overview" class="hidden subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition">FAQ's</a>
+          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-pill px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap transition inline-flex items-center gap-1.5">
+            <span>Announcements</span>
+            <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold">0</span>
+          </button>
+        </nav>
+      </div>
+    </div>
 
-        <!-- LEFT: OVERVIEW, SUBJECTS, HIGHLIGHTS, FACULTY, FAQS -->
+    <!-- MAIN 12-COLUMN WORKSPACE -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-7 pb-14">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
+
+        <!-- LEFT: ARCHITECTURAL CONTENT PANELS -->
         <div class="lg:col-span-8 space-y-6">
+          <div id="overview-view" class="space-y-6">
 
-          <!-- Description -->
-          <section id="sec-description" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="info" class="w-5 h-5 text-brand-600"></i>
-              <span>About This Batch</span>
-            </h2>
-            <p id="detail-description" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line"></p>
-          </section>
+            <!-- About Batch -->
+            <section id="sec-description" class="premium-card rounded-3xl p-6 sm:p-7 space-y-3">
+              <div class="text-center space-y-1 pb-2">
+                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Program Overview</div>
+                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">About This Batch</h2>
+              </div>
+              <p id="detail-description" class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line"></p>
+            </section>
 
-          <!-- Subjects Covered -->
-          <section id="sec-subjects" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="book-open" class="w-5 h-5 text-brand-600"></i>
-              <span>Subjects Covered</span>
-            </h2>
-            <div id="detail-subjects-list" class="flex flex-wrap gap-2"></div>
-          </section>
+            <!-- Batch Includes (Features Bento) -->
+            <section id="sec-features" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-5">
+              <div class="text-center space-y-1">
+                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Included Benefits</div>
+                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Batch Includes</h2>
+              </div>
+              <div id="detail-features-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs font-semibold text-slate-800"></div>
+            </section>
 
-          <!-- Batch Highlights -->
-          <section id="sec-features" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
-              <span>Batch Highlights</span>
-            </h2>
-            <div id="detail-features-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200"></div>
-          </section>
+            <!-- Subjects Covered -->
+            <section id="sec-subjects" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-sky-600">Curriculum Scope</div>
+                  <h2 class="text-lg font-extrabold text-slate-950">Subjects Covered</h2>
+                </div>
+              </div>
+              <div id="detail-subjects-list" class="flex flex-wrap gap-2.5"></div>
+            </section>
 
-          <!-- Faculty -->
-          <section id="sec-faculty" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="users" class="w-5 h-5 text-brand-600"></i>
-              <span>Know Your Teachers</span>
-            </h2>
-            <div id="detail-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-          </section>
+            <!-- Faculty -->
+            <section id="sec-faculty" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+              <div>
+                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-violet-600">Mentors</div>
+                <h2 class="text-lg font-extrabold text-slate-950">Know Your Teachers</h2>
+              </div>
+              <div id="detail-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+            </section>
 
-          <!-- Demo / Orientation Video Embed (if configured by Admin) -->
-          <section id="sec-demo-video" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="play-circle" class="w-5 h-5 text-rose-500"></i>
-              <span>Batch Orientation Video</span>
-            </h2>
-            <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-950">
-              <iframe id="detail-demo-iframe" class="w-full h-full" allowfullscreen frameborder="0"></iframe>
+            <!-- Demo Video Card with Lightbox -->
+            <section id="sec-demo-video" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-rose-600">Preview Session</div>
+                  <h2 class="text-lg font-extrabold text-slate-950">Orientation &amp; Demo Class</h2>
+                </div>
+                <button type="button" id="btn-demo-fullscreen" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-600 hover:text-white text-xs font-bold text-slate-700 transition inline-flex items-center gap-1.5">
+                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                  <span>Fullscreen</span>
+                </button>
+              </div>
+              <div id="demo-video-wrap" class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-200/80 shadow-sm">
+                <iframe id="detail-demo-iframe" class="w-full h-full border-0" allowfullscreen></iframe>
+              </div>
+            </section>
+
+            <!-- FAQs -->
+            <section id="sec-faqs" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+              <div>
+                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Answers</div>
+                <h2 class="text-lg font-extrabold text-slate-950">Frequently Asked Questions</h2>
+              </div>
+              <div id="detail-faqs-list" class="space-y-2.5"></div>
+            </section>
+
+          </div>
+
+          <!-- DEDICATED ANNOUNCEMENTS TAB PANEL -->
+          <section id="announcements-view" class="hidden premium-card rounded-3xl p-6 sm:p-7 space-y-4">
+            <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+              <div>
+                <h2 class="text-lg font-extrabold text-slate-950">Batch Announcements</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Official updates, schedule notices, and alerts for this batch</p>
+              </div>
+              <button type="button" id="btn-back-to-overview" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back to Overview</button>
+            </div>
+            <div id="live-announcements-feed" class="space-y-3.5">
+              <div class="text-center py-8 text-xs text-slate-400">Checking for announcements...</div>
             </div>
           </section>
-
-          <!-- FAQs -->
-          <section id="sec-faqs" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="help-circle" class="w-5 h-5 text-brand-600"></i>
-              <span>Frequently Asked Questions</span>
-            </h2>
-            <div id="detail-faqs-list" class="space-y-3"></div>
-          </section>
-
         </div>
 
-        <!-- RIGHT STICKY PRICING & ACTION CARD -->
-        <div class="lg:col-span-4 lg:sticky lg:top-24">
-          <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
-            <div id="sidebar-thumb" class="aspect-[16/9] w-full bg-slate-100 dark:bg-slate-800 overflow-hidden"></div>
+        <!-- RIGHT STICKY SIGNATURE ENROLLMENT CARD -->
+        <aside class="lg:col-span-4 lg:sticky lg:top-32">
+          <div class="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)]">
+            <div class="h-1.5 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-sky-500"></div>
+            <div class="p-5 space-y-4">
+              <div id="sidebar-thumb" class="aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70"></div>
 
-            <div class="p-6 space-y-5">
-              <div id="sidebar-price-block"></div>
-
-              <div id="sidebar-meta-list" class="space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-b border-slate-100 dark:border-slate-800 py-4"></div>
-
-              <div id="sidebar-cta-container"></div>
-
-              <div id="go-to-batch-notice" class="hidden p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-200">
-                <strong>Enrollment Active!</strong> Batch classroom lectures, notes & DPP hub is launching soon. Stay tuned!
+              <div class="flex items-center justify-between gap-2 text-xs">
+                <span id="sidebar-aspirant" class="font-bold text-slate-700 truncate"></span>
+                <span id="sidebar-lang" class="px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-extrabold text-slate-700 uppercase flex-shrink-0"></span>
               </div>
+
+              <!-- PRICE + INLINE CTA SAME ROW (NO SECURED/VERIFIED FILLER TEXT) -->
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div id="sidebar-price-block" class="min-w-0"></div>
+                <div id="sidebar-cta-container" class="flex-shrink-0"></div>
+              </div>
+
+              <div id="sidebar-meta-list" class="space-y-2.5 text-xs text-slate-600 border-t border-slate-100 pt-4"></div>
             </div>
           </div>
-        </div>
+        </aside>
 
       </div>
     </div>
 
   </main>
+
+  <!-- MOBILE STICKY GLASS BUY BAR -->
+  <div id="mob-sticky-bar" class="hidden lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/92 backdrop-blur-xl border-t border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-lg">
+    <div id="mob-price-block" class="min-w-0"></div>
+    <div id="mob-cta-container" class="flex-shrink-0"></div>
+  </div>
+
+  <!-- FLOATING TOAST -->
+  <div id="pg-toast" class="hidden fixed bottom-20 lg:bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-lg"></div>
 
   <script src="/assets/js/secure-storage.js"></script>
   <script src="/assets/js/utm-tracker.js"></script>
@@ -210,14 +303,30 @@
         return;
       }
 
-      const loginBtn = document.getElementById('btn-nav-login');
-      const userPill = document.getElementById('nav-user-pill');
-      const userNameEl = document.getElementById('nav-user-name');
-
-      if (session && session.email) {
-        if (loginBtn) loginBtn.classList.add('hidden');
-        if (userPill) userPill.classList.remove('hidden');
-        if (userNameEl) userNameEl.textContent = session.displayName || "Student";
+      // Navbar Profile Widget
+      const userWidget = document.getElementById('nav-user-widget');
+      if (userWidget && session.email) {
+        userWidget.classList.remove('hidden');
+        const fullName = session.displayName || session.name || "Student";
+        const firstName = fullName.split(" ")[0];
+        document.getElementById('nav-user-name').textContent = firstName;
+        document.getElementById('dropdown-user-fullname').textContent = fullName;
+        document.getElementById('dropdown-user-email').textContent = session.email;
+        document.getElementById('nav-avatar-initial').textContent = firstName.charAt(0).toUpperCase() || "S";
+        if (session.photoURL && /^https?:\/\//i.test(session.photoURL)) {
+          const img = document.getElementById('nav-avatar-img');
+          img.src = session.photoURL;
+          img.classList.remove('hidden');
+        }
+        document.getElementById('nav-user-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.getElementById('nav-user-dropdown')?.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => document.getElementById('nav-user-dropdown')?.classList.add('hidden'));
+        document.getElementById('nav-btn-logout')?.addEventListener('click', () => {
+          if (window.MendorbitSSO) MendorbitSSO.clearSession();
+          window.location.href = '/login.html';
+        });
       }
 
       const params = new URLSearchParams(window.location.search);
@@ -236,18 +345,64 @@
 
       function escapeHtml(str) {
         return String(str || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
       }
-
+      function safeUrl(u) {
+        const s = String(u || "").trim();
+        return (/^https?:\/\//i.test(s) || s.startsWith("/")) ? s : "";
+      }
       function formatBatchDate(dateStr) {
         if (!dateStr) return "";
-        const d = new Date(dateStr);
+        const m = String(dateStr).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const d = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+        const day = d.getDate();
+        const sfx = (day % 10 === 1 && day !== 11) ? "st" : (day % 10 === 2 && day !== 12) ? "nd" : (day % 10 === 3 && day !== 13) ? "rd" : "th";
+        return `${day}${sfx} ${d.toLocaleString("en-US", { month: "short" })} ${d.getFullYear()}`;
       }
+      function toast(msg) {
+        const t = document.getElementById('pg-toast');
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.remove('hidden');
+        setTimeout(() => t.classList.add('hidden'), 2400);
+      }
+
+      // Share batch
+      document.getElementById('btn-share-batch')?.addEventListener('click', async () => {
+        try {
+          if (navigator.share) await navigator.share({ title: document.title, url: window.location.href });
+          else {
+            await navigator.clipboard.writeText(window.location.href);
+            toast("Batch link copied!");
+          }
+        } catch (e) {}
+      });
+
+      // Subnav tab switcher (Overview <-> Announcements)
+      const ovView = document.getElementById('overview-view');
+      const annView = document.getElementById('announcements-view');
+      document.querySelectorAll('.subnav-pill').forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          const mode = pill.getAttribute('data-tab-view') || 'overview';
+          if (mode === 'announcements') e.preventDefault();
+          ovView.classList.toggle('hidden', mode !== 'overview');
+          annView.classList.toggle('hidden', mode !== 'announcements');
+          document.querySelectorAll('.subnav-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+        });
+      });
+      document.getElementById('btn-back-to-overview')?.addEventListener('click', () => {
+        ovView.classList.remove('hidden');
+        annView.classList.add('hidden');
+        document.querySelectorAll('.subnav-pill').forEach(p => p.classList.remove('active'));
+        document.querySelector('[href="#sec-description"]')?.classList.add('active');
+      });
+
+      document.getElementById('btn-demo-fullscreen')?.addEventListener('click', () => {
+        const w = document.getElementById('demo-video-wrap');
+        if (w && w.requestFullscreen) w.requestFullscreen().catch(() => {});
+      });
 
       try {
         const res = await MendorbitAPI.getBatchDetail(batchId, session ? session.email : "");
@@ -261,176 +416,207 @@
         const enrolled = !!b.isEnrolled || (session && Array.isArray(session.enrolledBatches) && session.enrolledBatches.includes(b.id));
         document.title = `${b.title} | Mendorbit`;
 
-        // Hero badges
         const classes = Array.isArray(b.targetClasses) && b.targetClasses.length
           ? b.targetClasses
           : (b.targetClass ? b.targetClass.split(",").map(s => s.trim()).filter(Boolean) : []);
+        const hdrTxt = document.getElementById('hdr-class-text');
+        if (hdrTxt) hdrTxt.textContent = b.displayTag || classes[0] || "Batch Overview";
 
-        const heroBadges = document.getElementById('hero-badges');
-        heroBadges.innerHTML = [
-          ...classes.map(c => `<span class="px-3 py-1 rounded-full bg-orange-500/20 border border-orange-400/40 text-orange-300 text-xs font-extrabold">${escapeHtml(c)}</span>`),
-          `<span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-extrabold uppercase">${escapeHtml(b.language || 'HINGLISH')}</span>`,
-          b.mode ? `<span class="px-3 py-1 rounded-full bg-brand-500/30 border border-brand-400/40 text-brand-200 text-xs font-bold">${escapeHtml(b.mode)}</span>` : '',
-          b.badgeText ? `<span class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black uppercase">${escapeHtml(b.badgeText)}</span>` : ''
+        const stLabel = b.status === 'ARCHIVED' ? 'Closed' : (b.statusLabel || 'Ongoing');
+        document.getElementById('hero-badges').innerHTML = [
+          `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-rose-200/90 text-rose-600 text-[11px] font-extrabold shadow-2xs"><span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span>${escapeHtml(stLabel)}</span></span>`,
+          ...classes.map(c => `<span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-bold shadow-2xs">${escapeHtml(c)}</span>`),
+          b.stream ? `<span class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-[11px] font-bold">${escapeHtml(b.stream)}</span>` : '',
+          b.badgeText ? `<span class="px-3 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-800 text-[11px] font-extrabold uppercase">${escapeHtml(b.badgeText)}</span>` : ''
         ].filter(Boolean).join('');
 
         document.getElementById('hero-title').textContent = b.title;
         const subEl = document.getElementById('hero-subtitle');
-        if (b.subtitle || b.stream) {
-          subEl.textContent = b.subtitle || b.stream;
-        } else {
-          subEl.classList.add('hidden');
-        }
+        if (b.subtitle) subEl.textContent = b.subtitle;
+        else subEl.classList.add('hidden');
 
-        const heroMeta = document.getElementById('hero-meta-row');
         const metaParts = [];
-        if (b.startDate) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i> Starts: ${escapeHtml(formatBatchDate(b.startDate))}</span>`);
-        if (b.endDate) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Validity: ${escapeHtml(formatBatchDate(b.endDate))}</span>`);
-        if (b.schedule) metaParts.push(`<span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-brand-300"></i> ${escapeHtml(b.schedule)}</span>`);
-        heroMeta.innerHTML = metaParts.join('');
+        metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="languages" class="w-3.5 h-3.5 text-indigo-600"></i> ${escapeHtml((b.language || 'HINGLISH').toUpperCase())}</span>`);
+        if (b.startDate) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="calendar" class="w-3.5 h-3.5 text-rose-500"></i> Starts: ${escapeHtml(formatBatchDate(b.startDate))}</span>`);
+        if (b.endDate) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Valid Till: ${escapeHtml(formatBatchDate(b.endDate))}</span>`);
+        if (b.schedule) metaParts.push(`<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-2xs"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-500"></i> ${escapeHtml(b.schedule)}</span>`);
+        document.getElementById('hero-meta-row').innerHTML = metaParts.join('');
 
-        // Syllabus PDF link
-        const extraLinks = document.getElementById('hero-extra-links');
-        if (b.syllabusPdfUrl) {
-          extraLinks.innerHTML = `<a href="${escapeHtml(b.syllabusPdfUrl)}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition"><i data-lucide="file-down" class="w-4 h-4 text-amber-300"></i> Download Syllabus Brochure</a>`;
+        if (b.syllabusPdfUrl && safeUrl(b.syllabusPdfUrl)) {
+          document.getElementById('hero-extra-links').innerHTML = `<a href="${escapeHtml(safeUrl(b.syllabusPdfUrl))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition"><i data-lucide="file-down" class="w-4 h-4 text-amber-300"></i> Download Syllabus Brochure</a>`;
         }
 
-        // Description
         if (b.description) {
           document.getElementById('detail-description').textContent = b.description;
         } else {
           document.getElementById('sec-description').classList.add('hidden');
         }
 
-        // Subjects
-        if (Array.isArray(b.subjects) && b.subjects.length > 0) {
-          document.getElementById('sec-subjects').classList.remove('hidden');
-          document.getElementById('detail-subjects-list').innerHTML = b.subjects.map(s => `
-            <span class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200/70 dark:border-brand-800 text-xs font-extrabold">${escapeHtml(s)}</span>
-          `).join('');
-        }
-
-        // Features
         if (Array.isArray(b.features) && b.features.length > 0) {
           document.getElementById('sec-features').classList.remove('hidden');
+          document.getElementById('nav-link-features').classList.remove('hidden');
           document.getElementById('detail-features-list').innerHTML = b.features.map(f => `
-            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-              <span>${escapeHtml(f)}</span>
+            <div class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200/70 bg-slate-50/60 hover:bg-white hover:border-indigo-200 hover:-translate-y-0.5 hover:shadow-sm transition">
+              <span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="star" class="w-4 h-4"></i>
+              </span>
+              <span class="text-xs font-bold text-slate-800 leading-snug">${escapeHtml(f)}</span>
             </div>
           `).join('');
         }
 
-        // Faculty
+        if (Array.isArray(b.subjects) && b.subjects.length > 0) {
+          document.getElementById('sec-subjects').classList.remove('hidden');
+          document.getElementById('nav-link-subjects').classList.remove('hidden');
+          document.getElementById('detail-subjects-list').innerHTML = b.subjects.map(s => `
+            <span class="px-4 py-2 rounded-2xl bg-indigo-50/70 text-indigo-700 border border-indigo-200/70 text-xs font-extrabold">${escapeHtml(s)}</span>
+          `).join('');
+        }
+
         if (Array.isArray(b.faculty) && b.faculty.length > 0) {
           document.getElementById('sec-faculty').classList.remove('hidden');
+          document.getElementById('nav-link-faculty').classList.remove('hidden');
           document.getElementById('detail-faculty-list').innerHTML = b.faculty.map(f => {
             const name = typeof f === 'string' ? f : (f.name || '');
             const sub = typeof f === 'string' ? '' : (f.subject || '');
             return `
-              <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
-                <div class="w-11 h-11 rounded-full bg-brand-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">
+              <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-sm transition">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-extrabold text-sm flex-shrink-0 shadow-xs">
                   ${escapeHtml(name.charAt(0).toUpperCase())}
                 </div>
                 <div class="min-w-0">
-                  <div class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${escapeHtml(name)}</div>
-                  ${sub ? `<div class="text-xs font-semibold text-brand-600 dark:text-brand-400 truncate">${escapeHtml(sub)}</div>` : ''}
+                  <div class="text-sm font-extrabold text-slate-900 truncate">${escapeHtml(name)}</div>
+                  ${sub ? `<div class="text-xs font-bold text-indigo-600 truncate">${escapeHtml(sub)}</div>` : ''}
                 </div>
               </div>
             `;
           }).join('');
         }
 
-        // Demo video
-        if (b.demoVideoUrl) {
+        if (b.demoVideoUrl && safeUrl(b.demoVideoUrl)) {
           document.getElementById('sec-demo-video').classList.remove('hidden');
-          document.getElementById('detail-demo-iframe').src = b.demoVideoUrl;
+          document.getElementById('nav-link-demo').classList.remove('hidden');
+          document.getElementById('detail-demo-iframe').src = safeUrl(b.demoVideoUrl);
         }
 
-        // FAQs
         if (Array.isArray(b.faqs) && b.faqs.length > 0) {
           document.getElementById('sec-faqs').classList.remove('hidden');
+          document.getElementById('nav-link-faqs').classList.remove('hidden');
           document.getElementById('detail-faqs-list').innerHTML = b.faqs.map(faq => `
-            <details class="group rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50/70 dark:bg-slate-800/40">
-              <summary class="flex items-center justify-between cursor-pointer font-bold text-xs sm:text-sm text-slate-900 dark:text-white list-none">
+            <details class="group rounded-2xl border border-slate-200/90 p-4 bg-slate-50/50 hover:bg-white hover:border-indigo-200 transition">
+              <summary class="flex items-center justify-between cursor-pointer font-bold text-xs sm:text-sm text-slate-900 list-none gap-3">
                 <span>${escapeHtml(faq.q)}</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
               </summary>
-              <p class="mt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(faq.a)}</p>
+              <p class="mt-2.5 pt-2.5 border-t border-slate-100 text-xs text-slate-600 leading-relaxed">${escapeHtml(faq.a)}</p>
             </details>
           `).join('');
         }
 
-        // Right Sticky Card
+        // Right Sticky Card + Mobile Bar
         const sideThumb = document.getElementById('sidebar-thumb');
-        sideThumb.innerHTML = b.thumbnail
-          ? `<img src="${escapeHtml(b.thumbnail)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover" />`
-          : `<div class="w-full h-full bg-gradient-to-br from-slate-900 via-brand-900 to-indigo-900 flex flex-col items-center justify-center p-5 text-center">
-               <span class="text-amber-300 text-xs font-extrabold uppercase mb-1">${escapeHtml(classes.join(' • ') || 'Mendorbit')}</span>
-               <div class="text-white font-black text-lg leading-snug">${escapeHtml(b.title)}</div>
+        const safeThumb = safeUrl(b.thumbnail);
+        sideThumb.innerHTML = safeThumb
+          ? `<img src="${escapeHtml(safeThumb)}" alt="${escapeHtml(b.title)}" class="w-full h-full object-cover" />`
+          : `<div class="w-full h-full bg-gradient-to-br from-indigo-50 via-sky-50 to-violet-50 flex flex-col items-center justify-center p-5 text-center">
+               <span class="text-indigo-600 text-xs font-extrabold uppercase mb-1">${escapeHtml(b.displayTag || classes.join(' • ') || 'Mendorbit')}</span>
+               <div class="text-slate-900 font-black text-lg leading-snug">${escapeHtml(b.title)}</div>
              </div>`;
 
-        const price = Number(b.price) || 0;
-        const orig = Number(b.originalPrice) || 0;
+        document.getElementById('sidebar-aspirant').textContent = 'For ' + (b.displayTag || classes.join(' • ') || 'All Aspirants');
+        document.getElementById('sidebar-lang').textContent = (b.language || 'HINGLISH').toUpperCase();
+
+        const price = Math.max(0, Number(b.price) || 0);
+        const orig = Math.max(0, Number(b.originalPrice) || 0);
         const pct = (orig > price && orig > 0) ? Math.round(((orig - price) / orig) * 100) : 0;
 
-        document.getElementById('sidebar-price-block').innerHTML = enrolled
-          ? `<div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-black text-base">
-               <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-               <span>Enrolled Batch</span>
+        const priceMarkup = enrolled
+          ? `<div>
+               <div class="flex items-center gap-1.5 text-emerald-600 font-extrabold text-sm">
+                 <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                 <span>Enrolled</span>
+               </div>
+               <div class="text-[11px] font-semibold text-slate-400">Active Access</div>
              </div>`
-          : (price > 0
-              ? `<div class="flex items-baseline gap-2.5">
-                   <span class="text-3xl font-black text-slate-900 dark:text-white">₹${price.toLocaleString('en-IN')}</span>
-                   ${orig > price ? `<span class="text-sm text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
-                   ${pct > 0 ? `<span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-xs font-black">${pct}% OFF</span>` : ''}
-                 </div>`
-              : `<div class="flex items-baseline gap-2.5">
-                   <span class="text-3xl font-black text-emerald-600">FREE</span>
-                   ${orig > 0 ? `<span class="text-sm text-slate-400 line-through">₹${orig.toLocaleString('en-IN')}</span>` : ''}
-                 </div>`);
+          : `<div>
+               ${orig > price ? `<div class="text-xs text-slate-400 line-through font-bold leading-none mb-1">₹${orig.toLocaleString('en-IN')}</div>` : ''}
+               <div class="flex items-center gap-2 flex-wrap">
+                 <span class="text-2xl font-extrabold text-slate-950 leading-none">${price === 0 ? 'FREE' : '₹' + price.toLocaleString('en-IN')}</span>
+                 ${pct > 0 ? `<span class="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-extrabold">${pct}% OFF</span>` : ''}
+               </div>
+             </div>`;
 
-        const metaLines = [];
-        if (classes.length) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Target Audience</span><span class="font-bold text-slate-800 dark:text-white text-right">${escapeHtml(classes.join(', '))}</span></div>`);
-        metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Language</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(b.language || 'HINGLISH')}</span></div>`);
-        if (b.startDate) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Starts On</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(formatBatchDate(b.startDate))}</span></div>`);
-        if (b.endDate) metaLines.push(`<div class="flex justify-between"><span class="text-slate-400">Valid Till</span><span class="font-bold text-slate-800 dark:text-white">${escapeHtml(formatBatchDate(b.endDate))}</span></div>`);
-        document.getElementById('sidebar-meta-list').innerHTML = metaLines.join('');
+        document.getElementById('sidebar-price-block').innerHTML = priceMarkup;
+        document.getElementById('mob-price-block').innerHTML = priceMarkup;
 
-        const ctaBox = document.getElementById('sidebar-cta-container');
-        if (enrolled) {
-          ctaBox.innerHTML = `
-            <a href="/study/${encodeURIComponent(b.id)}" id="btn-go-to-batch" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
-              <i data-lucide="play-circle" class="w-5 h-5"></i>
-              <span>Go to Batch</span>
-            </a>
-          `;
-        } else {
-          ctaBox.innerHTML = `
-            <button type="button" id="btn-detail-buy-now" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2">
-              <span>${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          `;
-          document.getElementById('btn-detail-buy-now').addEventListener('click', async function () {
-            this.disabled = true;
-            this.innerHTML = "Preparing Checkout...";
-            try {
-              const cRes = await MendorbitAPI.initCheckout(b.id, session ? session.email : "");
-              if (cRes && cRes.status === "success" && cRes.checkoutUrl) {
-                window.location.href = cRes.checkoutUrl;
-              } else {
-                window.location.href = `payment.html?id=${encodeURIComponent(b.id)}`;
+        const ctaMarkup = enrolled
+          ? `<a href="/study/${encodeURIComponent(b.id)}" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs tracking-wide shadow-sm transition inline-flex items-center gap-1.5">
+               <i data-lucide="play-circle" class="w-4 h-4"></i>
+               <span>Go to Batch</span>
+             </a>`
+          : `<button type="button" data-checkout-btn="1" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-xs tracking-wide shadow-md shadow-indigo-500/20 transition inline-flex items-center gap-1.5">
+               <span>${price > 0 ? 'Buy Now' : 'Enroll Now'}</span>
+               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+             </button>`;
+
+        document.getElementById('sidebar-cta-container').innerHTML = ctaMarkup;
+        document.getElementById('mob-cta-container').innerHTML = ctaMarkup;
+
+        if (!enrolled) {
+          document.querySelectorAll('[data-checkout-btn]').forEach(btn => {
+            btn.addEventListener('click', async function () {
+              btn.disabled = true;
+              btn.innerHTML = "Opening...";
+              try {
+                const cRes = await MendorbitAPI.initCheckout(b.id, session ? session.email : "");
+                if (cRes && cRes.status === "success" && cRes.checkoutUrl) {
+                  window.location.href = cRes.checkoutUrl;
+                } else {
+                  window.location.href = `/payment.html?id=${encodeURIComponent(b.id)}`;
+                }
+              } catch (err) {
+                window.location.href = `/payment.html?id=${encodeURIComponent(b.id)}`;
               }
-            } catch (err) {
-              window.location.href = `payment.html?id=${encodeURIComponent(b.id)}`;
-            }
+            });
           });
         }
 
+        const metaLines = [];
+        if (classes.length) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Target Audience</span><span class="font-bold text-slate-900 text-right">${escapeHtml(classes.join(', '))}</span></div>`);
+        metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Medium</span><span class="font-bold text-slate-900">${escapeHtml(b.language || 'HINGLISH')}</span></div>`);
+        if (b.startDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Starts On</span><span class="font-bold text-slate-900">${escapeHtml(formatBatchDate(b.startDate))}</span></div>`);
+        if (b.endDate) metaLines.push(`<div class="flex justify-between gap-3"><span class="text-slate-400">Valid Till</span><span class="font-bold text-slate-900">${escapeHtml(formatBatchDate(b.endDate))}</span></div>`);
+        document.getElementById('sidebar-meta-list').innerHTML = metaLines.join('');
+
         loader.classList.add('hidden');
         mainBox.classList.remove('hidden');
+        document.getElementById('mob-sticky-bar')?.classList.remove('hidden');
         if (window.lucide) lucide.createIcons();
+
+        // Live Announcements fetch
+        try {
+          const aRes = await MendorbitAPI.getBatchAnnouncements(b.id);
+          const list = (aRes && Array.isArray(aRes.announcements)) ? aRes.announcements : [];
+          const cnt = document.getElementById('nav-ann-count');
+          const feed = document.getElementById('live-announcements-feed');
+          if (list.length) {
+            cnt.textContent = list.length;
+            cnt.classList.remove('hidden');
+            feed.innerHTML = list.map(a => `
+              <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-extrabold text-slate-900">${escapeHtml(a.authorName || 'Mendorbit Team')}</span>
+                  <span class="text-[10px] font-semibold text-slate-400">${a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-IN') : ''}</span>
+                </div>
+                ${a.title ? `<div class="text-xs font-bold text-indigo-700">${escapeHtml(a.title)}</div>` : ''}
+                ${a.message ? `<p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(a.message)}</p>` : ''}
+                ${safeUrl(a.imageUrl) ? `<img src="${escapeHtml(safeUrl(a.imageUrl))}" alt="Announcement" class="rounded-xl max-h-64 object-contain border border-slate-200 bg-white" loading="lazy" />` : ''}
+              </div>
+            `).join('');
+          } else {
+            feed.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">No announcements posted for this batch yet.</div>`;
+          }
+        } catch (e) {}
       } catch (e) {
         console.error("[Batch Detail] Error:", e);
         loader.classList.add('hidden');

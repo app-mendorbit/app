@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <title>Study Room | Mendorbit Classroom</title>
+  <title>Batch Classroom | Mendorbit</title>
   <link rel="icon" type="image/png" href="/logo.png" />
+
+  <script>
+    document.documentElement.classList.remove("dark");
+    try { document.documentElement.style.colorScheme = "light"; } catch (e) {}
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,40 +30,36 @@
   </script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    html, body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #0f172a; overflow-x: hidden; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .tab-pill.active { background: #4f46e5; color: #ffffff; border-color: #4f46e5; box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.25); }
-    .subject-pill.active { background: #0f172a; color: #ffffff; border-color: #0f172a; }
-    .lec-row.active { background: #eef2ff; border-color: #c7d2fe; }
-    .opt-btn.selected { border-color: #4f46e5; background: #eef2ff; color: #312e81; }
-    .opt-btn.correct { border-color: #10b981; background: #ecfdf5; color: #065f46; }
-    .opt-btn.wrong { border-color: #f43f5e; background: #fff1f2; color: #9f1239; }
+    html, body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #fbfcfe; color: #0f172a; overflow-x: hidden; }
+    .dot-grid-bg {
+      background-image: radial-gradient(rgba(99, 102, 241, 0.14) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+<body class="min-h-screen flex flex-col bg-[#fbfcfe] text-slate-900">
 
-  <!-- CLEAN LIGHT TOP NAVBAR -->
-  <header class="sticky top-0 z-40 h-16 bg-white/95 backdrop-blur border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between gap-3">
+  <!-- FROSTED LIGHT HEADER -->
+  <header class="sticky top-0 z-40 h-16 bg-white/85 backdrop-blur-xl border-b border-slate-200/75 px-4 sm:px-8 flex items-center justify-between gap-3">
     <div class="flex items-center gap-3 min-w-0">
-      <a href="/batches.html" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition flex-shrink-0" title="All Batches">
+      <a href="/batches.html" class="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 transition flex-shrink-0" title="All Batches">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
       </a>
-      <a href="/index.html" class="flex items-center gap-2 flex-shrink-0">
+      <a href="/index.html" class="flex items-center gap-2.5 flex-shrink-0">
         <img src="/logo.png" alt="Mendorbit" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'" />
         <span class="hidden sm:inline font-extrabold text-base tracking-tight text-slate-900">Mendorbit</span>
       </a>
       <span class="text-slate-300 hidden sm:inline">/</span>
       <div class="min-w-0">
-        <h1 id="nav-batch-title" class="text-xs sm:text-sm font-extrabold text-slate-900 truncate">Loading Study Room...</h1>
-        <p id="nav-progress-label" class="text-[11px] font-semibold text-slate-500 hidden sm:block">Checking enrollment access...</p>
+        <h1 id="nav-batch-title" class="text-xs sm:text-sm font-extrabold text-slate-900 truncate">Loading Batch...</h1>
+        <p id="nav-batch-sub" class="text-[11px] font-semibold text-slate-500 hidden sm:block">Checking enrollment access...</p>
       </div>
     </div>
 
     <div class="flex items-center gap-2.5 flex-shrink-0">
-      <a id="nav-batch-info-link" href="/batches.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
+      <a id="nav-batch-info-link" href="/batches.html" class="hidden md:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
         <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i>
-        <span>Batch Info</span>
+        <span>Batch Overview</span>
       </a>
 
       <div id="nav-user-widget" class="relative hidden">
@@ -85,109 +86,121 @@
     </div>
   </header>
 
-  <!-- LOADING STATE -->
+  <!-- LOADING -->
   <div id="classroom-loader" class="flex-1 flex flex-col items-center justify-center py-24 px-4 text-center">
     <div class="w-11 h-11 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <p class="text-sm font-bold text-slate-600">Verifying your batch enrollment & loading classes...</p>
+    <p class="text-sm font-bold text-slate-600">Verifying your batch enrollment...</p>
   </div>
 
-  <!-- ENROLLMENT REQUIRED / ERROR LOCK SCREEN -->
+  <!-- NOT ENROLLED LOCK SCREEN -->
   <div id="classroom-locked" class="hidden flex-1 flex items-center justify-center px-4 py-16">
-    <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200 p-7 sm:p-8 text-center shadow-sm space-y-4">
+    <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 text-center shadow-[0_24px_60px_-15px_rgba(15,23,42,0.1)] space-y-4">
       <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
         <i data-lucide="lock" class="w-7 h-7"></i>
       </div>
       <h2 id="locked-title" class="text-xl font-extrabold text-slate-900">Enrolled Students Only</h2>
       <p id="locked-msg" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-        You need an active enrollment in this batch to watch lectures, download PDF notes, and solve DPP sheets.
+        You need an active enrollment in this batch to enter the study classroom.
       </p>
       <div class="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
-        <a id="btn-locked-enroll" href="/batches.html" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition">View Batch & Enroll</a>
+        <a id="btn-locked-enroll" href="/batches.html" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition">View Batch &amp; Enroll</a>
         <a href="/batches.html" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition">Browse Batches</a>
       </div>
     </div>
   </div>
 
-  <!-- MAIN STUDY WORKSPACE -->
-  <main id="classroom-main" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-6">
-    <!-- SUBJECT FILTER BAR -->
-    <div id="subject-bar" class="no-scrollbar flex items-center gap-2 overflow-x-auto pb-3 mb-4 border-b border-slate-200/80"></div>
+  <!-- UNDER PROGRESS CLASSROOM VIEW (FOR VERIFIED ENROLLED STUDENTS) -->
+  <main id="classroom-main" class="hidden flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
+    <section class="relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 shadow-[0_24px_70px_-20px_rgba(79,70,229,0.14)]">
+      <div class="h-1.5 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-sky-500"></div>
+      <div class="dot-grid-bg relative p-7 sm:p-11 text-center space-y-6">
+        <div class="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-indigo-100/60 blur-3xl"></div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <!-- LEFT / MAIN: VIDEO PLAYER + NOTES + GOOGLE SHEET DPP -->
-      <div class="lg:col-span-8 space-y-5">
-        <!-- VIDEO STAGE CARD -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-          <div id="video-stage-wrap" class="aspect-video w-full bg-slate-950 relative flex items-center justify-center">
-            <div id="video-empty-state" class="text-center px-6 text-slate-300 space-y-2">
-              <i data-lucide="play-circle" class="w-12 h-12 mx-auto text-indigo-400"></i>
-              <p class="text-sm font-bold text-white">Select a lecture from Curriculum to start studying</p>
-              <p class="text-xs text-slate-400">Lectures, PDF Notes, and Google Sheet DPPs appear right here.</p>
+        <div class="relative z-10 flex flex-wrap items-center justify-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-extrabold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>ENROLLED • SEAT CONFIRMED</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-extrabold">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>CLASSROOM UNDER PROGRESS</span>
+          </span>
+        </div>
+
+        <div class="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 flex items-center justify-center mx-auto">
+          <i data-lucide="sparkles" class="w-8 h-8"></i>
+        </div>
+
+        <div class="relative z-10 max-w-xl mx-auto space-y-2.5">
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-950">
+            Batch Classroom Is Under Progress
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Welcome to <strong id="up-batch-name" class="text-slate-900">your batch</strong>! Your enrollment is active. Our academic team is organizing structured lecture modules, class notes, and practice materials — everything will be unlocked right here very soon.
+          </p>
+        </div>
+
+        <div class="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left pt-2">
+          <div class="p-4 rounded-2xl bg-white/95 border border-slate-200/80 shadow-2xs flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="video" class="w-4 h-4"></i>
             </div>
-            <iframe id="yt-player-frame" class="hidden w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <div>
+              <div class="text-xs font-extrabold text-slate-900">Video Lectures</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Setting up stream modules</div>
+            </div>
           </div>
-
-          <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
-            <div class="min-w-0 space-y-1">
-              <div id="active-lec-crumb" class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 truncate">Ready to Learn</div>
-              <h2 id="active-lec-title" class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">Choose a topic from the list</h2>
-              <div id="active-lec-meta" class="text-xs text-slate-500 font-medium flex flex-wrap items-center gap-3"></div>
+          <div class="p-4 rounded-2xl bg-white/95 border border-slate-200/80 shadow-2xs flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
             </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              <button type="button" id="btn-fullscreen-player" class="hidden px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 inline-flex items-center gap-1.5 transition">
-                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-                <span>Fullscreen</span>
-              </button>
-              <button type="button" id="btn-mark-complete" class="hidden px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold inline-flex items-center gap-1.5 transition shadow-xs">
-                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
-                <span id="btn-mark-label">Mark Completed</span>
-              </button>
+            <div>
+              <div class="text-xs font-extrabold text-slate-900">Notes &amp; PDFs</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Preparing chapter handouts</div>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/95 border border-slate-200/80 shadow-2xs flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-extrabold text-slate-900">DPPs &amp; Tests</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Launching in next update</div>
             </div>
           </div>
         </div>
 
-        <!-- CONTENT WORKSPACE TABS: NOTES / DPP PRACTICE / ANNOUNCEMENTS -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-4">
-          <div class="no-scrollbar flex items-center gap-2 overflow-x-auto border-b border-slate-100 pb-3">
-            <button type="button" data-stage-tab="notes" class="tab-pill active px-4 py-2 rounded-xl border border-slate-200 text-xs font-extrabold whitespace-nowrap transition inline-flex items-center gap-1.5">
-              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-              <span>Class Notes &amp; Links</span>
-            </button>
-            <button type="button" data-stage-tab="dpp" class="tab-pill px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-extrabold whitespace-nowrap transition inline-flex items-center gap-1.5">
-              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-              <span>DPP Practice (MCQ Quiz)</span>
-            </button>
-            <button type="button" data-stage-tab="announcements" class="tab-pill px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-extrabold whitespace-nowrap transition inline-flex items-center gap-1.5">
-              <i data-lucide="megaphone" class="w-3.5 h-3.5"></i>
-              <span>Announcements</span>
-              <span id="stage-ann-badge" class="hidden px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-extrabold">0</span>
-            </button>
-          </div>
-
-          <!-- TAB 1: NOTES & LINKS -->
-          <div id="pane-notes" class="space-y-3"></div>
-
-          <!-- TAB 2: INTERACTIVE GOOGLE SHEET DPP ENGINE -->
-          <div id="pane-dpp" class="hidden space-y-4"></div>
-
-          <!-- TAB 3: BATCH ANNOUNCEMENTS -->
-          <div id="pane-announcements" class="hidden space-y-3"></div>
+        <div class="relative z-10 pt-3 flex flex-wrap items-center justify-center gap-3">
+          <a href="/index.html" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-sm transition inline-flex items-center gap-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Go to Dashboard</span>
+          </a>
+          <a id="up-btn-overview" href="/batches.html" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold transition inline-flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i>
+            <span>Batch Overview</span>
+          </a>
+          <a href="/batches.html" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition">
+            All Batches
+          </a>
         </div>
       </div>
+    </section>
 
-      <!-- RIGHT SIDEBAR: CHAPTERS & LECTURES CURRICULUM -->
-      <aside class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden lg:sticky lg:top-20">
-        <div class="px-4 sm:px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
-          <div>
-            <h3 class="text-sm font-extrabold text-slate-900">Batch Curriculum</h3>
-            <p id="curriculum-stats" class="text-[11px] font-semibold text-slate-500">0 lectures</p>
+    <!-- LIVE BATCH ANNOUNCEMENTS (IF ANY) -->
+    <section id="up-ann-section" class="hidden bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs space-y-4">
+      <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="megaphone" class="w-4 h-4"></i>
           </div>
-          <span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-extrabold">ENROLLED</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900">Batch Announcements</h3>
+            <p class="text-[11px] text-slate-500">Updates posted by your educator team</p>
+          </div>
         </div>
-
-        <div id="curriculum-tree" class="p-3 sm:p-4 space-y-3 max-h-[70vh] overflow-y-auto no-scrollbar"></div>
-      </aside>
-    </div>
+      </div>
+      <div id="up-ann-list" class="space-y-3"></div>
+    </section>
   </main>
 
   <script src="/assets/js/mendorbit-cipher.js"></script>
@@ -211,7 +224,7 @@
         return;
       }
 
-      // Populate Navbar Profile Widget
+      // Navbar Student Profile Widget
       const userWidget = document.getElementById('nav-user-widget');
       if (userWidget) {
         userWidget.classList.remove('hidden');
@@ -237,7 +250,7 @@
         });
       }
 
-      // 2. Resolve Batch ID cleanly from /study/<batchId> or ?id=<batchId>
+      // 2. Resolve Batch ID from /study/<batchId> or ?id=<batchId>
       const qs = new URLSearchParams(window.location.search);
       const pathMatch = (window.location.pathname || '').match(/\/study\/([^\/?#]+)/i);
       const batchId = (qs.get('id') || qs.get('batch') || (pathMatch ? decodeURIComponent(pathMatch[1]) : '')).trim();
@@ -250,7 +263,7 @@
         loader.classList.add('hidden');
         mainBox.classList.add('hidden');
         document.getElementById('locked-title').textContent = title || 'Enrolled Students Only';
-        document.getElementById('locked-msg').textContent = msg || 'Enrollment required to access this batch study room.';
+        document.getElementById('locked-msg').textContent = msg || 'Enrollment required to enter this batch classroom.';
         const enrollBtn = document.getElementById('btn-locked-enroll');
         if (enrollBtn && batchId) {
           enrollBtn.href = '/batch-detail.html?id=' + encodeURIComponent(batchId);
@@ -260,11 +273,13 @@
       }
 
       if (!batchId) {
-        showLocked('Batch Not Specified', 'Please open your study room directly from your enrolled batches.');
+        showLocked('Batch Not Specified', 'Please open your classroom directly from your enrolled batches.');
         return;
       }
 
-      document.getElementById('nav-batch-info-link').href = '/batch-detail.html?id=' + encodeURIComponent(batchId);
+      const overviewHref = '/batch-detail.html?id=' + encodeURIComponent(batchId);
+      document.getElementById('nav-batch-info-link').href = overviewHref;
+      document.getElementById('up-btn-overview').href = overviewHref;
 
       function esc(str) {
         return String(str == null ? '' : str)
@@ -274,435 +289,50 @@
         const s = String(u || '').trim();
         return (/^https?:\/\//i.test(s) || s.startsWith('/')) ? s : '';
       }
-      function toYoutubeEmbed(raw) {
-        const u = String(raw || '').trim();
-        if (!u) return '';
-        let m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-        if (m && m[1]) return 'https://www.youtube-nocookie.com/embed/' + m[1] + '?rel=0&modestbranding=1';
-        return safeUrl(u);
-      }
 
-      let batchData = null;
-      let curriculum = {};
-      let completedSet = new Set();
-      let activeSubject = '';
-      let activeLecture = null;
-      let activeDppState = { questions: [], selections: {}, checked: false, sheetTab: '' };
-
-      // 3. Fetch Zero-Bypass Protected Content + Announcements
+      // 3. Verify Server-Side Enrollment
+      let batchTitle = batchId;
       try {
         const res = await MendorbitAPI.getBatchContent(batchId, session.email);
         if (!res || res.status !== 'success') {
           showLocked('Access Restricted', (res && res.message) || 'You are not enrolled in this batch.');
           return;
         }
-        batchData = res.batch || { id: batchId, title: batchId };
-        curriculum = res.curriculum || {};
-        completedSet = new Set(Array.isArray(res.completedLectures) ? res.completedLectures : []);
+        const batchData = res.batch || { id: batchId, title: batchId };
+        batchTitle = batchData.title || batchId;
       } catch (err) {
-        showLocked('Connection Error', 'Unable to verify your enrollment with server right now. Please try again.');
+        showLocked('Connection Error', 'Unable to verify your enrollment right now. Please try again.');
         return;
       }
 
-      document.title = (batchData.title || 'Study Room') + ' | Mendorbit Classroom';
-      document.getElementById('nav-batch-title').textContent = batchData.title || batchId;
+      document.title = batchTitle + ' — Classroom Under Progress | Mendorbit';
+      document.getElementById('nav-batch-title').textContent = batchTitle;
+      document.getElementById('nav-batch-sub').textContent = 'Enrolled Student • Under Progress';
+      document.getElementById('up-batch-name').textContent = batchTitle;
 
       loader.classList.add('hidden');
       mainBox.classList.remove('hidden');
-
-      // Stage tab switcher
-      document.querySelectorAll('[data-stage-tab]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const target = btn.getAttribute('data-stage-tab');
-          document.querySelectorAll('[data-stage-tab]').forEach(b => {
-            const active = b.getAttribute('data-stage-tab') === target;
-            b.classList.toggle('active', active);
-            b.classList.toggle('bg-white', !active);
-            b.classList.toggle('text-slate-700', !active);
-          });
-          document.getElementById('pane-notes').classList.toggle('hidden', target !== 'notes');
-          document.getElementById('pane-dpp').classList.toggle('hidden', target !== 'dpp');
-          document.getElementById('pane-announcements').classList.toggle('hidden', target !== 'announcements');
-        });
-      });
-
-      // Fullscreen button for video stage
-      document.getElementById('btn-fullscreen-player')?.addEventListener('click', () => {
-        const wrap = document.getElementById('video-stage-wrap');
-        if (!wrap) return;
-        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-        else if (wrap.requestFullscreen) wrap.requestFullscreen().catch(() => {});
-      });
-
-      function updateProgressHeader() {
-        let total = 0;
-        Object.values(curriculum).forEach(chapters => {
-          if (Array.isArray(chapters)) {
-            chapters.forEach(ch => { total += Array.isArray(ch.lectures) ? ch.lectures.length : 0; });
-          }
-        });
-        const done = completedSet.size;
-        document.getElementById('nav-progress-label').textContent = `${done} of ${total} lectures completed`;
-        document.getElementById('curriculum-stats').textContent = `${total} lectures • ${Object.keys(curriculum).length} subjects`;
-      }
-
-      function renderSubjectsBar() {
-        const subjects = Object.keys(curriculum);
-        const bar = document.getElementById('subject-bar');
-        if (!subjects.length) {
-          bar.innerHTML = `<span class="text-xs font-semibold text-slate-400">No subjects published by educator yet.</span>`;
-          return;
-        }
-        if (!activeSubject || !curriculum[activeSubject]) activeSubject = subjects[0];
-        bar.innerHTML = subjects.map(sub => {
-          const isAct = sub === activeSubject;
-          return `<button type="button" data-sub="${esc(sub)}" class="subject-pill ${isAct ? 'active' : 'bg-white text-slate-700 hover:bg-slate-50'} px-4 py-2 rounded-xl border border-slate-200 text-xs font-extrabold whitespace-nowrap transition">${esc(sub)}</button>`;
-        }).join('');
-        bar.querySelectorAll('[data-sub]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            activeSubject = btn.getAttribute('data-sub');
-            renderSubjectsBar();
-            renderCurriculumTree();
-          });
-        });
-      }
-
-      function renderNotesPane(lec) {
-        const pane = document.getElementById('pane-notes');
-        if (!lec) {
-          pane.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">Select a lecture to view its PDF notes & study material links.</p>`;
-          return;
-        }
-        const notesUrl = safeUrl(lec.notesUrl || lec.pdfUrl);
-        const solUrl = safeUrl(lec.dppSolutionUrl);
-        const rows = [];
-        if (notesUrl) {
-          rows.push(`
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50/70">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="file-text" class="w-5 h-5"></i>
-                </div>
-                <div class="min-w-0">
-                  <div class="text-xs sm:text-sm font-extrabold text-slate-900 truncate">${esc(lec.notesTitle || (lec.title + ' — Class Notes'))}</div>
-                  <div class="text-[11px] font-medium text-slate-500 truncate">${esc(activeSubject)}</div>
-                </div>
-              </div>
-              <a href="${esc(notesUrl)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold inline-flex items-center justify-center gap-1.5 flex-shrink-0 transition">
-                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                <span>Open Notes</span>
-              </a>
-            </div>
-          `);
-        }
-        if (solUrl) {
-          rows.push(`
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-slate-200 bg-emerald-50/50">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="book-open-check" class="w-5 h-5"></i>
-                </div>
-                <div class="min-w-0">
-                  <div class="text-xs sm:text-sm font-extrabold text-slate-900 truncate">${esc(lec.title)} — DPP Written / Video Solution</div>
-                  <div class="text-[11px] font-medium text-slate-500">Additional reference link</div>
-                </div>
-              </div>
-              <a href="${esc(solUrl)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold inline-flex items-center justify-center gap-1.5 flex-shrink-0 transition">
-                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                <span>View Solution</span>
-              </a>
-            </div>
-          `);
-        }
-        if (!rows.length) {
-          pane.innerHTML = `<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">No notes link attached to this lecture yet.</div>`;
-        } else {
-          pane.innerHTML = rows.join('');
-        }
-        if (window.lucide) lucide.createIcons();
-      }
-
-      function renderDppQuestions() {
-        const pane = document.getElementById('pane-dpp');
-        const st = activeDppState;
-        if (!st.questions.length) return;
-
-        let score = 0;
-        if (st.checked) {
-          st.questions.forEach((q, idx) => {
-            if ((st.selections[idx] || '') === q.correctOption) score++;
-          });
-        }
-
-        const headerBar = `
-          <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-indigo-50/80 border border-indigo-100">
-            <div>
-              <div class="text-xs font-extrabold text-indigo-950">DPP Sheet: ${esc(st.sheetTab || 'Practice Set')}</div>
-              <div class="text-[11px] font-semibold text-indigo-700">${st.questions.length} MCQs loaded live from verified Google Sheet</div>
-            </div>
-            ${st.checked
-              ? `<div class="flex items-center gap-2">
-                   <span class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Score: ${score} / ${st.questions.length}</span>
-                   <button type="button" id="btn-dpp-retry" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50">Retry</button>
-                 </div>`
-              : `<button type="button" id="btn-dpp-submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-xs transition">Submit &amp; Check Answers</button>`}
-          </div>
-        `;
-
-        const cards = st.questions.map((q, idx) => {
-          const chosen = st.selections[idx] || '';
-          const opts = ['A', 'B', 'C', 'D'].filter(k => q.options && q.options[k]);
-          const btns = opts.map(key => {
-            let cls = 'opt-btn w-full text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-800 transition flex items-start gap-2.5';
-            if (st.checked) {
-              if (key === q.correctOption) cls += ' correct';
-              else if (chosen === key && chosen !== q.correctOption) cls += ' wrong';
-            } else if (chosen === key) {
-              cls += ' selected';
-            }
-            return `
-              <button type="button" data-q="${idx}" data-opt="${key}" class="${cls}" ${st.checked ? 'disabled' : ''}>
-                <span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 font-extrabold text-[11px] flex items-center justify-center flex-shrink-0">${key}</span>
-                <span class="leading-relaxed">${esc(q.options[key])}</span>
-              </button>
-            `;
-          }).join('');
-
-          const expHtml = st.checked
-            ? `<div class="mt-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-1.5">
-                 <div class="font-extrabold text-emerald-700">Correct Answer: Option ${esc(q.correctOption)}</div>
-                 ${q.explanation ? `<p class="leading-relaxed">${esc(q.explanation)}</p>` : ''}
-                 ${safeUrl(q.solutionUrl) ? `<a href="${esc(safeUrl(q.solutionUrl))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-indigo-600 font-extrabold hover:underline">Open Detailed Solution ↗</a>` : ''}
-               </div>`
-            : '';
-
-          return `
-            <div class="p-4 rounded-2xl border border-slate-200 bg-white space-y-3">
-              <div class="flex items-start justify-between gap-2">
-                <div class="text-xs sm:text-sm font-extrabold text-slate-900 leading-relaxed">
-                  <span class="text-indigo-600 mr-1">Q${esc(q.qNo || (idx + 1))}.</span> ${esc(q.question)}
-                </div>
-                ${q.topic ? `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold flex-shrink-0">${esc(q.topic)}</span>` : ''}
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${btns}</div>
-              ${expHtml}
-            </div>
-          `;
-        }).join('');
-
-        pane.innerHTML = headerBar + `<div class="space-y-3">${cards}</div>`;
-
-        pane.querySelectorAll('[data-q]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const qi = Number(btn.getAttribute('data-q'));
-            activeDppState.selections[qi] = btn.getAttribute('data-opt');
-            renderDppQuestions();
-          });
-        });
-        document.getElementById('btn-dpp-submit')?.addEventListener('click', () => {
-          activeDppState.checked = true;
-          renderDppQuestions();
-        });
-        document.getElementById('btn-dpp-retry')?.addEventListener('click', () => {
-          activeDppState.selections = {};
-          activeDppState.checked = false;
-          renderDppQuestions();
-        });
-      }
-
-      async function loadDppForLecture(lec) {
-        const pane = document.getElementById('pane-dpp');
-        activeDppState = { questions: [], selections: {}, checked: false, sheetTab: '' };
-        if (!lec || !lec.dppSheetTab) {
-          const sol = safeUrl(lec && lec.dppSolutionUrl);
-          pane.innerHTML = sol
-            ? `<div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                 <div><div class="text-xs font-extrabold text-slate-900">DPP Reference Available</div><div class="text-[11px] text-slate-500">No Google Sheet quiz tab linked; open the DPP link directly.</div></div>
-                 <a href="${esc(sol)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-extrabold">Open DPP Link ↗</a>
-               </div>`
-            : `<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">No DPP Google Sheet tab linked for this lecture yet.</div>`;
-          return;
-        }
-
-        pane.innerHTML = `<div class="py-8 text-center text-xs font-bold text-slate-500">Loading DPP questions from Google Sheet (${esc(lec.dppSheetTab)})...</div>`;
-        try {
-          const res = await MendorbitAPI.getBatchDpp(batchId, lec.dppSheetTab, lec.id || '', session.email);
-          if (res && res.status === 'success' && Array.isArray(res.questions) && res.questions.length) {
-            activeDppState = {
-              questions: res.questions,
-              selections: {},
-              checked: false,
-              sheetTab: res.sheetTab || lec.dppSheetTab
-            };
-            renderDppQuestions();
-          } else if (res && res.configured === false) {
-            pane.innerHTML = `<div class="p-6 rounded-2xl border border-amber-200 bg-amber-50 text-xs text-amber-900 font-semibold">${esc(res.message || 'DPP Spreadsheet Web App URL is not connected in Worker/Admin yet.')}</div>`;
-          } else {
-            pane.innerHTML = `<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">${esc((res && res.message) || 'No questions found in this DPP sheet tab.')}</div>`;
-          }
-        } catch (err) {
-          pane.innerHTML = `<div class="p-6 rounded-2xl border border-rose-200 bg-rose-50 text-xs text-rose-700 font-semibold">Failed to load DPP questions right now.</div>`;
-        }
-      }
-
-      function selectLecture(chapterTitle, lec) {
-        activeLecture = lec;
-        const embed = toYoutubeEmbed(lec.videoUrl);
-        const frame = document.getElementById('yt-player-frame');
-        const empty = document.getElementById('video-empty-state');
-        const fsBtn = document.getElementById('btn-fullscreen-player');
-        const mkBtn = document.getElementById('btn-mark-complete');
-
-        if (embed) {
-          frame.src = embed;
-          frame.classList.remove('hidden');
-          empty.classList.add('hidden');
-          fsBtn.classList.remove('hidden');
-        } else {
-          frame.src = '';
-          frame.classList.add('hidden');
-          empty.classList.remove('hidden');
-          fsBtn.classList.add('hidden');
-        }
-
-        document.getElementById('active-lec-crumb').textContent = `${activeSubject} • ${chapterTitle}`;
-        document.getElementById('active-lec-title').textContent = lec.title || 'Untitled Lecture';
-
-        const meta = [];
-        if (lec.teacher) meta.push(`<span>Faculty: <strong class="text-slate-800">${esc(lec.teacher)}</strong></span>`);
-        if (lec.duration) meta.push(`<span>Duration: <strong class="text-slate-800">${esc(lec.duration)}</strong></span>`);
-        if (lec.dppSheetTab) meta.push(`<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold">DPP Sheet: ${esc(lec.dppSheetTab)}</span>`);
-        document.getElementById('active-lec-meta').innerHTML = meta.join('');
-
-        mkBtn.classList.remove('hidden');
-        const syncMarkBtn = () => {
-          const isDone = completedSet.has(lec.id);
-          document.getElementById('btn-mark-label').textContent = isDone ? 'Completed' : 'Mark Completed';
-          mkBtn.className = isDone
-            ? 'px-3.5 py-2 rounded-xl bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-extrabold inline-flex items-center gap-1.5 transition'
-            : 'px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold inline-flex items-center gap-1.5 transition shadow-xs';
-        };
-        syncMarkBtn();
-        mkBtn.onclick = async () => {
-          if (!lec.id) return;
-          mkBtn.disabled = true;
-          try {
-            const pRes = await MendorbitAPI.saveLectureProgress(batchId, lec.id, session.email);
-            if (pRes && pRes.status === 'success') {
-              completedSet = new Set(pRes.completedLectures || [...completedSet, lec.id]);
-              syncMarkBtn();
-              updateProgressHeader();
-              renderCurriculumTree();
-            }
-          } catch (e) {}
-          mkBtn.disabled = false;
-        };
-
-        renderCurriculumTree();
-        renderNotesPane(lec);
-        loadDppForLecture(lec);
-      }
-
-      function renderCurriculumTree() {
-        const tree = document.getElementById('curriculum-tree');
-        const chapters = Array.isArray(curriculum[activeSubject]) ? curriculum[activeSubject] : [];
-        if (!chapters.length) {
-          tree.innerHTML = `<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">No lectures or chapters added in ${esc(activeSubject || 'this batch')} yet. Check back soon!</div>`;
-          return;
-        }
-
-        tree.innerHTML = chapters.map((ch, cIdx) => {
-          const lectures = Array.isArray(ch.lectures) ? ch.lectures : [];
-          const rows = lectures.map((lec, lIdx) => {
-            const isAct = activeLecture && activeLecture.id === lec.id;
-            const isDone = completedSet.has(lec.id);
-            return `
-              <button type="button" data-ch="${cIdx}" data-lec="${lIdx}" class="lec-row ${isAct ? 'active' : 'bg-white hover:bg-slate-50'} w-full text-left p-3 rounded-xl border border-slate-200 transition flex items-start gap-2.5">
-                <div class="w-6 h-6 rounded-lg ${isDone ? 'bg-emerald-100 text-emerald-700' : (isAct ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600')} text-[11px] font-extrabold flex items-center justify-center flex-shrink-0 mt-0.5">
-                  ${isDone ? '✓' : (lIdx + 1)}
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="text-xs font-extrabold text-slate-900 leading-snug">${esc(lec.title || 'Lecture ' + (lIdx + 1))}</div>
-                  <div class="text-[11px] text-slate-500 font-medium mt-0.5 flex flex-wrap items-center gap-2">
-                    ${lec.duration ? `<span>${esc(lec.duration)}</span>` : ''}
-                    ${lec.notesUrl ? `<span class="text-indigo-600 font-bold">• Notes</span>` : ''}
-                    ${lec.dppSheetTab ? `<span class="text-emerald-600 font-bold">• DPP</span>` : ''}
-                  </div>
-                </div>
-              </button>
-            `;
-          }).join('');
-
-          return `
-            <details open class="border border-slate-200 rounded-2xl p-3 bg-slate-50/50">
-              <summary class="list-none cursor-pointer flex items-center justify-between text-xs font-extrabold text-slate-900">
-                <span class="truncate">${esc(ch.title || 'Chapter ' + (cIdx + 1))}</span>
-                <span class="text-[11px] font-bold text-slate-400 flex-shrink-0">${lectures.length}</span>
-              </summary>
-              <div class="mt-2.5 space-y-2">${rows || '<p class="text-[11px] text-slate-400">No lectures in this chapter.</p>'}</div>
-            </details>
-          `;
-        }).join('');
-
-        tree.querySelectorAll('[data-lec]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const ci = Number(btn.getAttribute('data-ch'));
-            const li = Number(btn.getAttribute('data-lec'));
-            const ch = chapters[ci];
-            if (ch && Array.isArray(ch.lectures) && ch.lectures[li]) {
-              selectLecture(ch.title || ('Chapter ' + (ci + 1)), ch.lectures[li]);
-            }
-          });
-        });
-      }
-
-      async function loadAnnouncements() {
-        const pane = document.getElementById('pane-announcements');
-        const badge = document.getElementById('stage-ann-badge');
-        try {
-          const res = await MendorbitAPI.getBatchAnnouncements(batchId);
-          const list = (res && Array.isArray(res.announcements)) ? res.announcements : [];
-          if (list.length) {
-            badge.textContent = list.length;
-            badge.classList.remove('hidden');
-            pane.innerHTML = list.map(a => `
-              <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-slate-900">${esc(a.authorName || 'Mendorbit Team')}</span>
-                  <span class="text-[10px] font-semibold text-slate-400">${a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-IN') : ''}</span>
-                </div>
-                ${a.title ? `<div class="text-xs font-bold text-indigo-700">${esc(a.title)}</div>` : ''}
-                ${a.message ? `<p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${esc(a.message)}</p>` : ''}
-                ${safeUrl(a.imageUrl) ? `<img src="${esc(safeUrl(a.imageUrl))}" alt="Announcement" class="rounded-xl max-h-72 object-contain border border-slate-200 bg-white" loading="lazy" />` : ''}
-              </div>
-            `).join('');
-          } else {
-            pane.innerHTML = `<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">No announcements posted for this batch yet.</div>`;
-          }
-        } catch (e) {
-          pane.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">Unable to load announcements.</p>`;
-        }
-      }
-
-      updateProgressHeader();
-      renderSubjectsBar();
-      renderCurriculumTree();
-      renderNotesPane(null);
-      loadDppForLecture(null);
-      loadAnnouncements();
-
-      // Auto-select first lecture if available
-      const firstSub = Object.keys(curriculum)[0];
-      if (firstSub && Array.isArray(curriculum[firstSub])) {
-        for (const ch of curriculum[firstSub]) {
-          if (Array.isArray(ch.lectures) && ch.lectures.length) {
-            selectLecture(ch.title || 'Chapter 1', ch.lectures[0]);
-            break;
-          }
-        }
-      }
-
       if (window.lucide) lucide.createIcons();
+
+      // 4. Optional Live Announcements for this batch
+      try {
+        const aRes = await MendorbitAPI.getBatchAnnouncements(batchId);
+        const list = (aRes && Array.isArray(aRes.announcements)) ? aRes.announcements : [];
+        if (list.length) {
+          document.getElementById('up-ann-section').classList.remove('hidden');
+          document.getElementById('up-ann-list').innerHTML = list.map(a => `
+            <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-slate-900">${esc(a.authorName || 'Mendorbit Team')}</span>
+                <span class="text-[10px] font-semibold text-slate-400">${a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-IN') : ''}</span>
+              </div>
+              ${a.title ? `<div class="text-xs font-bold text-indigo-700">${esc(a.title)}</div>` : ''}
+              ${a.message ? `<p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${esc(a.message)}</p>` : ''}
+              ${safeUrl(a.imageUrl) ? `<img src="${esc(safeUrl(a.imageUrl))}" alt="Announcement" class="rounded-xl max-h-64 object-contain border border-slate-200 bg-white" loading="lazy" />` : ''}
+            </div>
+          `).join('');
+        }
+      } catch (e) {}
     });
   </script>
 </body>
