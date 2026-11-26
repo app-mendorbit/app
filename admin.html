@@ -2420,13 +2420,10 @@
         const subjectList = cfg.subjects ? String(cfg.subjects).split(',').map(s => s.trim()).filter(Boolean) : [];
         const subjectsCardsHtml = subjectList.length ? `
           <section id="section-subjects" class="surface-card rounded-3xl p-6 sm:p-7 space-y-4">
-            <div>
-              <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Syllabus Coverage</div>
-              <h2 class="text-lg font-extrabold text-slate-950">Subjects Covered</h2>
-            </div>
+            <h2 class="text-lg font-extrabold text-slate-950">Subjects Covered</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${subjectList.map((sub, idx) => `
-                <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-indigo-200 transition flex items-center gap-3">
+                <div class="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-indigo-200 transition flex items-center gap-3">
                   <span class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-indigo-600 font-extrabold text-xs flex items-center justify-center flex-shrink-0 shadow-2xs">${String(idx + 1).padStart(2, '0')}</span>
                   <span class="text-xs sm:text-sm font-extrabold text-slate-900">${pgbEsc(sub)}</span>
                 </div>
@@ -2436,12 +2433,9 @@
         ` : '';
 
         const studyOsHtml = `
-          <section class="surface-card rounded-3xl p-6 sm:p-7 space-y-5">
+          <section class="surface-card rounded-3xl p-6 sm:p-7 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-orange-600">Included Learning Tools</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Smart Study Tools Included Free</h2>
-              </div>
+              <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Smart Study Tools Included Free</h2>
               <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[11px] font-extrabold w-fit">Included With Batch</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -2489,10 +2483,7 @@
         const demosHtml = cfg.demos.length ? `
           <section id="section-demos" class="surface-card rounded-3xl p-6 sm:p-7">
             <div class="flex items-center justify-between gap-3 mb-5">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 mb-0.5">Preview Lectures</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Free Demo Videos</h2>
-              </div>
+              <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">Free Demo Videos</h2>
               <span class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-extrabold">${cfg.demos.length} ${cfg.demos.length === 1 ? 'Video' : 'Videos'}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2555,10 +2546,7 @@
         const faqsHtml = cfg.faqs.length ? `
           <section id="section-faqs" class="surface-card rounded-3xl p-6 sm:p-7">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 mb-0.5">Student Support</div>
-                <h2 class="text-lg font-extrabold text-slate-950">Frequently Asked Questions</h2>
-              </div>
+              <h2 class="text-lg font-extrabold text-slate-950">Frequently Asked Questions</h2>
               <div class="relative w-full sm:w-56">
                 <input type="search" id="faq-search-input" placeholder="Search questions..." class="w-full pl-8 pr-3 py-2 bg-slate-100/80 rounded-xl text-xs font-medium outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition" />
                 <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2796,59 +2784,59 @@
   <main class="flex-1 w-full">
 
     <!-- LUMINOUS ARCHITECTURAL HERO WITH BATCHES / CATEGORY BREADCRUMB -->
-    <section class="hero-glow-canvas border-b border-slate-200/80 px-4 sm:px-8 pt-4 pb-6 sm:pt-5 sm:pb-7">
-      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-9 items-start">
+    <section class="hero-glow-canvas border-b border-slate-200/80 px-4 sm:px-8 pt-3 pb-4 sm:pt-4 sm:pb-5">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-center">
 
         <!-- HERO LEFT -->
-        <div class="lg:col-span-7 xl:col-span-8 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <nav aria-label="Breadcrumb" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200/80 shadow-2xs text-xs font-bold text-slate-600">
+        <div class="lg:col-span-8 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2.5">
+            <nav aria-label="Breadcrumb" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-600">
               <a href="${pgbEsc(base)}/batches.html" class="hover:text-indigo-600 transition">Batches</a>
               <span class="text-slate-300">/</span>
               <a id="hdr-class-pill" href="${pgbEsc(base)}/batches.html" class="text-indigo-600 font-extrabold hover:underline truncate max-w-[180px]"><span>${pgbEsc(cfg.headerPill || (cfg.classesList && cfg.classesList[0]) || 'All Batches')}</span></a>
             </nav>
 
-            <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs text-xs font-bold text-slate-700 transition">
+            <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs text-[11px] font-bold text-slate-700 transition">
               <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               <span>Share Batch</span>
             </button>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 text-[11px] font-extrabold">
-              <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <span id="hero-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 text-[11px] font-extrabold">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
               <span>${pgbEsc(statusLine)}</span>
             </span>
-            ${cfg.stream ? `<span id="hero-stream-pill" class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-[11px] font-bold">${pgbEsc(cfg.stream)}</span>` : `<span id="hero-stream-pill" class="hidden"></span>`}
+            ${cfg.stream ? `<span id="hero-stream-pill" class="px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-[11px] font-bold">${pgbEsc(cfg.stream)}</span>` : `<span id="hero-stream-pill" class="hidden"></span>`}
             <div id="hero-classes-wrap" class="flex flex-wrap items-center gap-1.5">${classesHtml}</div>
           </div>
 
           <div>
-            <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-[-0.03em] leading-[1.12] text-slate-950">${pgbEsc(displayTitle)}</h1>
+            <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-[2.2rem] font-extrabold tracking-[-0.03em] leading-[1.15] text-slate-950">${pgbEsc(displayTitle)}</h1>
           </div>
 
           <!-- ELEVATED METRIC PILLS -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-            ${cfg.language ? `<div id="hero-lang-chip" class="px-3.5 py-2.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-3"><span class="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100/80 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Language</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate capitalize">${pgbEsc(cfg.language.toLowerCase())}</div></div></div>` : '<div id="hero-lang-chip" class="hidden"></div>'}
-            ${durationText ? `<div id="hero-duration-chip" class="px-3.5 py-2.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-3"><span class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100/80 text-amber-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M17 14h-6"/><path d="M13 18H7"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Duration</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate">${pgbEsc(durationText)}</div></div></div>` : ''}
-            ${cfg.validity ? `<div class="px-3.5 py-2.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-3"><span class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Validity</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate">${pgbEsc(cfg.validity)}</div></div></div>` : ''}
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-0.5">
+            ${cfg.language ? `<div id="hero-lang-chip" class="px-3 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-2.5"><span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100/80 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold text-slate-400 leading-none">Language</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate capitalize">${pgbEsc(cfg.language.toLowerCase())}</div></div></div>` : '<div id="hero-lang-chip" class="hidden"></div>'}
+            ${durationText ? `<div id="hero-duration-chip" class="px-3 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-2.5"><span class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100/80 text-amber-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M17 14h-6"/><path d="M13 18H7"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold text-slate-400 leading-none">Duration</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate">${pgbEsc(durationText)}</div></div></div>` : ''}
+            ${cfg.validity ? `<div class="px-3 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs flex items-center gap-2.5"><span class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold text-slate-400 leading-none">Validity</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate">${pgbEsc(cfg.validity)}</div></div></div>` : ''}
           </div>
-          ${cfg.starFeatures.length ? `<div class="flex flex-wrap items-center gap-2 pt-0.5 text-[11px] font-bold text-slate-700">${cfg.starFeatures.slice(0, 4).map(f => `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span> ${pgbEsc(f)}</span>`).join('')}</div>` : ''}
+          ${cfg.starFeatures.length ? `<div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-slate-700">${cfg.starFeatures.slice(0, 4).map(f => `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span> ${pgbEsc(f)}</span>`).join('')}</div>` : ''}
         </div>
 
-        <!-- HERO RIGHT: FEATURED SIGNATURE CHECKOUT CARD -->
-        <div class="lg:col-span-5 xl:col-span-4">
-          <div class="bg-white rounded-[26px] border border-slate-200/85 overflow-hidden shadow-[0_24px_60px_-15px_rgba(79,70,229,0.16)]">
-            <div class="h-1.5 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-orange-500"></div>
+        <!-- HERO RIGHT: COMPACT SIGNATURE CHECKOUT CARD -->
+        <div class="lg:col-span-4">
+          <div class="bg-white rounded-[22px] border border-slate-200/90 overflow-hidden shadow-[0_18px_45px_-16px_rgba(79,70,229,0.16)]">
+            <div class="h-1 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-orange-500"></div>
             <div id="card-thumb-container" class="aspect-[16/9] w-full bg-slate-100 overflow-hidden">${bannerVisual}</div>
-            <div class="p-5 sm:p-6 space-y-4">
+            <div class="p-4 space-y-3">
               <div class="flex items-center justify-between gap-2 text-xs">
                 <span id="card-aspirant" class="font-bold text-slate-700 truncate">${pgbEsc(cfg.aspirant || 'All Aspirants')}</span>
-                <span id="card-lang" class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-[11px] font-extrabold text-slate-700 capitalize flex-shrink-0 ${cfg.language ? '' : 'hidden'}">${pgbEsc(String(cfg.language || '').toLowerCase())}</span>
+                <span id="card-lang" class="px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-extrabold text-slate-700 capitalize flex-shrink-0 ${cfg.language ? '' : 'hidden'}">${pgbEsc(String(cfg.language || '').toLowerCase())}</span>
               </div>
 
               <!-- PRICE & CROSSED MRP + INLINE COMPACT BUY NOW BUTTON ON SAME ROW -->
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-3">
                 <div id="card-price-box" class="min-w-0">
                   <div id="card-mrp-row" class="${hasMrpAbove ? '' : 'hidden'} mb-0.5">
                     <span id="card-mrp" class="text-xs text-slate-400 line-through font-bold">₹${p1Mrp.toLocaleString('en-IN')}</span>
@@ -2882,15 +2870,15 @@
 
     <!-- STICKY PILL SUB-NAV RIGHT UNDER FIXED NAVBAR -->
     <div class="sticky top-16 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto py-2.5 flex items-center justify-between gap-3">
+      <div class="max-w-7xl mx-auto py-2 flex items-center justify-between gap-3">
         <nav class="no-scrollbar flex items-center gap-2 overflow-x-auto text-xs font-bold max-w-full">
-          <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active px-4 py-2 rounded-full whitespace-nowrap">Overview</a>
-          ${subjectList.length ? '<a href="#section-subjects" data-tab-view="overview" data-spy="section-subjects" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Subjects</a>' : ''}
-          <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Batch Details</a>
-          ${cfg.demos.length ? '<a href="#section-demos" data-tab-view="overview" data-spy="section-demos" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Demo Videos</a>' : ''}
-          ${cfg.otherDetails.length ? '<a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Other Details</a>' : ''}
-          ${cfg.faqs.length ? '<a href="#section-faqs" data-tab-view="overview" data-spy="section-faqs" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">FAQ&apos;s</a>' : ''}
-          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap inline-flex items-center gap-1.5">
+          <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active px-4 py-1.5 rounded-full whitespace-nowrap">Overview</a>
+          ${subjectList.length ? '<a href="#section-subjects" data-tab-view="overview" data-spy="section-subjects" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap">Subjects</a>' : ''}
+          <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap">Batch Details</a>
+          ${cfg.demos.length ? '<a href="#section-demos" data-tab-view="overview" data-spy="section-demos" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap">Demo Videos</a>' : ''}
+          ${cfg.otherDetails.length ? '<a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap">Other Details</a>' : ''}
+          ${cfg.faqs.length ? '<a href="#section-faqs" data-tab-view="overview" data-spy="section-faqs" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap">FAQ&apos;s</a>' : ''}
+          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-link px-4 py-1.5 rounded-full whitespace-nowrap inline-flex items-center gap-1.5">
             <span>Announcements</span>
             <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold">0</span>
           </button>
@@ -2899,10 +2887,10 @@
     </div>
 
     <!-- MAIN CONTENT WORKSPACE -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
-      <div class="lg:col-span-8 space-y-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-5 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div class="lg:col-span-8 space-y-5">
         <!-- OVERVIEW PANELS -->
-        <div id="overview-view" class="space-y-6">
+        <div id="overview-view" class="space-y-5">
           <section id="section-description" class="surface-card rounded-3xl p-6 sm:p-7">
             ${planSwitcherHtml}
             <details open class="group">
@@ -2921,10 +2909,7 @@
           ${subjectsCardsHtml}
 
           <section id="section-specs" class="surface-card rounded-3xl p-6 sm:p-7 space-y-4">
-            <div>
-              <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600">Key Specifications</div>
-              <h2 class="text-lg font-extrabold text-slate-950">Batch Details &amp; Format</h2>
-            </div>
+            <h2 class="text-lg font-extrabold text-slate-950">Batch Details &amp; Format</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${specHtml}
             </div>
@@ -2951,14 +2936,14 @@
       </div>
 
       <!-- RIGHT STICKY DAY-WISE CLASS SCHEDULE & SUPPORT SIDEBAR -->
-      <aside class="lg:col-span-4 lg:sticky lg:top-32 space-y-5">
+      <aside class="lg:col-span-4 lg:sticky lg:top-28 space-y-5">
         <section id="section-schedule" class="hidden surface-card rounded-3xl p-5 space-y-3.5">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg></span>
               <h3 class="text-sm font-extrabold text-slate-950">Class Schedule</h3>
             </div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Day Wise</span>
+            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold text-slate-500">Mon – Sun</span>
           </div>
           <div id="schedule-day-tabs" class="grid grid-cols-7 gap-1 bg-slate-100/90 p-1 rounded-xl"></div>
           <div id="schedule-day-body" class="divide-y divide-slate-100"></div>
@@ -3429,21 +3414,20 @@
               const fmtRange = (sl) => (sl.time && String(sl.time).trim()) ? String(sl.time).trim() : (sl.from && sl.to ? (sl.from + ' – ' + sl.to) : (sl.from || sl.to || 'TBA'));
               const renderSlotRow = (sl) => {
                 const teacher = String(sl.teacher || sl.faculty || '').trim();
-                const titleText = teacher ? ((sl.subject || 'Class') + ' · ' + teacher) : (sl.subject || 'Class');
-                return '<div class="py-2.5 flex items-center justify-between gap-2.5" title="' + esc(titleText) + '">'
-                  + '<div class="flex items-center gap-2 min-w-0">'
-                  + '<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>'
-                  + '<div class="min-w-0 flex items-center gap-1.5 truncate text-xs">'
-                  + '<span class="font-extrabold text-slate-900 truncate">' + esc(sl.subject || 'Class') + '</span>'
-                  + (teacher ? '<span class="text-slate-300 flex-shrink-0">·</span><span class="font-medium text-slate-500 truncate">' + esc(teacher) + '</span>' : '')
+                return '<div class="py-3 first:pt-1 last:pb-1 flex items-center justify-between gap-3">'
+                  + '<div class="min-w-0 flex items-start gap-2.5">'
+                  + '<span class="w-1 self-stretch rounded-full bg-gradient-to-b from-indigo-600 to-violet-500 flex-shrink-0 my-0.5"></span>'
+                  + '<div class="min-w-0">'
+                  + '<div class="text-xs font-extrabold text-slate-900 leading-snug">' + esc(sl.subject || 'Class') + '</div>'
+                  + (teacher ? '<div class="text-[11px] font-medium text-slate-500 mt-0.5 leading-none">By ' + esc(teacher) + '</div>' : '')
                   + '</div></div>'
-                  + '<span class="text-[11px] font-bold text-indigo-600 tabular-nums whitespace-nowrap flex-shrink-0">' + esc(fmtRange(sl)) + '</span>'
+                  + '<span class="px-2.5 py-1 rounded-lg bg-indigo-50/90 border border-indigo-100/80 text-indigo-700 text-[11px] font-bold tabular-nums whitespace-nowrap flex-shrink-0">' + esc(fmtRange(sl)) + '</span>'
                   + '</div>';
               };
               const draw = () => {
                 tabsEl.innerHTML = DAYS.map(d => {
                   const isAct = activeDay === d;
-                  return '<button type="button" data-sched-day="' + d + '" class="py-1.5 rounded-lg text-[11px] font-extrabold text-center transition ' + (isAct ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950') + '">' + SHORT[d] + '</button>';
+                  return '<button type="button" data-sched-day="' + d + '" class="py-1.5 rounded-lg text-[11px] font-extrabold text-center transition ' + (isAct ? 'bg-white text-indigo-700 shadow-xs border border-slate-200/70' : 'text-slate-600 hover:text-slate-950') + '">' + SHORT[d] + '</button>';
                 }).join('');
                 const entry = ws[activeDay] || {};
                 const slots = Array.isArray(entry.slots) ? entry.slots : [];
@@ -3456,7 +3440,7 @@
               const lBadge = document.getElementById('card-lang');
               if (lBadge) { lBadge.textContent = String(b.language).toLowerCase(); lBadge.classList.remove('hidden'); }
               const lChip = document.getElementById('hero-lang-chip');
-              if (lChip) { lChip.innerHTML = '<span class="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100/80 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Language</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate capitalize">' + esc(String(b.language).toLowerCase()) + '</div></div>'; lChip.classList.remove('hidden'); }
+              if (lChip) { lChip.innerHTML = '<span class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100/80 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><div class="min-w-0"><div class="text-[10px] font-bold text-slate-400 leading-none">Language</div><div class="text-xs font-extrabold text-slate-950 mt-1 truncate capitalize">' + esc(String(b.language).toLowerCase()) + '</div></div>'; lChip.classList.remove('hidden'); }
             }
             if (b.weeklySchedule && typeof b.weeklySchedule === 'object') {
               renderGeneratedWeeklySchedule(b.weeklySchedule);
@@ -3464,7 +3448,7 @@
             const thumbSafe = safeUrl(b.thumbnail);
             if (thumbSafe) {
               const tc = document.getElementById('card-thumb-container');
-              if (tc) tc.innerHTML = '<img id="card-thumb-img" src="' + esc(thumbSafe) + '" alt="' + esc(b.title || '') + '" class="w-full aspect-video object-cover rounded-xl border border-slate-200/70" />';
+              if (tc) tc.innerHTML = '<img id="card-thumb-img" src="' + esc(thumbSafe) + '" alt="' + esc(b.title || '') + '" class="w-full h-full object-cover" />';
             }
 
             const livePrice = Math.max(0, Number(b.price) || 0);
