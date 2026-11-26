@@ -26,6 +26,8 @@
     /^mendorbit\.in$/i,
     /^[a-z0-9-]+\.mendorbit\.in$/i,
     /^[a-z0-9-]+\.netlify\.app$/i,
+    /^app\.app-mendorbit\.workers\.dev$/i,
+    /^[a-z0-9-]+\.app-mendorbit\.workers\.dev$/i,
     /^localhost(:\d+)?$/i,
     /^127\.0\.0\.1(:\d+)?$/i
   ];
