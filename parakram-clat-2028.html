@@ -217,7 +217,6 @@
       <div class="max-w-7xl mx-auto py-2.5 flex items-center justify-between gap-3">
         <nav class="no-scrollbar flex items-center gap-2 overflow-x-auto text-xs font-bold max-w-full">
           <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active px-4 py-2 rounded-full whitespace-nowrap">Overview</a>
-          <a href="#section-schedule" data-tab-view="overview" data-spy="section-schedule" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Weekly Schedule</a>
           <a href="#section-subjects" data-tab-view="overview" data-spy="section-subjects" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">CLAT Subjects</a>
           <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Batch Details</a>
           <a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link px-4 py-2 rounded-full whitespace-nowrap">Other Details</a>
@@ -351,22 +350,6 @@
                 <div><div class="text-xs sm:text-sm font-extrabold text-slate-950">Quantitative Techniques</div><div class="text-[11px] text-slate-500 mt-0.5">Data interpretation caselets, ratios, percentages &amp; fast calculation tricks</div></div>
               </div>
             </div>
-          </section>
-
-          <!-- 7-DAY WEEKLY SCHEDULE (LIVE SYNCED WITH ADMIN CONSOLE) -->
-          <section id="section-schedule" class="surface-card rounded-3xl p-6 sm:p-7 space-y-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-600">Weekly Timetable</div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">7-Day Class Schedule</h2>
-              </div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold w-fit">
-                <svg class="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
-                <span>Mon – Sun Planner</span>
-              </span>
-            </div>
-            <div id="schedule-day-tabs" class="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1"></div>
-            <div id="schedule-day-body" class="space-y-2.5"></div>
           </section>
 
           <section id="section-specs" class="surface-card rounded-3xl p-6 sm:p-7 space-y-4">
@@ -546,28 +529,19 @@
         </section>
       </div>
 
-      <!-- RIGHT STICKY WEEKLY LEARNING FLOW SIDEBAR -->
+      <!-- RIGHT STICKY DAY-WISE CLASS SCHEDULE SIDEBAR -->
       <aside class="lg:col-span-4 lg:sticky lg:top-32 space-y-5">
-        <div class="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
-          <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-            <h3 class="text-sm font-extrabold text-slate-950">Weekly Learning Flow</h3>
+        <section id="section-schedule" class="surface-card rounded-3xl p-5 space-y-3.5">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg></span>
+              <h3 class="text-sm font-extrabold text-slate-950">Class Schedule</h3>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Day Wise</span>
           </div>
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <div class="font-extrabold text-slate-900">Mon – Sat • 2 Live Classes / Day</div>
-              <div class="text-slate-500 mt-0.5">Concept mastery + unlimited HD recorded backup</div>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <div class="font-extrabold text-slate-900">After Every Class • Notes &amp; DPP</div>
-              <div class="text-slate-500 mt-0.5">Downloadable chapter PDFs &amp; solved practice sets</div>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
-              <div class="font-extrabold text-slate-900">Sunday • Full-Length CLAT Mock</div>
-              <div class="text-slate-500 mt-0.5">Passage-based test simulation + rank analytics</div>
-            </div>
-          </div>
-        </div>
+          <div id="schedule-day-tabs" class="grid grid-cols-7 gap-1 bg-slate-100/90 p-1 rounded-xl"></div>
+          <div id="schedule-day-body" class="divide-y divide-slate-100"></div>
+        </section>
         <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-5 text-white space-y-3 shadow-lg">
           <div class="flex items-center gap-2.5">
             <span class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center"><svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
@@ -937,6 +911,100 @@
         setActiveTab('overview', document.querySelector('[data-spy="section-description"]'));
       });
 
+      const DEFAULT_WEEKLY_SCHEDULE = {
+        Monday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Legal Reasoning", teacher: "Legal Faculty" },
+            { time: "6:30 PM – 8:00 PM", subject: "English Language", teacher: "Verbal Faculty" }
+          ]
+        },
+        Tuesday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Logical Reasoning", teacher: "Reasoning Faculty" },
+            { time: "6:30 PM – 8:00 PM", subject: "Current Affairs", teacher: "GK Faculty" }
+          ]
+        },
+        Wednesday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Legal Reasoning", teacher: "Legal Faculty" },
+            { time: "6:30 PM – 8:00 PM", subject: "Quant Techniques", teacher: "Quant Faculty" }
+          ]
+        },
+        Thursday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Logical Reasoning", teacher: "Reasoning Faculty" },
+            { time: "6:30 PM – 8:00 PM", subject: "English Language", teacher: "Verbal Faculty" }
+          ]
+        },
+        Friday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Current Affairs", teacher: "GK Faculty" },
+            { time: "6:30 PM – 8:00 PM", subject: "Quant Techniques", teacher: "Quant Faculty" }
+          ]
+        },
+        Saturday: {
+          slots: [
+            { time: "4:30 PM – 6:00 PM", subject: "Passage Practice", teacher: "NLU Mentors" },
+            { time: "6:30 PM – 7:45 PM", subject: "Doubt Session", teacher: "Subject Mentors" }
+          ]
+        },
+        Sunday: {
+          slots: [
+            { time: "10:00 AM – 12:00 PM", subject: "CLAT Mock Test", teacher: "All-India Test" },
+            { time: "5:00 PM – 6:15 PM", subject: "Mock Analysis", teacher: "NLU Mentors" }
+          ]
+        }
+      };
+
+      function renderWeeklyScheduleWidget(wsData) {
+        const tabsEl = document.getElementById('schedule-day-tabs');
+        const bodyEl = document.getElementById('schedule-day-body');
+        if (!tabsEl || !bodyEl) return;
+        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
+        const hasRemote = wsData && typeof wsData === 'object' && DAYS.some(d => wsData[d] && Array.isArray(wsData[d].slots) && wsData[d].slots.length > 0);
+        const ws = hasRemote ? wsData : DEFAULT_WEEKLY_SCHEDULE;
+        const todayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+        const firstPopulated = DAYS.find(d => ws[d] && Array.isArray(ws[d].slots) && ws[d].slots.length > 0) || 'Monday';
+        let activeDay = (ws[todayName] && Array.isArray(ws[todayName].slots) && ws[todayName].slots.length > 0) ? todayName : firstPopulated;
+
+        const fmtRange = (sl) => (sl.time && String(sl.time).trim()) ? String(sl.time).trim() : (sl.from && sl.to ? (sl.from + ' – ' + sl.to) : (sl.from || sl.to || 'TBA'));
+        const renderSlotRow = (sl) => {
+          const teacher = String(sl.teacher || sl.faculty || '').trim();
+          const titleText = teacher ? ((sl.subject || 'Class') + ' · ' + teacher) : (sl.subject || 'Class');
+          return '<div class="py-2.5 flex items-center justify-between gap-2.5" title="' + esc(titleText) + '">'
+            + '<div class="flex items-center gap-2 min-w-0">'
+            + '  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>'
+            + '  <div class="min-w-0 flex items-center gap-1.5 truncate text-xs">'
+            + '    <span class="font-extrabold text-slate-900 truncate">' + esc(sl.subject || 'Class') + '</span>'
+            + (teacher ? '<span class="text-slate-300 flex-shrink-0">·</span><span class="font-medium text-slate-500 truncate">' + esc(teacher) + '</span>' : '')
+            + '  </div>'
+            + '</div>'
+            + '<span class="text-[11px] font-bold text-indigo-600 tabular-nums whitespace-nowrap flex-shrink-0">' + esc(fmtRange(sl)) + '</span>'
+            + '</div>';
+        };
+
+        const draw = () => {
+          tabsEl.innerHTML = DAYS.map(d => {
+            const isAct = activeDay === d;
+            return '<button type="button" data-sched-day="' + d + '" class="py-1.5 rounded-lg text-[11px] font-extrabold text-center transition ' + (isAct ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950') + '">' + SHORT[d] + '</button>';
+          }).join('');
+
+          const entry = ws[activeDay] || {};
+          const slots = Array.isArray(entry.slots) ? entry.slots : [];
+          bodyEl.innerHTML = slots.length ? slots.map(renderSlotRow).join('') : '<div class="py-5 text-center text-[11px] font-medium text-slate-400">No live classes scheduled on ' + SHORT[activeDay] + '.</div>';
+
+          tabsEl.querySelectorAll('[data-sched-day]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              activeDay = btn.getAttribute('data-sched-day');
+              draw();
+            });
+          });
+        };
+        draw();
+      }
+      renderWeeklyScheduleWidget(null);
+
       // Live Server Hydration + Live Announcements Feed
       async function hydrateLiveBatch() {
         if (!BATCH_ID) return;
@@ -1000,128 +1068,6 @@
               const st = document.getElementById('hero-stream-pill');
               if (st) { st.textContent = b.stream; st.classList.remove('hidden'); }
             }
-      const DEFAULT_WEEKLY_SCHEDULE = {
-        Monday: {
-          note: "2 Live Lectures + Daily Editorial & DPP",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Legal Reasoning", topic: "Constitutional Law & Principle-Fact Passages", faculty: "Live Class • NLU Mentor" },
-            { time: "06:30 PM – 08:00 PM", subject: "English Language", topic: "Reading Comprehension & Author Tone", faculty: "Live Class • Verbal Faculty" }
-          ]
-        },
-        Tuesday: {
-          note: "2 Live Lectures + Chapter PDF Notes",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Logical Reasoning", topic: "Critical Reasoning — Strengthening & Assumptions", faculty: "Live Class • Reasoning Mentor" },
-            { time: "06:30 PM – 08:00 PM", subject: "Current Affairs & GK", topic: "National & International Legal Updates", faculty: "Live Class • GK Faculty" }
-          ]
-        },
-        Wednesday: {
-          note: "2 Live Lectures + Solved DPP",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Legal Reasoning", topic: "Law of Torts & Negligence Case Studies", faculty: "Live Class • NLU Mentor" },
-            { time: "06:30 PM – 08:00 PM", subject: "Quantitative Techniques", topic: "Percentage & Ratio Data Caselets", faculty: "Live Class • Quant Mentor" }
-          ]
-        },
-        Thursday: {
-          note: "2 Live Lectures + Practice Set",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Logical Reasoning", topic: "Inference, Paradox & Parallel Arguments", faculty: "Live Class • Reasoning Mentor" },
-            { time: "06:30 PM – 08:00 PM", subject: "English Language", topic: "Contextual Vocabulary & Grammar Application", faculty: "Live Class • Verbal Faculty" }
-          ]
-        },
-        Friday: {
-          note: "2 Live Lectures + Monthly Digest Drill",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Current Affairs & GK", topic: "Weekly Legal Affairs & Burning Issues", faculty: "Live Class • GK Faculty" },
-            { time: "06:30 PM – 08:00 PM", subject: "Quantitative Techniques", topic: "Profit, Loss & Mixed Passage DI", faculty: "Live Class • Quant Mentor" }
-          ]
-        },
-        Saturday: {
-          note: "Weekly Consolidation & 24/7 Doubt Workshop",
-          slots: [
-            { time: "04:30 PM – 06:00 PM", subject: "Passage Marathon", topic: "Mixed Legal + CR + RC Timed Practice", faculty: "Live Practice • NLU Mentors" },
-            { time: "06:30 PM – 07:45 PM", subject: "Doubt & Strategy Clinic", topic: "Open Passage Doubts & Weekly Backlog Clearance", faculty: "Interactive Mentor Session" }
-          ]
-        },
-        Sunday: {
-          note: "Sunday All-India CLAT 2028 Mock Test & Analysis",
-          slots: [
-            { time: "10:00 AM – 12:00 PM", subject: "All-India CLAT Mock Test", topic: "Full 120-Question Passage-Based Exam Simulation", faculty: "Weekly Test Window" },
-            { time: "05:00 PM – 06:15 PM", subject: "Mock Post-Mortem & Rank Review", topic: "Percentile Breakdown, Trap Elimination & Target Setting", faculty: "Live Strategy Session" }
-          ]
-        }
-      };
-
-      function renderWeeklyScheduleWidget(wsData) {
-        const tabsEl = document.getElementById('schedule-day-tabs');
-        const bodyEl = document.getElementById('schedule-day-body');
-        if (!tabsEl || !bodyEl) return;
-        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        const SHORT = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
-        const hasRemote = wsData && typeof wsData === 'object' && DAYS.some(d => {
-          const entry = wsData[d];
-          return entry && ((Array.isArray(entry.slots) && entry.slots.length > 0) || (entry.note && String(entry.note).trim()));
-        });
-        const ws = hasRemote ? wsData : DEFAULT_WEEKLY_SCHEDULE;
-        const todayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
-        const firstPopulated = DAYS.find(d => ws[d] && ((ws[d].slots && ws[d].slots.length) || (ws[d].note && ws[d].note.trim()))) || 'Monday';
-        let activeDay = (ws[todayName] && ((ws[todayName].slots && ws[todayName].slots.length) || (ws[todayName].note && ws[todayName].note.trim()))) ? todayName : firstPopulated;
-
-        const renderSlotRow = (sl) => {
-          return '<div class="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-slate-50/80 to-white hover:border-indigo-200 hover:shadow-2xs transition flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">'
-            + '<div class="flex items-start sm:items-center gap-3 min-w-0">'
-            + '  <span class="px-2.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-extrabold whitespace-nowrap flex-shrink-0">' + esc(sl.time || 'Scheduled') + '</span>'
-            + '  <div class="min-w-0">'
-            + '    <div class="text-xs sm:text-sm font-extrabold text-slate-950 truncate">' + esc(sl.subject || 'Live Session') + '</div>'
-            + (sl.topic ? '    <div class="text-[11px] text-slate-500 mt-0.5 truncate">' + esc(sl.topic) + '</div>' : '')
-            + '  </div>'
-            + '</div>'
-            + (sl.faculty ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold whitespace-nowrap w-fit flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>' + esc(sl.faculty) + '</span>' : '')
-            + '</div>';
-        };
-
-        const draw = () => {
-          tabsEl.innerHTML = DAYS.map(d => {
-            const entry = ws[d] || {};
-            const count = Array.isArray(entry.slots) ? entry.slots.length : 0;
-            const isAct = activeDay === d;
-            return '<button type="button" data-sched-day="' + d + '" class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition flex items-center gap-1.5 ' + (isAct ? 'bg-slate-950 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 text-slate-700') + '">'
-              + '<span>' + SHORT[d] + '</span>'
-              + (count > 0 ? '<span class="w-1.5 h-1.5 rounded-full ' + (isAct ? 'bg-emerald-400' : 'bg-indigo-500') + '"></span>' : '')
-              + '</button>';
-          }).join('') + '<button type="button" data-sched-day="ALL" class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition ' + (activeDay === 'ALL' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700') + '">Full Week</button>';
-
-          if (activeDay === 'ALL') {
-            bodyEl.innerHTML = DAYS.map(d => {
-              const entry = ws[d] || {};
-              const slots = Array.isArray(entry.slots) ? entry.slots : [];
-              if (!slots.length && !(entry.note && String(entry.note).trim())) return '';
-              return '<div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-2.5">'
-                + '<div class="flex flex-wrap items-center justify-between gap-2">'
-                + '  <span class="text-xs font-extrabold text-slate-950">' + d + '</span>'
-                + (entry.note ? '  <span class="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200/70 px-2.5 py-0.5 rounded-lg">' + esc(entry.note) + '</span>' : '')
-                + '</div>'
-                + (slots.length ? '<div class="space-y-2">' + slots.map(renderSlotRow).join('') + '</div>' : '<p class="text-[11px] text-slate-500">Revision / Self-Study Slot</p>')
-                + '</div>';
-            }).filter(Boolean).join('');
-          } else {
-            const entry = ws[activeDay] || {};
-            const slots = Array.isArray(entry.slots) ? entry.slots : [];
-            bodyEl.innerHTML = (entry.note ? '<div class="px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span><span>' + esc(entry.note) + '</span></div>' : '')
-              + (slots.length ? slots.map(renderSlotRow).join('') : '<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">Self-study, DPP practice &amp; backlog revision day.</div>');
-          }
-
-          tabsEl.querySelectorAll('[data-sched-day]').forEach(btn => {
-            btn.addEventListener('click', () => {
-              activeDay = btn.getAttribute('data-sched-day');
-              draw();
-            });
-          });
-        };
-        draw();
-      }
-      renderWeeklyScheduleWidget(null);
-
             if (b.language) {
               const lBadge = document.getElementById('card-lang');
               if (lBadge) { lBadge.textContent = String(b.language).toLowerCase(); lBadge.classList.remove('hidden'); }

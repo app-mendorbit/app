@@ -188,7 +188,6 @@
           <a href="#sec-description" data-tab-view="overview" class="nav-tab active px-4 py-2 rounded-full whitespace-nowrap">Overview</a>
           <a href="#sec-features" id="nav-link-features" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">Batch Includes</a>
           <a href="#sec-subjects" id="nav-link-subjects" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">Subjects</a>
-          <a href="#sec-schedule" id="nav-link-schedule" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">Weekly Schedule</a>
           <a href="#sec-faculty" id="nav-link-faculty" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">Mentors</a>
           <a href="#sec-demo-video" id="nav-link-demo" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">Demo Class</a>
           <a href="#sec-faqs" id="nav-link-faqs" data-tab-view="overview" class="hidden nav-tab px-4 py-2 rounded-full whitespace-nowrap">FAQ's</a>
@@ -274,22 +273,6 @@
               <div id="detail-subjects-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
             </section>
 
-            <!-- 7-Day Weekly Class Schedule -->
-            <section id="sec-schedule" class="hidden surface-card rounded-3xl p-6 sm:p-7 space-y-5">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-600">Weekly Timetable</div>
-                  <h2 class="text-lg sm:text-xl font-extrabold text-slate-950">7-Day Class Schedule</h2>
-                </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold w-fit">
-                  <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-indigo-600"></i>
-                  <span>Mon – Sun Planner</span>
-                </span>
-              </div>
-              <div id="detail-schedule-tabs" class="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1"></div>
-              <div id="detail-schedule-body" class="space-y-2.5"></div>
-            </section>
-
             <!-- Faculty -->
             <section id="sec-faculty" class="hidden surface-card rounded-3xl p-6 sm:p-7 space-y-4">
               <div>
@@ -352,9 +335,20 @@
           </section>
         </div>
 
-        <!-- RIGHT COLUMN HIGHLIGHTS SUMMARY STICKY HELPER -->
+        <!-- RIGHT COLUMN SCHEDULE & SUPPORT SIDEBAR -->
         <aside class="lg:col-span-4 lg:sticky lg:top-32 space-y-5">
-          <div class="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
+          <section id="sec-schedule" class="hidden surface-card rounded-3xl p-5 space-y-3.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></span>
+                <h3 class="text-sm font-extrabold text-slate-950">Class Schedule</h3>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Day Wise</span>
+            </div>
+            <div id="detail-schedule-tabs" class="grid grid-cols-7 gap-1 bg-slate-100/90 p-1 rounded-xl"></div>
+            <div id="detail-schedule-body" class="divide-y divide-slate-100"></div>
+          </section>
+          <div id="quick-summary-card" class="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
             <div class="flex items-center gap-2.5">
               <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4"></i></span>
               <h3 class="text-sm font-extrabold text-slate-950">Quick Program Summary</h3>
@@ -620,64 +614,49 @@
         function renderWeeklyScheduleWidget(ws) {
           const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
           const SHORT = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
-          const hasAny = ws && typeof ws === 'object' && DAYS.some(d => {
-            const entry = ws[d];
-            return entry && ((Array.isArray(entry.slots) && entry.slots.length > 0) || (entry.note && String(entry.note).trim()));
-          });
+          const hasAny = ws && typeof ws === 'object' && DAYS.some(d => ws[d] && Array.isArray(ws[d].slots) && ws[d].slots.length > 0);
           if (!hasAny) return;
           document.getElementById('sec-schedule').classList.remove('hidden');
-          document.getElementById('nav-link-schedule').classList.remove('hidden');
+          document.getElementById('quick-summary-card')?.classList.add('hidden');
           const todayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()];
-          const firstPopulated = DAYS.find(d => ws[d] && ((ws[d].slots && ws[d].slots.length) || (ws[d].note && ws[d].note.trim()))) || "Monday";
-          let activeDay = (ws[todayName] && ((ws[todayName].slots && ws[todayName].slots.length) || (ws[todayName].note && ws[todayName].note.trim()))) ? todayName : firstPopulated;
+          const firstPopulated = DAYS.find(d => ws[d] && Array.isArray(ws[d].slots) && ws[d].slots.length > 0) || "Monday";
+          let activeDay = (ws[todayName] && Array.isArray(ws[todayName].slots) && ws[todayName].slots.length > 0) ? todayName : firstPopulated;
 
           const tabsEl = document.getElementById('detail-schedule-tabs');
           const bodyEl = document.getElementById('detail-schedule-body');
 
-          const renderSlotRow = (sl) => `
-            <div class="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 bg-gradient-to-r from-slate-50/80 to-white hover:border-indigo-200 hover:shadow-2xs transition flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-              <div class="flex items-start sm:items-center gap-3 min-w-0">
-                <span class="px-2.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-extrabold whitespace-nowrap flex-shrink-0">${escapeHtml(sl.time || 'Scheduled')}</span>
-                <div class="min-w-0">
-                  <div class="text-xs sm:text-sm font-extrabold text-slate-950 truncate">${escapeHtml(sl.subject || 'Live Session')}</div>
-                  ${sl.topic ? `<div class="text-[11px] text-slate-500 mt-0.5 truncate">${escapeHtml(sl.topic)}</div>` : ''}
+          const fmtRange = (sl) => {
+            if (sl.time && String(sl.time).trim()) return String(sl.time).trim();
+            if (sl.from && sl.to) return `${sl.from} – ${sl.to}`;
+            return sl.from || sl.to || 'TBA';
+          };
+
+          const renderSlotRow = (sl) => {
+            const teacher = String(sl.teacher || sl.faculty || '').trim();
+            const titleText = teacher ? `${sl.subject || 'Class'} · ${teacher}` : (sl.subject || 'Class');
+            return `<div class="py-2.5 flex items-center justify-between gap-2.5" title="${escapeHtml(titleText)}">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+                <div class="min-w-0 flex items-center gap-1.5 truncate text-xs">
+                  <span class="font-extrabold text-slate-900 truncate">${escapeHtml(sl.subject || 'Class')}</span>
+                  ${teacher ? `<span class="text-slate-300 flex-shrink-0">·</span><span class="font-medium text-slate-500 truncate">${escapeHtml(teacher)}</span>` : ''}
                 </div>
               </div>
-              ${sl.faculty ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold whitespace-nowrap w-fit flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${escapeHtml(sl.faculty)}</span>` : ''}
+              <span class="text-[11px] font-bold text-indigo-600 tabular-nums whitespace-nowrap flex-shrink-0">${escapeHtml(fmtRange(sl))}</span>
             </div>`;
+          };
 
           const draw = () => {
             tabsEl.innerHTML = DAYS.map(d => {
-              const entry = ws[d] || {};
-              const count = Array.isArray(entry.slots) ? entry.slots.length : 0;
               const isAct = activeDay === d;
-              return `<button type="button" data-sched-day="${d}" class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition flex items-center gap-1.5 ${isAct ? 'bg-slate-950 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
-                <span>${SHORT[d]}</span>
-                ${count > 0 ? `<span class="w-1.5 h-1.5 rounded-full ${isAct ? 'bg-emerald-400' : 'bg-indigo-500'}"></span>` : ''}
-              </button>`;
-            }).join('') + `<button type="button" data-sched-day="ALL" class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition ${activeDay === 'ALL' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700'}">Full Week</button>`;
+              return `<button type="button" data-sched-day="${d}" class="py-1.5 rounded-lg text-[11px] font-extrabold text-center transition ${isAct ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'}">${SHORT[d]}</button>`;
+            }).join('');
 
-            if (activeDay === 'ALL') {
-              bodyEl.innerHTML = DAYS.map(d => {
-                const entry = ws[d] || {};
-                const slots = Array.isArray(entry.slots) ? entry.slots : [];
-                if (!slots.length && !(entry.note && entry.note.trim())) return '';
-                return `<div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-2.5">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="text-xs font-extrabold text-slate-950">${d}</span>
-                    ${entry.note ? `<span class="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200/70 px-2.5 py-0.5 rounded-lg">${escapeHtml(entry.note)}</span>` : ''}
-                  </div>
-                  ${slots.length ? `<div class="space-y-2">${slots.map(renderSlotRow).join('')}</div>` : '<p class="text-[11px] text-slate-500">Revision / Self-Study Slot</p>'}
-                </div>`;
-              }).filter(Boolean).join('');
-            } else {
-              const entry = ws[activeDay] || {};
-              const slots = Array.isArray(entry.slots) ? entry.slots : [];
-              bodyEl.innerHTML = `
-                ${entry.note ? `<div class="px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span><span>${escapeHtml(entry.note)}</span></div>` : ''}
-                ${slots.length ? slots.map(renderSlotRow).join('') : '<div class="p-6 rounded-2xl border border-dashed border-slate-200 text-center text-xs text-slate-500">Self-study, DPP practice &amp; backlog revision day.</div>'}
-              `;
-            }
+            const entry = ws[activeDay] || {};
+            const slots = Array.isArray(entry.slots) ? entry.slots : [];
+            bodyEl.innerHTML = slots.length
+              ? slots.map(renderSlotRow).join('')
+              : '<div class="py-5 text-center text-[11px] font-medium text-slate-400">No live classes scheduled on ' + SHORT[activeDay] + '.</div>';
 
             tabsEl.querySelectorAll('[data-sched-day]').forEach(btn => {
               btn.addEventListener('click', () => {
