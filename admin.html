@@ -27,6 +27,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 min-h-screen flex font-sans overflow-x-hidden">
 
@@ -97,6 +101,11 @@
         <button type="button" data-admin-tab="admin-tab-coupons" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
           <i data-lucide="ticket-percent" class="w-4 h-4"></i>
           <span>Coupons &amp; Offers</span>
+        </button>
+
+        <button type="button" data-admin-tab="admin-tab-announcements" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="megaphone" class="w-4 h-4"></i>
+          <span>Announcements</span>
         </button>
 
         <button type="button" data-admin-tab="admin-tab-page-builder" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
@@ -385,8 +394,12 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Status Prefix (Red Dot)</label>
-                <input type="text" id="batch-input-statuslabel" placeholder="e.g. Ongoing / Upcoming" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+                <label class="block text-xs font-bold text-slate-700 mb-1">Batch Status Tag *</label>
+                <select id="batch-input-statuslabel" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-500 focus:bg-white">
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Completed">Completed</option>
+                </select>
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Start Date</label>
@@ -583,6 +596,74 @@
       </div>
 
       <!-- ======================================================== -->
+      <!-- TAB 5.2: BATCH ANNOUNCEMENTS                             -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-announcements" class="admin-tab-pane hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+            <div class="pb-3 border-b border-slate-100">
+              <h3 class="font-extrabold text-base text-slate-900">Publish Batch Announcement</h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">Send live text or image announcements directly to any batch&apos;s Announcements tab.</p>
+            </div>
+
+            <form id="form-create-announcement" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Select Target Batch *</label>
+                <select id="ann-input-batch" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-500 focus:bg-white">
+                  <option value="">-- Select Batch --</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Posted By (Author / Teacher Name) *</label>
+                <input type="text" id="ann-input-author" required placeholder="e.g. Satyam Sir / Academic Team" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Announcement Title (Optional)</label>
+                <input type="text" id="ann-input-title" placeholder="e.g. Important Schedule Update" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Announcement Message</label>
+                <textarea id="ann-input-message" rows="4" placeholder="Write clear update notes for students..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Banner Image URL (Optional)</label>
+                <input type="url" id="ann-input-image" placeholder="https://... (Leave blank for text-only notice)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
+                <div id="ann-image-preview-wrap" class="hidden mt-2 rounded-xl overflow-hidden border border-slate-200">
+                  <img id="ann-image-preview" src="" alt="Preview" class="w-full max-h-40 object-cover" />
+                </div>
+              </div>
+
+              <button type="submit" id="btn-submit-announcement" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-sm transition">
+                Publish Announcement
+              </button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h4 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Live Announcements Feed</h4>
+                <p class="text-[11px] text-slate-400">Appears automatically on linked batch overview pages</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <select id="ann-filter-batch" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 outline-none">
+                  <option value="">All Batches</option>
+                </select>
+                <button type="button" id="btn-refresh-announcements" class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700">Refresh</button>
+              </div>
+            </div>
+            <div id="admin-announcements-list" class="p-5 space-y-3 text-xs">
+              <div class="text-center py-8 text-slate-400">Loading announcements...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
       <!-- TAB 5.5: BATCH DETAILS PAGE CREATOR (FULL-WIDTH STUDIO)  -->
       <!-- ======================================================== -->
       <div id="admin-tab-page-builder" class="admin-tab-pane hidden space-y-6">
@@ -700,10 +781,6 @@
                   <label class="block text-[11px] font-bold text-slate-600 mb-1">Platform Base URL (Navigation &amp; Checkout)</label>
                   <input type="url" id="pgb-base-url" placeholder="https://app.mendorbit.in (defaults to current origin)" class="pgb-field w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 focus:bg-white transition" />
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Announcement Notice (Optional)</label>
-                  <input type="text" id="pgb-announcement" placeholder="e.g. Orientation session starts Monday at 5:00 PM IST." class="pgb-field w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 focus:bg-white transition" />
-                </div>
               </div>
 
               <!-- Optional Second Plan (Infinity / Pro) -->
@@ -743,14 +820,16 @@
               </div>
             </div>
 
-            <!-- 3. Batch Includes (Star Checklist Grid) -->
-            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-2.5">
-              <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">3</span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Batch Includes (Star Checklist Grid)</span>
+            <!-- 3. Batch Includes (Dynamic Feature Builder) -->
+            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">3</span>
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Batch Includes (Features)</span>
+                </div>
+                <button type="button" data-add-row="stars" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-[11px] font-bold transition">+ Add Feature</button>
               </div>
-              <p class="text-[11px] text-slate-400">One feature per line to display in the blue-star 3-column grid.</p>
-              <textarea id="pgb-star-features" rows="5" placeholder="Live &amp; Recorded Lectures by Top Faculties&#10;DPPs with Video Solutions&#10;Regular Tests &amp; All India Test Series&#10;Doubt Support by Mentors" class="pgb-field w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 focus:bg-white transition"></textarea>
+              <div id="pgb-list-stars" class="space-y-2"></div>
             </div>
 
             <!-- 4. This Batch Includes (Detailed Specs) -->
@@ -780,41 +859,50 @@
                   <label class="block text-[11px] font-bold text-slate-600 mb-1">Subjects</label>
                   <input type="text" id="pgb-subjects" placeholder="e.g. Mathematics, Science, English, Social Science" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500" />
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Additional Highlights (1 per line)</label>
-                  <textarea id="pgb-extra-highlights" rows="3" placeholder="Class Notes PDF for every lecture&#10;Weekly Revision &amp; Doubt Clinics" class="pgb-field w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+                <div class="sm:col-span-2 space-y-2 pt-1">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-[11px] font-bold text-slate-600">Additional Bullet Points</label>
+                    <button type="button" data-add-row="extra" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white text-[11px] font-bold transition">+ Add Bullet</button>
+                  </div>
+                  <div id="pgb-list-extra" class="space-y-2"></div>
                 </div>
               </div>
             </div>
 
-            <!-- 5. Demo Videos -->
-            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-2.5">
-              <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">5</span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Demo Videos (Optional)</span>
+            <!-- 5. Demo Videos (Structured Title + Video URL Builder) -->
+            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">5</span>
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Demo Videos (Title &amp; Link)</span>
+                </div>
+                <button type="button" data-add-row="demos" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-[11px] font-bold transition">+ Add Video</button>
               </div>
-              <p class="text-[11px] text-slate-400">One per line formatted as <code>Video Title | YouTube URL</code>.</p>
-              <textarea id="pgb-demos" rows="3" placeholder="Orientation Lecture | https://www.youtube.com/watch?v=...&#10;Maths Intro Class | https://youtu.be/..." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+              <div id="pgb-list-demos" class="space-y-2.5"></div>
             </div>
 
-            <!-- 6. Other Details -->
-            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-2.5">
-              <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">6</span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Other Details (Numbered List)</span>
+            <!-- 6. Other Details (Structured Heading + Description) -->
+            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">6</span>
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Other Details</span>
+                </div>
+                <button type="button" data-add-row="other" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-[11px] font-bold transition">+ Add Detail</button>
               </div>
-              <p class="text-[11px] text-slate-400">One per line formatted as <code>Bold Heading | Explanation or https://link</code>.</p>
-              <textarea id="pgb-other-details" rows="5" placeholder="Live + Recorded Lectures | Class notes of each lecture will be uploaded after class.&#10;Study Material Portal | Access PDF notes anytime at https://app.mendorbit.in" class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+              <div id="pgb-list-other" class="space-y-2.5"></div>
             </div>
 
-            <!-- 7. FAQ's -->
-            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-2.5">
-              <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">7</span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">FAQ&apos;s (Accordion)</span>
+            <!-- 7. FAQ's (Structured Question + Answer) -->
+            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 text-[11px] font-black flex items-center justify-center">7</span>
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">FAQ&apos;s (Questions &amp; Answers)</span>
+                </div>
+                <button type="button" data-add-row="faqs" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-[11px] font-bold transition">+ Add FAQ</button>
               </div>
-              <p class="text-[11px] text-slate-400">One per line formatted as <code>Question | Answer</code>.</p>
-              <textarea id="pgb-faqs" rows="4" placeholder="How will classes be conducted? | Classes are live with instant recordings available.&#10;Will I get PDF notes? | Yes, structured notes and DPPs are included." class="pgb-field w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500"></textarea>
+              <div id="pgb-list-faqs" class="space-y-2.5"></div>
             </div>
           </div>
 
@@ -1044,6 +1132,7 @@
           const label = btn.innerText.trim();
           switchAdminTab(targetId, label);
           if (targetId === 'admin-tab-enrollments') loadAdminEnrollments();
+          if (targetId === 'admin-tab-announcements') loadAdminAnnouncements();
         });
       });
 
@@ -1074,6 +1163,7 @@
             loadAdminBatches();
             loadAdminCoupons();
             loadAdminEnrollments();
+            loadAdminAnnouncements();
             return;
           } else {
             alert((res && res.message) || "Incorrect Admin Key. Access denied.");
@@ -1148,6 +1238,18 @@
           const cur2 = pgbP2Sel.value;
           pgbP2Sel.innerHTML = `<option value="">Custom Plan 2 Details</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
           pgbP2Sel.value = cur2;
+        }
+        const annSel = document.getElementById('ann-input-batch');
+        if (annSel) {
+          const curA = annSel.value;
+          annSel.innerHTML = `<option value="">-- Select Batch --</option><option value="ALL">All Batches (Global)</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
+          annSel.value = curA;
+        }
+        const annFilter = document.getElementById('ann-filter-batch');
+        if (annFilter) {
+          const curAF = annFilter.value;
+          annFilter.innerHTML = `<option value="">All Batches</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
+          annFilter.value = curAF;
         }
         if (typeof syncSelectedBatchSummary === 'function') syncSelectedBatchSummary();
       }
@@ -1367,7 +1469,8 @@
 
         document.getElementById('batch-input-stream').value = b.stream || "";
         document.getElementById('batch-input-language').value = (b.language || "HINGLISH").toUpperCase();
-        document.getElementById('batch-input-statuslabel').value = b.statusLabel || "Ongoing";
+        const stLbl = b.statusLabel || "Ongoing";
+        document.getElementById('batch-input-statuslabel').value = ["Ongoing", "Upcoming", "Completed"].includes(stLbl) ? stLbl : "Ongoing";
         document.getElementById('batch-input-startdate').value = b.startDate || "";
         document.getElementById('batch-input-status').value = b.status || "ACTIVE";
         document.getElementById('batch-input-price').value = b.price !== undefined ? b.price : "";
@@ -1728,6 +1831,186 @@
         return '';
       }
 
+      // ====== BATCH ANNOUNCEMENTS MANAGER ======
+      let loadedAnnouncements = [];
+
+      async function loadAdminAnnouncements() {
+        if (!activeAdminKey) return;
+        const container = document.getElementById('admin-announcements-list');
+        if (container) container.innerHTML = `<div class="text-center py-6 text-slate-400">Loading announcements...</div>`;
+        try {
+          const res = await MendorbitAPI.adminGetAnnouncements(activeAdminKey);
+          if (res && res.status === 'success' && Array.isArray(res.announcements)) {
+            loadedAnnouncements = res.announcements;
+            renderAdminAnnouncements();
+          }
+        } catch (e) { console.warn('[Announcements] Error:', e); }
+      }
+
+      function renderAdminAnnouncements() {
+        const container = document.getElementById('admin-announcements-list');
+        if (!container) return;
+        const filterVal = (document.getElementById('ann-filter-batch')?.value || '').trim();
+        const list = filterVal ? loadedAnnouncements.filter(a => a.batchId === filterVal) : loadedAnnouncements;
+        if (!list.length) {
+          container.innerHTML = `<div class="text-center py-10 text-slate-400">No announcements posted yet. Use the form on the left to send one.</div>`;
+          return;
+        }
+        container.innerHTML = list.map(a => {
+          const dateStr = a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+          return `
+            <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-2">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-extrabold">${escapeHtmlAdmin(a.batchTitle || a.batchId)}</span>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">By ${escapeHtmlAdmin(a.authorName || 'Admin')}</span>
+                    <span class="text-[10px] text-slate-400">${dateStr}</span>
+                  </div>
+                  ${a.title ? `<div class="font-extrabold text-slate-900 text-xs mt-1.5">${escapeHtmlAdmin(a.title)}</div>` : ''}
+                </div>
+                <button type="button" onclick="deleteAdminAnnouncement('${a.id}')" class="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition flex-shrink-0" title="Delete Announcement">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              ${a.message ? `<p class="text-slate-700 text-xs leading-relaxed whitespace-pre-line">${escapeHtmlAdmin(a.message)}</p>` : ''}
+              ${pgbSafeUrl(a.imageUrl) ? `<img src="${escapeHtmlAdmin(pgbSafeUrl(a.imageUrl))}" alt="Announcement Banner" class="w-full max-h-48 object-cover rounded-xl border border-slate-200" />` : ''}
+            </div>
+          `;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      window.deleteAdminAnnouncement = async function (id) {
+        if (!confirm('Delete this announcement?')) return;
+        const res = await MendorbitAPI.adminDeleteAnnouncement(id, activeAdminKey);
+        if (res && res.status === 'success') loadAdminAnnouncements();
+      };
+
+      document.getElementById('ann-filter-batch')?.addEventListener('change', renderAdminAnnouncements);
+      document.getElementById('btn-refresh-announcements')?.addEventListener('click', loadAdminAnnouncements);
+
+      document.getElementById('ann-input-image')?.addEventListener('input', (e) => {
+        const u = pgbSafeUrl(e.target.value);
+        const wrap = document.getElementById('ann-image-preview-wrap');
+        const img = document.getElementById('ann-image-preview');
+        if (u && wrap && img) {
+          img.src = u;
+          wrap.classList.remove('hidden');
+        } else if (wrap) {
+          wrap.classList.add('hidden');
+        }
+      });
+
+      document.getElementById('form-create-announcement')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!activeAdminKey) return;
+        const batchId = document.getElementById('ann-input-batch').value;
+        const authorName = document.getElementById('ann-input-author').value.trim();
+        const title = document.getElementById('ann-input-title').value.trim();
+        const message = document.getElementById('ann-input-message').value.trim();
+        const imageUrl = document.getElementById('ann-input-image').value.trim();
+        if (!batchId) { alert('Please select a target batch.'); return; }
+        if (!authorName) { alert('Please enter your Author / Sender name.'); return; }
+        if (!message && !imageUrl) { alert('Please add an announcement message or image URL.'); return; }
+
+        const bObj = loadedBatches.find(b => b.id === batchId);
+        const batchTitle = batchId === 'ALL' ? 'All Batches' : (bObj ? bObj.title : batchId);
+
+        const btn = document.getElementById('btn-submit-announcement');
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Publishing...';
+        try {
+          const res = await MendorbitAPI.adminCreateAnnouncement({ batchId, batchTitle, authorName, title, message, imageUrl }, activeAdminKey);
+          if (res && res.status === 'success') {
+            document.getElementById('form-create-announcement').reset();
+            document.getElementById('ann-image-preview-wrap')?.classList.add('hidden');
+            await loadAdminAnnouncements();
+            alert('Announcement published!');
+          } else {
+            alert((res && res.message) || 'Failed to publish announcement.');
+          }
+        } catch (err) {
+          alert('Connection error. Please verify Edge Worker deployment.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = orig;
+        }
+      });
+
+      // ====== STRUCTURED REPEATER BUILDERS FOR PAGE STUDIO ======
+      function addPgbRow(type, data = {}) {
+        const lists = {
+          stars: document.getElementById('pgb-list-stars'),
+          extra: document.getElementById('pgb-list-extra'),
+          demos: document.getElementById('pgb-list-demos'),
+          other: document.getElementById('pgb-list-other'),
+          faqs: document.getElementById('pgb-list-faqs')
+        };
+        const box = lists[type];
+        if (!box) return;
+
+        const row = document.createElement('div');
+        row.className = 'pgb-rep-row rounded-xl bg-slate-50 border border-slate-200 p-2.5 flex items-start gap-2';
+
+        if (type === 'stars' || type === 'extra') {
+          row.innerHTML = `
+            <input type="text" class="pgb-rep-input flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-indigo-500" placeholder="${type === 'stars' ? 'e.g. Live & Recorded Classes' : 'e.g. Weekly Doubt Solving Sessions'}" value="${pgbEsc(data.text || '')}" />
+            <button type="button" class="pgb-del-row p-2 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Remove">✕</button>
+          `;
+        } else if (type === 'demos') {
+          row.innerHTML = `
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" data-k="title" class="pgb-rep-input px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:border-indigo-500" placeholder="Video Title" value="${pgbEsc(data.title || '')}" />
+              <input type="url" data-k="url" class="pgb-rep-input px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono outline-none focus:border-indigo-500" placeholder="https://www.youtube.com/watch?v=..." value="${pgbEsc(data.url || '')}" />
+            </div>
+            <button type="button" class="pgb-del-row p-2 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Remove">✕</button>
+          `;
+        } else if (type === 'other') {
+          row.innerHTML = `
+            <div class="flex-1 space-y-2">
+              <input type="text" data-k="heading" class="pgb-rep-input w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none focus:border-indigo-500" placeholder="Heading (e.g. Study Material)" value="${pgbEsc(data.heading || '')}" />
+              <textarea data-k="body" rows="2" class="pgb-rep-input w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-indigo-500" placeholder="Details or https://link">${pgbEsc(data.body || '')}</textarea>
+            </div>
+            <button type="button" class="pgb-del-row p-2 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Remove">✕</button>
+          `;
+        } else if (type === 'faqs') {
+          row.innerHTML = `
+            <div class="flex-1 space-y-2">
+              <input type="text" data-k="q" class="pgb-rep-input w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold outline-none focus:border-indigo-500" placeholder="Question (e.g. How are doubts resolved?)" value="${pgbEsc(data.q || '')}" />
+              <textarea data-k="a" rows="2" class="pgb-rep-input w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-indigo-500" placeholder="Answer">${pgbEsc(data.a || '')}</textarea>
+            </div>
+            <button type="button" class="pgb-del-row p-2 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Remove">✕</button>
+          `;
+        }
+
+        row.querySelectorAll('.pgb-rep-input').forEach(inp => inp.addEventListener('input', schedulePageBuilderRender));
+        row.querySelector('.pgb-del-row')?.addEventListener('click', () => {
+          row.remove();
+          schedulePageBuilderRender();
+        });
+        box.appendChild(row);
+      }
+
+      document.querySelectorAll('[data-add-row]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          addPgbRow(btn.getAttribute('data-add-row'));
+          schedulePageBuilderRender();
+        });
+      });
+
+      function resetPgbRepeaters() {
+        ['pgb-list-stars', 'pgb-list-extra', 'pgb-list-demos', 'pgb-list-other', 'pgb-list-faqs'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = '';
+        });
+        addPgbRow('stars');
+        addPgbRow('demos');
+        addPgbRow('other');
+        addPgbRow('faqs');
+      }
+
       function readPageBuilderConfig() {
         const val = (id) => (document.getElementById(id)?.value || '').trim();
         const lines = (id) => val(id).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
@@ -1752,6 +2035,21 @@
         const p2PriceNum = b2 ? Math.max(0, Number(b2.price) || 0) : (p2PriceRaw === '' ? null : Math.max(0, Number(p2PriceRaw) || 0));
         const p2MrpNum = b2 ? Math.max(0, Number(b2.originalPrice) || 0) : (p2MrpRaw === '' ? 0 : Math.max(0, Number(p2MrpRaw) || 0));
 
+        const starFeatures = Array.from(document.querySelectorAll('#pgb-list-stars input')).map(i => i.value.trim()).filter(Boolean);
+        const extraHighlights = Array.from(document.querySelectorAll('#pgb-list-extra input')).map(i => i.value.trim()).filter(Boolean);
+        const demos = Array.from(document.querySelectorAll('#pgb-list-demos .pgb-rep-row')).map(r => ({
+          title: (r.querySelector('[data-k="title"]')?.value || '').trim() || 'Demo Class',
+          url: (r.querySelector('[data-k="url"]')?.value || '').trim()
+        })).filter(d => d.url);
+        const otherDetails = Array.from(document.querySelectorAll('#pgb-list-other .pgb-rep-row')).map(r => ({
+          heading: (r.querySelector('[data-k="heading"]')?.value || '').trim(),
+          body: (r.querySelector('[data-k="body"]')?.value || '').trim()
+        })).filter(o => o.heading || o.body);
+        const faqs = Array.from(document.querySelectorAll('#pgb-list-faqs .pgb-rep-row')).map(r => ({
+          q: (r.querySelector('[data-k="q"]')?.value || '').trim(),
+          a: (r.querySelector('[data-k="a"]')?.value || '').trim()
+        })).filter(f => f.q);
+
         return {
           batchId,
           batchStatus: b ? (b.status || 'ACTIVE') : 'ACTIVE',
@@ -1765,7 +2063,6 @@
           headerPill: classLabel || classesList[0] || '',
           baseUrl,
           apiBase: (typeof MendorbitAPI !== 'undefined' && MendorbitAPI.getBaseUrl) ? MendorbitAPI.getBaseUrl() : 'https://auth.app-mendorbit.workers.dev',
-          announcement: val('pgb-announcement'),
           thumbnail: b ? (b.thumbnail || '') : '',
           aspirant: val('pgb-aspirant') || (classLabel ? `For ${classLabel} Aspirants` : ''),
           language: b ? (b.language || 'HINGLISH') : '',
@@ -1781,28 +2078,16 @@
           plan2Mrp: p2MrpNum,
           plan2Url: b2 ? getBatchPaymentLink(b2) : pgbSafeUrl(val('pgb-plan2-url')),
           plan2Features: lines('pgb-plan2-features'),
-          starFeatures: lines('pgb-star-features'),
+          starFeatures,
           duration: val('pgb-duration') || (b && b.startDate ? b.startDate : ''),
           validity: val('pgb-validity'),
           mode: val('pgb-mode'),
           schedule: val('pgb-schedule'),
           subjects: val('pgb-subjects'),
-          extraHighlights: lines('pgb-extra-highlights'),
-          demos: lines('pgb-demos').map(l => {
-            const idx = l.indexOf('|');
-            if (idx === -1) return { title: 'Demo Lecture', url: l };
-            return { title: l.slice(0, idx).trim(), url: l.slice(idx + 1).trim() };
-          }).filter(d => d.url),
-          otherDetails: lines('pgb-other-details').map(l => {
-            const idx = l.indexOf('|');
-            if (idx === -1) return { heading: '', body: l };
-            return { heading: l.slice(0, idx).trim(), body: l.slice(idx + 1).trim() };
-          }),
-          faqs: lines('pgb-faqs').map(l => {
-            const idx = l.indexOf('|');
-            if (idx === -1) return { q: l, a: '' };
-            return { q: l.slice(0, idx).trim(), a: l.slice(idx + 1).trim() };
-          })
+          extraHighlights,
+          demos,
+          otherDetails,
+          faqs
         };
       }
 
@@ -1844,7 +2129,7 @@
         if (clsEl) clsEl.textContent = `${b.displayTag ? b.displayTag + ' • ' : ''}${clsList}`;
         if (priceEl) priceEl.textContent = price === 0 ? 'FREE' : `₹${price.toLocaleString('en-IN')}`;
         if (offerEl) offerEl.textContent = pct > 0 ? `${pct}% OFF (₹${mrp.toLocaleString('en-IN')})` : (mrp > 0 ? `MRP ₹${mrp.toLocaleString('en-IN')}` : 'No Offer Set');
-        if (statusEl) statusEl.textContent = `${b.statusLabel || b.status || 'Active'}${b.startDate ? ' • ' + b.startDate : ''}`;
+        if (statusEl) statusEl.textContent = `${b.statusLabel || b.status || 'Ongoing'}${b.startDate ? ' • ' + b.startDate : ''}`;
       }
 
       function generateStandaloneBatchHtml(cfg) {
@@ -1856,12 +2141,12 @@
 
         const renderStarItems = (items) => {
           if (!items.length) {
-            return '<div class="col-span-full text-xs text-slate-400 italic py-2">Add batch highlights in the Page Studio to populate this interactive checklist.</div>';
+            return '<div class="col-span-full text-xs text-slate-400 italic py-2">Add batch features in Section 3 to display them here.</div>';
           }
           return items.map(item => `
-            <div class="group flex items-start gap-2.5 p-2.5 rounded-xl border border-transparent hover:border-indigo-100 hover:bg-indigo-50/40 transition">
-              <span class="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition-transform">${starSvg}</span>
-              <span class="text-[13px] font-semibold text-slate-700 leading-snug pt-0.5">${pgbEsc(item)}</span>
+            <div class="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/40 transition">
+              <span class="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">${starSvg}</span>
+              <span class="text-[13px] font-semibold text-slate-700 leading-snug">${pgbEsc(item)}</span>
             </div>
           `).join('');
         };
@@ -1892,10 +2177,10 @@
         }
 
         const specHtml = specRows.length ? specRows.map(r => `
-          <div class="flex items-start gap-3.5 p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:border-slate-200 transition">
-            <span class="w-8 h-8 rounded-xl ${r.iconBg} flex items-center justify-center flex-shrink-0 mt-0.5">${r.icon}</span>
-            <div class="text-[13px] text-slate-700 leading-relaxed">
-              ${r.label ? `<div class="font-bold text-slate-900">${pgbEsc(r.label)}</div><div ${r.valId ? `id="${r.valId}"` : ''}>${pgbEsc(r.value)}</div>` : `<div class="font-semibold text-slate-800 pt-1">${pgbEsc(r.value)}</div>`}
+          <div class="flex items-center gap-3.5 p-3.5 rounded-xl bg-slate-50/70 border border-slate-100 hover:border-slate-200 transition">
+            <span class="w-8 h-8 rounded-xl ${r.iconBg} flex items-center justify-center flex-shrink-0">${r.icon}</span>
+            <div class="text-[13px] text-slate-700 leading-snug">
+              ${r.label ? `<div class="font-bold text-slate-900">${pgbEsc(r.label)}</div><div ${r.valId ? `id="${r.valId}"` : ''}>${pgbEsc(r.value)}</div>` : `<div class="font-semibold text-slate-800">${pgbEsc(r.value)}</div>`}
             </div>
           </div>
         `).join('') : '<div class="text-xs text-slate-400 italic">Fill Course Duration, Validity, Schedule, or Subjects to display batch details.</div>';
@@ -1904,8 +2189,8 @@
           <section id="section-demos" class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)]">
             <div class="flex items-center justify-between gap-3 mb-4">
               <div>
-                <h2 class="text-lg font-extrabold text-slate-900">Free Demo Classes</h2>
-                <p class="text-xs text-slate-500 mt-0.5">Preview teaching quality and lecture format before enrolling</p>
+                <h2 class="text-lg font-extrabold text-slate-900">Free Demo Videos</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Click Watch Video to stream with fullscreen support</p>
               </div>
               <span class="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold">${cfg.demos.length} ${cfg.demos.length === 1 ? 'Video' : 'Videos'}</span>
             </div>
@@ -1913,16 +2198,26 @@
               ${cfg.demos.map(d => {
                 const embed = pgbEmbedUrl(pgbSafeUrl(d.url));
                 const isDirectVideo = /\.(mp4|webm|ogg)(\?|$)/i.test(embed);
+                const ytMatch = embed.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+                const thumbImg = ytMatch ? `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg` : '';
                 return `
-                  <div class="group rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-indigo-300 hover:shadow-md transition">
-                    <div class="relative aspect-video bg-slate-900">
-                      ${isDirectVideo
-                        ? `<video src="${pgbEsc(embed)}" controls class="w-full h-full object-cover"></video>`
-                        : `<iframe src="${pgbEsc(embed)}" title="${pgbEsc(d.title)}" class="w-full h-full border-0" allowfullscreen loading="lazy"></iframe>`}
+                  <div class="group rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-indigo-300 hover:shadow-md transition flex flex-col justify-between">
+                    <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}">
+                      ${thumbImg
+                        ? `<img src="${pgbEsc(thumbImg)}" alt="${pgbEsc(d.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />`
+                        : `<div class="w-full h-full bg-gradient-to-br from-slate-800 to-indigo-950 flex items-center justify-center text-white/70 text-xs font-bold">Video Lecture</div>`}
+                      <div class="absolute inset-0 bg-slate-950/30 group-hover:bg-slate-950/20 flex items-center justify-center transition">
+                        <span class="w-12 h-12 rounded-full bg-white/95 text-indigo-600 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <svg class="w-5 h-5 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                        </span>
+                      </div>
                     </div>
-                    <div class="px-4 py-3 bg-white flex items-center justify-between gap-2">
+                    <div class="px-4 py-3 bg-white flex items-center justify-between gap-2.5">
                       <span class="text-xs font-extrabold text-slate-800 truncate">${pgbEsc(d.title)}</span>
-                      <button type="button" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white text-[11px] font-bold transition flex-shrink-0">Expand</button>
+                      <button type="button" data-open-video="${pgbEsc(embed)}" data-video-title="${pgbEsc(d.title)}" data-is-direct="${isDirectVideo ? '1' : '0'}" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold transition flex-shrink-0 inline-flex items-center gap-1.5 shadow-2xs">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                        <span>Watch Video</span>
+                      </button>
                     </div>
                   </div>
                 `;
@@ -1984,7 +2279,7 @@
         const p1Mrp = cfg.mrp;
         const p1Pct = calcDiscountPct(p1Price, p1Mrp);
         const p1PriceLabel = p1Price === null ? '₹—' : (p1Price === 0 ? 'FREE' : `₹${p1Price.toLocaleString('en-IN')}`);
-        const p1CtaLabel = cfg.ctaText || (p1Price === 0 ? 'Enroll Free' : 'Buy Now');
+        const p1CtaLabel = cfg.ctaText || (p1Price === 0 ? 'Enroll Now' : 'Buy Now');
         const p1BuyHref = pgbSafeUrl(cfg.buyUrl) || `${base}/batches.html`;
 
         const p2Enabled = cfg.enablePlan2 && cfg.plan2Name;
@@ -2029,9 +2324,10 @@
         const classesHtml = (cfg.classesList.length ? cfg.classesList : (cfg.headerPill ? [cfg.headerPill] : []))
           .map(c => `<span class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-700 shadow-2xs">${pgbEsc(c)}</span>`)
           .join('');
+        const hasMrpAbove = p1Mrp > (p1Price || 0);
 
         return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2043,14 +2339,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></scr` + `ipt>
   <style>
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #0f172a; overflow-x: hidden; }
     details summary::-webkit-details-marker { display: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .subnav-link.active { color: #4f46e5; border-bottom-color: #4f46e5; }
   </sty` + `le>
 </head>
 <body class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 pb-20 lg:pb-0">
-  <!-- LIGHT TOP HEADER -->
+  <!-- LIGHT TOP HEADER WITH PROFILE WIDGET -->
   <header class="h-16 bg-white/95 backdrop-blur border-b border-slate-200/80 sticky top-0 z-40 px-4 sm:px-8 flex items-center justify-between gap-4">
     <div class="flex items-center gap-3 min-w-0">
       <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-2.5 flex-shrink-0">
@@ -2059,27 +2357,53 @@
       </a>
       ${cfg.headerPill ? `<span class="text-slate-300 hidden sm:inline">/</span><a id="hdr-class-pill" href="${pgbEsc(base)}/batches.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition truncate max-w-[220px]"><span>${pgbEsc(cfg.headerPill)}</span><svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>` : ''}
     </div>
-    <div class="flex items-center gap-2.5">
+
+    <div class="flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0">
       <a href="https://mendorbit.in/contact" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Support</a>
-      <div id="hdr-auth-area">
-        <a href="${pgbEsc(base)}/index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition">Student Portal</a>
+
+      <a id="btn-nav-login" href="${pgbEsc(base)}/login.html?redirect=batches.html" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition">
+        Login
+      </a>
+
+      <div id="nav-user-widget" class="relative hidden">
+        <button id="nav-user-btn" type="button" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-full hover:bg-slate-100 transition">
+          <span class="text-xs font-bold text-slate-700">Hi, <span id="nav-user-name">Student</span></span>
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs overflow-hidden relative border border-slate-200">
+            <span id="nav-avatar-initial">S</span>
+            <img id="nav-avatar-img" class="w-full h-full object-cover hidden absolute inset-0" alt="Avatar" />
+          </div>
+          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div id="nav-user-dropdown" class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 hidden z-50">
+          <div class="px-3 py-2 border-b border-slate-100 mb-1">
+            <div class="text-xs font-extrabold text-slate-900 truncate" id="dropdown-user-fullname">Student</div>
+            <div class="text-[10px] text-slate-400 truncate font-mono" id="dropdown-user-email">student@email.com</div>
+          </div>
+          <a href="${pgbEsc(base)}/index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+            <span>Dashboard</span>
+          </a>
+          <a href="${pgbEsc(base)}/profile.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+            <span>My Profile</span>
+          </a>
+          <div class="my-1 border-t border-slate-100"></div>
+          <button id="nav-btn-logout" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition text-left">
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- FULL-WIDTH LIGHT MAIN -->
   <main class="flex-1 w-full pb-14">
-    <!-- BREADCRUMB BAR -->
+    <!-- CLEAN BREADCRUMB BAR -->
     <div class="bg-white border-b border-slate-200/70 px-4 sm:px-8 py-2.5">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
         <a href="${pgbEsc(base)}/batches.html" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           <span>All Batches</span>
         </a>
-        <div class="flex items-center gap-2 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Secured Live Pricing</span>
-        </div>
       </div>
     </div>
 
@@ -2097,7 +2421,7 @@
           ${cfg.stream ? `<span id="hero-stream-pill" class="px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-bold">${pgbEsc(cfg.stream)}</span>` : `<span id="hero-stream-pill" class="hidden"></span>`}
         </div>
         <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight max-w-4xl">${pgbEsc(displayTitle)}</h1>
-        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-semibold pt-1">
+        <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-600 font-semibold pt-1">
           ${cfg.language ? `<span id="hero-lang-chip" class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Medium: <strong class="text-slate-900 uppercase">${pgbEsc(cfg.language)}</strong></span>` : '<span id="hero-lang-chip" class="hidden"></span>'}
           ${cfg.duration ? `<span class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Duration: <strong class="text-slate-900">${pgbEsc(cfg.duration)}</strong></span>` : ''}
           ${cfg.validity ? `<span class="inline-flex items-center gap-1.5 bg-white/90 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">Validity: <strong class="text-slate-900">${pgbEsc(cfg.validity)}</strong></span>` : ''}
@@ -2105,59 +2429,73 @@
       </div>
     </section>
 
-    <!-- STICKY INTERACTIVE SUB-NAV -->
+    <!-- STICKY INTERACTIVE SUB-NAV (SCROLLBAR-FREE) -->
     <div class="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-16 z-30 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-        <nav class="flex items-center gap-6 overflow-x-auto text-xs sm:text-[13px] font-bold text-slate-500">
-          <a href="#section-description" data-spy="section-description" class="subnav-link active py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Description</a>
-          <a href="#section-specs" data-spy="section-specs" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Batch Specs</a>
-          ${cfg.demos.length ? '<a href="#section-demos" data-spy="section-demos" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Demo Classes</a>' : ''}
-          ${cfg.otherDetails.length ? '<a href="#section-other" data-spy="section-other" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Other Details</a>' : ''}
-          ${cfg.faqs.length ? '<a href="#section-faqs" data-spy="section-faqs" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">FAQ&apos;s</a>' : ''}
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <nav class="no-scrollbar flex items-center gap-5 sm:gap-6 overflow-x-auto text-xs sm:text-[13px] font-bold text-slate-500 max-w-full">
+          <a href="#section-description" data-tab-view="overview" data-spy="section-description" class="subnav-link active py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Description</a>
+          <a href="#section-specs" data-tab-view="overview" data-spy="section-specs" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Batch Specs</a>
+          ${cfg.demos.length ? '<a href="#section-demos" data-tab-view="overview" data-spy="section-demos" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Demo Videos</a>' : ''}
+          ${cfg.otherDetails.length ? '<a href="#section-other" data-tab-view="overview" data-spy="section-other" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">Other Details</a>' : ''}
+          ${cfg.faqs.length ? '<a href="#section-faqs" data-tab-view="overview" data-spy="section-faqs" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition">FAQ&apos;s</a>' : ''}
+          <button type="button" id="tab-btn-announcements" data-tab-view="announcements" class="subnav-link py-3.5 border-b-2 border-transparent hover:text-slate-900 whitespace-nowrap transition inline-flex items-center gap-1.5">
+            <span>Announcements</span>
+            <span id="nav-ann-count" class="hidden px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold">0</span>
+          </button>
         </nav>
         <div class="flex items-center gap-2 py-2">
           <button type="button" id="btn-share-batch" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition">
             <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             <span>Share Batch</span>
           </button>
-          ${cfg.announcement ? `
-          <button type="button" id="btn-announcement" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-xs font-bold text-amber-800 transition">
-            <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <span>Announcement</span>
-          </button>` : ''}
         </div>
       </div>
     </div>
 
-    ${cfg.announcement ? `<div id="announcement-banner" class="hidden max-w-7xl mx-auto px-4 sm:px-8 pt-5"><div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl px-4 py-3.5 text-xs font-semibold flex items-center justify-between gap-3 shadow-xs"><span>${pgbEsc(cfg.announcement)}</span><button type="button" onclick="this.parentElement.parentElement.classList.add('hidden')" class="text-amber-700 font-extrabold">Dismiss</button></div></div>` : ''}
-
     <!-- MAIN 12-COLUMN WORKSPACE -->
     <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <div class="lg:col-span-8 space-y-6">
-        <section id="section-description" class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)]">
-          ${planSwitcherHtml}
-          <details open class="group border border-slate-200 rounded-2xl p-4 sm:p-5 bg-slate-50/30">
-            <summary class="list-none cursor-pointer flex items-center justify-between text-sm sm:text-base font-extrabold text-slate-900">
-              <span>Batch Includes</span>
-              <svg class="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </summary>
-            <div id="plan-1-stars" class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-              ${renderStarItems(cfg.starFeatures)}
-            </div>
-            ${p2Enabled ? `<div id="plan-2-stars" class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">${renderStarItems(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures)}</div>` : ''}
-          </details>
-        </section>
+        <!-- OVERVIEW PANELS -->
+        <div id="overview-view" class="space-y-6">
+          <section id="section-description" class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)]">
+            ${planSwitcherHtml}
+            <details open class="group border border-slate-200 rounded-2xl p-4 sm:p-5 bg-slate-50/30">
+              <summary class="list-none cursor-pointer flex items-center justify-between text-sm sm:text-base font-extrabold text-slate-900">
+                <span>Batch Includes</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div id="plan-1-stars" class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                ${renderStarItems(cfg.starFeatures)}
+              </div>
+              ${p2Enabled ? `<div id="plan-2-stars" class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">${renderStarItems(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures)}</div>` : ''}
+            </details>
+          </section>
 
-        <section id="section-specs" class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)]">
-          <h2 class="text-lg font-extrabold text-slate-900 mb-4">This Batch Includes</h2>
-          <div class="space-y-3">
-            ${specHtml}
+          <section id="section-specs" class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)]">
+            <h2 class="text-lg font-extrabold text-slate-900 mb-4">This Batch Includes</h2>
+            <div class="space-y-3">
+              ${specHtml}
+            </div>
+          </section>
+
+          ${demosHtml}
+          ${otherHtml}
+          ${faqsHtml}
+        </div>
+
+        <!-- DEDICATED ANNOUNCEMENTS TAB PANEL -->
+        <section id="announcements-view" class="hidden bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] space-y-4">
+          <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div>
+              <h2 class="text-lg font-extrabold text-slate-900">Batch Announcements</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Official updates, notices, and schedule alerts for this batch</p>
+            </div>
+            <button type="button" id="btn-back-to-overview" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">Back to Overview</button>
+          </div>
+          <div id="live-announcements-feed" class="space-y-4">
+            <div class="text-center py-10 text-xs text-slate-400">Checking for announcements...</div>
           </div>
         </section>
-
-        ${demosHtml}
-        ${otherHtml}
-        ${faqsHtml}
       </div>
 
       <!-- RIGHT STICKY PURCHASE CARD -->
@@ -2172,27 +2510,24 @@
             <span id="card-lang" class="px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700 uppercase flex-shrink-0 ${cfg.language ? '' : 'hidden'}">${pgbEsc(cfg.language)}</span>
           </div>
 
-          <div class="pt-2 border-t border-slate-100">
-            <div class="flex items-baseline gap-2.5">
-              <span id="card-price" class="text-2xl sm:text-[28px] font-extrabold text-slate-900">${p1PriceLabel}</span>
-              ${p1Price > 0 && p1Mrp > p1Price ? `<span id="card-mrp" class="text-sm text-slate-400 line-through font-semibold">₹${p1Mrp.toLocaleString('en-IN')}</span>` : `<span id="card-mrp" class="hidden"></span>`}
+          <!-- PRICE & CROSSED MRP + INLINE COMPACT BUY NOW BUTTON ON SAME ROW -->
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div id="card-mrp-row" class="${hasMrpAbove ? '' : 'hidden'} mb-0.5">
+                <span id="card-mrp" class="text-xs text-slate-400 line-through font-bold">₹${p1Mrp.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="card-price" class="text-2xl font-extrabold text-slate-900 leading-none">${p1PriceLabel}</span>
+                <span id="card-discount-wrap" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[11px] font-extrabold ${p1Pct > 0 ? '' : 'hidden'}">
+                  <span id="card-discount-text">${p1Pct}% OFF</span>
+                </span>
+              </div>
             </div>
-            <div id="card-discount-wrap" class="mt-2 ${p1Pct > 0 ? '' : 'hidden'}">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-xs font-extrabold">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".5" fill="currentColor"/><circle cx="14.5" cy="14.5" r=".5" fill="currentColor"/></svg>
-                <span id="card-discount-text">${p1Pct}% OFF</span>
-              </span>
-            </div>
-          </div>
 
-          <button type="button" id="card-buy-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-sm text-center tracking-wide shadow-md shadow-indigo-500/20 transition flex items-center justify-center gap-2">
-            <span id="card-buy-label">${pgbEsc(p1CtaLabel)}</span>
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-
-          <div class="pt-1 flex items-center justify-center gap-2 text-[11px] font-semibold text-slate-400">
-            <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>Verified Checkout &amp; Instant Access</span>
+            <button type="button" id="card-buy-btn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold text-xs tracking-wide shadow-sm transition flex-shrink-0 inline-flex items-center gap-1.5">
+              <span id="card-buy-label">${pgbEsc(p1CtaLabel)}</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
           </div>
         </div>
       </aside>
@@ -2202,13 +2537,15 @@
   <!-- MOBILE STICKY BOTTOM BUY BAR -->
   <div class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-lg">
     <div>
-      <div class="flex items-baseline gap-2">
-        <span id="mob-price" class="text-lg font-extrabold text-slate-900">${p1PriceLabel}</span>
-        ${p1Price > 0 && p1Mrp > p1Price ? `<span id="mob-mrp" class="text-xs text-slate-400 line-through font-semibold">₹${p1Mrp.toLocaleString('en-IN')}</span>` : `<span id="mob-mrp" class="hidden"></span>`}
+      <div id="mob-mrp-row" class="${hasMrpAbove ? '' : 'hidden'} leading-none mb-0.5">
+        <span id="mob-mrp" class="text-[11px] text-slate-400 line-through font-bold">₹${p1Mrp.toLocaleString('en-IN')}</span>
       </div>
-      <div id="mob-pct" class="text-[11px] font-extrabold text-emerald-600 ${p1Pct > 0 ? '' : 'hidden'}">${p1Pct}% OFF</div>
+      <div class="flex items-center gap-2">
+        <span id="mob-price" class="text-lg font-extrabold text-slate-900 leading-none">${p1PriceLabel}</span>
+        <span id="mob-pct" class="px-1.5 py-0.5 rounded bg-emerald-50 text-[10px] font-extrabold text-emerald-700 ${p1Pct > 0 ? '' : 'hidden'}">${p1Pct}% OFF</span>
+      </div>
     </div>
-    <button type="button" id="mob-buy-btn" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold tracking-wide shadow-sm transition">${pgbEsc(p1CtaLabel)}</button>
+    <button type="button" id="mob-buy-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold tracking-wide shadow-sm transition flex-shrink-0">${pgbEsc(p1CtaLabel)}</button>
   </div>
 
   <!-- COMPARE PLANS MODAL -->
@@ -2222,25 +2559,33 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
         <div class="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4 space-y-2.5">
           <div class="font-extrabold text-sm text-indigo-700">${pgbEsc(cfg.plan1Name)}</div>
-          <ul class="space-y-1.5 text-slate-700">${cfg.starFeatures.map(f => `<li class="flex items-start gap-2"><span class="text-indigo-600 font-bold">★</span><span>${pgbEsc(f)}</span></li>`).join('')}</ul>
+          <ul class="space-y-1.5 text-slate-700">${cfg.starFeatures.map(f => `<li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">★</span><span>${pgbEsc(f)}</span></li>`).join('')}</ul>
         </div>
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-2.5">
           <div class="font-extrabold text-sm text-emerald-700">${pgbEsc(cfg.plan2Name)}</div>
-          <ul class="space-y-1.5 text-slate-700">${(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures).map(f => `<li class="flex items-start gap-2"><span class="text-emerald-600 font-bold">★</span><span>${pgbEsc(f)}</span></li>`).join('')}</ul>
+          <ul class="space-y-1.5 text-slate-700">${(cfg.plan2Features.length ? cfg.plan2Features : cfg.starFeatures).map(f => `<li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">★</span><span>${pgbEsc(f)}</span></li>`).join('')}</ul>
         </div>
       </div>
     </div>
   </div>` : ''}
 
-  <!-- DEMO VIDEO LIGHTBOX MODAL -->
-  <div id="video-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl">
-      <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
-        <h3 id="video-modal-title" class="text-sm font-extrabold text-slate-900 truncate">Demo Class</h3>
-        <button type="button" id="close-video-modal" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 font-bold">✕</button>
+  <!-- DEMO VIDEO FULLSCREEN-CAPABLE LIGHTBOX MODAL -->
+  <div id="video-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+    <div id="video-modal-frame" class="bg-slate-950 rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-800">
+      <div class="px-4 sm:px-5 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between gap-3">
+        <h3 id="video-modal-title" class="text-xs sm:text-sm font-extrabold text-white truncate">Demo Class</h3>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button type="button" id="btn-video-fullscreen" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[11px] font-bold transition">Fullscreen</button>
+          <button type="button" id="close-video-modal" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 font-bold">✕</button>
+        </div>
       </div>
-      <div id="video-modal-body" class="aspect-video bg-slate-900"></div>
+      <div id="video-modal-body" class="aspect-video bg-black"></div>
     </div>
+  </div>
+
+  <!-- ANNOUNCEMENT IMAGE LIGHTBOX -->
+  <div id="img-lightbox" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+    <img id="img-lightbox-src" src="" alt="Announcement" class="max-w-full max-h-[88vh] rounded-2xl shadow-2xl" />
   </div>
 
   <!-- FLOATING TOAST -->
@@ -2271,29 +2616,85 @@
         setTimeout(() => el.classList.add('hidden'), 2400);
       }
 
+      // Navbar Student Profile Widget (exact match to Dashboard / Batches)
+      function initNavbarProfile() {
+        try {
+          const rawUser = localStorage.getItem('mendorbit_sso_user');
+          const loginBtn = document.getElementById('btn-nav-login');
+          const userWidget = document.getElementById('nav-user-widget');
+          if (!rawUser) {
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (userWidget) userWidget.classList.add('hidden');
+            return null;
+          }
+          const u = JSON.parse(rawUser);
+          const fullName = u.displayName || u.name || 'Student';
+          const firstName = fullName.split(' ')[0];
+          const email = u.email || '';
+
+          if (loginBtn) loginBtn.classList.add('hidden');
+          if (userWidget) userWidget.classList.remove('hidden');
+          const nameEl = document.getElementById('nav-user-name');
+          const fullEl = document.getElementById('dropdown-user-fullname');
+          const emailEl = document.getElementById('dropdown-user-email');
+          const initEl = document.getElementById('nav-avatar-initial');
+          const imgEl = document.getElementById('nav-avatar-img');
+          if (nameEl) nameEl.textContent = firstName;
+          if (fullEl) fullEl.textContent = fullName;
+          if (emailEl) emailEl.textContent = email;
+          if (initEl) initEl.textContent = firstName.charAt(0).toUpperCase() || 'S';
+          const pic = safeUrl(u.photoURL || u.avatar);
+          if (pic && imgEl) {
+            imgEl.src = pic;
+            imgEl.classList.remove('hidden');
+          }
+          document.getElementById('nav-user-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('nav-user-dropdown')?.classList.toggle('hidden');
+          });
+          document.addEventListener('click', () => {
+            document.getElementById('nav-user-dropdown')?.classList.add('hidden');
+          });
+          document.getElementById('nav-btn-logout')?.addEventListener('click', () => {
+            try { localStorage.removeItem('mendorbit_sso_user'); localStorage.removeItem('mendorbit_sso_token'); } catch (ex) {}
+            window.location.href = BASE_URL + '/login.html';
+          });
+          return u;
+        } catch (e) { return null; }
+      }
+      const currentUser = initNavbarProfile();
+
       function applyPricingUI(pKey) {
         const d = plans[pKey] || plans[1];
         if (!d) return;
-        const priceTxt = d.price === null ? '₹—' : (d.price === 0 ? 'FREE' : '₹' + Number(d.price).toLocaleString('en-IN'));
+        const priceNum = Number(d.price) || 0;
+        const mrpNum = Number(d.mrp) || 0;
+        const priceTxt = d.price === null ? '₹—' : (priceNum === 0 ? 'FREE' : '₹' + priceNum.toLocaleString('en-IN'));
+
         const pEl = document.getElementById('card-price');
+        const mRow = document.getElementById('card-mrp-row');
         const mEl = document.getElementById('card-mrp');
         const dWrap = document.getElementById('card-discount-wrap');
         const dTxt = document.getElementById('card-discount-text');
+
         const mobP = document.getElementById('mob-price');
+        const mobMRow = document.getElementById('mob-mrp-row');
         const mobM = document.getElementById('mob-mrp');
         const mobPct = document.getElementById('mob-pct');
 
         if (pEl) pEl.textContent = priceTxt;
         if (mobP) mobP.textContent = priceTxt;
 
-        if (d.price > 0 && d.mrp > d.price) {
-          const mrpTxt = '₹' + Number(d.mrp).toLocaleString('en-IN');
-          if (mEl) { mEl.textContent = mrpTxt; mEl.className = 'text-sm text-slate-400 line-through font-semibold'; }
-          if (mobM) { mobM.textContent = mrpTxt; mobM.className = 'text-xs text-slate-400 line-through font-semibold'; }
-        } else {
-          if (mEl) mEl.className = 'hidden';
-          if (mobM) mobM.className = 'hidden';
+        const showMrp = mrpNum > priceNum;
+        if (mRow && mEl) {
+          mRow.classList.toggle('hidden', !showMrp);
+          if (showMrp) mEl.textContent = '₹' + mrpNum.toLocaleString('en-IN');
         }
+        if (mobMRow && mobM) {
+          mobMRow.classList.toggle('hidden', !showMrp);
+          if (showMrp) mobM.textContent = '₹' + mrpNum.toLocaleString('en-IN');
+        }
+
         if (dWrap && dTxt) {
           dWrap.classList.toggle('hidden', !(d.pct > 0));
           dTxt.textContent = d.pct + '% OFF';
@@ -2311,19 +2712,19 @@
         const mobBtn = document.getElementById('mob-buy-btn');
         if (!btn || !lbl) return;
         if (isEnrolled) {
-          lbl.textContent = 'Already Enrolled • Go to Classroom';
-          btn.className = 'w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm text-center tracking-wide shadow-md transition flex items-center justify-center gap-2';
-          if (mobBtn) { mobBtn.textContent = 'Go to Classroom'; mobBtn.className = 'px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold'; }
+          lbl.textContent = 'Go to Batch';
+          btn.className = 'px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs tracking-wide shadow-sm transition flex-shrink-0 inline-flex items-center gap-1.5';
+          if (mobBtn) { mobBtn.textContent = 'Go to Batch'; mobBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold'; }
           return;
         }
         if (isArchived) {
-          lbl.textContent = 'Admissions Closed';
+          lbl.textContent = 'Closed';
           btn.disabled = true;
-          btn.className = 'w-full py-3.5 rounded-xl bg-slate-200 text-slate-500 font-extrabold text-sm text-center cursor-not-allowed flex items-center justify-center gap-2';
-          if (mobBtn) { mobBtn.disabled = true; mobBtn.textContent = 'Closed'; mobBtn.className = 'px-6 py-2.5 rounded-xl bg-slate-200 text-slate-500 text-xs font-extrabold'; }
+          btn.className = 'px-5 py-2.5 rounded-xl bg-slate-200 text-slate-500 font-extrabold text-xs cursor-not-allowed flex-shrink-0';
+          if (mobBtn) { mobBtn.disabled = true; mobBtn.textContent = 'Closed'; mobBtn.className = 'px-5 py-2.5 rounded-xl bg-slate-200 text-slate-500 text-xs font-extrabold'; }
           return;
         }
-        const txt = d.cta || (d.price === 0 ? 'Enroll Free' : 'Buy Now');
+        const txt = d.cta || (Number(d.price) === 0 ? 'Enroll Now' : 'Buy Now');
         lbl.textContent = txt;
         if (mobBtn) mobBtn.textContent = txt;
       }
@@ -2338,22 +2739,15 @@
 
         const lbl = document.getElementById('card-buy-label');
         const origText = lbl ? lbl.textContent : '';
-        if (lbl) lbl.textContent = 'Securing Checkout...';
+        if (lbl) lbl.textContent = 'Opening...';
 
         try {
           let headers = { 'Content-Type': 'application/json' };
-          let email = '';
-          try {
-            const rawUser = localStorage.getItem('mendorbit_sso_user');
-            if (rawUser) {
-              const u = JSON.parse(rawUser);
-              email = u.email || '';
-              if (u.email) {
-                const tok = btoa(unescape(encodeURIComponent(JSON.stringify({ email: u.email, uid: u.uid || u.email, sessionId: u.sessionId || '' }))));
-                headers['Authorization'] = 'Bearer ' + tok;
-              }
-            }
-          } catch (e) {}
+          let email = currentUser ? (currentUser.email || '') : '';
+          if (currentUser && currentUser.email) {
+            const tok = btoa(unescape(encodeURIComponent(JSON.stringify({ email: currentUser.email, uid: currentUser.uid || currentUser.email, sessionId: currentUser.sessionId || '' }))));
+            headers['Authorization'] = 'Bearer ' + tok;
+          }
           const res = await fetch(API_BASE + '/api/batches/checkout-init', {
             method: 'POST',
             credentials: 'include',
@@ -2400,97 +2794,154 @@
         });
       });
 
-      // Live Server Hydration (Always keeps Price, Offer, Class Tags & Status current!)
+      // Subnav View Switching (Overview <-> Announcements)
+      const overviewView = document.getElementById('overview-view');
+      const annView = document.getElementById('announcements-view');
+      const spyLinks = document.querySelectorAll('.subnav-link');
+
+      function setActiveTab(viewName, triggerEl) {
+        if (overviewView) overviewView.classList.toggle('hidden', viewName !== 'overview');
+        if (annView) annView.classList.toggle('hidden', viewName !== 'announcements');
+        spyLinks.forEach(l => l.classList.remove('active'));
+        if (triggerEl) triggerEl.classList.add('active');
+      }
+
+      spyLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          const targetView = link.getAttribute('data-tab-view') || 'overview';
+          if (targetView === 'announcements') {
+            e.preventDefault();
+            setActiveTab('announcements', link);
+            window.scrollTo({ top: 180, behavior: 'smooth' });
+          } else {
+            setActiveTab('overview', link);
+          }
+        });
+      });
+
+      document.getElementById('btn-back-to-overview')?.addEventListener('click', () => {
+        setActiveTab('overview', document.querySelector('[data-spy="section-description"]'));
+      });
+
+      // Live Server Hydration + Live Announcements Feed
       async function hydrateLiveBatch() {
         if (!BATCH_ID) return;
-        let email = '';
+        let email = currentUser ? (currentUser.email || '') : '';
         let headers = {};
-        try {
-          const rawUser = localStorage.getItem('mendorbit_sso_user');
-          if (rawUser) {
-            const u = JSON.parse(rawUser);
-            email = u.email || '';
-            const firstName = (u.displayName || u.name || u.email || 'Student').split(' ')[0];
-            const authArea = document.getElementById('hdr-auth-area');
-            if (authArea) {
-              authArea.innerHTML = '<a href="' + esc(BASE_URL) + '/index.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 transition">Hi, ' + esc(firstName) + '</a>';
-            }
-            if (u.email) {
-              const tok = btoa(unescape(encodeURIComponent(JSON.stringify({ email: u.email, uid: u.uid || u.email, sessionId: u.sessionId || '' }))));
-              headers['Authorization'] = 'Bearer ' + tok;
-            }
-          }
-        } catch (e) {}
+        if (currentUser && currentUser.email) {
+          const tok = btoa(unescape(encodeURIComponent(JSON.stringify({ email: currentUser.email, uid: currentUser.uid || currentUser.email, sessionId: currentUser.sessionId || '' }))));
+          headers['Authorization'] = 'Bearer ' + tok;
+        }
 
         try {
           const res = await fetch(API_BASE + '/api/batches/detail?id=' + encodeURIComponent(BATCH_ID) + (email ? '&email=' + encodeURIComponent(email) : ''), { headers: headers, credentials: 'include' });
           const data = await res.json();
-          if (!data || data.status !== 'success' || !data.batch) return;
-          const b = data.batch;
+          if (data && data.status === 'success' && data.batch) {
+            const b = data.batch;
+            isArchived = b.status === 'ARCHIVED';
+            isEnrolled = Boolean(b.isEnrolled);
 
-          isArchived = b.status === 'ARCHIVED';
-          isEnrolled = Boolean(b.isEnrolled);
+            if (b.title) {
+              document.title = b.title + ' | Mendorbit';
+              const ht = document.getElementById('hero-title');
+              if (ht) ht.textContent = b.title;
+            }
+            const classes = Array.isArray(b.targetClasses) && b.targetClasses.length
+              ? b.targetClasses
+              : (b.targetClass ? String(b.targetClass).split(',').map(x => x.trim()).filter(Boolean) : []);
+            const classWrap = document.getElementById('hero-classes-wrap');
+            if (classWrap && (classes.length || b.displayTag)) {
+              const pills = classes.length ? classes : [b.displayTag];
+              classWrap.innerHTML = pills.map(c => '<span class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-700 shadow-2xs">' + esc(c) + '</span>').join('');
+            }
+            const hdrPill = document.getElementById('hdr-class-pill');
+            if (hdrPill && (b.displayTag || classes[0])) hdrPill.querySelector('span').textContent = b.displayTag || classes[0];
+            const asp = document.getElementById('card-aspirant');
+            if (asp && (b.displayTag || classes.length)) asp.textContent = 'For ' + (b.displayTag || classes.join(' • ')) + ' Aspirants';
+            const statusEl = document.getElementById('hero-status-pill');
+            if (statusEl) {
+              const stTxt = isArchived ? 'Closed' : ((b.statusLabel || 'Ongoing') + (b.startDate ? ' • ' + b.startDate : ''));
+              statusEl.innerHTML = '<span class="w-2 h-2 rounded-full ' + (isArchived ? 'bg-slate-400' : 'bg-rose-500 animate-pulse') + '"></span><span>' + esc(stTxt) + '</span>';
+            }
+            if (b.stream) {
+              const st = document.getElementById('hero-stream-pill');
+              if (st) { st.textContent = b.stream; st.classList.remove('hidden'); }
+            }
+            if (b.language) {
+              const lBadge = document.getElementById('card-lang');
+              if (lBadge) { lBadge.textContent = b.language; lBadge.classList.remove('hidden'); }
+              const lChip = document.getElementById('hero-lang-chip');
+              if (lChip) { lChip.innerHTML = 'Medium: <strong class="text-slate-900 uppercase">' + esc(b.language) + '</strong>'; lChip.classList.remove('hidden'); }
+            }
+            const thumbSafe = safeUrl(b.thumbnail);
+            if (thumbSafe) {
+              const tc = document.getElementById('card-thumb-container');
+              if (tc) tc.innerHTML = '<img id="card-thumb-img" src="' + esc(thumbSafe) + '" alt="' + esc(b.title || '') + '" class="w-full aspect-video object-cover rounded-xl border border-slate-200/70" />';
+            }
 
-          if (b.title) {
-            document.title = b.title + ' | Mendorbit';
-            const ht = document.getElementById('hero-title');
-            if (ht) ht.textContent = b.title;
-          }
+            const livePrice = Math.max(0, Number(b.price) || 0);
+            const liveMrp = Math.max(0, Number(b.originalPrice) || 0);
+            const livePct = (livePrice >= 0 && liveMrp > livePrice) ? Math.round(((liveMrp - livePrice) / liveMrp) * 100) : 0;
+            plans[1].price = livePrice;
+            plans[1].mrp = liveMrp;
+            plans[1].pct = livePct;
+            if (b.enrollToken) plans[1].url = BASE_URL + '/payment.html?info=' + encodeURIComponent(b.enrollToken);
 
-          const classes = Array.isArray(b.targetClasses) && b.targetClasses.length
-            ? b.targetClasses
-            : (b.targetClass ? String(b.targetClass).split(',').map(x => x.trim()).filter(Boolean) : []);
-          const classWrap = document.getElementById('hero-classes-wrap');
-          if (classWrap && (classes.length || b.displayTag)) {
-            const pills = classes.length ? classes : [b.displayTag];
-            classWrap.innerHTML = pills.map(c => '<span class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-700 shadow-2xs">' + esc(c) + '</span>').join('');
+            applyPricingUI(activePlan);
           }
-          const hdrPill = document.getElementById('hdr-class-pill');
-          if (hdrPill && (b.displayTag || classes[0])) {
-            hdrPill.querySelector('span').textContent = b.displayTag || classes[0];
-          }
-          const asp = document.getElementById('card-aspirant');
-          if (asp && (b.displayTag || classes.length)) {
-            asp.textContent = 'For ' + (b.displayTag || classes.join(' • ')) + ' Aspirants';
-          }
-          const statusEl = document.getElementById('hero-status-pill');
-          if (statusEl) {
-            const stTxt = isArchived ? 'Closed / Archived' : ((b.statusLabel || 'Ongoing') + (b.startDate ? ' • ' + b.startDate : ''));
-            statusEl.innerHTML = '<span class="w-2 h-2 rounded-full ' + (isArchived ? 'bg-slate-400' : 'bg-rose-500 animate-pulse') + '"></span><span>' + esc(stTxt) + '</span>';
-          }
-          if (b.stream) {
-            const st = document.getElementById('hero-stream-pill');
-            if (st) { st.textContent = b.stream; st.classList.remove('hidden'); }
-          }
-          if (b.language) {
-            const lBadge = document.getElementById('card-lang');
-            if (lBadge) { lBadge.textContent = b.language; lBadge.classList.remove('hidden'); }
-            const lChip = document.getElementById('hero-lang-chip');
-            if (lChip) { lChip.innerHTML = 'Medium: <strong class="text-slate-900 uppercase">' + esc(b.language) + '</strong>'; lChip.classList.remove('hidden'); }
-          }
-          const thumbSafe = safeUrl(b.thumbnail);
-          if (thumbSafe) {
-            const tc = document.getElementById('card-thumb-container');
-            if (tc) tc.innerHTML = '<img id="card-thumb-img" src="' + esc(thumbSafe) + '" alt="' + esc(b.title || '') + '" class="w-full aspect-video object-cover rounded-xl border border-slate-200/70" />';
-          }
+        } catch (e) {}
 
-          const livePrice = Math.max(0, Number(b.price) || 0);
-          const liveMrp = Math.max(0, Number(b.originalPrice) || 0);
-          const livePct = (livePrice >= 0 && liveMrp > livePrice) ? Math.round(((liveMrp - livePrice) / liveMrp) * 100) : 0;
-          plans[1].price = livePrice;
-          plans[1].mrp = liveMrp;
-          plans[1].pct = livePct;
-          if (b.enrollToken) plans[1].url = BASE_URL + '/payment.html?info=' + encodeURIComponent(b.enrollToken);
-
-          applyPricingUI(activePlan);
+        // Load Live Announcements for this Batch
+        try {
+          const annRes = await fetch(API_BASE + '/api/batches/announcements?batchId=' + encodeURIComponent(BATCH_ID));
+          const annData = await annRes.json();
+          const feed = document.getElementById('live-announcements-feed');
+          const countBadge = document.getElementById('nav-ann-count');
+          if (annData && annData.status === 'success' && Array.isArray(annData.announcements)) {
+            const items = annData.announcements;
+            if (countBadge) {
+              countBadge.textContent = String(items.length);
+              countBadge.classList.toggle('hidden', items.length === 0);
+            }
+            if (feed) {
+              if (!items.length) {
+                feed.innerHTML = '<div class="text-center py-12 text-xs text-slate-400">No announcements posted for this batch yet.</div>';
+              } else {
+                feed.innerHTML = items.map(a => {
+                  const dt = a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+                  const img = safeUrl(a.imageUrl);
+                  return '<article class="rounded-2xl border border-slate-200 p-4 sm:p-5 bg-slate-50/50 space-y-2.5">'
+                    + '<div class="flex flex-wrap items-center justify-between gap-2">'
+                    + '  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-extrabold">Posted by ' + esc(a.authorName || 'Mendorbit Team') + '</span>'
+                    + '  <span class="text-[11px] text-slate-400 font-medium">' + esc(dt) + '</span>'
+                    + '</div>'
+                    + (a.title ? '<h3 class="text-sm font-extrabold text-slate-900">' + esc(a.title) + '</h3>' : '')
+                    + (a.message ? '<p class="text-[13px] text-slate-700 leading-relaxed whitespace-pre-line">' + esc(a.message) + '</p>' : '')
+                    + (img ? '<img src="' + esc(img) + '" alt="Notice Banner" data-zoom-img="' + esc(img) + '" class="w-full max-h-80 object-cover rounded-xl border border-slate-200 cursor-zoom-in" />' : '')
+                    + '</article>';
+                }).join('');
+                feed.querySelectorAll('[data-zoom-img]').forEach(im => {
+                  im.addEventListener('click', () => {
+                    const lb = document.getElementById('img-lightbox');
+                    const lbi = document.getElementById('img-lightbox-src');
+                    if (lb && lbi) { lbi.src = im.getAttribute('data-zoom-img'); lb.classList.remove('hidden'); }
+                  });
+                });
+              }
+            }
+          }
         } catch (e) {}
       }
       hydrateLiveBatch();
 
-      // Scroll-spy for Subnav
-      const spyLinks = document.querySelectorAll('.subnav-link');
+      document.getElementById('img-lightbox')?.addEventListener('click', () => {
+        document.getElementById('img-lightbox').classList.add('hidden');
+      });
+
+      // Scroll-spy for Overview Sections
       if (spyLinks.length && 'IntersectionObserver' in window) {
         const obs = new IntersectionObserver((entries) => {
+          if (overviewView && overviewView.classList.contains('hidden')) return;
           entries.forEach(en => {
             if (en.isIntersecting) {
               const id = en.target.getAttribute('id');
@@ -2499,12 +2950,13 @@
           });
         }, { rootMargin: '-25% 0px -65% 0px' });
         spyLinks.forEach(l => {
-          const sec = document.getElementById(l.getAttribute('data-spy'));
+          const sid = l.getAttribute('data-spy');
+          const sec = sid ? document.getElementById(sid) : null;
           if (sec) obs.observe(sec);
         });
       }
 
-      // Share, Announcement, FAQ Search & Expand, Modals
+      // Share & FAQ Controls
       const shareBtn = document.getElementById('btn-share-batch');
       if (shareBtn) {
         shareBtn.addEventListener('click', async () => {
@@ -2513,10 +2965,6 @@
           try { await navigator.clipboard.writeText(shareUrl); toast('Batch link copied to clipboard!'); } catch (e) {}
         });
       }
-
-      const annBtn = document.getElementById('btn-announcement');
-      const annBanner = document.getElementById('announcement-banner');
-      if (annBtn && annBanner) annBtn.addEventListener('click', () => annBanner.classList.toggle('hidden'));
 
       const faqSearch = document.getElementById('faq-search-input');
       if (faqSearch) {
@@ -2545,7 +2993,9 @@
         cmpModal.addEventListener('click', (e) => { if (e.target === cmpModal) cmpModal.classList.add('hidden'); });
       }
 
+      // Video Player + Native Fullscreen Support
       const vidModal = document.getElementById('video-modal');
+      const vidFrame = document.getElementById('video-modal-frame');
       const vidBody = document.getElementById('video-modal-body');
       const vidTitle = document.getElementById('video-modal-title');
       document.querySelectorAll('[data-open-video]').forEach(btn => {
@@ -2555,12 +3005,21 @@
           if (vidTitle) vidTitle.textContent = btn.getAttribute('data-video-title') || 'Demo Class';
           const isDirect = btn.getAttribute('data-is-direct') === '1';
           vidBody.innerHTML = isDirect
-            ? '<video src="' + esc(u) + '" controls autoplay class="w-full h-full"></video>'
-            : '<iframe src="' + esc(u) + '" class="w-full h-full border-0" allowfullscreen></iframe>';
+            ? '<video src="' + esc(u) + '" controls autoplay controlsList="nodownload" class="w-full h-full"></video>'
+            : '<iframe src="' + esc(u) + '?autoplay=1&rel=0" class="w-full h-full border-0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
           vidModal.classList.remove('hidden');
         });
       });
+      document.getElementById('btn-video-fullscreen')?.addEventListener('click', () => {
+        if (!vidFrame) return;
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        } else if (vidFrame.requestFullscreen) {
+          vidFrame.requestFullscreen().catch(() => {});
+        }
+      });
       function closeVidModal() {
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         if (vidModal) vidModal.classList.add('hidden');
         if (vidBody) vidBody.innerHTML = '';
       }
@@ -2570,6 +3029,7 @@
         if (e.key === 'Escape') {
           closeVidModal();
           if (cmpModal) cmpModal.classList.add('hidden');
+          document.getElementById('img-lightbox')?.classList.add('hidden');
         }
       });
     })();
@@ -2659,6 +3119,7 @@
           else el.value = '';
         });
         document.getElementById('pgb-plan2-fields')?.classList.add('hidden');
+        resetPgbRepeaters();
         renderPageBuilderPreview();
       });
 
@@ -2710,6 +3171,7 @@
         document.getElementById('pgb-view-desktop')?.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
       });
 
+      resetPgbRepeaters();
       renderPageBuilderPreview();
       updateBatchLivePreview();
     });

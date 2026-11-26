@@ -130,6 +130,10 @@
     adminDeleteCoupon: async (code, adminKey) => post("/api/admin/coupons/delete", { code }, { "X-Admin-Key": adminKey }),
     adminUpdateCurriculum: async (batchId, subjects, adminKey) => post("/api/admin/batches/content/update", { batchId, subjects }, { "X-Admin-Key": adminKey }),
     adminGetEnrollments: async (batchId, adminKey) => get("/api/admin/batches/enrollments" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : ""), { "X-Admin-Key": adminKey }),
+    getBatchAnnouncements: async (batchId) => get("/api/batches/announcements" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : "")),
+    adminGetAnnouncements: async (adminKey) => get("/api/admin/announcements/all", { "X-Admin-Key": adminKey }),
+    adminCreateAnnouncement: async (data, adminKey) => post("/api/admin/announcements/create", data, { "X-Admin-Key": adminKey }),
+    adminDeleteAnnouncement: async (id, adminKey) => post("/api/admin/announcements/delete", { id }, { "X-Admin-Key": adminKey }),
 
     // Admin Security & Cipher
     adminDecrypt: async (ciphertext, adminKey) => post("/api/admin/decrypt", { ciphertext }, { "X-Admin-Key": adminKey }),
