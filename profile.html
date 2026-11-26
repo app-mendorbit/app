@@ -1983,9 +1983,13 @@
       // ========================================================
       // 2. AUTHENTICATION GUARD & DATA POPULATION
       // ========================================================
-      const session = MendorbitSSO.getSession();
+      const session = (typeof MendorbitSSO !== 'undefined' && typeof MendorbitSSO.requireAuthWithRedirect === 'function')
+        ? MendorbitSSO.requireAuthWithRedirect('/login.html')
+        : MendorbitSSO.getSession();
       if (!session || !session.email) {
-        window.location.replace("login.html?force_login=true");
+        if (typeof MendorbitSSO === 'undefined' || typeof MendorbitSSO.requireAuthWithRedirect !== 'function') {
+          window.location.replace("/login.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash));
+        }
         return;
       }
 

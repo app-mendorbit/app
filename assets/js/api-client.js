@@ -118,6 +118,7 @@
     validateCoupon: async (code, batchId) => post("/api/coupons/validate", { code, batchId }),
     enrollBatch: async (batchId, email, couponCode = "", infoToken = "") => post("/api/batches/enroll", { batchId, email, couponCode, infoToken }),
     getBatchContent: async (batchId, email) => get("/api/batches/content?id=" + encodeURIComponent(batchId) + (email ? ("&email=" + encodeURIComponent(email)) : "")),
+    getBatchDpp: async (batchId, sheetTab, dppId, email) => get("/api/batches/dpp?batchId=" + encodeURIComponent(batchId) + (sheetTab ? ("&sheetTab=" + encodeURIComponent(sheetTab)) : "") + (dppId ? ("&dppId=" + encodeURIComponent(dppId)) : "") + (email ? ("&email=" + encodeURIComponent(email)) : "")),
     saveLectureProgress: async (batchId, lectureId, email) => post("/api/batches/progress", { batchId, lectureId, email }),
 
     // Admin Batch, Coupon & Curriculum Studio
@@ -128,7 +129,8 @@
     adminGetCoupons: async (adminKey) => get("/api/admin/coupons/all", { "X-Admin-Key": adminKey }),
     adminCreateCoupon: async (couponData, adminKey) => post("/api/admin/coupons/create", couponData, { "X-Admin-Key": adminKey }),
     adminDeleteCoupon: async (code, adminKey) => post("/api/admin/coupons/delete", { code }, { "X-Admin-Key": adminKey }),
-    adminUpdateCurriculum: async (batchId, subjects, adminKey) => post("/api/admin/batches/content/update", { batchId, subjects }, { "X-Admin-Key": adminKey }),
+    adminGetBatchContent: async (batchId, adminKey) => get("/api/batches/content?id=" + encodeURIComponent(batchId), { "X-Admin-Key": adminKey }),
+    adminUpdateCurriculum: async (batchId, subjects, adminKey, dppScriptUrl) => post("/api/admin/batches/content/update", { batchId, subjects, dppScriptUrl: dppScriptUrl || "" }, { "X-Admin-Key": adminKey }),
     adminGetEnrollments: async (batchId, adminKey) => get("/api/admin/batches/enrollments" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : ""), { "X-Admin-Key": adminKey }),
     getBatchAnnouncements: async (batchId) => get("/api/batches/announcements" + (batchId ? ("?batchId=" + encodeURIComponent(batchId)) : "")),
     adminGetAnnouncements: async (adminKey) => get("/api/admin/announcements/all", { "X-Admin-Key": adminKey }),

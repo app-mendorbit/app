@@ -375,7 +375,15 @@
       if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
       if (backdrop) backdrop.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
 
-      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
+      const session = (typeof MendorbitSSO !== 'undefined' && typeof MendorbitSSO.requireAuthWithRedirect === 'function')
+        ? MendorbitSSO.requireAuthWithRedirect('/login.html')
+        : null;
+      if (!session) {
+        if (typeof MendorbitSSO === 'undefined' || typeof MendorbitSSO.requireAuthWithRedirect !== 'function') {
+          window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash));
+        }
+        return;
+      }
       const userPill = document.getElementById('checkout-user-pill');
       const userEmailEl = document.getElementById('checkout-user-email');
       const loginBtn = document.getElementById('btn-nav-login');
@@ -384,7 +392,7 @@
         if (userEmailEl) userEmailEl.textContent = session.email;
       } else if (loginBtn) {
         loginBtn.classList.remove('hidden');
-        loginBtn.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        loginBtn.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
       }
 
       const loader = document.getElementById('checkout-loader');
@@ -598,7 +606,7 @@
             }
             mainView.classList.add('hidden');
             document.getElementById('checkout-success-sub').textContent = `You have successfully enrolled in ${activeBatch.title}.`;
-            document.getElementById('btn-success-go-batch').href = activeBatch.viewMoreUrl || `batch-detail.html?id=${encodeURIComponent(activeBatch.id)}`;
+            document.getElementById('btn-success-go-batch').href = `/study/${encodeURIComponent(activeBatch.id)}`;
             successBox.classList.remove('hidden');
             if (window.lucide) lucide.createIcons();
           } else if (res && res.code === "PAYMENT_GATEWAY_PENDING") {

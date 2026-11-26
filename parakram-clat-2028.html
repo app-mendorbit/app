@@ -37,6 +37,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./assets/js/mendorbit-cipher.js"></script>
   <script src="./assets/js/secure-storage.js"></script>
+  <script src="./assets/js/utm-tracker.js"></script>
   <script src="./assets/js/sso-manager.js"></script>
   <style>
     html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -553,13 +554,22 @@
         return null;
       }
 
-      // Navbar Student Profile Widget (exact match to Dashboard / Batches)
+      // Navbar Student Profile Widget + Mandatory Auth Redirect (skip inside preview iframes)
       function initNavbarProfile() {
         try {
-          const u = readSsoSession();
+          const isPreviewFrame = (window.self !== window.top || window.location.protocol === 'about:');
+          const u = isPreviewFrame
+            ? readSsoSession()
+            : ((window.MendorbitSSO && typeof window.MendorbitSSO.requireAuthWithRedirect === 'function')
+                ? window.MendorbitSSO.requireAuthWithRedirect('/login.html')
+                : readSsoSession());
           const loginBtn = document.getElementById('btn-nav-login');
           const userWidget = document.getElementById('nav-user-widget');
           if (!u) {
+            if (!isPreviewFrame && (!window.MendorbitSSO || typeof window.MendorbitSSO.requireAuthWithRedirect !== 'function')) {
+              const target = (window.location.pathname || '/index.html') + (window.location.search || '') + (window.location.hash || '');
+              window.location.replace('/login.html?redirect=' + encodeURIComponent(target));
+            }
             if (loginBtn) loginBtn.classList.remove('hidden');
             if (userWidget) userWidget.classList.add('hidden');
             return null;
@@ -697,7 +707,7 @@
         const targetBatchId = (d && d.batchId) || BATCH_ID;
         if (isEnrolled) {
           window.location.href = targetBatchId
-            ? (BASE_URL + '/batch-classroom.html?id=' + encodeURIComponent(targetBatchId))
+            ? ('/study/' + encodeURIComponent(targetBatchId))
             : (BASE_URL + '/index.html');
           return;
         }

@@ -108,6 +108,11 @@
           <span>Announcements</span>
         </button>
 
+        <button type="button" data-admin-tab="admin-tab-content" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
+          <i data-lucide="book-open-check" class="w-4 h-4"></i>
+          <span>Batch Content &amp; DPP</span>
+        </button>
+
         <button type="button" data-admin-tab="admin-tab-page-builder" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition text-left">
           <i data-lucide="file-code-2" class="w-4 h-4"></i>
           <span>Batch Page Creator</span>
@@ -344,6 +349,14 @@
                 <label class="block text-xs font-bold text-slate-700 mb-1">Display Class / Tag Label (Orange Text) *</label>
                 <input type="text" id="batch-input-displaytag" required placeholder="e.g. Class 10 Boards / SSC CGL" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
               </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <label class="block text-xs font-bold text-slate-700">Batch URL ID (Auto-filled from Title — Editable before publish) *</label>
+                <span id="batch-study-url-preview" class="text-[11px] font-mono font-bold text-indigo-600 truncate">/study/...</span>
+              </div>
+              <input type="text" id="batch-input-id" required pattern="[a-z0-9-]+" placeholder="e.g. parakram-clat-2028" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-900 outline-none focus:border-sky-500 focus:bg-white" />
             </div>
 
             <!-- Separate Target Audience Selector (6 Classes Only) -->
@@ -660,6 +673,63 @@
               <div class="text-center py-8 text-slate-400">Loading announcements...</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 5.2: BATCH CONTENT & DPP ENGINE MANAGER              -->
+      <!-- ======================================================== -->
+      <div id="admin-tab-content" class="admin-tab-pane hidden space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900">Batch Content &amp; DPP Curriculum Manager</h2>
+            <p class="text-xs text-slate-500">Manage YouTube lecture classes, Class Notes links, and Google Sheet DPP tabs. Strictly locked behind enrolled student check at <span class="font-mono text-indigo-600">/study/&lt;batchId&gt;</span>.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <a id="content-open-study-link" href="/batches.html" target="_blank" class="hidden px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 inline-flex items-center gap-1.5">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>Open Study Room</span>
+            </a>
+            <button type="button" id="btn-save-batch-content" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-xs transition inline-flex items-center gap-1.5">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i>
+              <span>Save All Content</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+          <div class="lg:col-span-5">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Select Batch to Manage Content *</label>
+            <select id="content-batch-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 outline-none focus:border-indigo-500">
+              <option value="">-- Select a Batch --</option>
+            </select>
+          </div>
+          <div class="lg:col-span-5">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">DPP Google Apps Script Web App URL (Optional Override)</label>
+            <input type="url" id="content-dpp-script-url" placeholder="https://script.google.com/macros/s/.../exec (or set globally in worker.js)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+          </div>
+          <div class="lg:col-span-2 flex gap-2">
+            <button type="button" id="btn-load-batch-content" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-extrabold text-slate-700 transition">Load Content</button>
+          </div>
+        </div>
+
+        <div id="content-editor-empty" class="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center text-xs text-slate-500">
+          Select a batch above to view and organize Subjects, Chapters, YouTube Lectures, PDF Notes links, and Google Sheet DPPs.
+        </div>
+
+        <div id="content-editor-workspace" class="hidden space-y-5">
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2 flex-1">
+              <input type="text" id="new-subject-name" placeholder="New Subject Name (e.g. Legal Reasoning)" class="flex-1 min-w-[200px] px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900 outline-none focus:border-indigo-500" />
+              <button type="button" id="btn-add-subject" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold transition inline-flex items-center gap-1.5">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Add Subject</span>
+              </button>
+            </div>
+            <div id="content-batch-id-chip" class="text-[11px] font-mono font-bold text-slate-500"></div>
+          </div>
+
+          <div id="content-subjects-list" class="space-y-4"></div>
         </div>
       </div>
 
@@ -1158,6 +1228,12 @@
           switchAdminTab(targetId, label);
           if (targetId === 'admin-tab-enrollments') loadAdminEnrollments();
           if (targetId === 'admin-tab-announcements') loadAdminAnnouncements();
+          if (targetId === 'admin-tab-content') {
+            const cSel = document.getElementById('content-batch-select');
+            if (cSel && cSel.value && typeof loadBatchContentForAdmin === 'function') {
+              loadBatchContentForAdmin(cSel.value);
+            }
+          }
         });
       });
 
@@ -1276,6 +1352,12 @@
           annFilter.innerHTML = `<option value="">All Batches</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
           annFilter.value = curAF;
         }
+        const contentSel = document.getElementById('content-batch-select');
+        if (contentSel) {
+          const curC = contentSel.value;
+          contentSel.innerHTML = `<option value="">-- Select a Batch --</option>` + loadedBatches.map(b => `<option value="${b.id}">${b.title} (${b.id})</option>`).join('');
+          contentSel.value = curC;
+        }
         if (typeof syncSelectedBatchSummary === 'function') syncSelectedBatchSummary();
       }
 
@@ -1308,6 +1390,7 @@
                   ${thumbHtml}
                   <div class="min-w-0">
                     <div class="font-extrabold text-slate-900 text-xs truncate max-w-[200px]">${b.title}</div>
+                    <div class="text-[10px] font-mono text-slate-400 truncate max-w-[200px]">/study/${b.id}</div>
                     <div class="text-[10px] text-orange-600 font-bold">${b.displayTag || ''} <span class="text-slate-400 font-normal">• ${b.language || 'HINGLISH'}</span></div>
                   </div>
                 </div>
@@ -1331,6 +1414,10 @@
                   <button type="button" onclick="openEditBatchTab('${b.id}')" class="px-2.5 py-1.5 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 rounded-lg transition font-bold text-[11px] flex items-center gap-1">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                     <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="openContentManagerTab('${b.id}')" title="Manage Lectures, Notes & DPPs" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 rounded-lg transition font-bold text-[11px] flex items-center gap-1">
+                    <i data-lucide="book-open-check" class="w-3 h-3"></i>
+                    <span>Content</span>
                   </button>
                   <button type="button" onclick="openEnrollmentsTab('${b.id}', '${(b.title || '').replace(/'/g, "\\'")}')" title="View Enrolled Students" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition">
                     <i data-lucide="users" class="w-3.5 h-3.5"></i>
@@ -1456,9 +1543,41 @@
         alert("Direct Payment / Enroll link copied!");
       });
 
+      const batchIdInput = document.getElementById('batch-input-id');
+      const batchTitleInput = document.getElementById('batch-input-title');
+      const studyUrlPreview = document.getElementById('batch-study-url-preview');
+
+      function slugifyBatchId(text) {
+        return String(text || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+      function refreshStudyUrlPreview() {
+        if (!studyUrlPreview || !batchIdInput) return;
+        const clean = slugifyBatchId(batchIdInput.value);
+        studyUrlPreview.textContent = clean ? (`/study/${clean}`) : '/study/...';
+      }
+      batchTitleInput?.addEventListener('input', () => {
+        const editId = document.getElementById('batch-edit-id').value.trim();
+        if (!editId && batchIdInput && batchIdInput.dataset.manual !== '1') {
+          batchIdInput.value = slugifyBatchId(batchTitleInput.value);
+          refreshStudyUrlPreview();
+        }
+      });
+      batchIdInput?.addEventListener('input', () => {
+        batchIdInput.dataset.manual = batchIdInput.value.trim() ? '1' : '';
+        batchIdInput.value = batchIdInput.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        refreshStudyUrlPreview();
+      });
+
       function resetBatchForm() {
         batchForm.reset();
         document.getElementById('batch-edit-id').value = "";
+        if (batchIdInput) {
+          batchIdInput.value = "";
+          batchIdInput.readOnly = false;
+          batchIdInput.dataset.manual = "";
+          batchIdInput.classList.remove('opacity-70', 'cursor-not-allowed');
+        }
+        refreshStudyUrlPreview();
         document.querySelectorAll('.audience-cb').forEach(cb => cb.checked = false);
         document.getElementById('editor-form-title').textContent = "Create New Batch";
         document.getElementById('btn-submit-batch-form').textContent = "Publish Batch & Generate Payment Link";
@@ -1484,6 +1603,13 @@
         document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
 
         document.getElementById('batch-input-title').value = b.title || "";
+        if (batchIdInput) {
+          batchIdInput.value = b.id || "";
+          batchIdInput.readOnly = true;
+          batchIdInput.dataset.manual = "1";
+          batchIdInput.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+        refreshStudyUrlPreview();
         document.getElementById('batch-input-displaytag').value = b.displayTag || b.targetClass || "";
         const targetArr = Array.isArray(b.targetClasses) && b.targetClasses.length
           ? b.targetClasses
@@ -1515,6 +1641,7 @@
       batchForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const editId = document.getElementById('batch-edit-id').value.trim();
+        const customBatchId = slugifyBatchId(document.getElementById('batch-input-id')?.value || '');
         const title = document.getElementById('batch-input-title').value.trim();
         const displayTag = document.getElementById('batch-input-displaytag').value.trim();
         const targetClasses = getSelectedAudienceClasses();
@@ -1536,6 +1663,7 @@
         const viewMoreUrl = document.getElementById('batch-input-viewmore').value.trim();
 
         const batchPayload = {
+          ...(editId ? {} : (customBatchId ? { id: customBatchId } : {})),
           title,
           displayTag,
           targetClasses,
@@ -1574,6 +1702,12 @@
             }
             if (!editId) {
               document.getElementById('batch-edit-id').value = savedId;
+              if (batchIdInput) {
+                batchIdInput.value = savedId;
+                batchIdInput.readOnly = true;
+                batchIdInput.classList.add('opacity-70', 'cursor-not-allowed');
+                refreshStudyUrlPreview();
+              }
               document.getElementById('editor-form-title').textContent = `Published: ${title}`;
               document.getElementById('btn-submit-batch-form').textContent = "Save Changes";
             }
@@ -2471,6 +2605,7 @@
   <script src="https://cdn.tailwindcss.com"></scr` + `ipt>
   <script src="${pgbEsc(base)}/assets/js/mendorbit-cipher.js"></scr` + `ipt>
   <script src="${pgbEsc(base)}/assets/js/secure-storage.js"></scr` + `ipt>
+  <script src="${pgbEsc(base)}/assets/js/utm-tracker.js"></scr` + `ipt>
   <script src="${pgbEsc(base)}/assets/js/sso-manager.js"></scr` + `ipt>
   <style>
     html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -2798,13 +2933,22 @@
         return null;
       }
 
-      // Navbar Student Profile Widget (exact match to Dashboard / Batches)
+      // Navbar Student Profile Widget + Mandatory Auth Redirect (skip inside preview iframes)
       function initNavbarProfile() {
         try {
-          const u = readSsoSession();
+          const isPreviewFrame = (window.self !== window.top || window.location.protocol === 'about:');
+          const u = isPreviewFrame
+            ? readSsoSession()
+            : ((window.MendorbitSSO && typeof window.MendorbitSSO.requireAuthWithRedirect === 'function')
+                ? window.MendorbitSSO.requireAuthWithRedirect('/login.html')
+                : readSsoSession());
           const loginBtn = document.getElementById('btn-nav-login');
           const userWidget = document.getElementById('nav-user-widget');
           if (!u) {
+            if (!isPreviewFrame && (!window.MendorbitSSO || typeof window.MendorbitSSO.requireAuthWithRedirect !== 'function')) {
+              const target = (window.location.pathname || '/index.html') + (window.location.search || '') + (window.location.hash || '');
+              window.location.replace('/login.html?redirect=' + encodeURIComponent(target));
+            }
             if (loginBtn) loginBtn.classList.remove('hidden');
             if (userWidget) userWidget.classList.add('hidden');
             return null;
@@ -2942,7 +3086,7 @@
         const targetBatchId = (d && d.batchId) || BATCH_ID;
         if (isEnrolled) {
           window.location.href = targetBatchId
-            ? (BASE_URL + '/batch-classroom.html?id=' + encodeURIComponent(targetBatchId))
+            ? ('/study/' + encodeURIComponent(targetBatchId))
             : (BASE_URL + '/index.html');
           return;
         }
@@ -3401,6 +3545,236 @@
         if (iframe) iframe.style.width = '390px';
         document.getElementById('pgb-view-mobile')?.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
         document.getElementById('pgb-view-desktop')?.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+      });
+
+      // --------------------------------------------------------
+      // BATCH CONTENT & DPP CURRICULUM MANAGER ENGINE
+      // --------------------------------------------------------
+      let contentCurriculum = {};
+      let contentActiveBatchId = '';
+
+      function escContentAttr(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      window.openContentManagerTab = async function (batchId) {
+        const sel = document.getElementById('content-batch-select');
+        if (sel) sel.value = batchId || '';
+        switchAdminTab('admin-tab-content', 'Batch Content & DPP');
+        if (batchId) await loadBatchContentForAdmin(batchId);
+      };
+
+      async function loadBatchContentForAdmin(batchId) {
+        if (!batchId || !activeAdminKey) return;
+        contentActiveBatchId = batchId;
+        const emptyBox = document.getElementById('content-editor-empty');
+        const wsBox = document.getElementById('content-editor-workspace');
+        const studyLink = document.getElementById('content-open-study-link');
+        const idChip = document.getElementById('content-batch-id-chip');
+        const dppUrlInput = document.getElementById('content-dpp-script-url');
+
+        emptyBox.classList.remove('hidden');
+        emptyBox.textContent = 'Loading batch curriculum from Firebase...';
+        wsBox.classList.add('hidden');
+
+        try {
+          const res = await MendorbitAPI.adminGetBatchContent(batchId, activeAdminKey);
+          if (res && res.status === 'success') {
+            contentCurriculum = (res.curriculum && typeof res.curriculum === 'object') ? res.curriculum : {};
+            if (dppUrlInput) dppUrlInput.value = res.dppScriptUrl || '';
+            if (studyLink) {
+              studyLink.href = '/study/' + encodeURIComponent(batchId);
+              studyLink.classList.remove('hidden');
+            }
+            if (idChip) idChip.textContent = 'Route: /study/' + batchId;
+            emptyBox.classList.add('hidden');
+            wsBox.classList.remove('hidden');
+            renderContentSubjects();
+          } else {
+            emptyBox.textContent = (res && res.message) || 'Unable to load batch content.';
+          }
+        } catch (err) {
+          emptyBox.textContent = 'Connection error while loading batch content.';
+        }
+      }
+
+      function renderContentSubjects() {
+        const listEl = document.getElementById('content-subjects-list');
+        if (!listEl) return;
+        const subjectNames = Object.keys(contentCurriculum);
+        if (!subjectNames.length) {
+          listEl.innerHTML = `<div class="bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">No subjects added yet for this batch. Add a subject above (e.g. Legal Reasoning, GK &amp; Current Affairs).</div>`;
+          return;
+        }
+
+        listEl.innerHTML = subjectNames.map(subName => {
+          const chapters = Array.isArray(contentCurriculum[subName]) ? contentCurriculum[subName] : [];
+          const chHtml = chapters.map((ch, cIdx) => {
+            const lecs = Array.isArray(ch.lectures) ? ch.lectures : [];
+            const lecHtml = lecs.map((lec, lIdx) => `
+              <div class="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider">Lecture ${lIdx + 1}</span>
+                  <button type="button" data-del-lec="${escContentAttr(subName)}|${cIdx}|${lIdx}" class="px-2 py-1 rounded-lg text-[11px] font-bold text-rose-600 hover:bg-rose-50">Remove Lecture</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <input type="text" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|title" value="${escContentAttr(lec.title || '')}" placeholder="Lecture Title *" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 outline-none focus:border-indigo-500" />
+                  <input type="text" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|teacher" value="${escContentAttr(lec.teacher || '')}" placeholder="Faculty Name" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+                  <input type="text" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|duration" value="${escContentAttr(lec.duration || '')}" placeholder="Duration (e.g. 01:10:00)" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <input type="url" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|videoUrl" value="${escContentAttr(lec.videoUrl || '')}" placeholder="YouTube Lecture Link (https://youtu.be/...)" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+                  <input type="url" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|notesUrl" value="${escContentAttr(lec.notesUrl || '')}" placeholder="Class Notes PDF / Drive Link (https://...)" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <input type="text" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|dppSheetTab" value="${escContentAttr(lec.dppSheetTab || '')}" placeholder="DPP Google Sheet Tab Name (e.g. Legal_DPP_1)" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs font-mono text-slate-800 outline-none focus:border-indigo-500" />
+                  <input type="url" data-lec-field="${escContentAttr(subName)}|${cIdx}|${lIdx}|dppSolutionUrl" value="${escContentAttr(lec.dppSolutionUrl || '')}" placeholder="DPP Solution Video / PDF Link (Optional)" class="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 outline-none focus:border-indigo-500" />
+                </div>
+              </div>
+            `).join('');
+
+            return `
+              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                    <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-extrabold text-slate-500">CH ${cIdx + 1}</span>
+                    <input type="text" data-ch-title="${escContentAttr(subName)}|${cIdx}" value="${escContentAttr(ch.title || '')}" placeholder="Chapter Title *" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-extrabold text-slate-900 outline-none focus:border-indigo-500" />
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" data-add-lec="${escContentAttr(subName)}|${cIdx}" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold">+ Add Lecture</button>
+                    <button type="button" data-del-ch="${escContentAttr(subName)}|${cIdx}" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-white text-rose-600 hover:bg-rose-50 text-[11px] font-bold">Delete Chapter</button>
+                  </div>
+                </div>
+                <div class="space-y-2.5">${lecHtml || '<p class="text-[11px] text-slate-400">No lectures added in this chapter yet.</p>'}</div>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 class="text-sm font-extrabold text-slate-900">${escContentAttr(subName)}</h3>
+                  <p class="text-[11px] text-slate-400">${chapters.length} chapter(s)</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" data-add-ch="${escContentAttr(subName)}" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">+ Add Chapter</button>
+                  <button type="button" data-del-sub="${escContentAttr(subName)}" class="px-3 py-1.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold">Remove Subject</button>
+                </div>
+              </div>
+              <div class="space-y-3">${chHtml || '<p class="text-xs text-slate-400">Click "+ Add Chapter" to start adding lectures, notes, and DPP sheet tabs.</p>'}</div>
+            </div>
+          `;
+        }).join('');
+
+        // Wire live state binding
+        listEl.querySelectorAll('[data-ch-title]').forEach(inp => {
+          inp.addEventListener('input', () => {
+            const [sub, ci] = inp.getAttribute('data-ch-title').split('|');
+            if (contentCurriculum[sub] && contentCurriculum[sub][Number(ci)]) {
+              contentCurriculum[sub][Number(ci)].title = inp.value;
+            }
+          });
+        });
+        listEl.querySelectorAll('[data-lec-field]').forEach(inp => {
+          inp.addEventListener('input', () => {
+            const [sub, ci, li, field] = inp.getAttribute('data-lec-field').split('|');
+            const ch = contentCurriculum[sub] && contentCurriculum[sub][Number(ci)];
+            if (ch && ch.lectures && ch.lectures[Number(li)]) {
+              ch.lectures[Number(li)][field] = inp.value;
+            }
+          });
+        });
+        listEl.querySelectorAll('[data-add-ch]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const sub = btn.getAttribute('data-add-ch');
+            if (!Array.isArray(contentCurriculum[sub])) contentCurriculum[sub] = [];
+            contentCurriculum[sub].push({ title: 'Chapter ' + (contentCurriculum[sub].length + 1), lectures: [] });
+            renderContentSubjects();
+          });
+        });
+        listEl.querySelectorAll('[data-del-sub]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const sub = btn.getAttribute('data-del-sub');
+            if (!confirm(`Delete subject "${sub}" and all its chapters?`)) return;
+            delete contentCurriculum[sub];
+            renderContentSubjects();
+          });
+        });
+        listEl.querySelectorAll('[data-add-lec]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const [sub, ci] = btn.getAttribute('data-add-lec').split('|');
+            const ch = contentCurriculum[sub] && contentCurriculum[sub][Number(ci)];
+            if (!ch) return;
+            if (!Array.isArray(ch.lectures)) ch.lectures = [];
+            ch.lectures.push({
+              id: 'lec_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 5),
+              title: '',
+              teacher: '',
+              duration: '',
+              videoUrl: '',
+              notesUrl: '',
+              dppSheetTab: '',
+              dppSolutionUrl: ''
+            });
+            renderContentSubjects();
+          });
+        });
+        listEl.querySelectorAll('[data-del-ch]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const [sub, ci] = btn.getAttribute('data-del-ch').split('|');
+            if (!contentCurriculum[sub]) return;
+            contentCurriculum[sub].splice(Number(ci), 1);
+            renderContentSubjects();
+          });
+        });
+        listEl.querySelectorAll('[data-del-lec]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const [sub, ci, li] = btn.getAttribute('data-del-lec').split('|');
+            const ch = contentCurriculum[sub] && contentCurriculum[sub][Number(ci)];
+            if (ch && Array.isArray(ch.lectures)) {
+              ch.lectures.splice(Number(li), 1);
+              renderContentSubjects();
+            }
+          });
+        });
+      }
+
+      document.getElementById('content-batch-select')?.addEventListener('change', (e) => {
+        if (e.target.value) loadBatchContentForAdmin(e.target.value);
+      });
+      document.getElementById('btn-load-batch-content')?.addEventListener('click', () => {
+        const bid = document.getElementById('content-batch-select')?.value;
+        if (!bid) { alert('Please select a batch first.'); return; }
+        loadBatchContentForAdmin(bid);
+      });
+      document.getElementById('btn-add-subject')?.addEventListener('click', () => {
+        const inp = document.getElementById('new-subject-name');
+        const sub = (inp?.value || '').trim();
+        if (!sub) { alert('Enter a subject name.'); return; }
+        if (!contentCurriculum[sub]) contentCurriculum[sub] = [];
+        if (inp) inp.value = '';
+        renderContentSubjects();
+      });
+      document.getElementById('btn-save-batch-content')?.addEventListener('click', async () => {
+        const bid = contentActiveBatchId || document.getElementById('content-batch-select')?.value;
+        if (!bid) { alert('Select a batch first.'); return; }
+        const btn = document.getElementById('btn-save-batch-content');
+        const dppScriptUrl = (document.getElementById('content-dpp-script-url')?.value || '').trim();
+        btn.disabled = true;
+        try {
+          const res = await MendorbitAPI.adminUpdateCurriculum(bid, contentCurriculum, activeAdminKey, dppScriptUrl);
+          if (res && res.status === 'success') {
+            alert('Batch curriculum, notes & DPP tabs saved successfully!');
+          } else {
+            alert((res && res.message) || 'Failed to save curriculum.');
+          }
+        } catch (err) {
+          alert('Error saving batch content.');
+        } finally {
+          btn.disabled = false;
+        }
       });
 
       resetPgbRepeaters();

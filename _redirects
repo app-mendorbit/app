@@ -1,0 +1,4 @@
+# Mendorbit Clean Route Rewrites for Netlify
+/study/*   /batch-classroom.html   200
+/study     /batch-classroom.html   200
+/batch/*   /batch-detail.html      200

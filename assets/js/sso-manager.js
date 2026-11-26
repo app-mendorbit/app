@@ -575,12 +575,39 @@
     });
   }
 
+  /**
+   * Enforce mandatory authentication with preserved redirect path and UTM params
+   */
+  function requireAuthWithRedirect(loginPath) {
+    const sess = getSession();
+    if (sess && sess.email) return sess;
+
+    const currentTarget = (window.location.pathname || "/index.html") + (window.location.search || "") + (window.location.hash || "");
+    const targetParams = new URLSearchParams();
+    targetParams.set("redirect", currentTarget);
+
+    // Forward any active UTM / attribution params onto the login URL
+    try {
+      const curQs = new URLSearchParams(window.location.search || "");
+      const utmKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "ref", "referral", "gclid", "fbclid"];
+      utmKeys.forEach(k => {
+        const v = curQs.get(k);
+        if (v) targetParams.set(k, v);
+      });
+    } catch (e) {}
+
+    const base = loginPath || "/login.html";
+    window.location.replace(base + "?" + targetParams.toString());
+    return null;
+  }
+
   return {
     setSession: setSession,
     getSession: getSession,
     isLoggedIn: isLoggedIn,
     clearSession: clearSession,
     logout: logout,
+    requireAuthWithRedirect: requireAuthWithRedirect,
     onAuthStateChanged: onAuthStateChanged,
     getCookieDomain: getCookieDomain,
     listenToRemoteSessionStatus: listenToRemoteSessionStatus,

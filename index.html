@@ -399,18 +399,19 @@
       if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
       if (backdrop) backdrop.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); });
 
-      // SSO Auth Check
-      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
+      // Mandatory Auth Guard with Redirect + UTM Preservation
+      const session = (typeof MendorbitSSO !== 'undefined' && typeof MendorbitSSO.requireAuthWithRedirect === 'function')
+        ? MendorbitSSO.requireAuthWithRedirect('/login.html')
+        : ((typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null);
       const unauthView = document.getElementById('unauth-view');
       const authView = document.getElementById('auth-view');
       const profileContainer = document.getElementById('profile-dropdown-container');
       const guestLoginBtn = document.getElementById('nav-guest-login-btn');
 
       if (!session) {
-        unauthView.classList.remove('hidden');
-        authView.classList.add('hidden');
-        if (profileContainer) profileContainer.classList.add('hidden');
-        if (guestLoginBtn) guestLoginBtn.classList.remove('hidden');
+        if (typeof MendorbitSSO === 'undefined' || typeof MendorbitSSO.requireAuthWithRedirect !== 'function') {
+          window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash));
+        }
         return;
       }
 
@@ -605,7 +606,7 @@
                  </div>`);
 
         const primaryActionHtml = enrolled
-          ? `<a href="${escapeHtml(viewMoreUrl)}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">Go to Batch</a>`
+          ? `<a href="/study/${encodeURIComponent(b.id)}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">Go to Batch</a>`
           : `<button type="button" onclick="startDashCheckout('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">${price > 0 ? 'Buy Now' : 'Enroll Now'}</button>`;
 
         return `

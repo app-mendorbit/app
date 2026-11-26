@@ -383,8 +383,12 @@
       let viewMode = "all"; // 'all' | 'enrolled'
       let userSession = null;
 
-      if (typeof MendorbitSSO !== 'undefined') {
-        userSession = MendorbitSSO.getSession();
+      if (typeof MendorbitSSO !== 'undefined' && typeof MendorbitSSO.requireAuthWithRedirect === 'function') {
+        userSession = MendorbitSSO.requireAuthWithRedirect('/login.html');
+        if (!userSession) return;
+      } else {
+        window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash));
+        return;
       }
 
       function normalizeClassToFixed(raw) {
@@ -806,7 +810,7 @@
                    </div>`);
 
           const primaryBtnHtml = enrolled
-            ? `<a href="${escapeHtml(viewMoreUrl)}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition inline-flex items-center gap-1.5">
+            ? `<a href="/study/${encodeURIComponent(b.id)}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition inline-flex items-center gap-1.5">
                  <span>Go to Batch</span>
                </a>`
             : `<button type="button" onclick="goToSecureCheckout('${b.id}', this)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-sm transition">

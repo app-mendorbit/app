@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Batch Details | Mendorbit</title>
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="/logo.png">
 
   <script>
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -48,20 +48,20 @@
   <!-- TOP NAVBAR -->
   <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur h-16 px-4 sm:px-8 flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <a href="batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
+      <a href="/batches.html" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition" title="Back to Batches">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
       </a>
-      <a href="index.html" class="flex items-center gap-2.5">
-        <img src="logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
+      <a href="/index.html" class="flex items-center gap-2.5">
+        <img src="/logo.png" alt="Mendorbit" class="w-8 h-8 object-contain" />
         <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Mendorbit</span>
       </a>
     </div>
 
     <div class="flex items-center gap-3">
-      <a href="batches.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand-600 transition">
+      <a href="/batches.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand-600 transition">
         <span>All Batches</span>
       </a>
-      <a id="btn-nav-login" href="login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 text-white text-xs font-bold">
+      <a id="btn-nav-login" href="/login.html" class="hidden px-4 py-2 rounded-xl bg-slate-900 dark:bg-brand-600 text-white text-xs font-bold">
         Login
       </a>
       <div id="nav-user-pill" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold">
@@ -191,15 +191,25 @@
 
   </main>
 
-  <script src="assets/js/secure-storage.js"></script>
-  <script src="assets/js/sso-manager.js"></script>
-  <script src="assets/js/api-client.js"></script>
+  <script src="/assets/js/secure-storage.js"></script>
+  <script src="/assets/js/utm-tracker.js"></script>
+  <script src="/assets/js/sso-manager.js"></script>
+  <script src="/assets/js/api-client.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
       if (window.lucide) lucide.createIcons();
 
-      const session = (typeof MendorbitSSO !== 'undefined') ? MendorbitSSO.getSession() : null;
+      const session = (typeof MendorbitSSO !== 'undefined' && typeof MendorbitSSO.requireAuthWithRedirect === 'function')
+        ? MendorbitSSO.requireAuthWithRedirect('/login.html')
+        : null;
+      if (!session) {
+        if (typeof MendorbitSSO === 'undefined' || typeof MendorbitSSO.requireAuthWithRedirect !== 'function') {
+          window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash));
+        }
+        return;
+      }
+
       const loginBtn = document.getElementById('btn-nav-login');
       const userPill = document.getElementById('nav-user-pill');
       const userNameEl = document.getElementById('nav-user-name');
@@ -208,12 +218,11 @@
         if (loginBtn) loginBtn.classList.add('hidden');
         if (userPill) userPill.classList.remove('hidden');
         if (userNameEl) userNameEl.textContent = session.displayName || "Student";
-      } else {
-        if (loginBtn) loginBtn.classList.remove('hidden');
       }
 
       const params = new URLSearchParams(window.location.search);
-      const batchId = (params.get("id") || "").trim();
+      const pathMatch = (window.location.pathname || "").match(/\/batch\/([^\/?#]+)/i);
+      const batchId = (params.get("id") || (pathMatch ? decodeURIComponent(pathMatch[1]) : "")).trim();
 
       const loader = document.getElementById('detail-loader');
       const errBox = document.getElementById('detail-error');
@@ -391,14 +400,11 @@
         const ctaBox = document.getElementById('sidebar-cta-container');
         if (enrolled) {
           ctaBox.innerHTML = `
-            <button type="button" id="btn-go-to-batch" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
+            <a href="/study/${encodeURIComponent(b.id)}" id="btn-go-to-batch" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2">
               <i data-lucide="play-circle" class="w-5 h-5"></i>
               <span>Go to Batch</span>
-            </button>
+            </a>
           `;
-          document.getElementById('btn-go-to-batch').addEventListener('click', () => {
-            document.getElementById('go-to-batch-notice').classList.remove('hidden');
-          });
         } else {
           ctaBox.innerHTML = `
             <button type="button" id="btn-detail-buy-now" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2">

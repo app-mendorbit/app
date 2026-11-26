@@ -25,6 +25,7 @@
   const ALLOWED_REDIRECT_PATTERNS = [
     /^mendorbit\.in$/i,
     /^[a-z0-9-]+\.mendorbit\.in$/i,
+    /^[a-z0-9-]+\.netlify\.app$/i,
     /^localhost(:\d+)?$/i,
     /^127\.0\.0\.1(:\d+)?$/i
   ];
@@ -136,11 +137,30 @@
     const params = parseQueryParams();
     const candidate = params.redirect_url || params.redirect;
 
+    let finalDest = DEFAULT_REDIRECT;
     if (candidate && isSafeRedirect(candidate)) {
-      return candidate;
+      finalDest = candidate;
     }
 
-    return DEFAULT_REDIRECT;
+    // Preserve active UTM / referral params across the post-login redirect
+    try {
+      const utmKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "ref", "referral", "gclid", "fbclid"];
+      const parsed = new URL(finalDest, window.location.origin);
+      let modified = false;
+      utmKeys.forEach(k => {
+        if (params[k] && !parsed.searchParams.has(k)) {
+          parsed.searchParams.set(k, params[k]);
+          modified = true;
+        }
+      });
+      if (modified) {
+        finalDest = (finalDest.startsWith("/") && !finalDest.startsWith("//"))
+          ? (parsed.pathname + parsed.search + parsed.hash)
+          : parsed.toString();
+      }
+    } catch (e) {}
+
+    return finalDest;
   }
 
   /**

@@ -102,7 +102,19 @@
           const cookieMatch = document.cookie.match(/(^|;)\s*mendorbit_sso_session\s*=\s*([^;]+)/);
           const hasLocalSession = localStorage.getItem('mendorbit_sso_user') || localStorage.getItem('mendorbit_current_session');
           if (cookieMatch || hasLocalSession) {
-            const dest = MendorbitParams.get('redirect_url') || MendorbitParams.get('redirect') || 'index.html';
+            let dest = MendorbitParams.get('redirect_url') || MendorbitParams.get('redirect') || 'index.html';
+            try {
+              const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'ref', 'referral', 'gclid', 'fbclid'];
+              const u = new URL(dest, window.location.origin);
+              let dirty = false;
+              utmKeys.forEach(k => {
+                const v = MendorbitParams.get(k);
+                if (v && !u.searchParams.has(k)) { u.searchParams.set(k, v); dirty = true; }
+              });
+              if (dirty) {
+                dest = (dest.startsWith('/') && !dest.startsWith('//')) ? (u.pathname + u.search + u.hash) : u.toString();
+              }
+            } catch (ex) {}
             window.location.replace(dest);
           }
         }
