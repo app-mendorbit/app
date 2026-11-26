@@ -40,7 +40,7 @@
   <script src="./assets/js/utm-tracker.js"></script>
   <script src="./assets/js/sso-manager.js"></script>
   <style>
-    html { scroll-behavior: smooth; overflow-x: hidden; }
+    html { scroll-behavior: smooth; overflow-x: hidden; scroll-padding-top: 8.5rem; }
     body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #0f172a; overflow-x: hidden; }
     details summary::-webkit-details-marker { display: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -105,11 +105,11 @@
   <main class="flex-1 w-full">
 
     <!-- LUMINOUS ARCHITECTURAL HERO WITH BATCHES / LAW BREADCRUMB -->
-    <section class="hero-glow-canvas border-b border-slate-200/80 px-4 sm:px-8 pt-6 pb-8 sm:pt-8 sm:pb-10">
-      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-center">
+    <section class="hero-glow-canvas border-b border-slate-200/80 px-4 sm:px-8 pt-4 pb-6 sm:pt-5 sm:pb-7">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-9 items-start">
 
         <!-- HERO LEFT -->
-        <div class="lg:col-span-7 xl:col-span-8 space-y-5">
+        <div class="lg:col-span-7 xl:col-span-8 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <nav aria-label="Breadcrumb" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200/80 shadow-2xs text-xs font-bold text-slate-600">
               <a href="./batches.html" class="hover:text-indigo-600 transition">Batches</a>
@@ -132,12 +132,24 @@
             <div id="hero-classes-wrap" class="flex flex-wrap items-center gap-1.5"><span class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-bold shadow-2xs">Law</span></div>
           </div>
 
-          <h1 id="hero-title" class="text-3xl sm:text-4xl lg:text-[2.85rem] font-extrabold tracking-[-0.03em] leading-[1.1] text-slate-950">Parakram Batch for CLAT 2028</h1>
+          <div class="space-y-2">
+            <h1 id="hero-title" class="text-2xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-[-0.03em] leading-[1.12] text-slate-950">Parakram Batch for CLAT 2028</h1>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-medium">
+              Complete NLU preparation featuring 2 live lectures daily, chapter PDF notes, solved DPPs, weekly All-India mocks, Study Tracker, Study Room &amp; 24/7 free Doubt Engine.
+            </p>
+          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-0.5">
             <div id="hero-lang-chip" class="p-3 rounded-2xl bg-white/95 border border-slate-200/85 shadow-2xs"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Medium</div><div class="text-xs font-extrabold text-slate-950 mt-0.5 uppercase">HINGLISH</div></div>
             <div id="hero-duration-chip" class="p-3 rounded-2xl bg-white/95 border border-slate-200/85 shadow-2xs"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</div><div class="text-xs font-extrabold text-slate-950 mt-0.5">1st Dec 2026 – 30th Nov 2027</div></div>
             <div class="p-3 rounded-2xl bg-white/95 border border-slate-200/85 shadow-2xs"><div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Validity</div><div class="text-xs font-extrabold text-slate-950 mt-0.5">Till CLAT &amp; AILET 2028 Exam</div></div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold text-slate-700">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span> 2 Live Classes / Day</span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Solved DPPs &amp; Notes</span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Weekly CLAT Mocks</span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/90 border border-slate-200/80"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> 24/7 Free Doubt Engine</span>
           </div>
         </div>
 
